@@ -1,7 +1,8 @@
 {
-  "name": "papertradevue",
+  "name": "papertrade-client",
   "version": "0.1.0",
   "private": true,
+  "description": "Papper Trade Client using VUE.",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -43,5 +44,7 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "author": "Anand.AV",
+  "license": "ISC"
 }

@@ -135,7 +135,8 @@
       "CreatedOn": {
         "$date": "2020-05-04T07:16:23.459Z"
       },
-      "Trades": null
+      "IsEdit" : false,
+      "Trades": []
     },
     {
       "_id": {
@@ -146,6 +147,7 @@
       "CreatedOn": {
         "$date": "2020-05-04T07:16:24.632Z"
       },
+      
       "Trades": null
     },
     {
@@ -157,7 +159,8 @@
       "CreatedOn": {
         "$date": "2020-05-04T07:16:26.123Z"
       },
-      "Trades": null
+      "IsEdit" : false,
+      "Trades": []
     }
   ],
   "IsActive": false

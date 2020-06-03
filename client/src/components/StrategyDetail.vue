@@ -4,9 +4,9 @@
     <div class="card-body">
       <h5 class="card-title">Created On: {{Strategy.CreatedOn.$date}}</h5>
 
-      <ul v-if="Strategy.Trades">
-        <li :key="trade._id.$oid" v-for="trade in Strategy.Trades">
-          <button class="btn btn-dark" @click="SaveTrade(trade)">{{trade.Name}}</button>
+      <ul v-if="Strategy.Trades" class="list-group list-group-flush">
+        <li :key="Trade._id.$oid" v-for="Trade in Strategy.Trades" class="list-group-item">
+          <button class="btn btn-dark" @click="DeleteTrade(Strategy,Trade)">{{Trade.Name}}</button>
         </li>
       </ul>
 
@@ -14,14 +14,14 @@
             class="card-text"
       >With supporting text below as a natural lead-in to additional content.</p>-->
       <div class="TradeAddEditPlaceholder">
-        <TradeAddEdit  v-show="Strategy.IsEdit" />
+        <TradeAddEdit v-if="Strategy.IsEdit" />
       </div>
     </div>
     <div class="card-footer">
       <div class="col-lg-12">
-        <div class="row float-right">
-          <button class="btn btn-outline-primary" @click="ShowMyNewTrade(Strategy)">Add Trade</button>
-          <button class="btn btn-danger">Delete Stratergy</button>
+        <div class="btn-group row float-right">
+          <button class="btn btn-outline-primary" @click="CreateNewTrade(Strategy)">Add Trade</button>
+          <button class="btn btn-outline-danger">Delete Stratergy</button>
         </div>
       </div>
     </div>
@@ -35,10 +35,13 @@ export default {
   components: { TradeAddEdit },
   props: { Strategy: { type: Object } },
   methods: {
-    ...mapActions(['ShowNewTrade']),
-     ShowMyNewTrade(_strategy) {
+    ...mapActions(['ShowNewTrade', 'RemoveTrade']),
+     CreateNewTrade(_strategy) {
        this.ShowNewTrade(_strategy);
-     }
+     },
+     DeleteTrade(_strategy,_trade){
+       this.RemoveTrade({_strategy,_trade});
+     },
   }
 };
 </script>

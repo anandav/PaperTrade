@@ -33,15 +33,16 @@ export default {
   methods: {
     ...mapActions(['GetAllPortfolios','SelectPortfolioChanged','GetPortfolioById']),
     menuSelectedPortfolio(item) {
-      console.log(item);
+      //console.log(item);
       //this.SelectPortfolioChanged(item);
-      console.log(item._id.$oid);
+      //console.log(item._id.$oid);
       this.GetPortfolioById(item._id.$oid);
     }
   },
 
   created() {
     this.GetAllPortfolios();
+    
   },
   computed: {
     ...mapState(['Portfolios','Portfolio'])
