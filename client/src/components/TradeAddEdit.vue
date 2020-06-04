@@ -31,10 +31,11 @@
           <label for="formControlRange">Strike Price</label>
           <input
             type="range"
-            v-bind:min="9000"
-            v-bind:max="12000"
+            :min="9000"
+            :max="12000"
             step="50"
-            v-bind:value="this.myrangeValue"
+            @input="onStrikeRangeChanging($event)"
+            @change="onStrikeRangeChanged($event)"
             class="form-control-range"
             id="formControlRange"
           />
@@ -48,7 +49,7 @@
           /><input
             type="text"
             class="text form-control"
-            v-model="this.myrangeValue"
+            v-model="this.SelectedStrikePrice"
           />
         </div>
         <div class="form-group  col-2">
@@ -63,17 +64,29 @@
   </ul>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
+ //data(){return {myrangeValue : 10000}},
+import { mapActions, mapGetters, mapState } from "vuex";
 export default {
   name: "TradeAddEdit",
-  // prop : [myrangeValue],
- data(){return {myrangeValue : 10000}
- },
-  methods: { ...mapActions(["GetInstrumentDetail"]) },
+   props : {myrangeValue:{ type: Number }},
+
+ 
+  methods: { ...mapActions(["GetInstrumentDetail","OnStrikePriceRangeChanging","OnStrikePriceRangeChanged"]),
+  onStrikeRangeChanging(evt){
+   this.OnStrikePriceRangeChanging(evt)
+    
+  },
+  onStrikeRangeChanged(evt){
+    
+    this.OnStrikePriceRangeChanged(evt);
+  }
+  
+  },
   created() {
     this.GetInstrumentDetail();
   },
   computed: {
+    ...mapState(["SelectedStrikePrice"]),
     ...mapGetters(["getLatestPrice"]),
   },
 };

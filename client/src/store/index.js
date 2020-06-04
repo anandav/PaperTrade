@@ -9,6 +9,9 @@ import {
   SHOWNEWTRADE,
   GETINSTRUMENTDETAIL,
   REMOVETRADE,
+
+  ONSTRIKEPRICERANGECHANGING,
+  ONSTRIKEPRICERANGECHANGED,
 } from "./mutationtype";
 
 Vue.use(Vuex);
@@ -21,6 +24,8 @@ const state = {
   Trade: undefined,
   InsurumentDetail: undefined,
   InsurumentLatestPirce: undefined,
+  SelectedStrikePrice : 0,
+
 };
 const mutations = {
   [GETALLPORTFOLIOS](state, _portfolios) {
@@ -47,11 +52,16 @@ const mutations = {
     );
     state.Portfolio.Strategies.splice(inx, 1, _strategy);
   },
+  [ONSTRIKEPRICERANGECHANGING](state,_price){
+    state.SelectedStrikePrice = _price;
+  },
+  [ONSTRIKEPRICERANGECHANGED](state,_price){
+    state.SelectedStrikePrice = _price;
+  }
 };
 const actions = {
   async GetAllPortfolios({ commit }) {
     const response = await axios.get("/mongoDBData.json");
-    //console.log(response.data);
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
@@ -82,6 +92,14 @@ const actions = {
       (x) => x._id.$oid != _trade._id.$oid
     );
     commit(REMOVETRADE, _strategy);
+  },
+  OnStrikePriceRangeChanging({ commit },evnt){
+    console.log("changing called");
+    commit(ONSTRIKEPRICERANGECHANGING, evnt.target.value);
+  },
+  OnStrikePriceRangeChanged({ commit },evnt){
+    console.log("changed called");
+    commit(ONSTRIKEPRICERANGECHANGED, evnt.target.value);
   },
 };
 const modules = {};
