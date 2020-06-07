@@ -25,6 +25,7 @@ const state = {
   InsurumentDetail: undefined,
   InsurumentLatestPirce: undefined,
   SelectedStrikePrice : 0,
+  SelectedStrike : undefined,
 
 };
 const mutations = {
@@ -55,8 +56,8 @@ const mutations = {
   [ONSTRIKEPRICERANGECHANGING](state,_price){
     state.SelectedStrikePrice = _price;
   },
-  [ONSTRIKEPRICERANGECHANGED](state,_price){
-    state.SelectedStrikePrice = _price;
+  [ONSTRIKEPRICERANGECHANGED](){
+    //state.SelectedStrikePrice = _price;
   }
 };
 const actions = {
@@ -83,8 +84,13 @@ const actions = {
   async GetInstrumentDetail({ commit }, _insurumentSymbol) {
     console.log("Geting detail for" + _insurumentSymbol);
     const response = await axios.get("/chart-databyindex.json");
-    console.log(response.data);
     commit(GETINSTRUMENTDETAIL, response.data);
+  },
+  async GetLiveDetail(  searchQuery){
+    //underlying, instrumentType, expiryDate, optionType, strikePrice
+    console.log("Geting detail for" + searchQuery.underlying);
+     await axios.get("/liveEquity-derivatives.json");
+
   },
 
   RemoveTrade({ commit }, { _strategy, _trade }) {
@@ -97,9 +103,10 @@ const actions = {
     console.log("changing called");
     commit(ONSTRIKEPRICERANGECHANGING, evnt.target.value);
   },
-  OnStrikePriceRangeChanged({ commit },evnt){
+  OnStrikePriceRangeChanged({ commit },evnt){//{ commit },evnt){
+    console.log(evnt);
     console.log("changed called");
-    commit(ONSTRIKEPRICERANGECHANGED, evnt.target.value);
+    commit(ONSTRIKEPRICERANGECHANGED);
   },
 };
 const modules = {};

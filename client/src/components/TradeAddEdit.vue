@@ -3,27 +3,38 @@
     <li class="list-group-item">
       <div class="row">
         <div class="form-group col-2">
-          <label>Example label</label>
+          <label>Example label {{ tradeBSid }}</label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-outline-danger   active">
-              <input type="radio" name="options" id="option1" checked /> Sell
-            </label>
-            <label class="btn btn-outline-success ">
-              <input type="radio" name="options" id="option2" /> Buy
+            <label
+              class="btn"
+              v-for="(value, key) in tradeBS"
+              :key="key"
+              :class="{
+                'active btn-outline-success': key == 1,
+                'btn-outline-danger': key == 2,
+              }"
+            >
+              <input
+                type="radio"
+                :value="value"
+                :id="'trade_' + value"
+                v-model="tradeBSid"
+              />
+              {{ value }}
             </label>
           </div>
         </div>
         <div class="form-group col-3">
           <label>Test label</label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-outline-secondary   active">
-              <input type="radio" name="options" id="option1" checked /> Call
-            </label>
-            <label class="btn btn-outline-secondary ">
-              <input type="radio" name="options" id="option2" /> Put
-            </label>
-            <label class="btn btn-outline-secondary ">
-              <input type="radio" name="options" id="option3" /> Future
+            <label
+              class="btn btn-outline-secondary"
+              :class="{ active: key == 1 }"
+              v-for="(value, key) in tradetype"
+              :key="key"
+            >
+              <input type="radio" name="options" :id="'option' + key" />
+              {{ value }}
             </label>
           </div>
         </div>
@@ -47,14 +58,16 @@
             class="text form-control"
             v-model="this.getLatestPrice"
           /><input
-            type="text"
+            type="hidden"
             class="text form-control"
             v-model="this.SelectedStrikePrice"
           />
         </div>
-        <div class="form-group  col-2">
+      </div>
+      <div class="form-group  row">
+        <div class="pull-right">
           <label for="">Action</label>
-          <div class="btn-group">
+          <div class="btn-group  ">
             <button class="btn btn-outline-primary">Save</button>
             <button class="btn btn-outline-danger">Clear</button>
           </div>
@@ -64,23 +77,43 @@
   </ul>
 </template>
 <script>
- //data(){return {myrangeValue : 10000}},
+//data(){return {myrangeValue : 10000}},
 import { mapActions, mapGetters, mapState } from "vuex";
 export default {
   name: "TradeAddEdit",
-   props : {myrangeValue:{ type: Number }},
-
- 
-  methods: { ...mapActions(["GetInstrumentDetail","OnStrikePriceRangeChanging","OnStrikePriceRangeChanged"]),
-  onStrikeRangeChanging(evt){
-   this.OnStrikePriceRangeChanging(evt)
-    
+  data: function() {
+    return {
+      tradeBSid: "",
+      tradeBS: {
+        1: "Buy",
+        2: "Sell",
+      },
+      tradetype: {
+        1: "Call",
+        2: "Put",
+        3: "Future",
+      },
+    };
   },
-  onStrikeRangeChanged(evt){
-    
-    this.OnStrikePriceRangeChanged(evt);
-  }
-  
+
+  methods: {
+    ...mapActions([
+      "GetInstrumentDetail",
+      "OnStrikePriceRangeChanging",
+      "OnStrikePriceRangeChanged",
+    ]),
+    onStrikeRangeChanging(evt) {
+      this.OnStrikePriceRangeChanging(evt);
+    },
+    onStrikeRangeChanged(evt) {
+      var searchQuery = {
+        underlying: "NIFTY",
+        optionType: "put",
+        strikePrice: evt.target.value,
+        expiryDate: "",
+      };
+      this.OnStrikePriceRangeChanged(searchQuery);
+    },
   },
   created() {
     this.GetInstrumentDetail();
@@ -92,7 +125,8 @@ export default {
 };
 </script>
 <style scoped>
-.btn.focus {
+.btn.focus,
+input[type="text"] {
   outline: none !important;
   box-shadow: none !important;
 }
