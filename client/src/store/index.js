@@ -86,9 +86,9 @@ const actions = {
     const response = await axios.get("/chart-databyindex.json");
     commit(GETINSTRUMENTDETAIL, response.data);
   },
-  async GetLiveDetail(  searchQuery){
+  async GetLiveDetail( _searchQuery){
     //underlying, instrumentType, expiryDate, optionType, strikePrice
-    console.log("Geting detail for" + searchQuery.underlying);
+    console.log("Geting detail for" + _searchQuery.underlying);
      await axios.get("/liveEquity-derivatives.json");
 
   },

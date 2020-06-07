@@ -3,22 +3,23 @@
     <li class="list-group-item">
       <div class="row">
         <div class="form-group col-2">
-          <label>Example label {{ tradeBSid }}</label>
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label>Example label {{ gender }}</label>
+          <div class="btn-group btn-group-toggle" >
             <label
-              class="btn"
+              class=" btn"
               v-for="(value, key) in tradeBS"
               :key="key"
               :class="{
-                'active btn-outline-success': key == 1,
+                'btn-outline-success': key == 1,
                 'btn-outline-danger': key == 2,
-              }"
-            >
+                'active': value == [BuyOrSell]
+              }">
               <input
                 type="radio"
+                name="tradebsname"
                 :value="value"
                 :id="'trade_' + value"
-                v-model="tradeBSid"
+                v-model.number="BuyOrSell"
               />
               {{ value }}
             </label>
@@ -73,17 +74,26 @@
           </div>
         </div>
       </div>
+
+
+
+
+
     </li>
   </ul>
 </template>
 <script>
-//data(){return {myrangeValue : 10000}},
+
 import { mapActions, mapGetters, mapState } from "vuex";
-export default {
+//import { utilitymixins } from '../shared/utilitymixins'
+ export default {
   name: "TradeAddEdit",
-  data: function() {
+  //mixins : [utilitymixins],
+
+  data () {
     return {
-      tradeBSid: "",
+     BuyOrSell: "",
+     
       tradeBS: {
         1: "Buy",
         2: "Sell",
@@ -116,6 +126,8 @@ export default {
     },
   },
   created() {
+   // this.utilitymixins.foo();
+
     this.GetInstrumentDetail();
   },
   computed: {
