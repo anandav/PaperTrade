@@ -3,7 +3,7 @@
     <li class="list-group-item">
       <div class="row">
         <div class="form-group col-2">
-          <label>Example label {{ gender }}</label>
+          <label>Example label</label>
           <div class="btn-group btn-group-toggle" >
             <label
               class=" btn"
