@@ -20,7 +20,7 @@
     <div class="card-footer">
       <div class="col-lg-12">
         <div class="btn-group row float-right">
-          <button class="btn btn-outline-primary" @click="CreateNewTrade(Strategy)">Add Trade</button>
+          <button class="btn btn-outline-primary" @click="CreateNewTrade()">Add Trade</button>
           <button class="btn btn-outline-danger">Delete Stratergy</button>
         </div>
       </div>
@@ -28,20 +28,26 @@
   </div>
 </template>
 <script>
-import {mapActions} from 'vuex';
+import { mapActions } from "vuex";
 import TradeAddEdit from "./TradeAddEdit";
 export default {
   name: "StrategyDetail",
   components: { TradeAddEdit },
+
   props: { Strategy: { type: Object } },
   methods: {
-    ...mapActions(['ShowNewTrade', 'RemoveTrade']),
-     CreateNewTrade(_strategy) {
-       this.ShowNewTrade(_strategy);
-     },
-     DeleteTrade(_strategy,_trade){
-       this.RemoveTrade({_strategy,_trade});
-     },
-  }
+    ...mapActions(["ShowNewTrade", "RemoveTrade"]),
+    CreateNewTrade() {
+      if (this.Strategy.IsEdit) {
+        this.Strategy.IsEdit = false;
+      } else {
+        this.$set(this.Strategy, "IsEdit", true);
+      }
+      //this.ShowNewTrade(_strategy);
+    },
+    DeleteTrade(_strategy, _trade) {
+      this.RemoveTrade({ _strategy, _trade });
+    },
+  },
 };
 </script>

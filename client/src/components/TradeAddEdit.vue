@@ -2,98 +2,99 @@
   <ul class="list-group list-group-flush">
     <li class="list-group-item">
       <div class="row">
-        <div class="form-group col-2">
-          <label>Example label</label>
-          <div class="btn-group btn-group-toggle" >
+        <div class="col-md-1 mb-3">
+          <label for="firstName">Buy & Sell</label>
+          <div class="btn-group btn-group-toggle">
             <label
-              class=" btn"
+              class="btn"
               v-for="(value, key) in tradeBS"
               :key="key"
               :class="{
                 'btn-outline-success': key == 1,
                 'btn-outline-danger': key == 2,
-                'active': value == [BuyOrSell]
-              }">
+                'active': value == [TradeDetail.BuyOrSell]
+              }"
+            >
               <input
                 type="radio"
                 name="tradebsname"
                 :value="value"
                 :id="'trade_' + value"
-                v-model.number="BuyOrSell"
+                v-model="TradeDetail.BuyOrSell"
               />
-              {{ value }}
+              {{value}}
             </label>
           </div>
         </div>
-        <div class="form-group col-3">
-          <label>Test label</label>
+
+        <div class="col-md-2 mb-3">
+          <label>Type</label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <label
               class="btn btn-outline-secondary"
-              :class="{ active: key == 1 }"
               v-for="(value, key) in tradetype"
               :key="key"
+              :class="{ active:  value == [TradeDetail.Type] }"
             >
-              <input type="radio" name="options" :id="'option' + key" />
-              {{ value }}
+              <input type="radio" name="options"  :value="value" :id="'option' + key" v-model="TradeDetail.Type" />
+              {{value}}
             </label>
           </div>
         </div>
-        <div class="form-group col-3">
-          <label for="formControlRange">Strike Price</label>
-          <input
-            type="range"
-            :min="9000"
-            :max="12000"
-            step="50"
-            @input="onStrikeRangeChanging($event)"
-            @change="onStrikeRangeChanged($event)"
-            class="form-control-range"
-            id="formControlRange"
-          />
+
+        <div class="col-md-2 mb-3">
+          <label>Striker Price</label>
+          <div class>
+            <input
+              type="range"
+              :min="70"
+              :max="80"
+              step="0.25"
+              v-model="SelectedStrikePrice"
+              class="form-control-range"
+              id="formControlRange"
+            />
+
+            <span style="float: left; display:block">{{SelectedStrikePrice}}</span>
+          </div>
         </div>
-        <div class="form-group col-2">
-          <label for="">Price</label>
-          <input
-            type="text"
-            class="text form-control"
-            v-model="this.getLatestPrice"
-          /><input
-            type="hidden"
-            class="text form-control"
-            v-model="this.SelectedStrikePrice"
-          />
+        <div class="col-md-2 mb-3">
+          <label>Spot Price</label>
+          <div class>
+            <input type="text" v-model="SpotPrice" class="form-control" id="formSpotPrice" />
+          </div>
         </div>
-      </div>
-      <div class="form-group  row">
-        <div class="pull-right">
-          <label for="">Action</label>
-          <div class="btn-group  ">
-            <button class="btn btn-outline-primary">Save</button>
-            <button class="btn btn-outline-danger">Clear</button>
+
+        <div class="col-md-2 mb-3">
+          <label>Save & Cancel</label>
+          <span>{{TradeDetail}}</span>
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-outline-secondary" @click="onSaveTrade();">Save</button>
+            <button type="button" class="btn btn-outline-secondary">Cancel</button>
           </div>
         </div>
       </div>
-
-
-
-
-
+      <div class="form-group row">
+        <div class="pull-right">
+          <!-- <label for>Action</label> -->
+        </div>
+      </div>
     </li>
   </ul>
 </template>
 <script>
-
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex"; //, mapState
 //import { utilitymixins } from '../shared/utilitymixins'
- export default {
+export default {
   name: "TradeAddEdit",
   //mixins : [utilitymixins],
 
-  data () {
+  data() {
     return {
-     BuyOrSell: "",
-     
+      TradeDetail: { BuyOrSell: "", Type: "" },
+      SelectedStrikePrice: 75,
+      SpotPrice: 0.0,
+
       tradeBS: {
         1: "Buy",
         2: "Sell",
@@ -105,7 +106,7 @@ import { mapActions, mapGetters, mapState } from "vuex";
       },
     };
   },
-
+  props: { selectedPrice: { type: Number, default: 0 } },
   methods: {
     ...mapActions([
       "GetInstrumentDetail",
@@ -113,6 +114,7 @@ import { mapActions, mapGetters, mapState } from "vuex";
       "OnStrikePriceRangeChanged",
     ]),
     onStrikeRangeChanging(evt) {
+      //this.selectedPrice = evt.target.value;
       this.OnStrikePriceRangeChanging(evt);
     },
     onStrikeRangeChanged(evt) {
@@ -124,14 +126,16 @@ import { mapActions, mapGetters, mapState } from "vuex";
       };
       this.OnStrikePriceRangeChanged(searchQuery);
     },
+    onSaveTrade() {
+      this.TradeDetail;
+    },
   },
   created() {
-   // this.utilitymixins.foo();
-
+    // this.utilitymixins.foo();
     this.GetInstrumentDetail();
   },
   computed: {
-    ...mapState(["SelectedStrikePrice"]),
+    // ...mapState(["SelectedStrikePrice"]),
     ...mapGetters(["getLatestPrice"]),
   },
 };

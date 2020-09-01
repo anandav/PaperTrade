@@ -6,10 +6,9 @@ import {
   //  ADDEDITSTRATEGY,
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
-  SHOWNEWTRADE,
+  //SHOWNEWTRADE,
   GETINSTRUMENTDETAIL,
   REMOVETRADE,
-
   ONSTRIKEPRICERANGECHANGING,
   ONSTRIKEPRICERANGECHANGED,
 } from "./mutationtype";
@@ -35,14 +34,14 @@ const mutations = {
   [SETPORTFOLIO](state, _protfolio) {
     state.Portfolio = _protfolio;
   },
-  [SHOWNEWTRADE](state, _strategy) {
-    state.Strategy = _strategy;
-    state.Portfolio.Strategies.forEach((x) => {
-      if (x._id.$oid != _strategy._id.$oid) {
-        x.IsEdit = false;
-      }
-    });
-  },
+  // [SHOWNEWTRADE](state, _strategy) {
+  //   state.Strategy = _strategy;
+  //   state.Portfolio.Strategies.forEach((x) => {
+  //     if (x._id.$oid != _strategy._id.$oid) {
+  //       x.IsEdit = false;
+  //     }
+  //   });
+  // },
   [GETINSTRUMENTDETAIL](state, _data) {
     state.InsurumentDetail = _data;
   },
@@ -63,34 +62,32 @@ const mutations = {
 const actions = {
   async GetAllPortfolios({ commit }) {
     const response = await axios.get("/mongoDBData.json");
+    console.log(response.data);
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
     commit(SETPORTFOLIO, _protfolio);
   },
-  ShowNewTrade({ commit }, _strategy) {
-    _strategy.IsEdit = !_strategy.IsEdit;
-    commit(SHOWNEWTRADE, _strategy);
-  },
+  // ShowNewTrade({ commit }, _strategy) {
+  //   _strategy.IsEdit = !_strategy.IsEdit;
+  //   commit(SHOWNEWTRADE, _strategy);
+  // },
   async GetPortfolioById({ commit }, _id) {
-    var _protfolio = state.Portfolios.find((x) => x._id.$oid == _id);
-    _protfolio.Strategies.forEach((x) => {
-      x.IsEdit = false;
-    });
+    commit(SETPORTFOLIO, _id);
+    // var _protfolio = state.Portfolios.find((x) => x._id.$oid == _id);
+    // _protfolio.Strategies.forEach((x) => {
+    //   x.IsEdit = false;
+    // });
 
-    commit(SETPORTFOLIO, _protfolio);
+    // commit(SETPORTFOLIO, _protfolio);
   },
 
-  async GetInstrumentDetail({ commit }, _insurumentSymbol) {
-    console.log("Geting detail for" + _insurumentSymbol);
+  async GetInstrumentDetail({ commit }) {
     const response = await axios.get("/chart-databyindex.json");
     commit(GETINSTRUMENTDETAIL, response.data);
   },
-  async GetLiveDetail( _searchQuery){
-    //underlying, instrumentType, expiryDate, optionType, strikePrice
-    console.log("Geting detail for" + _searchQuery.underlying);
+  async GetLiveDetail(){
      await axios.get("/liveEquity-derivatives.json");
-
   },
 
   RemoveTrade({ commit }, { _strategy, _trade }) {
@@ -100,7 +97,7 @@ const actions = {
     commit(REMOVETRADE, _strategy);
   },
   OnStrikePriceRangeChanging({ commit },evnt){
-    console.log("changing called");
+    console.log("changing called"+evnt.target.value);
     commit(ONSTRIKEPRICERANGECHANGING, evnt.target.value);
   },
   OnStrikePriceRangeChanged({ commit },evnt){//{ commit },evnt){

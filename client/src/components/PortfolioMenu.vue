@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-3" style="height:100%; overflow-y:scroll;">
+  <div class="col-lg-3">
     <div
       class="pl-3 list-group portfolioitem"
       role="tablist"
@@ -33,16 +33,13 @@ export default {
   methods: {
     ...mapActions(['GetAllPortfolios','SelectPortfolioChanged','GetPortfolioById']),
     menuSelectedPortfolio(item) {
-      //console.log(item);
-      //this.SelectPortfolioChanged(item);
-      //console.log(item._id.$oid);
-      this.GetPortfolioById(item._id.$oid);
+       this.GetPortfolioById(item);
     }
   },
 
   created() {
     this.GetAllPortfolios();
-    
+
   },
   computed: {
     ...mapState(['Portfolios','Portfolio'])
@@ -70,6 +67,6 @@ export default {
 
 .active :hover{
   color: #ffffff !important;
-  
+
 }
 </style>
