@@ -11,6 +11,8 @@ import {
   REMOVETRADE,
   ONSTRIKEPRICERANGECHANGING,
   ONSTRIKEPRICERANGECHANGED,
+  TRADEADDEDIT,
+  SETSELECTEDSTRATEGY
 } from "./mutationtype";
 
 Vue.use(Vuex);
@@ -23,8 +25,8 @@ const state = {
   Trade: undefined,
   InsurumentDetail: undefined,
   InsurumentLatestPirce: undefined,
-  SelectedStrikePrice : 0,
-  SelectedStrike : undefined,
+  SelectedStrikePrice: 0,
+  SelectedStrike: undefined,
 
 };
 const mutations = {
@@ -52,11 +54,15 @@ const mutations = {
     );
     state.Portfolio.Strategies.splice(inx, 1, _strategy);
   },
-  [ONSTRIKEPRICERANGECHANGING](state,_price){
+  [ONSTRIKEPRICERANGECHANGING](state, _price) {
     state.SelectedStrikePrice = _price;
   },
-  [ONSTRIKEPRICERANGECHANGED](){
+  [ONSTRIKEPRICERANGECHANGED]() {
     //state.SelectedStrikePrice = _price;
+  },
+  [TRADEADDEDIT]() { },
+  [SETSELECTEDSTRATEGY]( _strategy){
+    state.Strategy = _strategy;
   }
 };
 const actions = {
@@ -86,8 +92,8 @@ const actions = {
     const response = await axios.get("/chart-databyindex.json");
     commit(GETINSTRUMENTDETAIL, response.data);
   },
-  async GetLiveDetail(){
-     await axios.get("/liveEquity-derivatives.json");
+  async GetLiveDetail() {
+    await axios.get("/liveEquity-derivatives.json");
   },
 
   RemoveTrade({ commit }, { _strategy, _trade }) {
@@ -96,20 +102,28 @@ const actions = {
     );
     commit(REMOVETRADE, _strategy);
   },
-  OnStrikePriceRangeChanging({ commit },evnt){
-    console.log("changing called"+evnt.target.value);
+  OnStrikePriceRangeChanging({ commit }, evnt) {
+    console.log("changing called" + evnt.target.value);
     commit(ONSTRIKEPRICERANGECHANGING, evnt.target.value);
   },
-  OnStrikePriceRangeChanged({ commit },evnt){//{ commit },evnt){
+  OnStrikePriceRangeChanged({ commit }, evnt) {//{ commit },evnt){
     console.log(evnt);
     console.log("changed called");
     commit(ONSTRIKEPRICERANGECHANGED);
   },
+  async TradeAddEdit({ commit }, TradeDetail) {
+    commit(TRADEADDEDIT, TradeDetail);
+  },
+  SetSelectedStrategy({ commit }, _strategy) {
+    commit(SETSELECTEDSTRATEGY, _strategy);
+
+  }
+
 };
 const modules = {};
 
 const getters = {
-  getLatestPrice: function(state) {
+  getLatestPrice: function (state) {
     if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
       var inx = state.InsurumentDetail.grapthData.length;
       var _data = state.InsurumentDetail.grapthData[inx - 1];

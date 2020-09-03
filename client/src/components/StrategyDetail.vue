@@ -1,5 +1,5 @@
 <template>
-  <div class="card mb-2">
+  <div class="card mb-2" @click="SelectedStrategy(Strategy)">
     <h5 class="card-header">{{Strategy.Name}}</h5>
     <div class="card-body">
       <h5 class="card-title">Created On: {{Strategy.CreatedOn.$date}}</h5>
@@ -14,7 +14,7 @@
             class="card-text"
       >With supporting text below as a natural lead-in to additional content.</p>-->
       <div class="TradeAddEditPlaceholder">
-        <TradeAddEdit v-if="Strategy.IsEdit" />
+        <TradeAddEdit v-if="Strategy.IsEdit" ParentStrategy="Strategy" />
       </div>
     </div>
     <div class="card-footer">
@@ -36,7 +36,7 @@ export default {
 
   props: { Strategy: { type: Object } },
   methods: {
-    ...mapActions(["ShowNewTrade", "RemoveTrade"]),
+    ...mapActions(["ShowNewTrade", "RemoveTrade", "SetSelectedStrategy"]),
     CreateNewTrade() {
       if (this.Strategy.IsEdit) {
         this.Strategy.IsEdit = false;
@@ -48,6 +48,10 @@ export default {
     DeleteTrade(_strategy, _trade) {
       this.RemoveTrade({ _strategy, _trade });
     },
+    SelectedStrategy(_strategy){
+      console.log(_strategy);
+      //this.SetSelectedStrategy(_strategy)
+    }
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="pr-2" v-if="Portfolio">
-    <div :key="itemstrategy._id.$oid" v-for="itemstrategy in Portfolio.Strategies">
-      <StrategyDetail :Strategy="itemstrategy"/>
+    <div :key="item._id.$oid" v-for="item in Portfolio.Strategies">
+      <StrategyDetail :Strategy="item"/>
       <hr />
     </div>
   </div>
@@ -14,8 +14,8 @@ export default {
   components: { StrategyDetail },
   computed: {
     ...mapState(["Portfolio"]),
-  },
+  }
   //Portfolio.Strategies
-  
+
  };
 </script>
