@@ -3,8 +3,7 @@
     <div
       class="pl-3 list-group portfolioitem"
       role="tablist"
-      v-show="Portfolios !== undefined && Portfolios.length >0"
-    >
+      v-show="Portfolios !== undefined && Portfolios.length >0">
       <div class="list-group-item list-group-item-dark">
         <div class="float-right">
           <a
@@ -27,23 +26,26 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState} from 'vuex';
+import { mapActions, mapState } from "vuex";
 export default {
   name: "PortfolioMenu",
   methods: {
-    ...mapActions(['GetAllPortfolios','SelectPortfolioChanged','GetPortfolioById']),
+    ...mapActions([
+      "GetAllPortfolios",
+      "SelectPortfolioChanged",
+      "GetPortfolioById",
+    ]),
     menuSelectedPortfolio(item) {
-       this.GetPortfolioById(item);
-    }
+      this.GetPortfolioById(item);
+    },
   },
 
   created() {
     this.GetAllPortfolios();
-
   },
   computed: {
-    ...mapState(['Portfolios','Portfolio'])
-  }
+    ...mapState(["Portfolios", "Portfolio"]),
+  },
 };
 </script>
 <style scoped>
@@ -52,12 +54,12 @@ export default {
   overflow-y: hidden;
 }
 
-.portforlio-menu-item{
+.portforlio-menu-item {
   font-size: 14px;
 }
 
-.portforlio-menu-item:hover{
-   color: #bebebe !important;
+.portforlio-menu-item:hover {
+  color: #bebebe !important;
 }
 .active {
   color: #ffffff !important;
@@ -65,8 +67,7 @@ export default {
   border-color: #6c757d;
 }
 
-.active :hover{
+.active :hover {
   color: #ffffff !important;
-
 }
 </style>

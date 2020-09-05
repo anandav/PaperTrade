@@ -1,5 +1,6 @@
 <template>
-  <div class="card mb-2" @click="SelectedStrategy(Strategy)">
+  <div class="card mb-2">
+    <!-- @click="SelectedStrategy(Strategy)" -->
     <h5 class="card-header">{{Strategy.Name}}</h5>
     <div class="card-body">
       <h5 class="card-title">Created On: {{Strategy.CreatedOn.$date}}</h5>
@@ -9,12 +10,8 @@
           <button class="btn btn-dark" @click="DeleteTrade(Strategy,Trade)">{{Trade.Name}}</button>
         </li>
       </ul>
-
-      <!-- <p
-            class="card-text"
-      >With supporting text below as a natural lead-in to additional content.</p>-->
       <div class="TradeAddEditPlaceholder">
-        <TradeAddEdit v-if="Strategy.IsEdit" ParentStrategy="Strategy" />
+        <TradeAddEdit v-if="Strategy.IsEdit" :ParentStrategy="Strategy" />
       </div>
     </div>
     <div class="card-footer">
@@ -42,16 +39,13 @@ export default {
         this.Strategy.IsEdit = false;
       } else {
         this.$set(this.Strategy, "IsEdit", true);
+        //console.log(this.Strategy);
+        //this.SetSelectedStrategy(this.Strategy);
       }
-      //this.ShowNewTrade(_strategy);
     },
     DeleteTrade(_strategy, _trade) {
       this.RemoveTrade({ _strategy, _trade });
     },
-    SelectedStrategy(_strategy){
-      console.log(_strategy);
-      //this.SetSelectedStrategy(_strategy)
-    }
   },
 };
 </script>

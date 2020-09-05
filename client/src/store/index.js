@@ -2,11 +2,8 @@ import Vuex from "vuex";
 import Vue from "vue";
 
 import {
-  //GETPORTFOLIOBYID,
-  //  ADDEDITSTRATEGY,
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
-  //SHOWNEWTRADE,
   GETINSTRUMENTDETAIL,
   REMOVETRADE,
   ONSTRIKEPRICERANGECHANGING,
@@ -36,19 +33,11 @@ const mutations = {
   [SETPORTFOLIO](state, _protfolio) {
     state.Portfolio = _protfolio;
   },
-  // [SHOWNEWTRADE](state, _strategy) {
-  //   state.Strategy = _strategy;
-  //   state.Portfolio.Strategies.forEach((x) => {
-  //     if (x._id.$oid != _strategy._id.$oid) {
-  //       x.IsEdit = false;
-  //     }
-  //   });
-  // },
+
   [GETINSTRUMENTDETAIL](state, _data) {
     state.InsurumentDetail = _data;
   },
   [REMOVETRADE](state, _strategy) {
-    console.log(state == undefined);
     var inx = state.Portfolio.Strategies.findIndex(
       (x) => x._id.$oid == _strategy._id.$oid
     );
@@ -60,7 +49,18 @@ const mutations = {
   [ONSTRIKEPRICERANGECHANGED]() {
     //state.SelectedStrikePrice = _price;
   },
-  [TRADEADDEDIT]() { },
+  [TRADEADDEDIT](_strategy, _trade) {
+    // console.clear();
+    // console.log(_strategy);
+    // console.log(_trade);
+
+    if(state.Strategy._oid == _strategy._oid){
+      if(!state.Strategy.Trades){
+        state.Strategy.Trades = [];
+      }
+      state.Strategy.Trades.push(_trade);
+    }
+  },
   [SETSELECTEDSTRATEGY]( _strategy){
     state.Strategy = _strategy;
   }
@@ -68,7 +68,6 @@ const mutations = {
 const actions = {
   async GetAllPortfolios({ commit }) {
     const response = await axios.get("/mongoDBData.json");
-    console.log(response.data);
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
@@ -111,12 +110,12 @@ const actions = {
     console.log("changed called");
     commit(ONSTRIKEPRICERANGECHANGED);
   },
-  async TradeAddEdit({ commit }, TradeDetail) {
-    commit(TRADEADDEDIT, TradeDetail);
-  },
-  SetSelectedStrategy({ commit }, _strategy) {
-    commit(SETSELECTEDSTRATEGY, _strategy);
+  async TradeAddEdit({ commit }, _strategy, _trade) {
 
+    commit(TRADEADDEDIT,_strategy, _trade);
+  },
+  SetSelectedStrategy({ commit }, _strategy,_trade) {
+    commit(SETSELECTEDSTRATEGY, _strategy, _trade);
   }
 
 };

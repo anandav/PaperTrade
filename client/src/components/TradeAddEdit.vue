@@ -143,12 +143,15 @@ export default {
       this.OnStrikePriceRangeChanged(searchQuery);
     },
     onSaveTrade() {
-      this.TradeAddEdit(this.TradeDetail);
+      //this.Strategy.Trades.push(this.TradeDetail);
+      console.log(this.ParentStrategy);
+      console.log(this.TradeDetail);
+      this.TradeAddEdit(this.Strategy,this.TradeDetail );
     },
   },
   created() {
     // this.utilitymixins.foo();
-    this.GetInstrumentDetail();
+    //this.GetInstrumentDetail();
   },
   computed: {
      ...mapState(["Strategy"]),//"SelectedStrikePrice"
