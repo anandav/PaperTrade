@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 // import Home from '../views/Home.vue'
-import PaperTrade from '../components/PaperTrade'
-import Detail from "../components/PortfolioDetail"
+import PaperTrade from '../components/PaperTrade';
+import Detail from '../components/PortfolioDetail';
 
 Vue.use(VueRouter)
 

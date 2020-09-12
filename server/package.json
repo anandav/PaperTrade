@@ -4,6 +4,7 @@
   "description": "Papper Trade Service using Express.js.",
   "main": "index.js",
   "scripts": {
+    "dev-debug": "DEBUG=express:* nodemon index.js",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -12,9 +13,11 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "mongodb": "^3.6.1",
+    "mongoose": "^5.10.5",
     "nodemon": "^2.0.4"
   }
 }

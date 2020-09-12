@@ -7,7 +7,7 @@
           <div class="btn-group btn-group-toggle">
             <label
               class="btn"
-              v-for="(value, key) in tradeBS"
+              v-for="(value, key) in tradeType"
               :key="key"
               :class="{
                 'btn-outline-success': key == 1,
@@ -17,7 +17,7 @@
             >
               <input
                 type="radio"
-                name="tradebsname"
+                name="tradeTypename"
                 :value="value"
                 :id="'trade_' + value"
                 v-model="TradeDetail.BuyOrSell"
@@ -32,15 +32,15 @@
           <div class="btn-group btn-group-toggle">
             <label
               class="btn btn-outline-secondary"
-              v-for="(value, key) in tradeType"
+              v-for="(value, key) in tradeSymbol"
               :key="key"
               :class="{ 'active':  value == [TradeDetail.Type] }"
             >
               <input
                 type="radio"
-                name="tradetype"
+                name="tradeSymbol"
                 :value="value"
-                :id="'tradetype_' + value"
+                :id="'tradeSymbol_' + value"
                 v-model="TradeDetail.Type"
               />
               {{value}}
@@ -107,11 +107,11 @@ export default {
         SpotPrice: 0.0,
       },
 
-      tradeBS: {
+      tradeType: {
         1: "Buy",
         2: "Sell",
       },
-      tradeType: {
+      tradeSymbol: {
         1: "Call",
         2: "Put",
         3: "Future",

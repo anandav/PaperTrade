@@ -1,6 +1,7 @@
 import Vuex from "vuex";
 import Vue from "vue";
 
+
 import {
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
@@ -67,7 +68,8 @@ const mutations = {
 };
 const actions = {
   async GetAllPortfolios({ commit }) {
-    const response = await axios.get("/mongoDBData.json");
+    console.log(process.env.EXPRESSSERVICE);
+    const response = await axios.get("http://192.168.0.6:9090/portfolio");
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
