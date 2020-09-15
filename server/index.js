@@ -3,19 +3,24 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 const port = 9090;
-
 const mongoose = require("mongoose");
-var portfolio = require('./api/portfolio');
+const portfolioCotroller = require('./controller/portfoliocotroller');
+//const UserControls = require("./controller/usercontroller");
 
-//app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/portfolio', portfolioCotroller);
+
 app.get("/",function(req,res){
-   res.send("thank you");
+  res.send("thank you");
 });
 
-app.use('/portfolio', portfolio);
+mongoose.connect(process.env.DBCONNECTIONSTRING,
+  {useNewUrlParser: true, useUnifiedTopology : true},()=>{
+  console.log("DB connected.");
+});
 
+//app.use(require("./route"));
 
 app.listen(port, function(){
   console.log(`application listening on ${port}`);

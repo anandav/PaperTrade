@@ -1,12 +1,14 @@
+require("./trade");
 const mongoose = require('mongoose');
 const schema = mongoose.Schema,
       model = mongoose.model.bind(mongoose),
-      objectid = mongoose.Schema.Types.ObjectId;
-      
+      tradeSchema = mongoose.model("Trade").schema;
+
 const startegySchema = schema({
   Name: {
     type : String
   },
+
   Description:{
     type : String
   },
@@ -14,11 +16,7 @@ const startegySchema = schema({
     type: Date,
     default : Date.now()
   },
-  Trades : [{
-    type : objectid,
-    ref: "Trade"
-
-  }]
+  Trades : [tradeSchema]
 });
 
 module.exports = model("Startegy", startegySchema);
