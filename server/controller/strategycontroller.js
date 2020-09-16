@@ -1,21 +1,24 @@
 const express = require("express");
 const router = express.Router();
+const commonUtility =  require("../models/commonUtility");
 const Strategy = require("../models/strategy");
 require("dotenv/config");
 
 router.get("/", async (req, res) => {
-  //process.stdout.write('\033c');
-  const data = await Strategy.find();
-  res.json(data);
+  var _porfolioid = req.body.protfolioid;
+  const result = await Strategy.find({});
+  res.json(result);
 });
 
-router.get("/find",(res, req)=>{
-//ToDo
+router.post("/find", (res, req) => {
+
 });
 
 router.post("/save", async (req, res) => {
-  // process.stdout.write('\033c');
-  const { Name, Description, CreatedOn, Strategies } = req.body;
+  const {Name, Description, CreatedOn, Strategies } = req.body;
+  console.log('commonUtil :>> ', commonUtility);
+  const _portfolioObjectf = await commonUtility.GetPortfolioById(protfolioid);
+
   var strategy = new Strategy({ Name, Description, CreatedOn, Strategies });
   try {
     const result = await strategy.save();
@@ -26,9 +29,11 @@ router.post("/save", async (req, res) => {
 });
 
 router.post("/update", async (req, res) => {
-  //process.stdout.write("\033c");
-  const { Name, Description } = req.body;
-  var _portfolioObject = await Strategy.findOne({ _id: req.body._id });
+  const { pid, sid, Name, Description } = req.body;
+  console.log('commonUtil :>> ', commonUtility.GetStartegyFromPorfolioById);
+
+  var _portfolioObject = await commonUtility.GetStartegyFromPorfolioById(pid,sid);
+  console.log(_portfolioObject);
   _portfolioObject.Name = Name;
   _portfolioObject.Description = Description;
   _portfolioObject.ModifiedOn = new Date();
@@ -39,5 +44,7 @@ router.post("/update", async (req, res) => {
     console.log(err);
   }
 });
+
+
 
 module.exports = router;

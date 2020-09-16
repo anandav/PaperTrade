@@ -8,7 +8,6 @@ const startegySchema = schema({
   Name: {
     type : String
   },
-
   Description:{
     type : String
   },
