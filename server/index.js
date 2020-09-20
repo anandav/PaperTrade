@@ -22,9 +22,6 @@ app.use("/", (req, res, next) => {
 app.use("/portfolio", portfolioCotroller);
 app.use("/strategy",strategyController);
 
-app.get("/", function (req, res) {
-  res.send("thank you");
-});
 
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,
