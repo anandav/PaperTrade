@@ -17,7 +17,7 @@
 
       <a
         class="list-group-item portforlio-menu-item text-dark"
-        :key="item._id.$oid"
+        :key="item._id"
         v-for="item in Portfolios"
         @click="menuSelectedPortfolio(item)"
         :class="{active : Portfolio === item}"

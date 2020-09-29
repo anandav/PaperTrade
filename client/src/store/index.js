@@ -1,6 +1,6 @@
 import Vuex from "vuex";
 import Vue from "vue";
-
+//import "dotenv/config";
 
 import {
   GETALLPORTFOLIOS,
@@ -9,8 +9,8 @@ import {
   REMOVETRADE,
   ONSTRIKEPRICERANGECHANGING,
   ONSTRIKEPRICERANGECHANGED,
-  TRADEADDEDIT,
-  SETSELECTEDSTRATEGY
+  SAVETRADE as SAVETRADE,
+  SETSELECTEDSTRATEGY,
 } from "./mutationtype";
 
 Vue.use(Vuex);
@@ -25,7 +25,6 @@ const state = {
   InsurumentLatestPirce: undefined,
   SelectedStrikePrice: 0,
   SelectedStrike: undefined,
-
 };
 const mutations = {
   [GETALLPORTFOLIOS](state, _portfolios) {
@@ -50,26 +49,25 @@ const mutations = {
   [ONSTRIKEPRICERANGECHANGED]() {
     //state.SelectedStrikePrice = _price;
   },
-  [TRADEADDEDIT](_strategy, _trade) {
+  [SAVETRADE](_strategy, _trade) {
     // console.clear();
     // console.log(_strategy);
     // console.log(_trade);
 
-    if(state.Strategy._oid == _strategy._oid){
-      if(!state.Strategy.Trades){
+    if (state.Strategy._oid == _strategy._oid) {
+      if (!state.Strategy.Trades) {
         state.Strategy.Trades = [];
       }
       state.Strategy.Trades.push(_trade);
     }
   },
-  [SETSELECTEDSTRATEGY]( _strategy){
+  [SETSELECTEDSTRATEGY](_strategy) {
     state.Strategy = _strategy;
-  }
+  },
 };
 const actions = {
   async GetAllPortfolios({ commit }) {
-    console.log(process.env.EXPRESSSERVICE);
-    const response = await axios.get("http://192.168.0.6:9090/portfolio");
+    const response = await axios.get(process.env.VUE_APP_APIURL+"/portfolio");
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
@@ -79,14 +77,13 @@ const actions = {
   //   _strategy.IsEdit = !_strategy.IsEdit;
   //   commit(SHOWNEWTRADE, _strategy);
   // },
-  async GetPortfolioById({ commit }, _id) {
-    commit(SETPORTFOLIO, _id);
-    // var _protfolio = state.Portfolios.find((x) => x._id.$oid == _id);
-    // _protfolio.Strategies.forEach((x) => {
-    //   x.IsEdit = false;
-    // });
-
-    // commit(SETPORTFOLIO, _protfolio);
+  async GetPortfolioById({ commit }, item) {
+     axios.post(process.env.VUE_APP_APIURL+"/portfolio/find", {
+      "fieldName": "_id",
+      "fieldValue": item._id,
+    }).then(function(res){
+      commit(SETPORTFOLIO, res.data[0]);
+    });
   },
 
   async GetInstrumentDetail({ commit }) {
@@ -107,24 +104,25 @@ const actions = {
     console.log("changing called" + evnt.target.value);
     commit(ONSTRIKEPRICERANGECHANGING, evnt.target.value);
   },
-  OnStrikePriceRangeChanged({ commit }, evnt) {//{ commit },evnt){
+  OnStrikePriceRangeChanged({ commit }, evnt) {
+    //{ commit },evnt){
     console.log(evnt);
     console.log("changed called");
     commit(ONSTRIKEPRICERANGECHANGED);
   },
-  async TradeAddEdit({ commit }, _strategy, _trade) {
-
-    commit(TRADEADDEDIT,_strategy, _trade);
+  async SaveTrade({ commit }, _strategy, _trade) {
+    console.log('_strategy :>> ', _strategy);
+    console.log('_trade :>> ', _trade);
+    commit(SAVETRADE, _strategy, _trade);
   },
-  SetSelectedStrategy({ commit }, _strategy,_trade) {
+  SetSelectedStrategy({ commit }, _strategy, _trade) {
     commit(SETSELECTEDSTRATEGY, _strategy, _trade);
-  }
-
+  },
 };
 const modules = {};
 
 const getters = {
-  getLatestPrice: function (state) {
+  getLatestPrice: function(state) {
     if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
       var inx = state.InsurumentDetail.grapthData.length;
       var _data = state.InsurumentDetail.grapthData[inx - 1];

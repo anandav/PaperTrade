@@ -1,28 +1,29 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const schema = mongoose.Schema,
-      model = mongoose.model.bind(mongoose);
+  model = mongoose.model.bind(mongoose);
+const BUYORSELL = {
+  BUY: 0,
+  SELL: 1,
+};
 
 const tradeSchema = schema({
-  Name :{
-    type : String
+  BuyOrSell: {
+    type: BUYORSELL,
   },
-  Symbol: {
-    type : String
+  Quantity: {
+    type: Number,
   },
-  TradeType:{
-    type : String
+  TradeType: {
+    type: String,
   },
-  SymbolType : {
-    type : String
+  DayToExpiry: {
+    type: Number,
   },
-  QTY : {
-    type : String
+  StrikePrice: {
+    type: Number,
   },
-  StrikePrice : {
-    type : String
-  },
-  SpotPricke : {
-    type : String
+  PremiumPrice: {
+    type: Number,
   }
 });
 

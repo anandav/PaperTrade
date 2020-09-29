@@ -18,13 +18,15 @@
         <p class="card-text">{{ Portfolio.Description }}</p>
       </div>
     </div>
-    <div class="float-right">
+    <div class="col-lg-12">
+    <div class="row">
       <a
-            class="btn btn-dark"
+            class="btn btn-dark float-right"
             href="#"
             data-target="#divcreateeditportfolio"
             data-toggle="modal"
           >Add New Strategy</a>
+    </div>
     </div>
     <StrategiesList />
   </div>

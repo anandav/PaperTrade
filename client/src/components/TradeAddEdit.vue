@@ -1,5 +1,5 @@
 <template>
-  <ul class="list-group list-group-flush">
+  <ul class="list-group list-group-flush" data-id="ParentStrategy._id" >
     <li class="list-group-item">
       <div class="row">
         <div class="col-md-1 mb-3">
@@ -49,7 +49,7 @@
         </div>
 
         <div class="col-md-2 mb-3">
-          <label>Striker Price</label>
+          <label>Strike Price</label>
           <div class>
             <input
               type="range"
@@ -65,7 +65,7 @@
           </div>
         </div>
         <div class="col-md-2 mb-3">
-          <label>Spot Price</label>
+          <label>Price</label>
           <div class>
             <input
               type="number"
@@ -126,7 +126,7 @@ export default {
       "GetInstrumentDetail",
       "OnStrikePriceRangeChanging",
       "OnStrikePriceRangeChanged",
-      "TradeAddEdit"
+      "SaveTrade"
     ]),
     onStrikeRangeChanging(evt) {
       //this.selectedPrice = evt.target.value;
@@ -146,7 +146,7 @@ export default {
       //this.Strategy.Trades.push(this.TradeDetail);
       console.log(this.ParentStrategy);
       console.log(this.TradeDetail);
-      this.TradeAddEdit(this.Strategy,this.TradeDetail );
+      this.SaveTrade(this.Strategy,this.TradeDetail );
     },
   },
   created() {

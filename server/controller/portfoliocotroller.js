@@ -14,10 +14,11 @@ router.post("/find", async (req, res) => {
   var result = {};
   if (fieldName && fieldValue) {
     result = await Portfolio.find({ [fieldName]: fieldValue });
+    console.log('result :>> ', result);
   }else {
     result  =  await Portfolio.find();
   }
-  res.json(result);
+  res.send(result);
 });
 
 router.post("/save", async (req, res) => {

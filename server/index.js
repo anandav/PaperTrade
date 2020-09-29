@@ -6,7 +6,7 @@ const port = 9090;
 const mongoose = require("mongoose");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const strategyController = require("./controller/strategycontroller");
-//const UserControls = require("./controller/usercontroller");
+const tradeController = require("./controller/tradecontroller");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -21,6 +21,7 @@ app.use("/", (req, res, next) => {
 
 app.use("/portfolio", portfolioCotroller);
 app.use("/strategy",strategyController);
+app.use("/trade",tradeController);
 
 
 mongoose.connect(

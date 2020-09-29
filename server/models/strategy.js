@@ -11,6 +11,9 @@ const startegySchema = schema({
   Description:{
     type : String
   },
+  Symbol:{
+    type: String
+  },
   CreatedOn : {
     type: Date,
     default : Date.now()
