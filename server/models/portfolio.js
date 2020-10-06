@@ -1,8 +1,8 @@
-require("./strategy");
+//require("./strategy");
 const mongoose = require('mongoose');
 const schema = mongoose.Schema,
-      model = mongoose.model.bind(mongoose),
-      strategySchema = mongoose.model("Startegy").schema;
+      model = mongoose.model.bind(mongoose);
+     // strategySchema = mongoose.model("Startegy").schema;
 
 const portfolioSchema = schema({
   Name: {
@@ -18,8 +18,8 @@ const portfolioSchema = schema({
   ModifiedOn : {
     type: Date,
     default : Date.now()
-  },
-  Strategies : [strategySchema]
+  }
+ // Strategies : [strategySchema]
 });
 
 module.exports = model("Portfolio", portfolioSchema);
