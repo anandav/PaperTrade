@@ -5,17 +5,18 @@ const schema = mongoose.Schema,
      // strategySchema = mongoose.model("Startegy").schema;
 
 const portfolioSchema = schema({
-  Name: {
+  name: {
     type : String
   },
-  Description:{
+  description:{
     type : String
   },
-  CreatedOn : {
+  createdon : {
     type: Date,
     default : Date.now()
   },
-  ModifiedOn : {
+  modifiedon : {
+
     type: Date,
     default : Date.now()
   }

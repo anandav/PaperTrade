@@ -7,22 +7,22 @@ const BUYORSELL = {
 };
 
 const tradeSchema = schema({
-  BuyOrSell: {
+  buyorsell: {
     type: BUYORSELL,
   },
-  Quantity: {
+  quantity: {
     type: Number,
   },
-  TradeType: {
+  tradeType: {
     type: String,
   },
-  DayToExpiry: {
+  daytoexpiry: {
     type: Number,
   },
-  StrikePrice: {
+  strikeprice: {
     type: Number,
   },
-  PremiumPrice: {
+  premiumprice: {
     type: Number,
   }
 });

@@ -1,15 +1,16 @@
 const express = require("express");
-const router = express.Router();
+const portfolicontroller = express.Router();
 const Portfolio = require("../models/portfolio");
 const commonUtility = require("../models/commonUtility");
+
 require("dotenv/config");
 
-router.get("/", async (req, res) => {
-  const data = await Portfolio.find({},{"Name": 1,"Description":1});
+portfolicontroller.get("/", async (req, res) => {
+  const data = await Portfolio.find({},{"name": 1,"description":1});
   res.json(data);
 });
 
-router.post("/find", async (req, res) => {
+portfolicontroller.post("/find", async (req, res) => {
   var { fieldName, fieldValue } = req.body;
   var result = {};
   if (fieldName && fieldValue) {
@@ -21,16 +22,16 @@ router.post("/find", async (req, res) => {
   res.send(result);
 });
 
-router.post("/save", async (req, res) => {
-  const {  pid, Name, Description, CreatedOn, Strategies } = req.body;
+portfolicontroller.post("/save", async (req, res) => {
+  const {  pid, name, description, createdon } = req.body;
   var _portfolioObject = {};
   if (pid) {
      _portfolioObject = await commonUtility.GetPortfolioById(pid);
-     _portfolioObject.Name = Name;
-     _portfolioObject.Description = Description;
-     _portfolioObject.ModifiedOn = new Date();
+     _portfolioObject.name = name;
+     _portfolioObject.description = description;
+     _portfolioObject.modifiedon = new Date();
   } else {
-     _portfolioObject = new Portfolio({ Name, Description, CreatedOn, Strategies });
+     _portfolioObject = new Portfolio({ name, description, createdon });
   }
 
   try {
@@ -43,4 +44,4 @@ router.post("/save", async (req, res) => {
 
 
 
-module.exports = router;
+module.exports = portfolicontroller;

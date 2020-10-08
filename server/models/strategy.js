@@ -7,21 +7,21 @@ const schema = mongoose.Schema,
       portfolioSchema = mongoose.model("Portfolio").schema;
 
 const startegySchema = schema({
-  Name: {
+  name: {
     type : String
   },
-  Description:{
+  description:{
     type : String
   },
-  Symbol:{
+  symbol:{
     type: String
   },
-  CreatedOn : {
+  createdOn : {
     type: Date,
     default : Date.now()
   },
-  Trades : [tradeSchema],
-  Porfolios : [portfolioSchema]	
+  trades : [tradeSchema],
+  porfolios : [portfolioSchema]	
 });
 
 module.exports = model("Startegy", startegySchema);
