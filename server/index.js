@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
+  console.clear();
   console.log("Body");
   console.log("====");
   console.log(req.body);

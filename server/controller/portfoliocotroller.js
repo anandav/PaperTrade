@@ -15,8 +15,7 @@ portfolicontroller.post("/find", async (req, res) => {
   var result = {};
   if (fieldName && fieldValue) {
     result = await Portfolio.find({ [fieldName]: fieldValue });
-    console.log('result :>> ', result);
-  }else {
+    }else {
     result  =  await Portfolio.find();
   }
   res.send(result);
@@ -42,6 +41,9 @@ portfolicontroller.post("/save", async (req, res) => {
   }
 });
 
-
-
 module.exports = portfolicontroller;
+
+
+
+
+

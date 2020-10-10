@@ -1,33 +1,37 @@
 const express = require("express");
-const router = express.Router();
+const starategycontoller = express.Router();
 const commUtility = require("../models/commonUtility");
 const Strategy = require("../models/strategy");
-const Portfolio = require("../models/portfolio");
+//const Portfolio = require("../models/portfolio");
 
-router.post("/find", async (res, req) => {
+starategycontoller.post("/find", async (res, req) => {
   res.send(await commUtility.GetStartegyById(req.body.sid));
 });
 
-router.post("/save", async (req, res) => {
-  const { pid, sid, Name, Description } = req.body;
+starategycontoller.post("/save", async (req, res) => {
+  const { sid, name, description, symbol } = req.body;
   if (sid) {
     var _strategyObject = await Portfolio.updateOne(
-      { "Strategies._id": sid },
+      { "strategies._id": sid },
       {
         $set: {
-          "Strategies.$.Name": Name,
-          "Strategies.$.Description": Description,
-          "Strategies.$.ModifiedOn": new Date(),
+          "strategies.$.name": Name,
+          "strategies.$.description": Description,
+          "strategies.$.modifiedOn": new Date(),
         },
       }
     );
     res.send(_strategyObject);
   } else {
-    const _portfolioObject = await commUtility.GetPortfolioById(pid);
-    var strategy = new Strategy({ Name, Description, Symbol, CreatedOn: new Date() });
+    //const _portfolioObject = await commUtility.GetPortfolioById(pid);
+    const strategy = new Strategy({ name, description, symbol, createdon: new Date() });
+	  //console.clear();
+	  //console.log(startegy);
+	  
     try {
-      _portfolioObject.Strategies.push(strategy);
-      const result = await _portfolioObject.save();
+     // _portfolioObject.Strategies.push(strategy);
+     // const result = await _portfolioObject.save();
+      const result = await startegy.Save();
       res.send(result);
     } catch (err) {
       console.log(err);
@@ -35,4 +39,4 @@ router.post("/save", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = starategycontoller;
