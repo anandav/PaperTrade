@@ -34,6 +34,7 @@ portfolicontroller.post("/save", async (req, res) => {
   }
 
   try {
+    console.log('_portfolioObject :>> ', _portfolioObject);
     const result = await _portfolioObject.save();
     res.send(result);
   } catch (err) {

@@ -30,7 +30,7 @@ router.post("/save", async (req, res) => {
       PremiumPrice,
     });
     var trades = [trade];
-    var _strategyObject = await commonUtility.GetStartegyById(sid);
+    var _strategyObject = await commonUtility.GetStrategyById(sid);
 
     // console.log("_strategyObject :>> ", _strategyObject);
 
@@ -53,7 +53,7 @@ router.post("/save", async (req, res) => {
         }
       );
 
-      var _strategyObject2 = await commonUtility.GetStartegyById(sid);
+      var _strategyObject2 = await commonUtility.GetStrategyById(sid);
 
       console.log("_strategyObject2 :>> ", _strategyObject2);
 

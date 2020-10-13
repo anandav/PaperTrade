@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema,
       model = mongoose.model.bind(mongoose);
-     // strategySchema = mongoose.model("Startegy").schema;
 
 const portfolioSchema = schema({
   name: {
@@ -16,7 +15,6 @@ const portfolioSchema = schema({
     default : Date.now()
   },
   modifiedon : {
-
     type: Date,
     default : Date.now()
   }

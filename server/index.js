@@ -4,8 +4,9 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 9090;
 const mongoose = require("mongoose");
-const portfolioCotroller = require("./controller/portfoliocotroller");
 const strategyController = require("./controller/strategycontroller");
+const portfolioCotroller = require("./controller/portfoliocotroller");
+
 const tradeController = require("./controller/tradecontroller");
 
 app.use(bodyParser.json());
@@ -20,8 +21,8 @@ app.use("/", (req, res, next) => {
   next();
 });
 
-app.use("/portfolio", portfolioCotroller);
 app.use("/strategy",strategyController);
+app.use("/portfolio", portfolioCotroller);
 app.use("/trade",tradeController);
 
 

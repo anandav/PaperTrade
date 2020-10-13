@@ -7,7 +7,7 @@ module.exports = {
     return profolioObject;
   },
 
-  GetStartegyById: async function (id) {
+  GetStrategyById: async function (id) {
     var strategyObject = await Portfolio.findOne({
       "Strategies._id": id,
     });

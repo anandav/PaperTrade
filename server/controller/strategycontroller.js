@@ -5,7 +5,7 @@ const Strategy = require("../models/strategy");
 //const Portfolio = require("../models/portfolio");
 
 starategycontoller.post("/find", async (res, req) => {
-  res.send(await commUtility.GetStartegyById(req.body.sid));
+  res.send(await commUtility.GetStrategyById(req.body.sid));
 });
 
 starategycontoller.post("/save", async (req, res) => {
@@ -25,13 +25,10 @@ starategycontoller.post("/save", async (req, res) => {
   } else {
     //const _portfolioObject = await commUtility.GetPortfolioById(pid);
     const strategy = new Strategy({ name, description, symbol, createdon: new Date() });
-	  //console.clear();
-	  //console.log(startegy);
-	  
     try {
      // _portfolioObject.Strategies.push(strategy);
      // const result = await _portfolioObject.save();
-      const result = await startegy.Save();
+      const result = await strategy.save();
       res.send(result);
     } catch (err) {
       console.log(err);
