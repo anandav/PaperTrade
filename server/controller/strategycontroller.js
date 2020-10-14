@@ -2,6 +2,7 @@ const express = require("express");
 const starategycontoller = express.Router();
 const commUtility = require("../models/commonUtility");
 const Strategy = require("../models/strategy");
+const trade = require("../models/trade");
 //const Portfolio = require("../models/portfolio");
 
 starategycontoller.post("/find", async (res, req) => {
@@ -9,25 +10,35 @@ starategycontoller.post("/find", async (res, req) => {
 });
 
 starategycontoller.post("/save", async (req, res) => {
-  const { sid, name, description, symbol } = req.body;
-  if (sid) {
-    var _strategyObject = await Portfolio.updateOne(
-      { "strategies._id": sid },
+  const { _id, name, description, symbol, trades } = req.body;
+  if (_id) {
+    var _data = {
+      name,
+      description,
+      symbol,
+      modifiedOn: new Date(),
+    };
+    if (trades) {
+      _data.trades = trades;
+    }
+    console.log('_data :>> ', _data);
+    
+    var _strategyObject = await Strategy.updateOne(
+      { _id: _id },
       {
-        $set: {
-          "strategies.$.name": Name,
-          "strategies.$.description": Description,
-          "strategies.$.modifiedOn": new Date(),
-        },
+        $set: _data,
       }
     );
     res.send(_strategyObject);
   } else {
-    //const _portfolioObject = await commUtility.GetPortfolioById(pid);
-    const strategy = new Strategy({ name, description, symbol, createdon: new Date() });
+    const strategy = new Strategy({
+      name,
+      description,
+      symbol,
+      trades,
+      createdon: new Date(),
+    });
     try {
-     // _portfolioObject.Strategies.push(strategy);
-     // const result = await _portfolioObject.save();
       const result = await strategy.save();
       res.send(result);
     } catch (err) {
