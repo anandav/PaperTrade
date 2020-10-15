@@ -21,7 +21,9 @@ const strategySchema = schema({
     default: Date.now(),
   },
   trades: [tradeSchema],
-  porfolios: [portfolioSchema],
+  portfolios: {
+	  type:Array
+  },
 });
 
 //name, description, symbol, createdon

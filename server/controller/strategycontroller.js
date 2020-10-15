@@ -3,14 +3,13 @@ const starategycontoller = express.Router();
 const commUtility = require("../models/commonUtility");
 const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
-//const Portfolio = require("../models/portfolio");
 
 starategycontoller.post("/find", async (res, req) => {
   res.send(await commUtility.GetStrategyById(req.body.sid));
 });
 
 starategycontoller.post("/save", async (req, res) => {
-  const { _id, name, description, symbol, trades } = req.body;
+  const { _id, name, description, symbol, trades, portfolios } = req.body;
   if (_id) {
     var _data = {
       name,
@@ -21,8 +20,9 @@ starategycontoller.post("/save", async (req, res) => {
     if (trades) {
       _data.trades = trades;
     }
-    console.log('_data :>> ', _data);
-    
+    if(portfolios){
+	_data.portfolios = portfolios;
+    }  
     var _strategyObject = await Strategy.updateOne(
       { _id: _id },
       {
@@ -36,6 +36,7 @@ starategycontoller.post("/save", async (req, res) => {
       description,
       symbol,
       trades,
+      portfolios,
       createdon: new Date(),
     });
     try {
