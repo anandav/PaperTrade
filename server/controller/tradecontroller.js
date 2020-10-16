@@ -22,42 +22,28 @@ router.post("/save", async (req, res) => {
     //update
   } else {
     var trade = new Trade({
-      BuyOrSell,
-      Quantity,
-      TradeType,
-      DayToExpiry,
-      StrikePrice,
-      PremiumPrice,
+      isbuy,
+      isfuture,
+      quantity,
+      daytoexpiry,
+      strikeprice,
+      premiumprice,
     });
     var trades = [trade];
     var _strategyObject = await commonUtility.GetStrategyById(sid);
-
-    // console.log("_strategyObject :>> ", _strategyObject);
-
     try {
-      // const result = await _strategyObject.updateOne(
-      //   {
-      //     "Strategies._id": sid,
-      //   },
-      //   { $set: { "Strategies.$.Trades": trade } }
-      // );
       const result = await _strategyObject.updateOne(
         {},
-        { $set: { "Strategies.$[_sid].Name": "testing" } },
+        { $set: { "strategies.$[_sid].name": "testing" } },
         {
           arrayFilters: [
             {
-              "s_id": sid,
+              s_id: sid,
             },
           ],
         }
       );
-
       var _strategyObject2 = await commonUtility.GetStrategyById(sid);
-
-      console.log("_strategyObject2 :>> ", _strategyObject2);
-
-      console.log("result :>> ", result);
       res.send(result);
     } catch (err) {
       console.log("err :>> ", err);

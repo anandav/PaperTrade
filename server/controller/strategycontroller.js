@@ -20,9 +20,9 @@ starategycontoller.post("/save", async (req, res) => {
     if (trades) {
       _data.trades = trades;
     }
-    if(portfolios){
-	_data.portfolios = portfolios;
-    }  
+    if (portfolios) {
+      _data.portfolios = portfolios;
+    }
     var _strategyObject = await Strategy.updateOne(
       { _id: _id },
       {
