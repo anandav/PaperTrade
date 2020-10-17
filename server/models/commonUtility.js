@@ -1,5 +1,6 @@
 const { ObjectID } = require("mongodb");
 const Portfolio = require("./portfolio");
+const Strategy = require("./strategy");
 const trade = require("./trade");
 module.exports = {
   GetPortfolioById: async function (id) {
@@ -8,14 +9,14 @@ module.exports = {
   },
 
   GetStrategyById: async function (id) {
-    var strategyObject = await Portfolio.findOne({
-      "Strategies._id": id,
+    var strategyObject = await Strategy.findOne({
+      _id: id,
     });
     return strategyObject;
   },
   GetTradeById: async function (id) {
-    var tradeObject = await Profolio.findOne({
-      "Strategies.Trades._id": id,
+    var tradeObject = await Strategy.findOne({
+      "trades._id": id,
     });
     return tradeObject;
   },

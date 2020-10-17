@@ -5,10 +5,21 @@ const BUYORSELL = {
   BUY: 0,
   SELL: 1,
 };
+const CALLPUTFUT = {
+  CALL: 0,
+  PUT: 1,
+  FUT: 2,
+};
 
 const tradeSchema = schema({
-  buyorsell: {
-    type: BUYORSELL,
+  issell: {
+    type: Boolean,
+  },
+  isfuture: {
+    type: Boolean,
+  },
+  callorputorfut: {
+    type: CALLPUTFUT,
   },
   quantity: {
     type: Number,
@@ -16,7 +27,7 @@ const tradeSchema = schema({
   tradeType: {
     type: String,
   },
-  daytoexpiry: {
+  daystoexpiry: {
     type: Number,
   },
   strikeprice: {
@@ -24,7 +35,7 @@ const tradeSchema = schema({
   },
   premiumprice: {
     type: Number,
-  }
+  },
 });
 
 module.exports = model("Trade", tradeSchema);

@@ -4,6 +4,11 @@ const commUtility = require("../models/commonUtility");
 const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
 
+starategycontoller.get("/", async (req, res) => {
+  const data = await Strategy.find({});
+  res.json(data);
+});
+
 starategycontoller.post("/find", async (res, req) => {
   res.send(await commUtility.GetStrategyById(req.body.sid));
 });
