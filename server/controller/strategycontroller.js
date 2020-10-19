@@ -53,4 +53,13 @@ starategycontoller.post("/save", async (req, res) => {
   }
 });
 
+starategycontoller.post("/delete", async (req, res) => {
+  var { _id } = req.body;
+  if (_id) {
+    Strategy.deleteOne({ _id: _id }, (err, doc) => {
+      res.json(doc);
+    });
+  }
+});
+
 module.exports = starategycontoller;

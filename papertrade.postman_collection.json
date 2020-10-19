@@ -1,0 +1,216 @@
+{
+	"info": {
+		"_postman_id": "8a142df2-938d-45c3-be48-58783e3d2332",
+		"name": "papertrade",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:9090/portfolio/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9090/portfolio/",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"portfolio",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/strategy/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9090/strategy/",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"strategy",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/portfolio/find",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"fieldName\": \"_id\", \"fieldValue\": \"5f646505577d26203a64d168\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/portfolio/find",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"portfolio",
+						"find"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/portfolio/save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \n    \"name\": \"Strategy1\",\n    \"description\": \"Strategy1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/portfolio/save",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"portfolio",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/portfolio/delete",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"_id\": \"5f8dafb6b9032a9e2fbb7093\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/portfolio/delete",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"portfolio",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/strategy/save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"createdon\": \"2020-10-17T19:59:28.470Z\",\n    \"portfolios\": [\n        \"5f8888b8abf1a967a818ed0a\",\n        \"5f8888ddabf1a967a818ed0b\"\n    ],\n  \n    \"name\": \"a2\",\n    \"description\": \"a2desc\",\n    \"symbol\": \"^\",\n    \"trades\": [\n        {\n            \"issell\": false,\n            \"quantity\": 120,\n            \"callorputorfut\": 2,\n            \"isfuture\": true,\n            \"daystoexpiry\": 2,\n            \"strikeprice\": 11500,\n            \"premiumprice\": 146\n        },\n        {\n            \"issell\": false,\n            \"quantity\": 120,\n            \"callorputorfut\": 2,\n            \"isfuture\": true,\n            \"daystoexpiry\": 2,\n            \"strikeprice\": 11500,\n            \"premiumprice\": 145\n        },\n        {\n          \n            \"issell\": true,\n            \"quantity\": 150,\n            \"iscall\": true,\n            \"isfuture\": true,\n            \"daystoexpiry\": 1,\n            \"strikeprice\": 11800,\n            \"premiumprice\": 120\n        },\n        {\n           \n            \"issell\": true,\n            \"quantity\": 150,\n            \"iscall\": true,\n            \"isfuture\": true,\n            \"daystoexpiry\": 1,\n            \"strikeprice\": 11800,\n            \"premiumprice\": 120\n        }\n    ]\n   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/strategy/save",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"strategy",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/strategy/delete",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"_id\": \"5f8b4d20b9082e3574a40ba8\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/strategy/delete",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"strategy",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9090/trade/save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sid\": \"5f8b4d20b9082e3574a40ba8\",\n    \"issell\": 1,\n    \"quantity\": 150,\n    \"iscall\": true,\n    \"isfuture\": true,\n    \"daystoexpiry\": \"1\",\n    \"strikeprice\": 11800,\n    \"premiumprice\": 120\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/trade/save",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"trade",
+						"save"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

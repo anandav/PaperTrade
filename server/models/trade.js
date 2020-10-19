@@ -18,9 +18,12 @@ const tradeSchema = schema({
   isfuture: {
     type: Boolean,
   },
-  callorputorfut: {
-    type: CALLPUTFUT,
+  iscall :{
+    type: Boolean,
   },
+  // callorputorfut: {
+  //   type: CALLPUTFUT,
+  // },
   quantity: {
     type: Number,
   },

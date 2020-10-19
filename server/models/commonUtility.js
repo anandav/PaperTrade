@@ -12,6 +12,7 @@ module.exports = {
     var strategyObject = await Strategy.findOne({
       _id: id,
     });
+    //console.log('strategyObject :>> ', strategyObject);
     return strategyObject;
   },
   GetTradeById: async function (id) {

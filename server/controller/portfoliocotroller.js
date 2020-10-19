@@ -6,7 +6,7 @@ const commonUtility = require("../models/commonUtility");
 require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
-  const data = await Portfolio.find({},{"name": 1,"description":1});
+  const data = await Portfolio.find({}, { name: 1, description: 1 });
   res.json(data);
 });
 
@@ -15,26 +15,24 @@ portfolicontroller.post("/find", async (req, res) => {
   var result = {};
   if (fieldName && fieldValue) {
     result = await Portfolio.find({ [fieldName]: fieldValue });
-    }else {
-    result  =  await Portfolio.find();
+  } else {
+    result = await Portfolio.find();
   }
   res.send(result);
 });
 
 portfolicontroller.post("/save", async (req, res) => {
-  const {  pid, name, description, createdon } = req.body;
+  const { pid, name, description, createdon } = req.body;
   var _portfolioObject = {};
   if (pid) {
-     _portfolioObject = await commonUtility.GetPortfolioById(pid);
-     _portfolioObject.name = name;
-     _portfolioObject.description = description;
-     _portfolioObject.modifiedon = new Date();
+    _portfolioObject = await commonUtility.GetPortfolioById(pid);
+    _portfolioObject.name = name;
+    _portfolioObject.description = description;
+    _portfolioObject.modifiedon = new Date();
   } else {
-     _portfolioObject = new Portfolio({ name, description, createdon });
+    _portfolioObject = new Portfolio({ name, description, createdon });
   }
-
   try {
-    console.log('_portfolioObject :>> ', _portfolioObject);
     const result = await _portfolioObject.save();
     res.send(result);
   } catch (err) {
@@ -42,9 +40,12 @@ portfolicontroller.post("/save", async (req, res) => {
   }
 });
 
+portfolicontroller.post("/delete", async (req, res) => {
+  if (req.body._id) {
+    Portfolio.deleteOne({ _id: req.body._id }, (err, doc) => {
+      res.json(doc);
+    });
+  }
+});
+
 module.exports = portfolicontroller;
-
-
-
-
-
