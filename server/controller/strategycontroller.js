@@ -1,19 +1,39 @@
 const express = require("express");
-const starategycontoller = express.Router();
+const strategycontoller = express.Router();
 const commUtility = require("../models/commonUtility");
 const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
 
-starategycontoller.get("/", async (req, res) => {
-  const data = await Strategy.find({});
-  res.json(data);
+strategycontoller.get("/", async (req, res) => {
+  await Strategy.find({})
+    .populate("portfolios")
+    .exec((err, data) => {
+      res.json(data);
+    });
 });
 
-starategycontoller.post("/find", async (res, req) => {
+strategycontoller.post("/find", async (res, req) => {
   res.send(await commUtility.GetStrategyById(req.body.sid));
 });
 
-starategycontoller.post("/save", async (req, res) => {
+strategycontoller.post("/findwithportfolio", async (req, res) => {
+  var { fieldName, fieldValue } = req.body;
+  var result = {};
+  if (fieldName && fieldValue) {
+    //result = await Strategy.find({ [fieldName]: fieldValue });
+    await Strategy.find({ "portfolios._id": fieldValue })
+      .populate("portfolios")
+      .exec((err, data) => {
+        res.json(data);
+      });
+
+  } else {
+    result = await Strategy.find({});
+  }
+  res.send(result);
+});
+
+strategycontoller.post("/save", async (req, res) => {
   const { _id, name, description, symbol, trades, portfolios } = req.body;
   if (_id) {
     var _data = {
@@ -53,7 +73,7 @@ starategycontoller.post("/save", async (req, res) => {
   }
 });
 
-starategycontoller.post("/delete", async (req, res) => {
+strategycontoller.post("/delete", async (req, res) => {
   var { _id } = req.body;
   if (_id) {
     Strategy.deleteOne({ _id: _id }, (err, doc) => {
@@ -62,4 +82,4 @@ starategycontoller.post("/delete", async (req, res) => {
   }
 });
 
-module.exports = starategycontoller;
+module.exports = strategycontoller;

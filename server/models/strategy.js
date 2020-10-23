@@ -6,6 +6,7 @@ const schema = mongoose.Schema,
   tradeSchema = mongoose.model("Trade").schema,
   portfolioSchema = mongoose.model("Portfolio").schema;
 
+
 const strategySchema = schema({
   name: {
     type: String,
@@ -21,9 +22,11 @@ const strategySchema = schema({
     default: Date.now(),
   },
   trades: [tradeSchema],
-  portfolios: {
-	  type:Array
-  },
+  portfolios: [{
+    type:mongoose.Schema.Types.ObjectId,
+    ref: "Portfolio"
+
+  }],
 });
 
 //name, description, symbol, createdon

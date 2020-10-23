@@ -21,10 +21,10 @@ app.use("/", (req, res, next) => {
   next();
 });
 
+
 app.use("/strategy",strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade",tradeController);
-
 
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,
