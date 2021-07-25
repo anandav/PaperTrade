@@ -20,9 +20,9 @@
   </div>
 </template>
 <style scoped>
-body{
-  background-color: #f0f;
-}
+
+ 
+
 .header {
   height: 60px;
   min-width: 320px;
@@ -30,19 +30,19 @@ body{
   z-index: 9;
   width: 100%;
   position: fixed;
-  background-color: #181818;
+  background-color: #282828;
   box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1);
 }
 
 .wrapper {
   padding: 0;
   width: 100%;
-  margin: 0 auto;
+  margin: 20px auto ;
   max-width: 1200px;
 }
 
 .wrapper a{
-  margin: 10px;
+  padding-right: 20px;
 }
 /* nav a {
   font-weight: bold;

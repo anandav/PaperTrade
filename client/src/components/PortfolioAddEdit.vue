@@ -1,11 +1,13 @@
 <template>
-    <div>
-Add / Edit
-</div>
+    <div v-show="showaddedit">
+	<input v-model="name" type="text" />	
+    </div>
 </template>
 <script>
 export default {
-    name : "PortfolioAddEdit"
+    name : "PortfolioAddEdit",
+    props :{ showaddedit : Boolean, name : String}
+ 
     
 }
 </script>
