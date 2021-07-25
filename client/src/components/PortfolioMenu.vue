@@ -2,8 +2,9 @@
   <div class="col-lg-3">
     <div
       class="pl-3 list-group portfolioitem"
-      role="tablist"
-      v-show="Portfolios !== undefined && Portfolios.length >0">
+      role="tablist">
+      <!-- v-show="Portfolios !== undefined && Portfolios.length >0" -->
+
       <div class="list-group-item list-group-item-dark">
         <div class="float-right">
           <a
@@ -21,7 +22,7 @@
         v-for="item in Portfolios"
         @click="menuSelectedPortfolio(item)"
         :class="{active : Portfolio === item}"
-      >{{item.Name}}</a>
+      >{{item.name}}</a>
     </div>
   </div>
 </template>

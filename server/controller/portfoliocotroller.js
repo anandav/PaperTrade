@@ -6,7 +6,7 @@ const commonUtility = require("../models/commonUtility");
 require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
-  const data = await Portfolio.find({}, { name: 1, description: 1 });
+  const data = await Portfolio.find();
   res.json(data);
 });
 
@@ -37,6 +37,7 @@ portfolicontroller.post("/save", async (req, res) => {
     res.send(result);
   } catch (err) {
     console.log(err);
+    res.send(err);
   }
 });
 

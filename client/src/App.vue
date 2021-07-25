@@ -20,6 +20,9 @@
   </div>
 </template>
 <style scoped>
+body{
+  background-color: #f0f;
+}
 .header {
   height: 60px;
   min-width: 320px;
@@ -27,7 +30,7 @@
   z-index: 9;
   width: 100%;
   position: fixed;
-  background-color: #fff;
+  background-color: #181818;
   box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1);
 }
 

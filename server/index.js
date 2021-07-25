@@ -9,7 +9,9 @@ const portfolioCotroller = require("./controller/portfoliocotroller");
 
 const tradeController = require("./controller/tradecontroller");
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended:true
+}));
 app.use(cors());
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
@@ -33,6 +35,7 @@ mongoose.connect(
     console.log("DB connected.");
   }
 );
+
 
 //app.use(require("./route"));
 
