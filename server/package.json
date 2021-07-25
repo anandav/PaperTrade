@@ -1,12 +1,12 @@
 {
   "name": "server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Papper Trade Service using Express.js.",
   "main": "index.js",
   "scripts": {
-    "dev-debug": "DEBUG=express:* nodemon index.js",
-    "dev": "clear && nodemon index.js",
-    "start": "node index.js"
+    "dev-debug": "DEBUG=express:* nodemon ./src/index.js",
+    "dev": "clear && nodemon ./src/index.js",
+    "start": "node ./src/index.js"
   },
   "author": "Anand.AV",
   "license": "ISC",
