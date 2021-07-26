@@ -6,16 +6,7 @@
         <router-link to="/about" class="">About</router-link>
       </div>
     </div>
-    <!-- <nav class="navbar navbar-expand-lg shadow-sm p-3 mb-2">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <router-link to="/papertrade" class="nav-link">Papet Trade</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/about" class="nav-link">About</router-link>
-        </li>
-      </ul>
-    </nav>-->
+   
     <router-view />
   </div>
 </template>
@@ -42,6 +33,7 @@
 }
 
 .wrapper a{
+  color: antiquewhite;
   padding-right: 20px;
 }
 /* nav a {

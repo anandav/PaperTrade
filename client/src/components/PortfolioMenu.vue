@@ -1,26 +1,28 @@
 <template>
   <div class="col-lg-3">
-    <div class="pl-3 list-group portfolioitem" role="tablist">
-      <div class="list-group-item list-group-item-dark">
-	<div class="float-right">
-		<a
-			class="btn btn-dark"
-			href="#" data-target="#divcreateeditportfolio"   data-toggle="modal">Create New Portfolio</a>
-			</div>
-		</div>
-	<div id="divcreateeditportfolio" class="modal fade" role="dialog"> 
-
-
-	</div>
-
-      <a
-        class="list-group-item portforlio-menu-item text-dark"
-        v-show="Portfolios !== undefined && Portfolios.length >0" 
-        :key="item._id"
-        v-for="item in Portfolios"
-        @click="menuSelectedPortfolio(item)"
-        :class="{active : Portfolio === item}"
-      >{{item.name}}</a>
+    <div class="card text-white bg-secondary">
+      <div class="card-header">
+        <div class="float-left"></div>
+        <div class="float-right">
+          <a
+            class="btn btn-dark"
+            href="#"
+            data-target="#divcreateeditportfolio"
+            data-toggle="modal"
+            >Create New Portfolio</a
+          >
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="car-title" :key="item._id" v-for="item in Portfolios">
+          <a
+            v-show="Portfolios !== undefined && Portfolios.length > 0"
+            @click="menuSelectedPortfolio(item)"
+            :class="{ active: Portfolio === item }"
+            >{{ item.name }}</a
+          >
+        </div>
+      </div>
     </div>
   </div>
 </template>
