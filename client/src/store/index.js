@@ -67,23 +67,30 @@ const mutations = {
 };
 const actions = {
   async GetAllPortfolios({ commit }) {
-    const response = await axios.get(process.env.VUE_APP_APIURL+"/portfolio");
+    const response = await axios.get(process.env.VUE_APP_APIURL + "/portfolio");
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
     commit(SETPORTFOLIO, _protfolio);
   },
-  // ShowNewTrade({ commit }, _strategy) {
-  //   _strategy.IsEdit = !_strategy.IsEdit;
-  //   commit(SHOWNEWTRADE, _strategy);
-  // },
+
   async GetPortfolioById({ commit }, item) {
-     axios.post(process.env.VUE_APP_APIURL+"/portfolio/find", {
+    axios.post(process.env.VUE_APP_APIURL + "/portfolio/find", {
       "fieldName": "_id",
       "fieldValue": item._id,
-    }).then(function(res){
+    }).then(function (res) {
       commit(SETPORTFOLIO, res.data[0]);
     });
+  },
+  async SavePortfolio({ commit }, item) {
+    axios.post(process.env.VUE_APP_APIURL + "/portfolio/save", {
+      "pid": item.pid,
+      "name": item.name,
+      "description" : item.description,
+    }).then(function (res) {
+      commit(GETALLPORTFOLIOS, res.data);
+    });
+
   },
 
   async GetInstrumentDetail({ commit }) {
@@ -122,7 +129,7 @@ const actions = {
 const modules = {};
 
 const getters = {
-  getLatestPrice: function(state) {
+  getLatestPrice: function (state) {
     if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
       var inx = state.InsurumentDetail.grapthData.length;
       var _data = state.InsurumentDetail.grapthData[inx - 1];

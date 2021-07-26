@@ -9,9 +9,7 @@ const portfolioCotroller = require("./controller/portfoliocotroller");
 
 const tradeController = require("./controller/tradecontroller");
 
-app.use(bodyParser.urlencoded({
-	extended:true
-}));
+
 app.use(cors());
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
