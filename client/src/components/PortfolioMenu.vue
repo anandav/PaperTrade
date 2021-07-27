@@ -22,6 +22,7 @@
           <!-- v-show="Portfolios !== undefined && Portfolios.length > 0" -->
           <a
             @click="menuSelectedPortfolio(item)"
+            
             :class="{ active: Portfolio === item }"
             >{{ item.name }}</a
           >
@@ -47,11 +48,12 @@ export default {
     addEditPortfolio() {
       if (this.isEdit) {
         console.log(this.portfolioName);
-        this.portfolioName = "";
+       
         this.SavePortfolio({
           pid: 0,
           name: this.portfolioName,
           description: "",
+          getallportfolio : true
         });
       }
       this.isEdit = !this.isEdit;

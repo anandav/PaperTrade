@@ -22,7 +22,7 @@ portfolicontroller.post("/find", async (req, res) => {
 });
 
 portfolicontroller.post("/save", async (req, res) => {
-  const { pid, name, description, createdon } = req.body;
+  const { pid, name, description, createdon, getallportfolio } = req.body;
   var _portfolioObject = {};
   if (pid) {
     _portfolioObject = await commonUtility.GetPortfolioById(pid);
@@ -34,7 +34,13 @@ portfolicontroller.post("/save", async (req, res) => {
   }
   try {
     const result = await _portfolioObject.save();
-    res.send(result);
+    console.log("Portfoli saved");
+    if (getallportfolio) {
+      const _allportfolio = await Portfolio.find();
+      res.send(_allportfolio);
+    } else {
+      res.send(result);
+    }
   } catch (err) {
     console.log(err);
     res.send(err);

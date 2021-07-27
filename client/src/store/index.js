@@ -75,6 +75,8 @@ const actions = {
   },
 
   async GetPortfolioById({ commit }, item) {
+    console.log("find function called.");
+    console.log(item);
     axios.post(process.env.VUE_APP_APIURL + "/portfolio/find", {
       "fieldName": "_id",
       "fieldValue": item._id,
@@ -83,11 +85,16 @@ const actions = {
     });
   },
   async SavePortfolio({ commit }, item) {
+    console.log("Portfolio function calledl.");
+    console.log(item);
     axios.post(process.env.VUE_APP_APIURL + "/portfolio/save", {
       "pid": item.pid,
       "name": item.name,
       "description" : item.description,
+      "getallportfolio" : item.getallportfolio,
     }).then(function (res) {
+      console.log("Save Portfoli reuslt in res.data");
+      console.log(res.data);
       commit(GETALLPORTFOLIOS, res.data);
     });
 
