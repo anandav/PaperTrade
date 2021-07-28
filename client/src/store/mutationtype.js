@@ -1,5 +1,10 @@
+///Portfolio
 export const GETALLPORTFOLIOS = 'getAllPortfilios';
 export const SETPORTFOLIO = 'setSelectedPortfolio';
+export const DELETEPORTFOLIE = 'deletePortfolio';
+
+
+
 export const SHOWNEWTRADE = 'showNewTrade';
 export const GETINSTRUMENTDETAIL = 'getInstrumentDetail';
 export const REMOVETRADE = 'removeTrade';

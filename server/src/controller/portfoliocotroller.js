@@ -22,10 +22,10 @@ portfolicontroller.post("/find", async (req, res) => {
 });
 
 portfolicontroller.post("/save", async (req, res) => {
-  const { pid, name, description, createdon, getallportfolio } = req.body;
+  const { _id, name, description, createdon, updateui } = req.body;
   var _portfolioObject = {};
-  if (pid) {
-    _portfolioObject = await commonUtility.GetPortfolioById(pid);
+  if (_id) {
+    _portfolioObject = await commonUtility.GetPortfolioById(_id);
     _portfolioObject.name = name;
     _portfolioObject.description = description;
     _portfolioObject.modifiedon = new Date();
@@ -34,8 +34,7 @@ portfolicontroller.post("/save", async (req, res) => {
   }
   try {
     const result = await _portfolioObject.save();
-    console.log("Portfoli saved");
-    if (getallportfolio) {
+    if (updateui) {
       const _allportfolio = await Portfolio.find();
       res.send(_allportfolio);
     } else {
@@ -47,10 +46,11 @@ portfolicontroller.post("/save", async (req, res) => {
   }
 });
 
+
 portfolicontroller.post("/delete", async (req, res) => {
   if (req.body._id) {
     Portfolio.deleteOne({ _id: req.body._id }, (err, doc) => {
-      res.json(doc);
+      res.send(doc);
     });
   }
 });

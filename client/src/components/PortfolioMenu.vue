@@ -2,38 +2,36 @@
   <div class="col-lg-3">
     <div class="card text-white bg-secondary">
       <div class="card-header">
-        <div class="float-left">
+        <div class="float-left" ref="refportfolioname">
           <input
             class="form-control"
             v-show="isEdit"
             placeholder="Portfolio Name"
             type="text"
             v-model="portfolioName"
+            @keyup.enter="addEditPortfolio()"
+            
           />
         </div>
         <div class="float-right">
-          <a class="btn btn-dark" href="#" @click="addEditPortfolio()">{{
-            btnAddEditProtfolio
-          }}</a>
+          <a class="btn btn-dark" href="#" @click="addEditPortfolio()">
+            <i v-show="!isEdit" class="bi bi-plus-square"></i>
+            <i v-show="isEdit" class="bi bi-save"></i>
+            {{ btnAddEditProtfolio }}</a
+          >
         </div>
       </div>
       <div class="card-body">
-        <div class="car-title" :key="item._id" v-for="item in Portfolios">
-          <div class="">
-            <div class="">
-
-
-            <a
-              @click="menuSelectedPortfolio(item)"
-              :class="{ active: Portfolio === item }"
-              class="pull-left"
-              >{{ item.name }}</a
-            >
-            </div>
-            <div class="btn btn-danger pull-right">
-              <i @click="deletePortfolio(item)" class="far fa-save"> </i>
-            </div>
-          </div>
+        <div class="mt-2" :key="item._id" v-for="item in Portfolios">
+          <a
+            @click="menuSelectedPortfolio(item)"
+            :class="{ active: Portfolio === item }"
+            class=""
+            >{{ item.name }}</a
+          >
+          <a class="btn btn-danger float-right">
+            <i @click="deletePortfolio(item)" class="bi bi-trash"></i>
+          </a>
           <hr />
         </div>
       </div>
@@ -42,12 +40,12 @@
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
+
 export default {
   name: "PortfolioMenu",
   methods: {
     ...mapActions([
       "GetAllPortfolios",
-      "SelectPortfolioChanged",
       "GetPortfolioById",
       "SavePortfolio",
       "DeletePortfolio",
@@ -55,17 +53,18 @@ export default {
     menuSelectedPortfolio(item) {
       this.GetPortfolioById(item);
     },
+
     addEditPortfolio() {
-      if (this.isEdit) {
+      if (this.isEdit && this.portfolioName) {
         this.SavePortfolio({
-          pid: 0,
+          _id: 0,
           name: this.portfolioName,
           description: "",
-          getallportfolio: true,
+          updateui: true,
         });
+        this.portfolioName = "";
       }
       this.isEdit = !this.isEdit;
-
       this.btnAddEditProtfolio = this.isEdit
         ? this.$getConst("savePortfolio")
         : this.$getConst("addNewPortfolio");

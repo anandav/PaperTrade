@@ -18,16 +18,24 @@ app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
   //console.clear();
   console.log("Body");
-  console.log("====");
+  console.log("==request-body-start==");
   console.log(req.body);
-  console.log("====");
+  console.log("==request-body-end==");
+
+
   next();
 });
+
+
+
 
 
 app.use("/strategy",strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade",tradeController);
+
+
+
 
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,
@@ -43,3 +51,6 @@ mongoose.connect(
 app.listen(port, function () {
   console.log(`application listening on ${port}`);
 });
+
+
+

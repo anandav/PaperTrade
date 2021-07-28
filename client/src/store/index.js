@@ -8,6 +8,7 @@ Vue.use(Vuex);
 import {
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
+  DELETEPORTFOLIE,
 } from "./mutationtype";
 
 const state = {
@@ -28,6 +29,15 @@ const mutations = {
   [SETPORTFOLIO](state, _protfolio) {
     state.Portfolio = _protfolio;
   },
+  [DELETEPORTFOLIE](state, _protfolio) {
+    console.log("Porfolio Delete Mutation called")
+    var _index = state.Portfolios.findIndex(x => x._id == _protfolio._id);
+    if (_index > -1) {
+      state.Portfolios.splice(_index, 1);
+      console.log("Porfolio Delete from state.")
+    }
+
+  }
 };
 
 const modules = {};
@@ -37,11 +47,10 @@ const getters = {
     if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
       var inx = state.InsurumentDetail.grapthData.length;
       var _data = state.InsurumentDetail.grapthData[inx - 1];
-      console.log(_data[1]);
       return _data[1];
     }
   },
-  getPortfolioById : function(state){
+  getPortfolioById: function (state) {
     return state.Portfolio;
   },
 };
@@ -49,7 +58,7 @@ const getters = {
 export default new Vuex.Store({
   state,
   mutations,
-  actions: { ...portfolioActions } ,
+  actions: { ...portfolioActions },
   modules,
   getters,
 });
