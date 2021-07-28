@@ -19,13 +19,22 @@
       </div>
       <div class="card-body">
         <div class="car-title" :key="item._id" v-for="item in Portfolios">
-          <!-- v-show="Portfolios !== undefined && Portfolios.length > 0" -->
-          <a
-            @click="menuSelectedPortfolio(item)"
-            
-            :class="{ active: Portfolio === item }"
-            >{{ item.name }}</a
-          >
+          <div class="">
+            <div class="">
+
+
+            <a
+              @click="menuSelectedPortfolio(item)"
+              :class="{ active: Portfolio === item }"
+              class="pull-left"
+              >{{ item.name }}</a
+            >
+            </div>
+            <div class="btn btn-danger pull-right">
+              <i @click="deletePortfolio(item)" class="far fa-save"> </i>
+            </div>
+          </div>
+          <hr />
         </div>
       </div>
     </div>
@@ -41,19 +50,18 @@ export default {
       "SelectPortfolioChanged",
       "GetPortfolioById",
       "SavePortfolio",
+      "DeletePortfolio",
     ]),
     menuSelectedPortfolio(item) {
       this.GetPortfolioById(item);
     },
     addEditPortfolio() {
       if (this.isEdit) {
-        console.log(this.portfolioName);
-       
         this.SavePortfolio({
           pid: 0,
           name: this.portfolioName,
           description: "",
-          getallportfolio : true
+          getallportfolio: true,
         });
       }
       this.isEdit = !this.isEdit;
@@ -61,6 +69,9 @@ export default {
       this.btnAddEditProtfolio = this.isEdit
         ? this.$getConst("savePortfolio")
         : this.$getConst("addNewPortfolio");
+    },
+    deletePortfolio(itempfl) {
+      this.DeletePortfolio(itempfl);
     },
   },
   data: function () {

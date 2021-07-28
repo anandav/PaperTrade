@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+
 const app = express();
 const port = 9090;
 const mongoose = require("mongoose");
@@ -16,7 +16,7 @@ app.use(express.urlencoded({extended : true}));
 app.use(cors());
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
-  console.clear();
+  //console.clear();
   console.log("Body");
   console.log("====");
   console.log(req.body);
