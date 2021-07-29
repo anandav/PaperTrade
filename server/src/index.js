@@ -33,7 +33,7 @@ app.use("/", (req, res, next) => {
 app.use("/strategy",strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade",tradeController);
-
+app.use("/",express.static('public'));
 
 
 
