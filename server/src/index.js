@@ -25,13 +25,13 @@ app.use("/strategy",strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade",tradeController);
 app.use("/",express.static('public'));
-mongoose.connect(
-  process.env.DBCONNECTIONSTRING,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  () => {
-    console.log("DB connected.");
-  }
-);
+// mongoose.connect(
+//   process.env.DBCONNECTIONSTRING,
+//   { useNewUrlParser: true, useUnifiedTopology: true },
+//   () => {
+//     console.log("DB connected.");
+//   }
+// );
 //app.use(require("./route"));
 app.listen(port, function () {
   console.log(`application listening on ${port}`);
