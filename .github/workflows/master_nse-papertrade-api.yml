@@ -29,7 +29,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: node-app
-        path: ./server
+        path: ./
 
   deploy:
     runs-on: ubuntu-latest
