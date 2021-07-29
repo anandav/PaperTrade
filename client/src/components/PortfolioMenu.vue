@@ -70,6 +70,7 @@ export default {
         : this.$getConst("addNewPortfolio");
     },
     deletePortfolio(itempfl) {
+      console.log("Porfolio Delete clicked")
       this.DeletePortfolio(itempfl);
     },
   },

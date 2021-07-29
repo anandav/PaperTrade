@@ -24,14 +24,14 @@ jobs:
     - name: npm install, build, and test
       run: |
         npm install --prefix ./server
-        npm run build --prefix ./server --if-present
-        npm run test --prefix ./server --if-present
+        # npm run build --prefix ./server --if-present
+        # npm run test --prefix ./server --if-present
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
       with:
         name: node-app
-        path: .
+        path: ./server
 
   deploy:
     runs-on: ubuntu-latest

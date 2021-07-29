@@ -39,8 +39,12 @@ const actions = {
     });
   },
   async DeletePortfolio({ commit }, item) {
+
+    console.log("Porfolio Delete Action called")
+    
     axios.post(process.env.VUE_APP_APIURL + "/portfolio/delete", item)
-      .then(function () {
+    .then(function () {
+        console.log("Porfolio Delete callback called")
         commit(DELETEPORTFOLIE, item);
       });
 
