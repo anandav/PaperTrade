@@ -1,11 +1,10 @@
 const express = require("express");
 const cors = require("cors");
-
 const app = express();
-const port = 9090;
 const mongoose = require("mongoose");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
+const port =  process.env.PORT || 9090;
 
 const tradeController = require("./controller/tradecontroller");
 
