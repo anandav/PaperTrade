@@ -16,6 +16,7 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
+    "helmet": "^4.6.0",
     "mongodb": "^3.6.2",
     "mongoose": "^5.13.3",
     "nodemon": "^2.0.4"
