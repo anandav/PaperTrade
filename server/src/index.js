@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const port =  process.env.PORT || 9090;
@@ -11,6 +12,8 @@ const tradeController = require("./controller/tradecontroller");
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 app.use(cors());
+app.use(helmet());
+
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
   //console.clear();

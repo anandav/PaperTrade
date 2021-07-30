@@ -6,6 +6,7 @@
   "scripts": {
     "dev-debug": "DEBUG=express:* nodemon ./src/index.js",
     "dev": "clear && nodemon ./src/index.js",
+    "build": "webpack",
     "start": "node ./src/index.js"
   },
   "author": "Anand.AV",
@@ -20,5 +21,10 @@
     "mongodb": "^3.6.2",
     "mongoose": "^5.13.3",
     "nodemon": "^2.0.4"
+  },
+  "devDependencies": {
+    "webpack": "^5.47.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-node-externals": "^3.0.0"
   }
 }
