@@ -6,7 +6,7 @@ import Detail from '../components/PortfolioDetail';
 
 Vue.use(VueRouter)
 
-const routes = [
+const approutes = [
   {
     path: '/',
     component: PaperTrade,
@@ -38,7 +38,7 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes : approutes
 })
 
 export default router

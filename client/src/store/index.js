@@ -36,7 +36,6 @@ const mutations = {
       state.Portfolios.splice(_index, 1);
       console.log("Porfolio Delete from state.")
     }
-
   }
 };
 

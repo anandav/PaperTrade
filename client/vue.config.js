@@ -2,12 +2,15 @@ var fs = require('fs');
 
 module.exports = {
   devServer: {
-    https: false,
+    https: true,
     useLocalIp: false,
-    //  port: 9000,
+    //  port: 8081,
     //host: "localhost"
     //   allowedHosts: [
     //     'localhost',
     //   ]
   }
+
+
+
 };

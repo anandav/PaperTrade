@@ -14,6 +14,7 @@
     "bootstrap-icons": "^1.5.0",
     "core-js": "^3.6.4",
     "dotenv": "^8.2.0",
+    "node-static": "^0.7.11",
     "vue": "^2.6.12",
     "vue-router": "^3.4.5",
     "vuex": "^3.5.1"
@@ -23,7 +24,7 @@
     "@vue/cli-plugin-eslint": "^3.1.1",
     "@vue/cli-plugin-router": "^4.5.6",
     "@vue/cli-plugin-vuex": "^4.5.6",
-    "@vue/cli-service": "^3.12.1",
+    "@vue/cli-service": "^4.5.13",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",

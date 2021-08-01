@@ -29,8 +29,8 @@
             class=""
             >{{ item.name }}</a
           >
-          <a class="btn btn-danger float-right">
-            <i @click="deletePortfolio(item)" class="bi bi-trash"></i>
+          <a class="btn btn-danger float-right" @click="deletePortfolio(item)">
+            <i class="bi bi-trash"></i>
           </a>
           <hr />
         </div>
