@@ -10,7 +10,6 @@
             type="text"
             v-model="portfolioName"
             @keyup.enter="addEditPortfolio()"
-            
           />
         </div>
         <div class="float-right">
@@ -22,16 +21,40 @@
         </div>
       </div>
       <div class="card-body">
+        <div v-show="isLoading" class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
         <div class="mt-2" :key="item._id" v-for="item in Portfolios">
-          <a
-            @click="menuSelectedPortfolio(item)"
-            :class="{ active: Portfolio === item }"
-            class=""
-            >{{ item.name }}</a
-          >
-          <a class="btn btn-danger float-right" @click="deletePortfolio(item)">
-            <i class="bi bi-trash"></i>
-          </a>
+          <div class="row">
+            <div class="col-sm">
+              <a
+                @click="menuSelectedPortfolio(item)"
+                :class="{ active: Portfolio === item }"
+                v-show="!(inlineEdit && item._id === _pid)"
+                class=""
+                >{{ item.name }}</a
+              >
+              <input
+                class="form-control col-lg"
+                v-show="inlineEdit && item._id === _pid"
+                placeholder="Edit Portfolio Name"
+                type="text"
+                v-model="item.name"
+                @keyup.enter="inlineEditPortfolio(item)"
+              />
+            </div>
+            <div class="col-sm">
+              <div class="float-right">
+                <a class="btn btn-dark" @click="inlineEditPortfolio(item)">
+                  <i v-show="!inlineEdit" class="bi bi-plus-square"></i>
+                  <i v-show="inlineEdit" class="bi bi-save"></i>
+                </a>
+                <a class="btn btn-danger ml-2" @click="deletePortfolio(item)">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </div>
+            </div>
+          </div>
           <hr />
         </div>
       </div>
@@ -62,6 +85,7 @@ export default {
           description: "",
           updateui: true,
         });
+        this._pid = "";
         this.portfolioName = "";
       }
       this.isEdit = !this.isEdit;
@@ -69,8 +93,19 @@ export default {
         ? this.$getConst("savePortfolio")
         : this.$getConst("addNewPortfolio");
     },
+    inlineEditPortfolio(item) {
+      if (item.name) {
+        this.inlineEdit = !this.inlineEdit;
+        this._pid = item._id;
+        if (this.inlineEdit) {
+          //TODO placeholder for edit mode
+        } else {
+          this.SavePortfolio(item);
+        }
+      }
+    },
     deletePortfolio(itempfl) {
-      console.log("Porfolio Delete clicked")
+      console.log("Porfolio Delete clicked");
       this.DeletePortfolio(itempfl);
     },
   },
@@ -78,12 +113,16 @@ export default {
     return {
       portfolioName: "",
       btnAddEditProtfolio: this.$getConst("addNewPortfolio"),
+      isLoading: true,
       isEdit: false,
+      inlineEdit: false,
     };
   },
 
   created() {
-    this.GetAllPortfolios();
+    this.GetAllPortfolios().then(() => {
+      this.isLoading = false;
+    });
   },
   computed: {
     ...mapState(["Portfolios", "Portfolio"]),

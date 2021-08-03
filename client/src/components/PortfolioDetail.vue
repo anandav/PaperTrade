@@ -7,15 +7,15 @@
       <div class="card-header" :id="Portfolio._id">
         <div class="row">
           <div class="float-right col-lg-6">
-            <h5 class="card-title">{{ Portfolio.Name }}</h5>
+            <h5 class="card-title">{{ Portfolio.name }}</h5>
           </div>
           <div class=" col-lg-6">
-            <div class="float-right">Created On: {{ Portfolio.CreatedOn }}</div>
+            <div class="float-right">Created On: {{ Portfolio.createdon}}</div>
           </div>
         </div>
       </div>
       <div class="card-body">
-        <p class="card-text">{{ Portfolio.Description }}</p>
+        <p class="card-text">{{ Portfolio.description }}</p>
       </div>
     </div>
     <div class="col-lg-12">

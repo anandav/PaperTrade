@@ -1,4 +1,7 @@
+import "dotenv/config";
 const axios = require("axios");
+const apiUrl = process.env.VUE_APP_APIURL || "/";
+
 import {
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
@@ -8,7 +11,7 @@ import {
 
 const actions = {
   async GetAllPortfolios({ commit }) {
-    const response = await axios.get("/portfolio");
+    const response = await axios.get(apiUrl + "portfolio");
     commit(GETALLPORTFOLIOS, response.data);
   },
   SelectPortfolioChanged({ commit }, _protfolio) {
@@ -16,7 +19,7 @@ const actions = {
   },
 
   async GetPortfolioById({ commit }, item) {
-    axios.post("/portfolio/find", {
+    axios.post(apiUrl + "portfolio/find", {
       "fieldName": "_id",
       "fieldValue": item._id,
     }).then(function (res) {
@@ -24,7 +27,7 @@ const actions = {
     });
   },
   async SavePortfolio({ commit }, item) {
-    axios.post("/portfolio/save", {
+    axios.post(apiUrl + "portfolio/save", {
       "_id": item._id,
       "name": item.name,
       "description": item.description,
@@ -35,14 +38,12 @@ const actions = {
       } else {
         commit(SETPORTFOLIO, res.data[0])
       }
-
     });
   },
   async DeletePortfolio({ commit }, item) {
-
     console.log("Porfolio Delete Action called")
 
-    axios.post("/portfolio/delete", item)
+    axios.post(apiUrl + "portfolio/delete", item)
       .then(function () {
         console.log("Porfolio Delete callback called")
         commit(DELETEPORTFOLIE, item);
