@@ -1,0 +1,19 @@
+{
+  "name": "nse-papertrade",
+  "version": "1.0.0",
+  "description": "Do papertrade with out losing your capital. Inspired by Sensibull and Tradingview paper trades.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anandav/NSE-PaperTrade.git"
+  },
+  "author": "Anand.AV",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anandav/NSE-PaperTrade/issues"
+  },
+  "homepage": "https://github.com/anandav/NSE-PaperTrade#readme"
+}
