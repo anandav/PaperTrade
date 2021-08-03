@@ -24,7 +24,7 @@ jobs:
     - name: npm install client
       run: |
         npm install --prefix ./client
-        npm run build
+        npm run build --prefix ./client
 
 
     - name: npm install server
