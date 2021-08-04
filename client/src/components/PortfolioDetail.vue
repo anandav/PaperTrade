@@ -3,7 +3,9 @@
     <div class="jumbotron" v-show="!Portfolio">
       <h3 class="display-4">Please select a portfolio.</h3>
     </div> 
-    <div class="card text-white bg-secondary mb-3" v-if="Portfolio">
+    <div class="shadow-sm bg-white rounded-lg h-18 bg-yellow-800">{{ Portfolio.name }}</div>
+      <!-- <h2 class="title"></h2> -->
+    <!-- <div class="card text-white bg-secondary mb-3" v-if="Portfolio">
       <div class="card-header" :id="Portfolio._id">
         <div class="row">
           <div class="float-right col-lg-6">
@@ -17,7 +19,7 @@
       <div class="card-body">
         <p class="card-text">{{ Portfolio.description }}</p>
       </div>
-    </div>
+    </div> -->
     <div class="col-lg-12">
     <div class="row">
       <a

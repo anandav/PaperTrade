@@ -21,19 +21,23 @@
         </div>
       </div>
       <div class="card-body">
-        <div v-show="isLoading" class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
+        <div class="d-flex justify-content-center">
+          <div v-show="isLoading" class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
         </div>
         <div class="mt-2" :key="item._id" v-for="item in Portfolios">
           <div class="row">
             <div class="col-sm">
-              <a
-                @click="menuSelectedPortfolio(item)"
-                :class="{ active: Portfolio === item }"
-                v-show="!(inlineEdit && item._id === _pid)"
-                class=""
-                >{{ item.name }}</a
-              >
+              <div class="pt-2">
+                <a
+                  @click="menuSelectedPortfolio(item)"
+                  :class="{ active: Portfolio === item }"
+                  v-show="!(inlineEdit && item._id === _pid)"
+                  class="pt-5"
+                  >{{ item.name }}</a
+                >
+              </div>
               <input
                 class="form-control col-lg"
                 v-show="inlineEdit && item._id === _pid"
