@@ -1,5 +1,8 @@
 # NSE-PaperTrade
 Do papertrade with out losing your capital. Inspired by Sensibull and Tradingview paper trades.
+
+[![Papertrade](https://github.com/anandav/NSE-PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)](https://github.com/anandav/NSE-PaperTrade/actions/workflows/master_nse-papertrade-app.yml)
+
 ![Build App and API](https://github.com/anandav/NSE-PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
 
 
