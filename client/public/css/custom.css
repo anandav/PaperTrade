@@ -1,4 +1,13 @@
 
 body{
-	background-color: #383838;
+	background-color: #21272E;
+}
+
+.header {
+	background-color: #2C333B;
+}
+
+.bg-grey-custom{
+	background-color: #434c55;
+
 }

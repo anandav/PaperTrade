@@ -1,6 +1,7 @@
 import Vuex from "vuex";
 import Vue from "vue";
 import portfolioActions from "./portfoliactions";
+import strategyActions from "./strategyaction";
 
 
 
@@ -9,6 +10,9 @@ import {
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
   DELETEPORTFOLIE,
+
+  GETALLSTRATEGIES
+
 } from "./mutationtype";
 
 const state = {
@@ -30,13 +34,14 @@ const mutations = {
     state.Portfolio = _protfolio;
   },
   [DELETEPORTFOLIE](state, _protfolio) {
-    console.log("Porfolio Delete Mutation called")
     var _index = state.Portfolios.findIndex(x => x._id == _protfolio._id);
     if (_index > -1) {
       state.Portfolios.splice(_index, 1);
-      console.log("Porfolio Delete from state.")
     }
-  }
+  },
+  [GETALLSTRATEGIES](state, _strategies) {
+    state.Strategies = _strategies;
+  },
 };
 
 const modules = {};
@@ -57,7 +62,7 @@ const getters = {
 export default new Vuex.Store({
   state,
   mutations,
-  actions: { ...portfolioActions },
+  actions: { ...portfolioActions, ...strategyActions },
   modules,
   getters,
 });
