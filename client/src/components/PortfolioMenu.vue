@@ -29,7 +29,7 @@
         <div class="mt-2" :key="item._id" v-for="item in Portfolios">
           <div class="row">
             <div class="col-sm">
-              <div class="pt-2">
+              <div class="">
                 <a
                   @click="menuSelectedPortfolio(item)"
                   :class="{ active: Portfolio === item }"

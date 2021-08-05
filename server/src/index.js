@@ -10,7 +10,7 @@ const port =  process.env.PORT || 9090;
 const tradeController = require("./controller/tradecontroller");
 
 app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+//app.use(express.urlencoded({extended : true}));
 app.use(cors());
 app.use(helmet());
 
