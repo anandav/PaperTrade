@@ -16,17 +16,16 @@ strategycontoller.post("/find", async (res, req) => {
   res.send(await commUtility.GetStrategyById(req.body.sid));
 });
 
-strategycontoller.post("/findwithportfolio", async (req, res) => {
+strategycontoller.post("/findusingportfolioid", async (req, res) => {
   var { fieldName, fieldValue } = req.body;
   var result = {};
   if (fieldName && fieldValue) {
-    //result = await Strategy.find({ [fieldName]: fieldValue });
-    await Strategy.find({ "portfolios._id": fieldValue })
-      .populate("portfolios")
-      .exec((err, data) => {
-        res.json(data);
-      });
 
+    result = await Strategy.find({ [fieldName]: fieldValue });
+    if (data) {
+      //res.json(data);
+    }
+    res.send({});
   } else {
     result = await Strategy.find({});
   }
@@ -34,7 +33,7 @@ strategycontoller.post("/findwithportfolio", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id, name, description, symbol, trades, portfolios } = req.body;
+  const { _id,pid, name, description, symbol, trades, portfolios } = req.body;
   if (_id) {
     var _data = {
       name,

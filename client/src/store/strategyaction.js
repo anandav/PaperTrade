@@ -7,9 +7,9 @@ import {
 
 export default  {
     async GetAllStrategies({ commit }, item) {
-        axios.post(apiUrl + "strategy/find", {
+        axios.post(apiUrl + "strategy/findusingportfolioid", {
             "fieldName": "pid",
-            "fieldValue": item.pid,
+            "fieldValue": item,
 
         }).then(function (res) {
             commit(GETALLSTRATEGIES, res.data[0]);

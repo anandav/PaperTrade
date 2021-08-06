@@ -4,20 +4,25 @@
       <h3 class="display-4">Please select a portfolio.</h3>
     </div>
     <div v-if="Portfolio" class="text-white">
-      <div class="bg-secondary  p-4 ">
+      <div class="bg-secondary p-4">
         {{ Portfolio.name }}
-        <a class="btn btn-warning float-right" data-toggle="modal">
+        <a class="btn btn-warning float-right text-dark"
+        :click="addNewStrategy()">
+          <i class="bi bi-plus-square"></i>
           Add New Strategy</a
         >
       </div>
 
-      <div class="col-lg-12"></div>
+      <div v-show="isEdit" class="col-lg-12">
+        {{Portfolio._id}}
+      </div>
+      <!-- <div class="col-lg-12"></div> -->
       <StrategiesList />
     </div>
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 import StrategiesList from "./StrategiesList";
 export default {
   name: "PortfolioDetail",
@@ -26,13 +31,12 @@ export default {
     ...mapState(["Portfolio"]),
   },
   methods: {
-    ...mapActions(["GetAllStrategies"]),
+    addNewStrategy : function(){
+      this.isEdit = !this.isEdit;
+    }
   },
   data: function () {
-    return { isEdit: true };
-  },
-  created() {
-    //this.GetAllStrategies();
+    return { isEdit: false };
   },
 };
 </script>

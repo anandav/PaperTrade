@@ -1,21 +1,28 @@
 <template>
   <div class="pr-2" v-if="Portfolio">
-    <div :key="item._id.$oid" v-for="item in Portfolio.Strategies">
-      <StrategyDetail :Strategy="item"/>
+    {{Portfolio._id}}
+    <!-- <div :key="item._id.$oid" v-for="item in Strategies">
+      <StrategyDetail :Strategy="item" />
       <hr />
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
-import StrategyDetail from "./StrategyDetail";
+import { mapState, mapActions } from "vuex";
+//import StrategyDetail from "./StrategyDetail";
+
 export default {
   name: "StrategiesList",
-  components: { StrategyDetail },
+  //components: { StrategyDetail },
+  props :{pid : Number},
   computed: {
     ...mapState(["Portfolio"]),
-  }
-  //Portfolio.Strategies
-
- };
+  },
+  created() {
+    this.GetAllStrategies(this.Portfolio._id);
+  },
+  methods: {
+    ...mapActions(["GetAllStrategies"]),
+  },
+};
 </script>
