@@ -50,7 +50,7 @@
             <div class="col-sm">
               <div class="float-right">
                 <a class="btn btn-warning text-dark" @click="inlineEditPortfolio(item)">
-                  <i v-show="!inlineEdit" class="bi bi-plus-square "></i>
+                  <i v-show="!inlineEdit" class="bi bi-pencil"></i>
                   <i v-show="inlineEdit" class="bi bi-save"></i>
                 </a>
                 <a class="btn btn-danger ml-2" @click="deletePortfolio(item)">

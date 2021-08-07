@@ -4,48 +4,30 @@ const commUtility = require("../models/commonUtility");
 const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
 
-strategycontoller.get("/", async (req, res) => {
-  await Strategy.find({})
-    .populate("portfolios")
-    .exec((err, data) => {
-      res.json(data);
-    });
-});
-
-strategycontoller.post("/find", async (res, req) => {
-  res.send(await commUtility.GetStrategyById(req.body.sid));
-});
-
 strategycontoller.post("/findusingportfolioid", async (req, res) => {
   var { fieldName, fieldValue } = req.body;
   var result = {};
   if (fieldName && fieldValue) {
-
     result = await Strategy.find({ [fieldName]: fieldValue });
-    if (data) {
-      //res.json(data);
-    }
-    res.send({});
+    console.log(result);
+    res.json(result);
   } else {
     result = await Strategy.find({});
   }
-  res.send(result);
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id,pid, name, description, symbol, trades, portfolios } = req.body;
+  const { _id, portfolio, name, description, symbol, trades  } = req.body;
   if (_id) {
     var _data = {
       name,
       description,
       symbol,
+      portfolio,
       modifiedOn: new Date(),
     };
     if (trades) {
       _data.trades = trades;
-    }
-    if (portfolios) {
-      _data.portfolios = portfolios;
     }
     var _strategyObject = await Strategy.updateOne(
       { _id: _id },
@@ -60,7 +42,7 @@ strategycontoller.post("/save", async (req, res) => {
       description,
       symbol,
       trades,
-      portfolios,
+      portfolio,
       createdon: new Date(),
     });
     try {

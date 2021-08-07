@@ -40,6 +40,7 @@ const mutations = {
     }
   },
   [GETALLSTRATEGIES](state, _strategies) {
+    //console.log(_strategies);
     state.Strategies = _strategies;
   },
 };

@@ -1,25 +1,46 @@
 <template>
-  <div class="card mb-2">
+  <div class="card mb-2 bg-grey-custom">
     <!-- @click="SelectedStrategy(Strategy)" -->
-    <h5 class="card-header">{{Strategy.Name}}</h5>
-    <div class="card-body">
-      <h5 class="card-title">Created On: {{Strategy.CreatedOn.$date}}</h5>
+    <div class="card-header">
+      <div class="d-flex">
+        <div class="p-2 align-self-center">
+          <h5>{{ Strategy.name }}</h5>
+        </div>
+        <div class="p-2">
+          <i class="btn btn-danger bi bi-trash"></i>
+        </div>
+        <div class="ml-auto p-2">
+          <h5 class="float-right">
+            Created On:
+            {{ Strategy.CreatedOn }}
+          </h5>
+        </div>
+      </div>
+    </div>
 
+    <div class="card-body">
       <ul v-if="Strategy.Trades" class="list-group list-group-flush">
-        <li :key="Trade._id.$oid" v-for="Trade in Strategy.Trades" class="list-group-item">
-          <button class="btn btn-dark" @click="DeleteTrade(Strategy,Trade)">{{Trade.Name}}</button>
+        <li
+          :key="Trade._id.$oid"
+          v-for="Trade in Strategy.Trades"
+          class="list-group-item"
+        >
+          <button class="btn btn-dark" @click="DeleteTrade(Strategy, Trade)">
+            {{ Trade.Name }}
+          </button>
         </li>
       </ul>
       <div class="TradeAddEditPlaceholder">
         <TradeAddEdit v-if="Strategy.IsEdit" :ParentStrategy="Strategy" />
       </div>
     </div>
-    <div class="card-footer">
+    <div class="card-footer text-dark">
       <div class="col-lg-12">
-        <div class="btn-group row float-right">
-          <button class="btn btn-outline-primary" @click="CreateNewTrade()">Add Trade</button>
-          <button class="btn btn-outline-danger">Delete Stratergy</button>
-        </div>
+        <a class="btn btn-warning float-right" @click="CreateNewTrade()">
+          <i class="bi bi-plus-square"></i>
+          <!-- <i v-show="isEdit" class="bi bi-save"></i> -->
+          Add New Trade
+        </a>
       </div>
     </div>
   </div>

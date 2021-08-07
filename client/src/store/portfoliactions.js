@@ -38,7 +38,7 @@ const actions = {
       } else {
         commit(SETPORTFOLIO, res.data[0])
       }
-    });
+    }).catch(e => { console.log(e); });
   },
   async DeletePortfolio({ commit }, item) {
     console.log("Porfolio Delete Action called")

@@ -1,6 +1,6 @@
 <template>
-  <ul class="list-group list-group-flush" data-id="ParentStrategy._id" >
-    <li class="list-group-item">
+  <div class="list-group list-group-flush bg-grey-custom" data-id="ParentStrategy._id" >
+    
       <div class="row">
         <div class="col-md-1 mb-3">
           <label>Buy & Sell</label>
@@ -88,8 +88,8 @@
           <!-- <label for>Action</label> -->
         </div>
       </div>
-    </li>
-  </ul>
+    
+  </div>
 </template>
 <script>
 import { mapActions, mapGetters, mapState } from "vuex"; //, mapState
