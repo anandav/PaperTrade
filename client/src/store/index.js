@@ -7,11 +7,15 @@ import strategyActions from "./strategyaction";
 
 Vue.use(Vuex);
 import {
+  //Portfolio
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
   DELETEPORTFOLIE,
 
-  GETALLSTRATEGIES
+  //Startegy
+  GETALLSTRATEGIES,
+  ADDEDITSTRATEGY,
+  DELETESTRATEGY,
 
 } from "./mutationtype";
 
@@ -19,7 +23,7 @@ const state = {
   Portfolios: [],
   Strategies: [],
   Portfolio: undefined,
-  Strategy: undefined,
+  NewStrategyPlaceHolder: undefined,
   Trade: undefined,
   InsurumentDetail: undefined,
   InsurumentLatestPirce: undefined,
@@ -32,6 +36,7 @@ const mutations = {
   },
   [SETPORTFOLIO](state, _protfolio) {
     state.Portfolio = _protfolio;
+    //state.Strategies = null;
   },
   [DELETEPORTFOLIE](state, _protfolio) {
     var _index = state.Portfolios.findIndex(x => x._id == _protfolio._id);
@@ -40,8 +45,24 @@ const mutations = {
     }
   },
   [GETALLSTRATEGIES](state, _strategies) {
-    //console.log(_strategies);
     state.Strategies = _strategies;
+  },
+  [ADDEDITSTRATEGY](state, _strategy) {
+
+    if (state.Strategies) {
+      state.Strategies.unshift(_strategy);
+    } else {
+      state.Strategies = [_strategy];
+
+    }
+  },
+  [DELETESTRATEGY](state, _strategyId) {
+    for (let i = 0, l = state.Strategies.length; i < l; i++) {
+      if (state.Strategies[i]._id == _strategyId) {
+        state.Strategies.splice(i, 1);
+        return;
+      }
+    }
   },
 };
 

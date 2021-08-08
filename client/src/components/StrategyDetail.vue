@@ -1,42 +1,65 @@
 <template>
   <div class="card mb-2 bg-grey-custom">
-    <!-- @click="SelectedStrategy(Strategy)" -->
+    <!-- @click="SelectedStrategy(PropStrategy)" -->
     <div class="card-header">
       <div class="d-flex">
         <div class="p-2 align-self-center">
-          <h5>{{ Strategy.name }}</h5>
+          <h5 v-show="!PropStrategy.isNameEdit">{{ PropStrategy.name }} {{ PropStrategy._id}} </h5>
+          <input
+            class="form-control"
+            v-show="PropStrategy.isNameEdit"
+            v-model="PropStrategy.name"
+          />
         </div>
+
         <div class="p-2">
-          <i class="btn btn-danger bi bi-trash"></i>
+          <a class="btn btn-warning" @click="addEditStrategy()">
+            <i
+              class="bi"
+              :class="PropStrategy.isNameEdit ? 'bi-save' : 'bi-pencil'"
+            ></i>
+          </a>
+          <a class="btn btn-danger ml-2" @click="deleteStrategy()">
+            <i class="bi bi-trash"></i>
+          </a>
+        </div>
+        <div class="p-2 ml-auto">
+          {{ PropStrategy.symbol }}
         </div>
         <div class="ml-auto p-2">
           <h5 class="float-right">
             Created On:
-            {{ Strategy.CreatedOn }}
+            {{ PropStrategy.CreatedOn }}
           </h5>
         </div>
       </div>
     </div>
 
     <div class="card-body">
-      <ul v-if="Strategy.Trades" class="list-group list-group-flush">
+      <ul v-if="PropStrategy.trades" class="list-group list-group-flush">
         <li
-          :key="Trade._id.$oid"
-          v-for="Trade in Strategy.Trades"
+          :key="Trade._id"
+          v-for="Trade in PropStrategy.Trades"
           class="list-group-item"
         >
-          <button class="btn btn-dark" @click="DeleteTrade(Strategy, Trade)">
+          <button
+            class="btn btn-dark"
+            @click="deleteTrade(PropStrategy, Trade)"
+          >
             {{ Trade.Name }}
           </button>
         </li>
       </ul>
       <div class="TradeAddEditPlaceholder">
-        <TradeAddEdit v-if="Strategy.IsEdit" :ParentStrategy="Strategy" />
+        <TradeAddEdit
+          v-if="this.isAddEditTrade"
+          :ParentStrategy="PropStrategy"
+        />
       </div>
     </div>
     <div class="card-footer text-dark">
       <div class="col-lg-12">
-        <a class="btn btn-warning float-right" @click="CreateNewTrade()">
+        <a class="btn btn-warning float-right" @click="addEditTrade()">
           <i class="bi bi-plus-square"></i>
           <!-- <i v-show="isEdit" class="bi bi-save"></i> -->
           Add New Trade
@@ -51,22 +74,38 @@ import TradeAddEdit from "./TradeAddEdit";
 export default {
   name: "StrategyDetail",
   components: { TradeAddEdit },
-
-  props: { Strategy: { type: Object } },
+  props: { PropStrategy: { type: Object } },
   methods: {
-    ...mapActions(["ShowNewTrade", "RemoveTrade", "SetSelectedStrategy"]),
-    CreateNewTrade() {
-      if (this.Strategy.IsEdit) {
-        this.Strategy.IsEdit = false;
+    ...mapActions([
+      "AddEditStrategy",
+      "AddEditTrade",
+      "DeleteStrategy",
+      "RemoveTrade",
+    ]),
+
+    addEditStrategy() {
+      if (this.PropStrategy.isNameEdit) {
+        console.log("Save clicked");
+        //this.AddEditStrategy(_strategy);
       } else {
-        this.$set(this.Strategy, "IsEdit", true);
-        //console.log(this.Strategy);
-        //this.SetSelectedStrategy(this.Strategy);
+        console.log("Edit clicked");
       }
+      this.PropStrategy.isNameEdit = !this.PropStrategy.isNameEdit;
     },
-    DeleteTrade(_strategy, _trade) {
+    deleteStrategy() {
+      this.DeleteStrategy({ _id: this.PropStrategy._id });
+    },
+    addEditTrade() {
+      this.isAddEditTrade = !this.isAddEditTrade;
+    },
+    deleteTrade(_strategy, _trade) {
       this.RemoveTrade({ _strategy, _trade });
     },
+  },
+  data: function () {
+    return {
+      isAddEditTrade: false,
+    };
   },
 };
 </script>

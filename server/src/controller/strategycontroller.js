@@ -17,7 +17,8 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id, portfolio, name, description, symbol, trades  } = req.body;
+  const { _id, portfolio, name, description, symbol, trades } = req.body;
+  
   if (_id) {
     var _data = {
       name,
@@ -62,5 +63,16 @@ strategycontoller.post("/delete", async (req, res) => {
     });
   }
 });
+
+
+strategycontoller.post("/deleteusingportfolio", async (req, res) => {
+  var { portfolio } = req.body;
+  if (_id) {
+    Strategy.deleteOne({ portfolio }, (err, doc) => {
+      res.json(doc);
+    });
+  }
+});
+
 
 module.exports = strategycontoller;

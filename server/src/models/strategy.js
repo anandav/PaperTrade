@@ -26,10 +26,6 @@ const strategySchema = schema({
     type:mongoose.Schema.Types.ObjectId,
     ref: "Portfolio"
   },
-  // portfolios: [{
-  //   type:mongoose.Schema.Types.ObjectId,
-  //   ref: "Portfolio"
-  // }],
 });
 
 //name, description, symbol, createdon

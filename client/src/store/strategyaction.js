@@ -2,12 +2,13 @@ import "dotenv/config";
 const axios = require("axios");
 const apiUrl = process.env.VUE_APP_APIURL || "/";
 import {
-    GETALLSTRATEGIES 
+    GETALLSTRATEGIES,
+    ADDEDITSTRATEGY,
+    DELETESTRATEGY
 } from "./mutationtype";
 
-export default  {
+export default {
     async GetAllStrategies({ commit }, item) {
-        console.log(item);
         axios.post(apiUrl + "strategy/findusingportfolioid", {
             "fieldName": "portfolio",
             "fieldValue": item,
@@ -16,7 +17,18 @@ export default  {
             commit(GETALLSTRATEGIES, res.data);
         });
     },
-    //async GetAllStrategy ({commit}) { },
-
+    AddEditStrategy({ commit }, item) {
+        axios.post(apiUrl + "strategy/save", item).then(function (res) {
+            console.log(res.data[0]);
+            commit(ADDEDITSTRATEGY, item);
+        })
+    },
+    DeleteStrategy({ commit }, item) {
+        axios.post(apiUrl + "strategy/delete", item).then(function (res) {
+            if (res.status == 200); {
+                commit(DELETESTRATEGY, item._id);
+            }   
+        })
+    }
 };
 

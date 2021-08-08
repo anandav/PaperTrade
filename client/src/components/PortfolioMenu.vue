@@ -76,9 +76,11 @@ export default {
       "GetPortfolioById",
       "SavePortfolio",
       "DeletePortfolio",
+      "GetAllStrategies",
     ]),
     menuSelectedPortfolio(item) {
       this.GetPortfolioById(item);
+      this.GetAllStrategies(item);
     },
 
     addEditPortfolio() {

@@ -14,23 +14,42 @@
           Add New Strategy</a
         >
       </div>
-      <StrategiesList />
+
+      <!-- <StrategiesList /> -->
+      <div class="mt-3">
+        <div :key="item._id" v-for="item in Strategies">
+          <StrategyDetail :PropStrategy="item" />
+          <hr />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
-import StrategiesList from "./StrategiesList";
+import { mapState, mapActions } from "vuex";
+import StrategyDetail from "./StrategyDetail.vue";
 export default {
   name: "PortfolioDetail",
-  components: { StrategiesList },
+  components: {
+    StrategyDetail,
+  },
   computed: {
     ...mapState(["Portfolio", "Strategies"]),
   },
   methods: {
+    ...mapActions(["AddEditStrategy"]),
     addNewStrategy: function () {
       this.isEdit = !this.isEdit;
-      console.log( this.$dayjs.format());
+
+      var _strategy = {
+        name: "NEW",
+        description: "",
+        symbol: "NIFTY",
+        portfolio: this.Portfolio._id,
+        //isNameEdit: true,
+      };
+      this.AddEditStrategy(_strategy);
+     
     },
   },
   data: function () {
