@@ -46,7 +46,7 @@ export default {
         description: "",
         symbol: "NIFTY",
         portfolio: this.Portfolio._id,
-        //isNameEdit: true,
+        isNameEdit: true,
       };
       this.AddEditStrategy(_strategy);
      

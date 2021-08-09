@@ -6,11 +6,13 @@ const commonUtility = require("../models/commonUtility");
 require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
+  console.log("called / ");
   const data = await Portfolio.find();
   res.json(data);
 });
 
 portfolicontroller.post("/find", async (req, res) => {
+  console.log("called /find ");
   var { fieldName, fieldValue } = req.body;
   var result = {};
   if (fieldName && fieldValue) {

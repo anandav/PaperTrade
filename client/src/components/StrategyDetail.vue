@@ -4,10 +4,10 @@
     <div class="card-header">
       <div class="d-flex">
         <div class="p-2 align-self-center">
-          <h5 v-show="!PropStrategy.isNameEdit">{{ PropStrategy.name }} {{ PropStrategy._id}} </h5>
+          <h5 v-show="!this.isNameEdit">{{ PropStrategy.name }}</h5>
           <input
             class="form-control"
-            v-show="PropStrategy.isNameEdit"
+            v-show="this.isNameEdit"
             v-model="PropStrategy.name"
           />
         </div>
@@ -16,7 +16,7 @@
           <a class="btn btn-warning" @click="addEditStrategy()">
             <i
               class="bi"
-              :class="PropStrategy.isNameEdit ? 'bi-save' : 'bi-pencil'"
+              :class="this.isNameEdit ? 'bi-save' : 'bi-pencil'"
             ></i>
           </a>
           <a class="btn btn-danger ml-2" @click="deleteStrategy()">
@@ -82,15 +82,14 @@ export default {
       "DeleteStrategy",
       "RemoveTrade",
     ]),
-
     addEditStrategy() {
-      if (this.PropStrategy.isNameEdit) {
-        console.log("Save clicked");
-        //this.AddEditStrategy(_strategy);
-      } else {
+      this.isNameEdit = !this.isNameEdit;
+      if (this.isNameEdit) {
         console.log("Edit clicked");
+      } else {
+        console.log("Save clicked");
+        this.AddEditStrategy(this.PropStrategy);
       }
-      this.PropStrategy.isNameEdit = !this.PropStrategy.isNameEdit;
     },
     deleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
@@ -102,9 +101,14 @@ export default {
       this.RemoveTrade({ _strategy, _trade });
     },
   },
+  created: function () {
+    //this.isNameEdit =  this.PropStrategy.isNameEdit;
+    //console.log("created");
+  },
   data: function () {
     return {
       isAddEditTrade: false,
+      isNameEdit: false,
     };
   },
 };

@@ -48,13 +48,19 @@ const mutations = {
     state.Strategies = _strategies;
   },
   [ADDEDITSTRATEGY](state, _strategy) {
-
-    if (state.Strategies) {
+    var foundIndex = state.Strategies.findIndex(x=> x._id == _strategy._id);
+    if(foundIndex > -1){
+      console.log(foundIndex);
+      state.Strategies[foundIndex] = _strategy;
+    }else{
       state.Strategies.unshift(_strategy);
-    } else {
-      state.Strategies = [_strategy];
-
     }
+
+    // if (state.Strategies) {
+    //   state.Strategies.unshift(_strategy);
+    // } else {
+    //   state.Strategies = [_strategy];
+    // }
   },
   [DELETESTRATEGY](state, _strategyId) {
     for (let i = 0, l = state.Strategies.length; i < l; i++) {

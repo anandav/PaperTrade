@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
-const port =  process.env.PORT || 9090;
+const port = process.env.PORT || 9090;
 
 const tradeController = require("./controller/tradecontroller");
 
@@ -23,17 +23,30 @@ app.use("/", (req, res, next) => {
   console.log("==request-body-end==");
   next();
 });
-app.use("/strategy",strategyController);
+app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
-app.use("/trade",tradeController);
-app.use("/",express.static('public'));
+app.use("/trade", tradeController);
+app.use("/", express.static('public'));
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,
   { useNewUrlParser: true, useUnifiedTopology: true },
   () => {
-    console.log("DB connected.");
+    console.log("DB connected...");
+    //console.log(process.env.DBCONNECTIONSTRING);
   }
 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 //app.use(require("./route"));
 app.listen(port, function () {

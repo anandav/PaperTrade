@@ -19,15 +19,16 @@ export default {
     },
     AddEditStrategy({ commit }, item) {
         axios.post(apiUrl + "strategy/save", item).then(function (res) {
-            console.log(res.data[0]);
-            commit(ADDEDITSTRATEGY, item);
+            if (res.status == 200) {
+                commit(ADDEDITSTRATEGY, item);
+            }
         })
     },
     DeleteStrategy({ commit }, item) {
         axios.post(apiUrl + "strategy/delete", item).then(function (res) {
-            if (res.status == 200); {
+            if (res.status == 200) {
                 commit(DELETESTRATEGY, item._id);
-            }   
+            }
         })
     }
 };
