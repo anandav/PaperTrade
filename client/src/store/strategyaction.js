@@ -19,8 +19,13 @@ export default {
     },
     AddEditStrategy({ commit }, item) {
         axios.post(apiUrl + "strategy/save", item).then(function (res) {
+            console.log(res);
             if (res.status == 200) {
-                commit(ADDEDITSTRATEGY, item);
+                console.log("Actoin responce status 200");
+                commit(ADDEDITSTRATEGY, res.data);
+            } else {
+
+                console.log(res.status);
             }
         })
     },
@@ -29,6 +34,7 @@ export default {
             if (res.status == 200) {
                 commit(DELETESTRATEGY, item._id);
             }
+
         })
     }
 };

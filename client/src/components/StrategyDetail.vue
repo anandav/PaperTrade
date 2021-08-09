@@ -9,6 +9,7 @@
             class="form-control"
             v-show="this.isNameEdit"
             v-model="PropStrategy.name"
+            @keydown.enter="addEditStrategy()"
           />
         </div>
 
@@ -84,10 +85,7 @@ export default {
     ]),
     addEditStrategy() {
       this.isNameEdit = !this.isNameEdit;
-      if (this.isNameEdit) {
-        console.log("Edit clicked");
-      } else {
-        console.log("Save clicked");
+      if (!this.isNameEdit) {
         this.AddEditStrategy(this.PropStrategy);
       }
     },

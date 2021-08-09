@@ -17,26 +17,32 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id, portfolio, name, description, symbol, trades } = req.body;
+  const { _id, portfolio, name, description, symbol, trades, createdon} = req.body;
   
   if (_id) {
     var _data = {
+      _id,
       name,
       description,
       symbol,
       portfolio,
-      modifiedOn: new Date(),
+      createdon,
+      modifiedon: new Date(),
     };
     if (trades) {
       _data.trades = trades;
     }
+    
     var _strategyObject = await Strategy.updateOne(
       { _id: _id },
       {
         $set: _data,
       }
-    );
-    res.send(_strategyObject);
+      );
+      console.log("_data");
+      console.log(_data);
+
+    res.send(_data);
   } else {
     const strategy = new Strategy({
       name,
@@ -45,6 +51,7 @@ strategycontoller.post("/save", async (req, res) => {
       trades,
       portfolio,
       createdon: new Date(),
+      modifiedon: new Date(),
     });
     try {
       const result = await strategy.save();
