@@ -12,20 +12,14 @@ export default {
         axios.post(apiUrl + "strategy/findusingportfolioid", {
             "fieldName": "portfolio",
             "fieldValue": item,
-
         }).then(function (res) {
             commit(GETALLSTRATEGIES, res.data);
         });
     },
     AddEditStrategy({ commit }, item) {
         axios.post(apiUrl + "strategy/save", item).then(function (res) {
-            console.log(res);
             if (res.status == 200) {
-                console.log("Actoin responce status 200");
                 commit(ADDEDITSTRATEGY, res.data);
-            } else {
-
-                console.log(res.status);
             }
         })
     },

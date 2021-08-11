@@ -1,10 +1,10 @@
 
 body{
-	background-color: #21272E;
+	background-color: #21272E !important;
 }
 
 .header {
-	background-color: #2C333B;
+	background-color: #2C333B !important;
 }
 
 .bg-grey-custom{

@@ -39,7 +39,7 @@
                 >
               </div>
               <input
-                class="form-control col-lg"
+                class="form-control  "
                 v-show="inlineEdit && item._id === _pid"
                 placeholder="Edit Portfolio Name"
                 type="text"
@@ -48,8 +48,8 @@
               />
             </div>
             <div class="col-sm">
-              <div class="float-right">
-                <a class="btn btn-warning text-dark" @click="inlineEditPortfolio(item)">
+              <div class="float-right text-dark">
+                <a class="btn btn-warning " @click="inlineEditPortfolio(item)">
                   <i v-show="!inlineEdit" class="bi bi-pencil"></i>
                   <i v-show="inlineEdit" class="bi bi-save"></i>
                 </a>

@@ -36,7 +36,6 @@ const mutations = {
   },
   [SETPORTFOLIO](state, _protfolio) {
     state.Portfolio = _protfolio;
-    //state.Strategies = null;
   },
   [DELETEPORTFOLIE](state, _protfolio) {
     var _index = state.Portfolios.findIndex(x => x._id == _protfolio._id);
@@ -49,21 +48,11 @@ const mutations = {
   },
   [ADDEDITSTRATEGY](state, _strategy) {
     var foundIndex = state.Strategies.findIndex(x=> x._id == _strategy._id);
-    console.log(_strategy._id);
-    console.log(_strategy.name);
     if(foundIndex > -1){
-      console.log(foundIndex);
       state.Strategies[foundIndex] = _strategy;
     }else{
-      console.log("item not foud");
       state.Strategies.unshift(_strategy);
     }
-
-    // if (state.Strategies) {
-    //   state.Strategies.unshift(_strategy);
-    // } else {
-    //   state.Strategies = [_strategy];
-    // }
   },
   [DELETESTRATEGY](state, _strategyId) {
     for (let i = 0, l = state.Strategies.length; i < l; i++) {
