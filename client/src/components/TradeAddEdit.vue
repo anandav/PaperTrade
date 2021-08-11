@@ -1,94 +1,84 @@
 <template>
-  <div class="list-group list-group-flush bg-grey-custom" data-id="ParentStrategy._id" >
-    
-      <div class="row">
-        <div class="col-md-1 mb-3">
-          <label>Buy & Sell</label>
-          <div class="btn-group btn-group-toggle">
-            <label
-              class="btn"
-              v-for="(value, key) in tradeType"
-              :key="key"
-              :class="{
-                'btn-outline-success': key == 1,
-                'btn-outline-danger': key == 2,
-                'active': value == [TradeDetail.BuyOrSell]
-              }"
-            >
-              <input
-                type="radio"
-                name="tradeTypename"
-                :value="value"
-                :id="'trade_' + value"
-                v-model="TradeDetail.BuyOrSell"
-              />
-              {{value}}
-            </label>
-          </div>
-        </div>
+  <div
+    class="list-group list-group-flush bg-grey-custom"
+    data-id="ParentStrategy._id"
+  >
+    <div class="row text-white">
+      <div class="col-sm col-md-2">
+        <div class>
+          <input
+            type="range"
+            :min="14000"
+            :max="17000"
+            step="50"
+            v-model.number="TradeDetail.SelectedStrikePrice"
+            class="form-control-range"
+            id="formControlRange"
+          />
 
-        <div class="col-md-2 mb-3">
-          <label>Type</label>
-          <div class="btn-group btn-group-toggle">
-            <label
-              class="btn btn-outline-secondary"
-              v-for="(value, key) in tradeSymbol"
-              :key="key"
-              :class="{ 'active':  value == [TradeDetail.Type] }"
-            >
-              <input
-                type="radio"
-                name="tradeSymbol"
-                :value="value"
-                :id="'tradeSymbol_' + value"
-                v-model="TradeDetail.Type"
-              />
-              {{value}}
-            </label>
-          </div>
-        </div>
-
-        <div class="col-md-2 mb-3">
-          <label>Strike Price</label>
-          <div class>
-            <input
-              type="range"
-              :min="70"
-              :max="80"
-              step="0.25"
-              v-model.number="TradeDetail.SelectedStrikePrice"
-              class="form-control-range"
-              id="formControlRange"
-            />
-
-            <span style="float: left; display:block">{{TradeDetail.SelectedStrikePrice}}</span>
-          </div>
-        </div>
-        <div class="col-md-2 mb-3">
-          <label>Price</label>
-          <div class>
-            <input
-              type="number"
-              v-model.number="TradeDetail.SpotPrice"
-              class="form-control"
-              id="formSpotPrice"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="btn-group" role="group" style="margin-top:30px;">
-            <button type="button" class="btn btn-outline-secondary" @click="onSaveTrade();">Save</button>
-            <button type="button" class="btn btn-outline-secondary">Cancel</button>
-           </div>
+          <span>{{ TradeDetail.SelectedStrikePrice }}</span>
         </div>
       </div>
-      <div class="form-group row">
-        <div class="pull-right">
-          <!-- <label for>Action</label> -->
+
+      <div class="col-sm col-md-2">
+        <div class>
+          <input
+            placeholder="Price"
+            type="number"
+            v-model.number="TradeDetail.SpotPrice"
+            class="form-control"
+            id="formSpotPrice"
+          />
         </div>
       </div>
-    
+
+      <div class="col-sm col-md-8">
+        <div class="btn-group btn-group-toggle">
+          <label
+            class="btn btn-sm"
+            v-for="(value, key) in tradeType"
+            :key="key"
+            :class="{
+              'btn-outline-success': key == 1,
+              'btn-outline-danger': key == 2,
+              active: value == [TradeDetail.BuyOrSell],
+            }"
+          >
+            <input
+              type="radio"
+              name="tradeTypename"
+              :value="value"
+              :id="'trade_' + value"
+              v-model="TradeDetail.BuyOrSell"
+            />
+            {{ value }}
+          </label>
+        </div>
+     
+        <div class="ml-2 btn-group btn-group-toggle">
+          <label
+            class="btn btn-outline-secondary btn-sm"
+            v-for="(value, key) in tradeSymbol"
+            :key="key"
+            :class="{ active: value == [TradeDetail.Type] }"
+          >
+            <input
+              type="radio"
+              name="tradeSymbol"
+              :value="value"
+              :id="'tradeSymbol_' + value"
+              v-model="TradeDetail.Type"
+            />
+            {{ value }}
+          </label>
+        </div>
+     
+        <div class="col-md-8">
+          <a class="btn btn-outline-secondary" @click="onSaveTrade()"> Save </a>
+          <a class="btn btn-outline-secondary"> Cancel </a>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -103,8 +93,8 @@ export default {
       TradeDetail: {
         BuyOrSell: "",
         Type: "",
-        SelectedStrikePrice: 75,
-        SpotPrice: 0.0,
+        SelectedStrikePrice: 16300,
+        SpotPrice: null,
       },
 
       tradeType: {
@@ -118,15 +108,13 @@ export default {
       },
     };
   },
-  props: { selectedPrice: { type: Number, default: 0 },
-  ParentStrategy :{}
-  },
+  props: { selectedPrice: { type: Number, default: 0 }, ParentStrategy: {} },
   methods: {
     ...mapActions([
       "GetInstrumentDetail",
       "OnStrikePriceRangeChanging",
       "OnStrikePriceRangeChanged",
-      "SaveTrade"
+      "SaveTrade",
     ]),
     onStrikeRangeChanging(evt) {
       //this.selectedPrice = evt.target.value;
@@ -146,7 +134,7 @@ export default {
       //this.Strategy.Trades.push(this.TradeDetail);
       console.log(this.ParentStrategy);
       console.log(this.TradeDetail);
-      this.SaveTrade(this.Strategy,this.TradeDetail );
+      this.SaveTrade(this.Strategy, this.TradeDetail);
     },
   },
   created() {
@@ -154,10 +142,9 @@ export default {
     //this.GetInstrumentDetail();
   },
   computed: {
-     ...mapState(["Strategy"]),//"SelectedStrikePrice"
+    ...mapState(["Strategy"]), //"SelectedStrikePrice"
     ...mapGetters(["getLatestPrice"]),
   },
-
 };
 </script>
 <style scoped>
