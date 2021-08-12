@@ -1,46 +1,39 @@
 <template>
   <div
     class="list-group list-group-flush bg-grey-custom"
-    data-id="ParentStrategy._id"
+    
   >
     <div class="row text-white">
-      <div class="col-sm col-md-2">
-        <div class>
+      <div class="col-md-2">
+        <div>
           <input
+            class="form-control"
+            type="text"
+            v-model="TradeDetail.SelectedStrikePrice"
+          />
+          <input
+            placeholder="Strike Price"
             type="range"
-            :min="14000"
-            :max="17000"
-            step="50"
+            :min="TradeDetail.StrikePriceMin"
+            :max="TradeDetail.StrikePriceMax"
+            :step="TradeDetail.StrikePriceStep"
             v-model.number="TradeDetail.SelectedStrikePrice"
             class="form-control-range"
             id="formControlRange"
           />
-
-          <span>{{ TradeDetail.SelectedStrikePrice }}</span>
+          <!-- <span>{{ TradeDetail.SelectedStrikePrice }}</span>  -->
         </div>
       </div>
 
-      <div class="col-sm col-md-2">
-        <div class>
-          <input
-            placeholder="Price"
-            type="number"
-            v-model.number="TradeDetail.SpotPrice"
-            class="form-control"
-            id="formSpotPrice"
-          />
-        </div>
-      </div>
-
-      <div class="col-sm col-md-8">
+      <div class="col-md-1 pl-4">
         <div class="btn-group btn-group-toggle">
           <label
-            class="btn btn-sm"
+            class="btn btn btn-secondary"
             v-for="(value, key) in tradeType"
             :key="key"
             :class="{
-              'btn-outline-success': key == 1,
-              'btn-outline-danger': key == 2,
+              'text-success': key == 1,
+              'text-danger': key == 2,
               active: value == [TradeDetail.BuyOrSell],
             }"
           >
@@ -54,10 +47,11 @@
             {{ value }}
           </label>
         </div>
-     
-        <div class="ml-2 btn-group btn-group-toggle">
+      </div>
+      <div class="col-md-2  pl-5">
+        <div class="btn-group btn-group-toggle">
           <label
-            class="btn btn-outline-secondary btn-sm"
+            class="btn btn-secondary  text-white"
             v-for="(value, key) in tradeSymbol"
             :key="key"
             :class="{ active: value == [TradeDetail.Type] }"
@@ -72,11 +66,21 @@
             {{ value }}
           </label>
         </div>
-     
-        <div class="col-md-8">
-          <a class="btn btn-outline-secondary" @click="onSaveTrade()"> Save </a>
-          <a class="btn btn-outline-secondary"> Cancel </a>
-        </div>
+      </div>
+
+      <div class="col-md-2">
+        <input
+          placeholder="Price"
+          type="number"
+          v-model.number="TradeDetail.SpotPrice"
+          class="form-control"
+          id="formSpotPrice"
+        />
+      </div>
+
+      <div class="col-md-2 text-dark">
+        <a class="btn btn-warning" @click="onSaveTrade()"> Save </a>
+        <!-- <a class="btn btn-danger"> Cancel </a> -->
       </div>
     </div>
   </div>
@@ -91,6 +95,9 @@ export default {
   data() {
     return {
       TradeDetail: {
+        StrikePriceMin :14000,
+        StrikePriceMax : 17000,
+        StrikePriceStep : 50,
         BuyOrSell: "",
         Type: "",
         SelectedStrikePrice: 16300,
@@ -108,7 +115,11 @@ export default {
       },
     };
   },
-  props: { selectedPrice: { type: Number, default: 0 }, ParentStrategy: {} },
+  props: {
+    selectedPrice: { type: Number, default: 0 },
+   
+    ParentStrategy: {},
+  },
   methods: {
     ...mapActions([
       "GetInstrumentDetail",
@@ -117,7 +128,6 @@ export default {
       "SaveTrade",
     ]),
     onStrikeRangeChanging(evt) {
-      //this.selectedPrice = evt.target.value;
       this.OnStrikePriceRangeChanging(evt);
     },
     onStrikeRangeChanged(evt) {
@@ -131,9 +141,6 @@ export default {
       this.OnStrikePriceRangeChanged(searchQuery);
     },
     onSaveTrade() {
-      //this.Strategy.Trades.push(this.TradeDetail);
-      console.log(this.ParentStrategy);
-      console.log(this.TradeDetail);
       this.SaveTrade(this.Strategy, this.TradeDetail);
     },
   },

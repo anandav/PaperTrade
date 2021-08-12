@@ -41,7 +41,7 @@
       <div class="card-body text-dark">
         <div class="row">
           <div class="col-sm">
-            <TradeAddEdit :ParentStrategy="PropStrategy" />
+            <TradeAddEdit :ParentStrategy="PropStrategy"   />
           </div>
         </div>
       </div>
@@ -82,8 +82,18 @@ export default {
     deleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
+    bindAddEditTrade(){
+      this.BindAddEditTrade(this.PropStrategy);
+    }
   },
-  created: function () {},
+  created: function () {
+    // this.PropTrade =   {
+    //     BuyOrSell: "Sell",
+    //     Type: "Put",
+    //     SelectedStrikePrice: 16300,
+    //     SpotPrice: 50,
+    //   }
+  },
   data: function () {
     return {
       isNameEdit: false,

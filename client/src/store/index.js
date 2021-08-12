@@ -17,18 +17,21 @@ import {
   ADDEDITSTRATEGY,
   DELETESTRATEGY,
 
+  //trade
+  BINDADDEDITTRADE,
+
 } from "./mutationtype";
 
 const state = {
   Portfolios: [],
   Strategies: [],
   Portfolio: undefined,
-  NewStrategyPlaceHolder: undefined,
-  Trade: undefined,
-  InsurumentDetail: undefined,
-  InsurumentLatestPirce: undefined,
-  SelectedStrikePrice: 0,
-  SelectedStrike: undefined,
+  // NewStrategyPlaceHolder: undefined,
+  // Trade: undefined,
+  // InsurumentDetail: undefined,
+  // InsurumentLatestPirce: undefined,
+  // SelectedStrikePrice: 0,
+  // SelectedStrike: undefined,
 };
 const mutations = {
   [GETALLPORTFOLIOS](state, _portfolios) {
@@ -47,10 +50,10 @@ const mutations = {
     state.Strategies = _strategies;
   },
   [ADDEDITSTRATEGY](state, _strategy) {
-    var foundIndex = state.Strategies.findIndex(x=> x._id == _strategy._id);
-    if(foundIndex > -1){
+    var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
+    if (foundIndex > -1) {
       state.Strategies[foundIndex] = _strategy;
-    }else{
+    } else {
       state.Strategies.unshift(_strategy);
     }
   },
@@ -62,6 +65,15 @@ const mutations = {
       }
     }
   },
+  [BINDADDEDITTRADE](state, _strategy, symbol) {
+    var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
+    if (foundIndex > -1) {
+      state.Strategies[foundIndex].BindAddEditTrade = symbol;
+    }
+
+
+
+  }
 };
 
 const modules = {};
