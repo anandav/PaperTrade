@@ -111,7 +111,6 @@ export default {
       }
     },
     deletePortfolio(itempfl) {
-      console.log("Porfolio Delete clicked");
       this.DeletePortfolio(itempfl);
     },
   },

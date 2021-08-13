@@ -1,27 +1,23 @@
 <template>
-  <div
-    class="list-group list-group-flush bg-grey-custom"
-    
-  >
+  <div class="list-group list-group-flush bg-grey-custom">
     <div class="row text-white">
       <div class="col-md-2">
         <div>
           <input
             class="form-control"
             type="text"
-            v-model="TradeDetail.SelectedStrikePrice"
+            v-model="PropStrategy.BindingValues.SelectedStrikePrice"
           />
           <input
             placeholder="Strike Price"
             type="range"
-            :min="TradeDetail.StrikePriceMin"
-            :max="TradeDetail.StrikePriceMax"
-            :step="TradeDetail.StrikePriceStep"
-            v-model.number="TradeDetail.SelectedStrikePrice"
+            :min="PropStrategy.BindingValues.StrikePriceMin"
+            :max="PropStrategy.BindingValues.StrikePriceMax"
+            :step="PropStrategy.BindingValues.StrikePriceStep"
+            v-model.number="PropStrategy.BindingValues.SelectedStrikePrice"
             class="form-control-range"
             id="formControlRange"
           />
-          <!-- <span>{{ TradeDetail.SelectedStrikePrice }}</span>  -->
         </div>
       </div>
 
@@ -34,7 +30,7 @@
             :class="{
               'text-success': key == 1,
               'text-danger': key == 2,
-              active: value == [TradeDetail.BuyOrSell],
+              active: value == [PropStrategy.BindingValues.BuyOrSell],
             }"
           >
             <input
@@ -42,26 +38,27 @@
               name="tradeTypename"
               :value="value"
               :id="'trade_' + value"
-              v-model="TradeDetail.BuyOrSell"
+              v-model="PropStrategy.BindingValues.BuyOrSell"
             />
             {{ value }}
           </label>
         </div>
       </div>
-      <div class="col-md-2  pl-5">
+
+      <div class="col-md-2 pl-5">
         <div class="btn-group btn-group-toggle">
           <label
-            class="btn btn-secondary  text-white"
+            class="btn btn-secondary text-white"
             v-for="(value, key) in tradeSymbol"
             :key="key"
-            :class="{ active: value == [TradeDetail.Type] }"
+            :class="{ active: value == [PropStrategy.BindingValues.Type] }"
           >
             <input
               type="radio"
               name="tradeSymbol"
               :value="value"
               :id="'tradeSymbol_' + value"
-              v-model="TradeDetail.Type"
+              v-model="PropStrategy.BindingValues.Type"
             />
             {{ value }}
           </label>
@@ -72,38 +69,24 @@
         <input
           placeholder="Price"
           type="number"
-          v-model.number="TradeDetail.SpotPrice"
+          v-model.number="PropStrategy.BindingValues.SpotPrice"
           class="form-control"
           id="formSpotPrice"
         />
       </div>
 
       <div class="col-md-2 text-dark">
-        <a class="btn btn-warning" @click="onSaveTrade()"> Save </a>
-        <!-- <a class="btn btn-danger"> Cancel </a> -->
+        <a class="btn btn-warning" @click="onAddEditTrade()"> Save </a>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapActions, mapGetters, mapState } from "vuex"; //, mapState
-//import { utilitymixins } from '../shared/utilitymixins'
+import { mapActions } from "vuex"; //mapGetters, mapState
 export default {
   name: "TradeAddEdit",
-  //mixins : [utilitymixins],
-
   data() {
     return {
-      TradeDetail: {
-        StrikePriceMin :14000,
-        StrikePriceMax : 17000,
-        StrikePriceStep : 50,
-        BuyOrSell: "",
-        Type: "",
-        SelectedStrikePrice: 16300,
-        SpotPrice: null,
-      },
-
       tradeType: {
         1: "Buy",
         2: "Sell",
@@ -116,42 +99,16 @@ export default {
     };
   },
   props: {
-    selectedPrice: { type: Number, default: 0 },
-   
-    ParentStrategy: {},
+    PropStrategy: {},
   },
+  computed: {},
   methods: {
-    ...mapActions([
-      "GetInstrumentDetail",
-      "OnStrikePriceRangeChanging",
-      "OnStrikePriceRangeChanged",
-      "SaveTrade",
-    ]),
-    onStrikeRangeChanging(evt) {
-      this.OnStrikePriceRangeChanging(evt);
-    },
-    onStrikeRangeChanged(evt) {
-      console.log("test");
-      var searchQuery = {
-        underlying: "NIFTY",
-        optionType: "put",
-        strikePrice: evt.target.value,
-        expiryDate: "",
-      };
-      this.OnStrikePriceRangeChanged(searchQuery);
-    },
-    onSaveTrade() {
-      this.SaveTrade(this.Strategy, this.TradeDetail);
+    ...mapActions(["AddEditTrade"]),
+    onAddEditTrade() {
+      this.AddEditTrade(this.PropStrategy);
     },
   },
-  created() {
-    // this.utilitymixins.foo();
-    //this.GetInstrumentDetail();
-  },
-  computed: {
-    ...mapState(["Strategy"]), //"SelectedStrikePrice"
-    ...mapGetters(["getLatestPrice"]),
-  },
+  created() {},
 };
 </script>
 <style scoped>

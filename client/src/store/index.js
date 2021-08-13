@@ -2,6 +2,7 @@ import Vuex from "vuex";
 import Vue from "vue";
 import portfolioActions from "./portfoliactions";
 import strategyActions from "./strategyaction";
+import tradeActions from "./tradeaction";
 
 
 
@@ -65,10 +66,11 @@ const mutations = {
       }
     }
   },
-  [BINDADDEDITTRADE](state, _strategy, symbol) {
+
+  [BINDADDEDITTRADE](state, {_strategy, _symbolDetail}) {
     var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
     if (foundIndex > -1) {
-      state.Strategies[foundIndex].BindAddEditTrade = symbol;
+      state.Strategies[foundIndex].BindAddEditTrade = _symbolDetail;
     }
 
 
@@ -94,7 +96,7 @@ const getters = {
 export default new Vuex.Store({
   state,
   mutations,
-  actions: { ...portfolioActions, ...strategyActions },
+  actions: { ...portfolioActions, ...strategyActions, ...tradeActions },
   modules,
   getters,
 });

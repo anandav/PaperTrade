@@ -5,6 +5,7 @@ export const DELETEPORTFOLIE = 'DeletePortfolio';
 //Strategy
 export const GETALLSTRATEGIES = 'GetAllStrategy';
 export const ADDEDITSTRATEGY = 'AddEditStrategy';
-export const  DELETESTRATEGY = 'DeleteStrategy';
+export const DELETESTRATEGY = 'DeleteStrategy';
 //trade
 export const BINDADDEDITTRADE = 'BindAddEditTrade';
+export const ADDEDITTRADE = 'AddEditTrade';

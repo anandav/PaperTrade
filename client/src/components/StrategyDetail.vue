@@ -41,7 +41,11 @@
       <div class="card-body text-dark">
         <div class="row">
           <div class="col-sm">
-            <TradeAddEdit :ParentStrategy="PropStrategy"   />
+            <TradeAddEdit
+              :StrategyID="PropStrategy._id"
+              :PropStrategy="PropStrategy"
+             
+            />
           </div>
         </div>
       </div>
@@ -70,7 +74,7 @@ import TradeAddEdit from "./TradeAddEdit";
 export default {
   name: "StrategyDetail",
   components: { TradeAddEdit },
-  props: { PropStrategy: { type: Object } },
+  props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
   methods: {
     ...mapActions(["AddEditStrategy", "DeleteStrategy"]),
     addEditStrategy() {
@@ -82,17 +86,9 @@ export default {
     deleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
-    bindAddEditTrade(){
-      this.BindAddEditTrade(this.PropStrategy);
-    }
   },
   created: function () {
-    // this.PropTrade =   {
-    //     BuyOrSell: "Sell",
-    //     Type: "Put",
-    //     SelectedStrikePrice: 16300,
-    //     SpotPrice: 50,
-    //   }
+  
   },
   data: function () {
     return {
