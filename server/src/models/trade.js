@@ -12,33 +12,34 @@ const CALLPUTFUT = {
 };
 
 const tradeSchema = schema({
-  issell: {
-    type: Boolean,
+  symbol: {
+    type: String
   },
-  isfuture: {
-    type: Boolean,
+  lotsize :{
+    type : Number
   },
-  iscall :{
-    type: Boolean,
+  expiry: {
+    type: Date
   },
-  // callorputorfut: {
-  //   type: CALLPUTFUT,
-  // },
+  buyorsell: {
+    type: BUYORSELL,
+  },
+  tradetype: {
+    type: CALLPUTFUT,
+  },
   quantity: {
     type: Number,
   },
-  tradeType: {
-    type: String,
-  },
-  daystoexpiry: {
+  selectedstrike: {
     type: Number,
   },
-  strikeprice: {
+  spotprice: {
     type: Number,
   },
-  premiumprice: {
-    type: Number,
+  note : {
+    type: String
   },
+
 });
 
 module.exports = model("Trade", tradeSchema);

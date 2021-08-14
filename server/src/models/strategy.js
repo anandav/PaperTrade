@@ -17,6 +17,10 @@ const strategySchema = schema({
   symbol: {
     type: String,
   },
+  ismultiplesymbol: {
+    type: Boolean,
+    default : false
+  },
   createdon: {
     type: Date,
     default: Date.now(),
@@ -25,9 +29,10 @@ const strategySchema = schema({
     type: Date,
     default: Date.now(),
   },
+
   trades: [tradeSchema],
   portfolio: {
-    type:mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Portfolio"
   },
 });

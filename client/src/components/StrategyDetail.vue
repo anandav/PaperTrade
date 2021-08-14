@@ -3,14 +3,14 @@
   <div>
     <div class="card mb-2 bg-grey-custom">
       <div class="card-header">
-        <div class="d-flex">
+        <div class="d-flex justify-content-between bd-highlight">
           <div class="">
-            <div v-show="!this.isNameEdit">
+            <span v-show="!this.isNameEdit">
               {{ PropStrategy.name }}
-            </div>
+            </span>
 
             <input
-              class="input-sm"
+              class="form-control"
               placeholder="Strategy Name"
               v-show="this.isNameEdit"
               v-model="PropStrategy.name"
@@ -18,20 +18,30 @@
             />
           </div>
 
-          <div class="ml-auto">
-            <div v-show="!this.isNameEdit">
+          <div class="" v-if="!PropStrategy.ismultiplesymbol">
+            <span v-show="!this.isNameEdit">
               {{ PropStrategy.symbol }}
-            </div>
+            </span>
 
             <input
-              class=""
+              class="form-control"
               placeholder="Symbol"
               v-show="this.isNameEdit"
               v-model="PropStrategy.symbol"
               @keydown.enter="addEditStrategy()"
             />
           </div>
-          <div class="ml-auto">
+          <div class="">
+            <label>
+              <input
+                type="checkbox"
+                v-model="PropStrategy.ismultiplesymbol"
+                @click="addEditStrategy()"
+              />
+              Is Multiple Symbol
+            </label>
+          </div>
+          <div class="">
             Created On:
             {{ PropStrategy.CreatedOn }}
           </div>
@@ -40,13 +50,13 @@
 
       <div class="card-body text-dark">
         <div class="row">
-          <div class="col-sm">
-            <TradeAddEdit
-              :StrategyID="PropStrategy._id"
-              :PropStrategy="PropStrategy"
-             
-            />
-          </div>
+          <TradeList :PropStrategy="PropStrategy" />
+        </div>
+        <div class="row">
+          <TradeAddEdit
+            :StrategyID="PropStrategy._id"
+            :PropStrategy="PropStrategy"
+          />
         </div>
       </div>
       <div class="card-footer text-dark">
@@ -71,9 +81,10 @@
 <script>
 import { mapActions } from "vuex";
 import TradeAddEdit from "./TradeAddEdit";
+import TradeList from "./TradeList";
 export default {
   name: "StrategyDetail",
-  components: { TradeAddEdit },
+  components: { TradeAddEdit, TradeList },
   props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
   methods: {
     ...mapActions(["AddEditStrategy", "DeleteStrategy"]),
@@ -87,9 +98,7 @@ export default {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
   },
-  created: function () {
-  
-  },
+  created: function () {},
   data: function () {
     return {
       isNameEdit: false,

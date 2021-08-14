@@ -13,22 +13,25 @@ tradeController.post("/save", async (req, res) => {
   const {
     sid,
     _id,
-    issell,
+    symbol,
+    lotsize,
+    buyorsell,
+    tradetype,
     quantity,
-    iscall,
-    isfuture,
-    daystoexpiry,
-    strikeprice,
-    premiumprice,
+    selectedstrike,
+    spotprice,
+    note,
+
   } = req.body;
   var _trade = new Trade({
-    issell,
+    symbol,
+    lotsize,
+    buyorsell,
+    tradetype,
     quantity,
-    iscall,
-    isfuture,
-    daystoexpiry,
-    strikeprice,
-    premiumprice,
+    selectedstrike,
+    spotprice,
+    note,
   });
 
   if (_id) {
@@ -45,8 +48,9 @@ tradeController.post("/save", async (req, res) => {
       _strategyObject.save(function (_error, doc) {
         res.json(doc);
       });
+    } else {
+      res.json({ "error_msg": "Strategy not found." });
     }
-    res.json({"error_msg":"Strategy not found."});
   }
 });
 
