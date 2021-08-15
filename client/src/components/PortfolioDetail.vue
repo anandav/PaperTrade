@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-9">
+  <div class="col-lg-9 col-md-7">
     <div v-if="!Portfolio" class="jumbotron">
       <h3 class="display-4">Please select a portfolio.</h3>
     </div>

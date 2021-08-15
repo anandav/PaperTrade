@@ -52,12 +52,12 @@
         <div class="row">
           <TradeList :PropStrategy="PropStrategy" />
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <TradeAddEdit
             :StrategyID="PropStrategy._id"
             :PropStrategy="PropStrategy"
           />
-        </div>
+        </div> -->
       </div>
       <div class="card-footer text-dark">
         <div class="p-2 float-left">
@@ -66,6 +66,13 @@
           </a>
         </div>
         <div class="float-right">
+          <a class="btn btn-warning" @click="bindAddEditTrade()">
+            <i
+              class="bi"
+              :class="this.isNameEdit ? 'bi-save' : 'bi-pencil'"
+            ></i>
+            Add Trade
+          </a>
           <a class="btn btn-warning" @click="addEditStrategy()">
             <i
               class="bi"
@@ -79,15 +86,15 @@
   </div>
 </template>
 <script>
-import { mapActions } from "vuex";
-import TradeAddEdit from "./TradeAddEdit";
+import { mapActions, mapState } from "vuex";
+//import TradeAddEdit from "./TradeAddEdit";
 import TradeList from "./TradeList";
 export default {
   name: "StrategyDetail",
-  components: { TradeAddEdit, TradeList },
+  components: { TradeList },
   props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
   methods: {
-    ...mapActions(["AddEditStrategy", "DeleteStrategy"]),
+    ...mapActions(["AddEditStrategy", "DeleteStrategy", "BindAddEditTrade"]),
     addEditStrategy() {
       this.isNameEdit = !this.isNameEdit;
       if (!this.isNameEdit && this.PropStrategy.name) {
@@ -97,6 +104,16 @@ export default {
     deleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
+    bindAddEditTrade() {
+      if (this.TradeDetail) {
+        this.BindAddEditTrade(null);
+      } else {
+        this.BindAddEditTrade(this.PropStrategy);
+      }
+    },
+  },
+  computed: {
+    ...mapState(["TradeDetail"]),
   },
   created: function () {},
   data: function () {

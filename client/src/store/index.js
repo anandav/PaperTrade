@@ -4,22 +4,20 @@ import portfolioActions from "./portfoliactions";
 import strategyActions from "./strategyaction";
 import tradeActions from "./tradeaction";
 
-
-
 Vue.use(Vuex);
 import {
   //Portfolio
   GETALLPORTFOLIOS,
   SETPORTFOLIO,
   DELETEPORTFOLIE,
-
   //Startegy
   GETALLSTRATEGIES,
   ADDEDITSTRATEGY,
   DELETESTRATEGY,
-
   //trade
   BINDADDEDITTRADE,
+  ADDEDITTRADE,
+
 
 } from "./mutationtype";
 
@@ -27,12 +25,7 @@ const state = {
   Portfolios: [],
   Strategies: [],
   Portfolio: undefined,
-  // NewStrategyPlaceHolder: undefined,
-  // Trade: undefined,
-  // InsurumentDetail: undefined,
-  // InsurumentLatestPirce: undefined,
-  // SelectedStrikePrice: 0,
-  // SelectedStrike: undefined,
+  TradeDetail: undefined,
 };
 const mutations = {
   [GETALLPORTFOLIOS](state, _portfolios) {
@@ -66,32 +59,44 @@ const mutations = {
       }
     }
   },
-
-  [BINDADDEDITTRADE](state, {_strategy, _symbolDetail}) {
-    var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
+  [BINDADDEDITTRADE](state, _tradeDetail) {
+    state.TradeDetail = _tradeDetail;
+  },
+  [ADDEDITTRADE](state, _tradeDetail) {
+    var foundIndex = state.Strategies.findIndex(x => x._id == _tradeDetail.sid);
+    console.log(foundIndex);
     if (foundIndex > -1) {
-      state.Strategies[foundIndex].BindAddEditTrade = _symbolDetail;
+      var strategy = state.Strategies[foundIndex];
+      console.log("strategy");
+      console.log(strategy);
+      var tradeIndex = strategy.trades.findIndex(y => y._id == _tradeDetail._id);
+      console.log("tradeIndex");
+      console.log(tradeIndex);
+      if(tradeIndex >-1){
+        strategy.trades.splice(tradeIndex,1);
+      }else{
+        strategy.trades.push(tradeIndex);
+      }
+      
     }
-
-
-
-  }
+  },
 };
 
 const modules = {};
+const getters = {};
 
-const getters = {
-  getLatestPrice: function (state) {
-    if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
-      var inx = state.InsurumentDetail.grapthData.length;
-      var _data = state.InsurumentDetail.grapthData[inx - 1];
-      return _data[1];
-    }
-  },
-  getPortfolioById: function (state) {
-    return state.Portfolio;
-  },
-};
+// const getters = {
+//   getLatestPrice: function (state) {
+//     if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
+//       var inx = state.InsurumentDetail.grapthData.length;
+//       var _data = state.InsurumentDetail.grapthData[inx - 1];
+//       return _data[1];
+//     }
+//   },
+//   getPortfolioById: function (state) {
+//     return state.Portfolio;
+//   },
+// };
 
 export default new Vuex.Store({
   state,

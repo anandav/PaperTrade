@@ -1,8 +1,8 @@
 <template>
-  <div class="col-lg-3">
+  <div class="col-lg-3 col-md-5">
     <div class="card text-white bg-grey-custom">
       <div class="card-header">
-        <div class="float-left" ref="refportfolioname">
+        <div class="float-left">
           <input
             class="form-control"
             v-show="isEdit"
@@ -16,8 +16,11 @@
           <a class="btn btn-warning" href="#" @click="addEditPortfolio()">
             <i v-show="!isEdit" class="bi bi-plus-square"></i>
             <i v-show="isEdit" class="bi bi-save"></i>
-            {{ btnAddEditProtfolio }}</a
-          >
+            <span class="d-none d-lg-inline d-xl-inline">
+              {{ btnAddEditProtfolio }}
+            </span>
+          </a>
+          
         </div>
       </div>
       <div class="card-body">
@@ -39,7 +42,7 @@
                 >
               </div>
               <input
-                class="form-control  "
+                class="form-control"
                 v-show="inlineEdit && item._id === _pid"
                 placeholder="Edit Portfolio Name"
                 type="text"
@@ -49,7 +52,7 @@
             </div>
             <div class="col-sm">
               <div class="float-right text-dark">
-                <a class="btn btn-warning " @click="inlineEditPortfolio(item)">
+                <a class="btn btn-warning" @click="inlineEditPortfolio(item)">
                   <i v-show="!inlineEdit" class="bi bi-pencil"></i>
                   <i v-show="inlineEdit" class="bi bi-save"></i>
                 </a>
