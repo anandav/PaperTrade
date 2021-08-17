@@ -64,20 +64,22 @@ const mutations = {
   },
   [ADDEDITTRADE](state, _tradeDetail) {
     var foundIndex = state.Strategies.findIndex(x => x._id == _tradeDetail.sid);
-    console.log(foundIndex);
+
     if (foundIndex > -1) {
       var strategy = state.Strategies[foundIndex];
-      console.log("strategy");
-      console.log(strategy);
+
       var tradeIndex = strategy.trades.findIndex(y => y._id == _tradeDetail._id);
-      console.log("tradeIndex");
-      console.log(tradeIndex);
-      if(tradeIndex >-1){
-        strategy.trades.splice(tradeIndex,1);
-      }else{
-        strategy.trades.push(tradeIndex);
+      //strategy.trades.length
+      if (tradeIndex == -1) {
+        //insert
+        strategy.trades.push(_tradeDetail);
+        //strategy.trades.splice(tradeIndex, 0, _tradeDetail);
+      } else {
+        //update
+        strategy.trades.splice(tradeIndex, 1, _tradeDetail);
       }
-      
+      state.TradeDetail = null;
+
     }
   },
 };
