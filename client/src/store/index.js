@@ -17,6 +17,7 @@ import {
   //trade
   BINDADDEDITTRADE,
   ADDEDITTRADE,
+  DELETETRADE,
 
 
 } from "./mutationtype";
@@ -80,6 +81,16 @@ const mutations = {
       }
       state.TradeDetail = null;
 
+    }
+  },
+  [DELETETRADE](state, { sid, tid }) {
+    var foundIndex = state.Strategies.findIndex(x => x._id == sid);
+    if (foundIndex > -1) {
+      var strategy = state.Strategies[foundIndex];
+      var tradeIndex = strategy.trades.findIndex(y => y._id == tid);
+      if (tradeIndex > -1) {
+        strategy.trades.splice(tradeIndex, 1);
+      }
     }
   },
 };

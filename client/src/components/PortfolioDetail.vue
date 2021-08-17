@@ -11,7 +11,7 @@
           @click="addNewStrategy()"
         >
           <i class="bi bi-plus-square"></i>
-          Add New Strategy</a
+          {{txtAddStrategy}}</a
         >
       </div>
 
@@ -47,13 +47,15 @@ export default {
         description: "",
         symbol: "NIFTY",
         portfolio: this.Portfolio._id,
-        isNameEdit: true,
+        isEdit: true,
       };
       this.AddEditStrategy(_strategy);
     },
   },
   data: function () {
-    return { isEdit: false };
+    return { isEdit: false,
+     txtAddStrategy : this.$getConst("addNewStrategy"),
+    };
   },
 };
 </script>

@@ -17,7 +17,7 @@
             <i v-show="!isEdit" class="bi bi-plus-square"></i>
             <i v-show="isEdit" class="bi bi-save"></i>
             <span class="d-none d-lg-inline d-xl-inline">
-              {{ btnAddEditProtfolio }}
+              {{ txtAddEditPortfolio }}
             </span>
           </a>
           
@@ -98,7 +98,7 @@ export default {
         this.portfolioName = "";
       }
       this.isEdit = !this.isEdit;
-      this.btnAddEditProtfolio = this.isEdit
+      this.txtAddEditPortfolio = this.isEdit
         ? this.$getConst("savePortfolio")
         : this.$getConst("addNewPortfolio");
     },
@@ -120,7 +120,7 @@ export default {
   data: function () {
     return {
       portfolioName: "",
-      btnAddEditProtfolio: this.$getConst("addNewPortfolio"),
+      txtAddEditPortfolio: this.$getConst("addNewPortfolio"),
       isLoading: true,
       isEdit: false,
       inlineEdit: false,

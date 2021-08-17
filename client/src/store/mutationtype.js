@@ -9,3 +9,4 @@ export const DELETESTRATEGY = 'DeleteStrategy';
 //trade
 export const BINDADDEDITTRADE = 'BindAddEditTrade';
 export const ADDEDITTRADE = 'AddEditTrade';
+export const DELETETRADE = 'DeleteTrade';

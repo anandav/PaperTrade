@@ -5,6 +5,7 @@ const apiUrl = process.env.VUE_APP_APIURL || "/";
 import {
     BINDADDEDITTRADE,
     ADDEDITTRADE,
+    DELETETRADE,
 
 } from "./mutationtype";
 
@@ -32,7 +33,6 @@ export default {
         }
     },
     AddEditTrade({ commit }, _tradeDetail) {
-        console.log(_tradeDetail);
         if (_tradeDetail) {
             axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                 if (res.status == 200) {
@@ -41,5 +41,13 @@ export default {
             });
         }
     },
-
+    DeleteTrade({ commit }, {sid, tid}) {
+        if (sid && tid) {
+            axios.post(apiUrl + "trade/delete", { tid }).then(function (res) {
+                if (res.status == 200) {
+                    commit(DELETETRADE, {sid, tid});
+                }
+            });
+        }
+    }
 }

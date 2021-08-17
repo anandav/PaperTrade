@@ -5,28 +5,28 @@
       <div class="card-header">
         <div class="d-flex justify-content-between bd-highlight">
           <div class="">
-            <span v-show="!this.isNameEdit">
+            <span v-show="!this.isEdit">
               {{ PropStrategy.name }}
             </span>
 
             <input
               class="form-control"
               placeholder="Strategy Name"
-              v-show="this.isNameEdit"
+              v-show="this.isEdit"
               v-model="PropStrategy.name"
               @keydown.enter="addEditStrategy()"
             />
           </div>
 
           <div class="" v-if="!PropStrategy.ismultiplesymbol">
-            <span v-show="!this.isNameEdit">
+            <span v-show="!this.isEdit">
               {{ PropStrategy.symbol }}
             </span>
 
             <input
               class="form-control"
               placeholder="Symbol"
-              v-show="this.isNameEdit"
+              v-show="this.isEdit"
               v-model="PropStrategy.symbol"
               @keydown.enter="addEditStrategy()"
             />
@@ -69,16 +69,16 @@
           <a class="btn btn-warning" @click="bindAddEditTrade()">
             <i
               class="bi"
-              :class="this.isNameEdit ? 'bi-save' : 'bi-pencil'"
+              :class="this.isEdit ? 'bi-save' : 'bi-pencil'"
             ></i>
             Add Trade
           </a>
-          <a class="btn btn-warning" @click="addEditStrategy()">
+          <a class="btn btn-warning ml-2" @click="addEditStrategy()">
             <i
               class="bi"
-              :class="this.isNameEdit ? 'bi-save' : 'bi-pencil'"
+              :class="this.isEdit ? 'bi-save' : 'bi-pencil'"
             ></i>
-            Edit Strategy
+            {{txtEditSaveStrategy}}
           </a>
         </div>
       </div>
@@ -87,7 +87,7 @@
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
-//import TradeAddEdit from "./TradeAddEdit";
+//import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
 export default {
   name: "StrategyDetail",
@@ -96,8 +96,9 @@ export default {
   methods: {
     ...mapActions(["AddEditStrategy", "DeleteStrategy", "BindAddEditTrade"]),
     addEditStrategy() {
-      this.isNameEdit = !this.isNameEdit;
-      if (!this.isNameEdit && this.PropStrategy.name) {
+      this.isEdit = !this.isEdit;
+      this.txtEditSaveStrategy = this.isEdit ? this.$getConst("saveStrategy"):  this.$getConst("editStrategy");
+      if (!this.isEdit && this.PropStrategy.name) {
         this.AddEditStrategy(this.PropStrategy);
       }
     },
@@ -118,7 +119,8 @@ export default {
   created: function () {},
   data: function () {
     return {
-      isNameEdit: false,
+      isEdit: false,
+      txtEditSaveStrategy : this.$getConst("editStrategy"),
     };
   },
 };
