@@ -2,7 +2,7 @@
   <table class="table text-light">
     <thead>
       <tr>
-        <th scope="col">ID</th>
+        <!-- <th scope="col">ID</th> -->
         <th v-show="PropStrategy.ismultiplesymbol" scope="col">Symbol</th>
         <th scope="col">Lot Size</th>
         <th scope="col">Buy/Sell</th>
@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       <tr v-for="item in PropStrategy.trades" :key="item._id">
-        <th scope="row">{{ item._id }}</th>
+        <!-- <th scope="row">{{ item._id }}</th> -->
         <td v-show="PropStrategy.ismultiplesymbol">{{ item.symbol }}</td>
         <td>{{ item.lotsize }}</td>
         <td>{{ item.buyorsell }}</td>

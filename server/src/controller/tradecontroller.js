@@ -57,11 +57,18 @@ tradeController.post("/save", async (req, res) => {
 tradeController.post("/delete", async (req, res) => {
   var { tid } = req.body;
   if (tid) {
-    commonUtility.GetTradeById(tid).then(x => {
-      console.log("trategy.trades----------");
-      console.log(x);
-      console.log("trategy.trades----------");
-    });
+    const result = await Strategy.findOneAndUpdate(
+      { "trades._id": tid },
+      { $pull: { "trades": { _id: tid } } },
+      { new: true }, function (err) {
+        if (err) { console.log(err); }
+      }
+    );
+    res.json(result);
+
+    // var result = commonUtility.GetTradeById(tid).then(x => {
+    //   console.log(x);
+    // });
 
     // Strategy.trades._id(tid).remove();
     // Strategy.save(function (err) {
