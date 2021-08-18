@@ -1,6 +1,6 @@
 <template>
   <div class="card bg-dark text-light order-window" v-if="TradeDetail">
-    <div class="card-header">
+    <div class="card-header" @mousedown="onMyMouseDown">
       <a
         type="button"
         class="close"
@@ -13,106 +13,119 @@
       <!-- -{{ TradeDetail.lotsize }} -->
     </div>
     <div class="card-body">
-      <form action="">
-        <div class="row d-flex">
-          <div class="col-sm">
-            <input
-              class="form-control bg-transparent border border-secondary text-white"
-              type="text"
-              v-model="TradeDetail.selectedstrike"
-            />
-            <input
-              placeholder="Strike Price"
-              type="range"
-              :min="TradeDetail.strikepricemin"
-              :max="TradeDetail.strikepricemax"
-              :step="TradeDetail.strikepricestep"
-              v-model.number="TradeDetail.selectedstrike"
-              class="form-control-range"
-              id="formControlRange"
-            />
-          </div>
-          <div class="col-sm">
-            <div class="col-sm btn-group btn-group-toggle">
-              <label
-                class="btn btn-secondary text-white"
-                v-for="(value, key) in TRADETYPE"
-                :key="key"
-                :class="{ active: value == [TradeDetail.tradetype] }"
-              >
-                <input
-                  type="radio"
-                  name="TRADETYPE"
-                  :value="value"
-                  :id="'tradeSymbol_' + value"
-                  v-model="TradeDetail.tradetype"
-                />
-                {{ value }}
-              </label>
-            </div>
-          </div>
-          <div class="col-sm">
-            <div class="btn-group btn-group-toggle">
-              <label
-                class="btn btn btn-secondary"
-                v-for="(value, key) in BUYORSELL"
-                :key="key"
-                :class="{
-                  'text-success': key == 1,
-                  'text-danger': key == 2,
-                  active: value == [TradeDetail.buyorsell],
-                }"
-              >
-                <input
-                  type="radio"
-                  name="tradeTypename"
-                  :value="value"
-                  :id="'trade_' + value"
-                  v-model="TradeDetail.buyorsell"
-                />
-                {{ value }}
-              </label>
-            </div>
-          </div>
-          <div class="col-sm">
-            <input
-              placeholder="Price"
-              type="number"
-              v-model.number="TradeDetail.spotprice"
-              class="form-control bg-transparent border border-secondary text-white"
-              id="formSpotPrice"
-            />
-          </div>
-          <div class="col-sm">
-            <input
-              placeholder="Quantity"
-              type="number"
-              v-model.number="TradeDetail.quantity"
-              class="form-control bg-transparent border border-secondary text-white"
-              id="formSpotPrice"
-            />
+      <div class="row d-flex">
+        <div class="col-sm">
+          <input
+            class="
+              form-control
+              bg-transparent
+              border border-secondary
+              text-white
+            "
+            type="text"
+            v-model="TradeDetail.selectedstrike"
+          />
+          <input
+            placeholder="Strike Price"
+            type="range"
+            :min="TradeDetail.strikepricemin"
+            :max="TradeDetail.strikepricemax"
+            :step="TradeDetail.strikepricestep"
+            v-model.number="TradeDetail.selectedstrike"
+            class="form-control-range"
+            id="formControlRange"
+          />
+        </div>
+        <div class="col-sm">
+          <div class="col-sm btn-group btn-group-toggle">
+            <label
+              class="btn btn-secondary text-white"
+              v-for="(value, key) in TRADETYPE"
+              :key="key"
+              :class="{ active: value == [TradeDetail.tradetype] }"
+            >
+              <input
+                type="radio"
+                name="TRADETYPE"
+                :value="value"
+                :id="'tradeSymbol_' + value"
+                v-model="TradeDetail.tradetype"
+              />
+              {{ value }}
+            </label>
           </div>
         </div>
-
-        <div class="d-flex mt-2">
-          <textarea
-            placeholder="Note"
+        <div class="col-sm">
+          <div class="btn-group btn-group-toggle">
+            <label
+              class="btn btn btn-secondary"
+              v-for="(value, key) in BUYORSELL"
+              :key="key"
+              :class="{
+                'text-success': key == 1,
+                'text-danger': key == 2,
+                active: value == [TradeDetail.buyorsell],
+              }"
+            >
+              <input
+                type="radio"
+                name="tradeTypename"
+                :value="value"
+                :id="'trade_' + value"
+                v-model="TradeDetail.buyorsell"
+              />
+              {{ value }}
+            </label>
+          </div>
+        </div>
+        <div class="col-sm">
+          <input
+            placeholder="Price"
             type="number"
-            v-model.number="TradeDetail.note"
-            class="form-control bg-transparent border border-secondary text-white"
+            v-model.number="TradeDetail.spotprice"
+            class="
+              form-control
+              bg-transparent
+              border border-secondary
+              text-white
+            "
             id="formSpotPrice"
-          ></textarea>
+          />
         </div>
-        <div class="d-flex mt-2">
-          <a
-            class="btn btn-warning float-right"
-            @click="onAddEditTrade()"
-            href="#"
-          >
-            Save
-          </a>
+        <div class="col-sm">
+          <input
+            placeholder="Quantity"
+            type="number"
+            v-model.number="TradeDetail.quantity"
+            class="
+              form-control
+              bg-transparent
+              border border-secondary
+              text-white
+            "
+            id="formSpotPrice"
+          />
         </div>
-      </form>
+      </div>
+
+      <div class="d-flex mt-2">
+        <textarea
+          placeholder="Note"
+          type="number"
+          v-model.number="TradeDetail.note"
+          class="form-control bg-transparent border border-secondary text-white"
+          id="formSpotPrice"
+        ></textarea>
+      </div>
+      <div class="d-flex mt-2">
+        <a
+          class="btn btn-warning float-right"
+          @click="onAddEditTrade()"
+          href="#"
+        >
+          Save
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -141,11 +154,14 @@ export default {
   },
   methods: {
     ...mapActions(["AddEditTrade", "BindAddEditTrade"]),
-    onAddEditTrade() {
+    onAddEditTrade: function () {
       this.AddEditTrade(this.TradeDetail);
     },
-    bindAddEditTrade() {
+    bindAddEditTrade: function () {
       this.BindAddEditTrade(null);
+    },
+    onMyMouseDown: function () {
+      console.log("console log");
     },
   },
   created() {},

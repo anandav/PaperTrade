@@ -68,8 +68,7 @@
         <div class="float-right">
           <a class="btn btn-warning" @click="bindAddEditTrade()">
             <i
-              class="bi"
-              :class="this.isEdit ? 'bi-save' : 'bi-pencil'"
+              class="bi-plus-square"
             ></i>
             Add Trade
           </a>
