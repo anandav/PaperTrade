@@ -107,6 +107,7 @@ export default {
         this.inlineEdit = !this.inlineEdit;
         this._pid = item._id;
         if (this.inlineEdit) {
+          //this.inlineEdit = false;
           //TODO placeholder for edit mode
         } else {
           this.SavePortfolio(item);
