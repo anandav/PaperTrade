@@ -20,7 +20,6 @@
               {{ txtAddEditPortfolio }}
             </span>
           </a>
-          
         </div>
       </div>
       <div class="card-body">
@@ -30,33 +29,40 @@
           </div>
         </div>
         <div class="mt-2" :key="item._id" v-for="item in Portfolios">
-          <div class="row">
+          <div class="row" :class="{ isPortfolioEdit: item == editPortfolio }">
             <div class="col-sm">
               <div class="">
                 <a
-                  @click="menuSelectedPortfolio(item)"
+                  @click="onMenuSelectedPortfolio(item)"
                   :class="{ active: Portfolio === item }"
                   v-show="!(inlineEdit && item._id === _pid)"
-                  class="pt-5"
+                  class="pt-5 view"
                   >{{ item.name }}</a
                 >
               </div>
               <input
-                class="form-control"
-                v-show="inlineEdit && item._id === _pid"
+                class="form-control edit"
                 placeholder="Edit Portfolio Name"
                 type="text"
                 v-model="item.name"
-                @keyup.enter="inlineEditPortfolio(item)"
+                @keyup.enter="onInlineSavePortfolio(item)"
               />
             </div>
             <div class="col-sm">
               <div class="float-right text-dark">
-                <a class="btn btn-warning" @click="inlineEditPortfolio(item)">
-                  <i v-show="!inlineEdit" class="bi bi-pencil"></i>
-                  <i v-show="inlineEdit" class="bi bi-save"></i>
+                <a
+                  class="btn btn-warning view"
+                  @click="onInlineEditPortfolio(item)"
+                >
+                  <i class="bi bi-pencil"></i>
                 </a>
-                <a class="btn btn-danger ml-2" @click="deletePortfolio(item)">
+                <a
+                  class="btn btn-warning edit"
+                  @click="onInlineSavePortfolio(item)"
+                >
+                  <i class="bi bi-save"></i>
+                </a>
+                <a class="btn btn-danger ml-2" @click="onDeletePortfolio(item)">
                   <i class="bi bi-trash"></i>
                 </a>
               </div>
@@ -81,7 +87,7 @@ export default {
       "DeletePortfolio",
       "GetAllStrategies",
     ]),
-    menuSelectedPortfolio(item) {
+    onMenuSelectedPortfolio(item) {
       this.GetPortfolioById(item);
       this.GetAllStrategies(item);
     },
@@ -102,19 +108,14 @@ export default {
         ? this.$getConst("savePortfolio")
         : this.$getConst("addNewPortfolio");
     },
-    inlineEditPortfolio(item) {
-      if (item.name) {
-        this.inlineEdit = !this.inlineEdit;
-        this._pid = item._id;
-        if (this.inlineEdit) {
-          //this.inlineEdit = false;
-          //TODO placeholder for edit mode
-        } else {
-          this.SavePortfolio(item);
-        }
-      }
+    onInlineEditPortfolio(portfolio) {
+      this.editPortfolio = portfolio;
     },
-    deletePortfolio(itempfl) {
+    onInlineSavePortfolio(portfolio) {
+      this.editPortfolio = null;
+      this.SavePortfolio(portfolio);
+    },
+    onDeletePortfolio(itempfl) {
       this.DeletePortfolio(itempfl);
     },
   },
@@ -125,6 +126,7 @@ export default {
       isLoading: true,
       isEdit: false,
       inlineEdit: false,
+      editPortfolio: null,
     };
   },
 
@@ -139,7 +141,7 @@ export default {
 };
 </script>
 <style scoped>
-.portfolioitem {
+/* .portfolioitem {
   min-height: 560px;
   overflow-y: hidden;
 }
@@ -159,5 +161,21 @@ export default {
 
 .active :hover {
   color: #ffffff !important;
+} */
+
+[v-cloak] {
+  display: none;
+}
+.form-control {
+  width: 200px;
+}
+.edit {
+  display: none;
+}
+.isPortfolioEdit .edit {
+  display: inline-block;
+}
+.isPortfolioEdit .view {
+  display: none;
 }
 </style>

@@ -1,34 +1,34 @@
 <template>
   <!-- @click="SelectedStrategy(PropStrategy)" -->
   <div>
-    <div class="card mb-2 bg-grey-custom">
+    <div
+      class="card mb-2 bg-grey-custom"
+      :class="{ isStrategyEdit: PropStrategy == editStrategy }"
+    >
       <div class="card-header">
         <div class="d-flex justify-content-between bd-highlight">
           <div class="">
-            <span v-show="!this.isEdit">
+            <span class="view">
               {{ PropStrategy.name }}
             </span>
-
             <input
-              class="form-control"
+              class="form-control edit"
               placeholder="Strategy Name"
-              v-show="this.isEdit"
               v-model="PropStrategy.name"
-              @keydown.enter="addEditStrategy()"
+              @keydown.enter="onSaveStrategy()"
             />
           </div>
 
           <div class="" v-if="!PropStrategy.ismultiplesymbol">
-            <span v-show="!this.isEdit">
+            <span class="view">
               {{ PropStrategy.symbol }}
             </span>
 
             <input
-              class="form-control"
+              class="form-control edit"
               placeholder="Symbol"
-              v-show="this.isEdit"
               v-model="PropStrategy.symbol"
-              @keydown.enter="addEditStrategy()"
+              @keydown.enter="onSaveStrategy()"
             />
           </div>
           <div class="">
@@ -36,7 +36,7 @@
               <input
                 type="checkbox"
                 v-model="PropStrategy.ismultiplesymbol"
-                @click="addEditStrategy()"
+                @click="onSaveStrategy()"
               />
               Is Multiple Symbol
             </label>
@@ -48,36 +48,33 @@
         </div>
       </div>
 
-      <div class="card-body text-dark">
-        <div class="row">
-          <TradeList :PropStrategy="PropStrategy" />
-        </div>
-        <!-- <div class="row">
-          <TradeAddEdit
-            :StrategyID="PropStrategy._id"
-            :PropStrategy="PropStrategy"
-          />
-        </div> -->
+      <div class="card-body">
+        <TradeList :PropStrategy="PropStrategy" />
       </div>
       <div class="card-footer text-dark">
         <div class="p-2 float-left">
-          <a class="btn btn-danger ml-2" @click="deleteStrategy()">
+          <a class="btn btn-danger ml-2" @click="onDeleteStrategy()">
             <i class="bi bi-trash"></i>
           </a>
         </div>
         <div class="float-right">
-          <a class="btn btn-warning" @click="bindAddEditTrade()">
-            <i
-              class="bi-plus-square"
-            ></i>
+          <a class="btn btn-warning" @click="onBindAddEditTrade()">
+            <i class="bi-plus-square"></i>
             Add Trade
           </a>
-          <a class="btn btn-warning ml-2" @click="addEditStrategy()">
-            <i
-              class="bi"
-              :class="this.isEdit ? 'bi-save' : 'bi-pencil'"
-            ></i>
-            {{txtEditSaveStrategy}}
+          <a
+            class="btn btn-warning ml-2 view"
+            @click="onEditStrategy(PropStrategy)"
+          >
+            <i class="bi bi-pencil"></i>
+            {{ txtEditSaveStrategy }}
+          </a>
+          <a
+            class="btn btn-secondary ml-2 edit"
+            @click="onSaveStrategy()"
+          >
+            <i class="bi bi-save"></i>
+            {{ txtEditSaveStrategy }}
           </a>
         </div>
       </div>
@@ -94,17 +91,19 @@ export default {
   props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
   methods: {
     ...mapActions(["AddEditStrategy", "DeleteStrategy", "BindAddEditTrade"]),
-    addEditStrategy() {
-      this.isEdit = !this.isEdit;
-      this.txtEditSaveStrategy = this.isEdit ? this.$getConst("saveStrategy"):  this.$getConst("editStrategy");
-      if (!this.isEdit && this.PropStrategy.name) {
-        this.AddEditStrategy(this.PropStrategy);
-      }
+    onEditStrategy(strategy) {
+      this.editStrategy = strategy;
+      this.txtEditSaveStrategy = this.$getConst("saveStrategy");
     },
-    deleteStrategy() {
+    onSaveStrategy() {
+      this.editStrategy = null;
+      this.txtEditSaveStrategy = this.$getConst("editStrategy");
+      this.AddEditStrategy(this.PropStrategy);
+    },
+    onDeleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
-    bindAddEditTrade() {
+    onBindAddEditTrade() {
       if (this.TradeDetail) {
         this.BindAddEditTrade(null);
       } else {
@@ -118,9 +117,28 @@ export default {
   created: function () {},
   data: function () {
     return {
-      isEdit: false,
-      txtEditSaveStrategy : this.$getConst("editStrategy"),
+      txtEditSaveStrategy: this.$getConst("editStrategy"),
+      editStrategy: null,
     };
   },
 };
 </script>
+
+<style scoped>
+[v-cloak] {
+  display: none;
+}
+.form-control {
+  width: 200px;
+}
+.edit {
+  display: none;
+}
+.isStrategyEdit .edit {
+  display: inline-block;
+}
+.isStrategyEdit .view {
+  display: none;
+}
+</style>
+
