@@ -9,11 +9,11 @@
             placeholder="Portfolio Name"
             type="text"
             v-model="portfolioName"
-            @keyup.enter="addEditPortfolio()"
+            @keyup.enter="onAddNewPortfolio()"
           />
         </div>
         <div class="float-right">
-          <a class="btn btn-warning" href="#" @click="addEditPortfolio()">
+          <a class="btn btn-warning" href="#" @click="onAddNewPortfolio()">
             <i v-show="!isEdit" class="bi bi-plus-square"></i>
             <i v-show="isEdit" class="bi bi-save"></i>
             <span class="d-none d-lg-inline d-xl-inline">
@@ -35,7 +35,7 @@
                 <a
                   @click="onMenuSelectedPortfolio(item)"
                   :class="{ active: Portfolio === item }"
-                  v-show="!(inlineEdit && item._id === _pid)"
+                 
                   class="pt-5 view"
                   >{{ item.name }}</a
                 >
@@ -91,8 +91,7 @@ export default {
       this.GetPortfolioById(item);
       this.GetAllStrategies(item);
     },
-
-    addEditPortfolio() {
+    onAddNewPortfolio() {
       if (this.isEdit && this.portfolioName) {
         this.SavePortfolio({
           _id: 0,
@@ -100,7 +99,6 @@ export default {
           description: "",
           updateui: true,
         });
-        this._pid = "";
         this.portfolioName = "";
       }
       this.isEdit = !this.isEdit;
@@ -125,7 +123,6 @@ export default {
       txtAddEditPortfolio: this.$getConst("addNewPortfolio"),
       isLoading: true,
       isEdit: false,
-      inlineEdit: false,
       editPortfolio: null,
     };
   },

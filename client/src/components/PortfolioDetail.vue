@@ -8,7 +8,7 @@
         {{ Portfolio.name }}
         <a
           class="btn btn-warning float-right text-dark"
-          @click="addNewStrategy()"
+          @click="onAddNewStrategy()"
         >
           <i class="bi bi-plus-square"></i>
           {{txtAddStrategy}}</a
@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     ...mapActions(["AddEditStrategy"]),
-    addNewStrategy: function () {
+    onAddNewStrategy: function () {
       this.isEdit = !this.isEdit;
 
       var _strategy = {

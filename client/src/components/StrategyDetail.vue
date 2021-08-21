@@ -60,7 +60,7 @@
         <div class="float-right">
           <a class="btn btn-warning" @click="onBindAddEditTrade()">
             <i class="bi-plus-square"></i>
-            Add Trade
+            {{txtAddTrade}}
           </a>
           <a
             class="btn btn-warning ml-2 view"
@@ -118,6 +118,7 @@ export default {
   data: function () {
     return {
       txtEditSaveStrategy: this.$getConst("editStrategy"),
+      txtAddTrade : this.$getConst("addTrade"),
       editStrategy: null,
     };
   },

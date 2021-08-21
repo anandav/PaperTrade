@@ -4,6 +4,7 @@ const Resource = {
 	addNewStrategy: "Add New Strategy",
 	editStrategy: "Edit Strategy",
 	saveStrategy: "Save Strategy",
+	addTrade : "Add New Trade"
 };
 
 Resource.install = function (Vue) {
