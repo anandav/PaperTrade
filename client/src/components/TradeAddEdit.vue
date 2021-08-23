@@ -1,8 +1,8 @@
 <template>
   <div
-    class="card bg-dark text-light order-window"
-    v-if="TradeDetail"
+    class="card bg-dark text-light order-window edit"
     @keydown.esc="bindAddEditTrade()"
+    v-if="TradeDetail"
   >
     <div id="header" class="card-header" @mousedown="onMyMouseDown">
       <a
@@ -97,7 +97,7 @@
             id="formSpotPrice"
           />
         </div>
-        
+
         <div class="col-sm">
           <input
             placeholder="Price"
@@ -131,39 +131,35 @@
         >
           Save
         </a>
+        <a
+          class="btn btn-warning float-right"
+          @click="bindAddEditTrade()"
+          href="#"
+        >
+          Cancel
+        </a>
       </div>
     </div>
   </div>
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
-import myMixins from "../shared/utilitymixins"
+import myMixins from "../shared/utilitymixins";
 export default {
   name: "TradeAddEdit",
-  mixins : [myMixins],
-  // data() {
-  //   return {
-  //     BUYORSELL: {
-  //       1: "Buy",
-  //       2: "Sell",
-  //     },
-  //     TRADETYPE: {
-  //       1: "Call",
-  //       2: "Put",
-  //       3: "Future",
-  //     },
-  //   };
-  // },
+  mixins: [myMixins],
   props: {
     PropStrategy: {},
   },
   computed: {
-    ...mapState(["TradeDetail"]),
+    ...mapState([ "TradeDetail"]),
   },
   methods: {
     ...mapActions(["AddEditTrade", "BindAddEditTrade"]),
     onAddEditTrade: function () {
-      this.AddEditTrade(this.TradeDetail);
+      this.AddEditTrade(this.TradeDetail).then(()=>{
+        this.BindAddEditTrade(null);
+      })
     },
     bindAddEditTrade: function () {
       this.BindAddEditTrade(null);
@@ -171,11 +167,8 @@ export default {
     onMyMouseDown: function () {
       console.log("console log");
     },
-    
   },
   created() {
-
-    //this.dragElement(document.getElementsByClassName("order-window"));
   },
 };
 </script>
@@ -188,4 +181,16 @@ export default {
   width: 800px;
   height: 250px;
 }
+
+/* [v-cloak] {
+  display: none;
+}
+.edit {
+  display: none;
+}
+.isTradeWindowEdit.edit {
+   The above  class ("isTradeWindowEdit" and "edit") 
+  is applied ONLY for Root node  of edit window  
+  display: inline-block;
+} */
 </style>

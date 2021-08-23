@@ -36,7 +36,9 @@ export default {
         if (_tradeDetail) {
             axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                 if (res.status == 200) {
-                    commit(ADDEDITTRADE, _tradeDetail);
+                    ///res.data is strategy
+                    res.data.name = "anand";
+                    commit(ADDEDITTRADE, res.data);
                 }
             });
         }

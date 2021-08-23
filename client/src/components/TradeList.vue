@@ -51,7 +51,9 @@
               v-model="item.selectedstrike"
               type="range"
               class="edit"
-              :step="50"
+              :min="item.strikepricemin"
+              :max="item.strikepricemax"
+              :step="item.strikepricestep"
             />
           </div>
         </td>
@@ -129,13 +131,19 @@
         <td>
           {{
             item.buyorsell == "Buy"
-              ? -(item.spotprice * (item.lotsize * item.quantity))
-              : item.spotprice * (item.lotsize * item.quantity)
+              ? -(item.spotprice * (item.lotsize * item.quantity)).toFixed(2)
+              : (item.spotprice * (item.lotsize * item.quantity)).toFixed(2)
           }}
         </td>
         <td hidden>{{ item.note }}</td>
 
         <td>
+          <a
+            class="btn btn-warning ml-2 text-dark view"
+            @click="onInlineExitTrade(item)"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
           <a
             class="btn btn-warning ml-2 text-dark view"
             @click="onInlineEditTrade(item)"
@@ -184,18 +192,25 @@ export default {
   mixins: [myMixins],
   props: { PropStrategy: {} },
   methods: {
-    ...mapActions(["DeleteTrade"]),
+    ...mapActions(["AddEditTrade", "DeleteTrade"]),
     onDeleteTrade: function (sid, tid) {
       this.DeleteTrade({ sid, tid });
     },
     onInlineEditTrade: function (trade) {
       this.editTrade = trade;
     },
-    onInlineSaveTrade: function (trade, pid) {
+    onInlineSaveTrade: function (trade) {
       this.editTrade = null;
+      this.AddEditTrade(trade);
+    },
+    onInlineExitTrade: function (trade) {
+      var _exitTrade = { ...trade };
+      _exitTrade.buyorsell = _exitTrade.buyorsell == "Buy" ? "Sell" : "Buy";
+      _exitTrade._id = null;
+      _exitTrade.sid = this.PropStrategy._id;
       console.log(trade);
-      console.log(pid);
-      ///TODO: Save Trade
+      console.log(_exitTrade);
+      this.AddEditTrade(_exitTrade);
     },
   },
   data: function () {
@@ -212,7 +227,7 @@ export default {
             ? price - _e.spotprice * (_e.lotsize * _e.quantity)
             : price + _e.spotprice * (_e.lotsize * _e.quantity);
       });
-      return price;
+      return price.toFixed(2);
     },
   },
 };

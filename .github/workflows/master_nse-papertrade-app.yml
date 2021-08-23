@@ -21,10 +21,6 @@ jobs:
       with:
         node-version: '14.x'
 
-    - name: Git Semantic Version
-        uses: PaulHatch/semantic-version@v4.0.2
-      
-
     - name: npm install client
       run: |
         npm install --prefix ./client

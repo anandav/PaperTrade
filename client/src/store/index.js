@@ -63,24 +63,10 @@ const mutations = {
   [BINDADDEDITTRADE](state, _tradeDetail) {
     state.TradeDetail = _tradeDetail;
   },
-  [ADDEDITTRADE](state, _tradeDetail) {
-    var foundIndex = state.Strategies.findIndex(x => x._id == _tradeDetail.sid);
-
-    if (foundIndex > -1) {
-      var strategy = state.Strategies[foundIndex];
-
-      var tradeIndex = strategy.trades.findIndex(y => y._id == _tradeDetail._id);
-      //strategy.trades.length
-      if (tradeIndex == -1) {
-        //insert
-        strategy.trades.push(_tradeDetail);
-        //strategy.trades.splice(tradeIndex, 0, _tradeDetail);
-      } else {
-        //update
-        strategy.trades.splice(tradeIndex, 1, _tradeDetail);
-      }
-      state.TradeDetail = null;
-
+  [ADDEDITTRADE](state, _strategy) {
+    var strategyIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
+    if (strategyIndex > -1) {
+      state.Strategies[strategyIndex].trades = _strategy.trades;
     }
   },
   [DELETETRADE](state, { sid, tid }) {
@@ -96,20 +82,12 @@ const mutations = {
 };
 
 const modules = {};
-const getters = {};
+const getters = {
+  TradeDetail: (state) => {
+    return state.TradeDetail;
+  }
+};
 
-// const getters = {
-//   getLatestPrice: function (state) {
-//     if (state.InsurumentDetail && state.InsurumentDetail.grapthData) {
-//       var inx = state.InsurumentDetail.grapthData.length;
-//       var _data = state.InsurumentDetail.grapthData[inx - 1];
-//       return _data[1];
-//     }
-//   },
-//   getPortfolioById: function (state) {
-//     return state.Portfolio;
-//   },
-// };
 
 export default new Vuex.Store({
   state,

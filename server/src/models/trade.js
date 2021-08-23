@@ -40,6 +40,20 @@ const tradeSchema = schema({
     type: String
   },
 
+  strikepricemin: {
+    type : Number,
+    default: 0
+  },
+  strikepricemax:{
+    type : Number,
+    default: 0
+  },
+  strikepricestep:{
+    type : Number,
+    default: 0
+  },
+
+
 });
 
 module.exports = model("Trade", tradeSchema);

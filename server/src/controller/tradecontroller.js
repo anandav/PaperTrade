@@ -21,6 +21,9 @@ tradeController.post("/save", async (req, res) => {
     selectedstrike,
     spotprice,
     note,
+    strikepricemin,
+    strikepricemax,
+    strikepricestep,
 
   } = req.body;
   var _trade = new Trade({
@@ -32,15 +35,24 @@ tradeController.post("/save", async (req, res) => {
     selectedstrike,
     spotprice,
     note,
+    strikepricemin,
+    strikepricemax,
+    strikepricestep,
   });
 
   if (_id) {
+    console.log('_id trade Update :>> ', _id);
     _trade._id = _id;
-    const result = await Strategy.updateOne(
+    await Strategy.updateOne(
       { "trades._id": _id },
       { $set: { "trades.$": _trade } }
     );
-    res.json(result);
+    
+    
+    commonUtility.GetTradeById(_id).then((_result) => {
+      console.log('_result :>> ', _result);
+      res.json(_result);
+    });
   } else if (sid && !_id) {
     var _strategyObject = await commonUtility.GetStrategyById(sid);
     if (_strategyObject) {
