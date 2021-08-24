@@ -3,6 +3,7 @@
     <div class="header">
       <div class="wrapper">
         <router-link to="/papertrade" class="">Papet Trade</router-link>
+        <router-link to="/builder" class="">Builder</router-link>
         <router-link to="/about" class="">About</router-link>
       </div>
     </div>

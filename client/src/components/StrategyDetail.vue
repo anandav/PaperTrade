@@ -57,10 +57,15 @@
             <i class="bi bi-trash"></i>
           </a>
         </div>
+        <div class="p-2 float-left">
+          <a class="btn btn-warning ml-2" @click="onDuplicateStrategy()">
+            <i class="bi bi-clipboard-plus"></i>
+          </a>
+        </div>
         <div class="float-right">
           <a class="btn btn-warning" @click="onBindAddEditTrade()">
             <i class="bi-plus-square"></i>
-            {{txtAddTrade}}
+            {{ txtAddTrade }}
           </a>
           <a
             class="btn btn-warning ml-2 view"
@@ -69,10 +74,7 @@
             <i class="bi bi-pencil"></i>
             {{ txtEditSaveStrategy }}
           </a>
-          <a
-            class="btn btn-secondary ml-2 edit"
-            @click="onSaveStrategy()"
-          >
+          <a class="btn btn-secondary ml-2 edit" @click="onSaveStrategy()">
             <i class="bi bi-save"></i>
             {{ txtEditSaveStrategy }}
           </a>
@@ -103,6 +105,14 @@ export default {
     onDeleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
+    onDuplicateStrategy() {
+      var _startegyClone = { ...this.PropStrategy };
+      _startegyClone._id = null;
+      _startegyClone.trades.forEach(t => {
+        t._id = null;
+      });
+      this.AddEditStrategy(_startegyClone);
+    },
     onBindAddEditTrade() {
       if (this.TradeDetail) {
         this.BindAddEditTrade(null);
@@ -118,7 +128,7 @@ export default {
   data: function () {
     return {
       txtEditSaveStrategy: this.$getConst("editStrategy"),
-      txtAddTrade : this.$getConst("addTrade"),
+      txtAddTrade: this.$getConst("addTrade"),
       editStrategy: null,
     };
   },

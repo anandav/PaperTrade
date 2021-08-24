@@ -33,6 +33,13 @@ var utilitymixins = {
         3: "Future",
         // 4:"Stocks",
       },
+      EXCHANGE: {
+        1: "NSE",
+        4: "CDS",
+        3: "BSE",
+        5: "MCX",
+        2: "CBOE",
+      }
     }
   }
 };

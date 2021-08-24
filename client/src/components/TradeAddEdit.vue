@@ -123,16 +123,16 @@
           id="formSpotPrice"
         ></textarea>
       </div>
-      <div class="d-flex mt-2">
+      <div class="d-flex mt-2 float-right">
         <a
-          class="btn btn-warning float-right"
+          class="btn btn-warning "
           @click="onAddEditTrade()"
           href="#"
         >
           Save
         </a>
         <a
-          class="btn btn-warning float-right"
+          class="btn btn-warning ml-1"
           @click="bindAddEditTrade()"
           href="#"
         >

@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.4",
+    "d3": "^7.0.1",
     "dayjs": "^1.10.6",
     "dotenv": "^8.2.0",
     "node-static": "^0.7.11",
@@ -24,7 +25,7 @@
     "@vue/cli-plugin-eslint": "^3.1.1",
     "@vue/cli-plugin-router": "^4.5.6",
     "@vue/cli-plugin-vuex": "^4.5.6",
-    "@vue/cli-service": "^4.5.13",
+    "@vue/cli-service": "^3.12.1",
     "autoprefixer": "^10.3.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",

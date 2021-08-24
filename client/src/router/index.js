@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import Home from '../views/Home.vue'
 import PaperTrade from '../components/PaperTrade';
-import Detail from '../components/PortfolioDetail';
+import Builder from '../components/builder/Builder';
 
 Vue.use(VueRouter)
 
@@ -17,18 +16,14 @@ const approutes = [
     name: 'PaperTrade',
     component: PaperTrade
   },
-  {
-    path: '/Detail/:id',
-    name: 'Detail',
-    component: Detail
+   {
+    path: '/builder',
+    name: 'Builder',
+    component: Builder
   },
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },{
     path : '*',
     redirect: '/'
