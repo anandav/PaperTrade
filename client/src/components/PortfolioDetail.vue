@@ -11,7 +11,7 @@
           @click="onAddNewStrategy()"
         >
           <i class="bi bi-plus-square"></i>
-          {{txtAddStrategy}}</a
+          {{ txtAddStrategy }}</a
         >
       </div>
 
@@ -23,12 +23,12 @@
         </div>
       </div>
     </div>
-   
   </div>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
 import StrategyDetail from "./StrategyDetail.vue";
+import myMixins from "../shared/utilitymixins";
 export default {
   name: "PortfolioDetail",
   components: {
@@ -38,24 +38,15 @@ export default {
     ...mapState(["Portfolio", "Strategies"]),
   },
   methods: {
-    ...mapActions(["AddEditStrategy"]),
+    ...mapActions(["AddStrategy"]),
     onAddNewStrategy: function () {
       this.isEdit = !this.isEdit;
-
-      var _strategy = {
-        name: "NEW",
-        description: "",
-        symbol: "NIFTY",
-        portfolio: this.Portfolio._id,
-        isEdit: true,
-      };
-      this.AddEditStrategy(_strategy);
+      this.AddStrategy(this.Portfolio._id);
     },
   },
+  mixins: [myMixins],
   data: function () {
-    return { isEdit: false,
-     txtAddStrategy : this.$getConst("addNewStrategy"),
-    };
+    return { isEdit: false, txtAddStrategy: this.$getConst("addNewStrategy") };
   },
 };
 </script>

@@ -18,6 +18,18 @@
               @keydown.enter="onSaveStrategy()"
             />
           </div>
+<!-- 
+          <div class=""  v-if="!PropStrategy.ismultiplesymbol">
+            <span class="view">
+              {{ PropStrategy.spotprice }}
+            </span>
+            <input
+              class="form-control edit"
+              placeholder="Spot Price"
+              v-model="PropStrategy.spotprice"
+              
+            />
+          </div> -->
 
           <div class="" v-if="!PropStrategy.ismultiplesymbol">
             <span class="view">
@@ -63,20 +75,31 @@
           </a>
         </div>
         <div class="float-right">
-          <a class="btn btn-warning" @click="onBindAddEditTrade()">
+          <a
+            v-if="!PropStrategy.ismultiplesymbol"
+            class="btn btn-warning ml-2 view"
+            @click="onShowChart()"
+          >
+            <i class="bi bi-graph-up"></i>
+            {{ txtShowChart }}
+          </a>
+
+          <a class="btn btn-warning ml-2" @click="onBindAddEditTrade()">
             <i class="bi-plus-square"></i>
             {{ txtAddTrade }}
           </a>
+
           <a
             class="btn btn-warning ml-2 view"
             @click="onEditStrategy(PropStrategy)"
           >
             <i class="bi bi-pencil"></i>
-            {{ txtEditSaveStrategy }}
+            {{ txtEditStrategy }}
           </a>
-          <a class="btn btn-secondary ml-2 edit" @click="onSaveStrategy()">
+
+          <a class="btn btn-warning ml-2 edit" @click="onSaveStrategy()">
             <i class="bi bi-save"></i>
-            {{ txtEditSaveStrategy }}
+            {{ txtSaveStrategy }}
           </a>
         </div>
       </div>
@@ -87,20 +110,31 @@
 import { mapActions, mapState } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
+import myMixins from "../shared/utilitymixins";
 export default {
   name: "StrategyDetail",
   components: { TradeList },
-  props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
+  computed: {
+    ...mapState(["TradeDetail"]),
+  },
+  created: function () {},
+  data: function () {
+    return {
+      txtEditStrategy: this.$getConst("editStrategy"),
+      txtSaveStrategy: this.$getConst("saveStrategy"),
+      txtShowChart: this.$getConst("showChart"),
+      txtAddTrade: this.$getConst("addTrade"),
+      editStrategy: null,
+    };
+  },
   methods: {
-    ...mapActions(["AddEditStrategy", "DeleteStrategy", "BindAddEditTrade"]),
+    ...mapActions(["EditStrategy", "DeleteStrategy", "BindAddEditTrade"]),
     onEditStrategy(strategy) {
       this.editStrategy = strategy;
-      this.txtEditSaveStrategy = this.$getConst("saveStrategy");
     },
     onSaveStrategy() {
       this.editStrategy = null;
-      this.txtEditSaveStrategy = this.$getConst("editStrategy");
-      this.AddEditStrategy(this.PropStrategy);
+      this.EditStrategy(this.PropStrategy);
     },
     onDeleteStrategy() {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
@@ -108,30 +142,26 @@ export default {
     onDuplicateStrategy() {
       var _startegyClone = { ...this.PropStrategy };
       _startegyClone._id = null;
-      _startegyClone.trades.forEach(t => {
+      _startegyClone.trades.forEach((t) => {
         t._id = null;
       });
-      this.AddEditStrategy(_startegyClone);
+      this.EditStrategy(_startegyClone);
     },
     onBindAddEditTrade() {
       if (this.TradeDetail) {
         this.BindAddEditTrade(null);
       } else {
         this.BindAddEditTrade(this.PropStrategy);
+        
       }
     },
+    onShowChart() {
+      console.log("show Chart clicked");
+      this.GenerateChartPoint(this.PropStrategy, 16400 ); //16624
+    },
   },
-  computed: {
-    ...mapState(["TradeDetail"]),
-  },
-  created: function () {},
-  data: function () {
-    return {
-      txtEditSaveStrategy: this.$getConst("editStrategy"),
-      txtAddTrade: this.$getConst("addTrade"),
-      editStrategy: null,
-    };
-  },
+  mixins: [myMixins],
+  props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
 };
 </script>
 

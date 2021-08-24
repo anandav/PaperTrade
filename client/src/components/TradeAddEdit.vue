@@ -147,7 +147,6 @@ import { mapActions, mapState } from "vuex";
 import myMixins from "../shared/utilitymixins";
 export default {
   name: "TradeAddEdit",
-  mixins: [myMixins],
   props: {
     PropStrategy: {},
   },
@@ -168,6 +167,7 @@ export default {
       console.log("console log");
     },
   },
+  mixins: [myMixins],
   created() {
   },
 };

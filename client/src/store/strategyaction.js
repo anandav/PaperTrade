@@ -6,6 +6,7 @@ import {
     ADDEDITSTRATEGY,
     DELETESTRATEGY
 } from "./mutationtype";
+//import { GetTodayDate } from '../shared/utilitymixins';
 
 export default {
     async GetAllStrategies({ commit }, item) {
@@ -18,7 +19,22 @@ export default {
             }
         });
     },
-    AddEditStrategy({ commit }, item) {
+    AddStrategy({ commit }, _pid) {
+        var item = {
+            name: "NEW",
+            description: "",
+            symbol: "NIFTY",
+            portfolio: _pid,
+            isEdit: true,
+        };
+        axios.post(apiUrl + "strategy/save", item).then(function (res) {
+            if (res.status == 200) {
+                commit(ADDEDITSTRATEGY, res.data);
+            }
+        });
+    },
+
+    EditStrategy({ commit }, item) {
         axios.post(apiUrl + "strategy/save", item).then(function (res) {
             if (res.status == 200) {
                 commit(ADDEDITSTRATEGY, res.data);
