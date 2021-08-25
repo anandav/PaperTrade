@@ -17,8 +17,8 @@ export default {
                 sid: _strategy._id,
                 lotsize: 50,
                 expiry: null,
-                strikepricemin: 14000,
-                strikepricemax: 20000,
+                strikepricemin: 15900,
+                strikepricemax: 17000,
                 strikepricestep: 50,
                 buyorsell: "Sell", //Buy/Sell
                 tradetype: "Call", //Call/Put/Future

@@ -1,31 +1,62 @@
 var utilitymixins = {
   methods: {
-    GenerateChartPoint: function (strategy, todaySpotPrice) {
-      if (strategy && strategy.trades && strategy.trades.length) {
+    GenerateChartPoint: function (strategy) {
+      if (strategy && strategy.trades && strategy.trades.length > 0) {
         var tradeCount = strategy.trades.length;
-
+        var chartData = [];
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
-          let _strikeprice = currentTrade.strikepricemin;
-
+          let _strikePrice = currentTrade.strikepricemin;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
+          // if (true) {
+          //   ///have to pass a parameter from u
+          //   _strikePrice = currentTrade.strikepricemin - (currentTrade.strikepricestep - currentTrade.price);
+          //   console.log('_strikePrice :>> ', _strikePrice);
+          // }
+
+          let j = 0;
           do {
 
             if (currentTrade.tradetype == "Call") {
-
-              _intrinsicValue = _strikeprice - todaySpotPrice > 0 ? 0 : _strikeprice - todaySpotPrice;
-              PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.spotprice : currentTrade.spotprice - _intrinsicValue
-              netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL)
-              console.log({ 'strikeprice': _strikeprice, "intrinsicValue": _intrinsicValue, "NetPnL": netPnL });
+              _intrinsicValue = _strikePrice - currentTrade.selectedstrike > 0 ? _strikePrice - currentTrade.selectedstrike : 0;
             }
             else if (currentTrade.tradetype == "Put") {
-              console.log("put");
+              _intrinsicValue = currentTrade.selectedstrike - _strikePrice > 0 ? currentTrade.selectedstrike - _strikePrice : 0;
             }
-            _strikeprice += currentTrade.strikepricestep;
-          }
-          while (currentTrade.strikepricemax >= _strikeprice)
-        }
+            PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
+            netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
 
+if(i== 3){
+
+}
+
+            if (chartData[j]) {
+              chartData[j].netPnL += netPnL;
+              chartData[j].PnL = PnL;
+            } else {
+              chartData.push({
+                "strikePrice": _strikePrice,
+                "intrinsicValue": _intrinsicValue,
+                "PnL": PnL,
+                "netPnL": netPnL,
+                "qty": currentTrade.quantity,
+                "lot": currentTrade.lotsize,
+                "price": currentTrade.price
+              });
+            }
+
+            if(i== 3){
+              console.log('_strikePrice, netPnL, _intrinsicValue :>> ', _strikePrice, netPnL, _intrinsicValue);
+
+            }
+
+            j += 1;
+            _strikePrice += currentTrade.strikepricestep;
+          }
+          while (currentTrade.strikepricemax >= _strikePrice)
+        }
+        console.log(chartData);
+        return chartData;
       }
     },
     GetTodayDate: function () {
