@@ -24,7 +24,7 @@ export default {
                 tradetype: "Call", //Call/Put/Future
                 quantity: 1,
                 selectedstrike: 16500,
-                spotprice: 30,
+                price: 30,
                 note: "",
             };
             commit(BINDADDEDITTRADE, _trade);

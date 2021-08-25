@@ -18,18 +18,7 @@
               @keydown.enter="onSaveStrategy()"
             />
           </div>
-<!-- 
-          <div class=""  v-if="!PropStrategy.ismultiplesymbol">
-            <span class="view">
-              {{ PropStrategy.spotprice }}
-            </span>
-            <input
-              class="form-control edit"
-              placeholder="Spot Price"
-              v-model="PropStrategy.spotprice"
-              
-            />
-          </div> -->
+
 
           <div class="" v-if="!PropStrategy.ismultiplesymbol">
             <span class="view">

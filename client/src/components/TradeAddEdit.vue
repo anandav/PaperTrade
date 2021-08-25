@@ -94,7 +94,7 @@
               border border-secondary
               text-white
             "
-            id="formSpotPrice"
+           
           />
         </div>
 
@@ -102,14 +102,14 @@
           <input
             placeholder="Price"
             type="number"
-            v-model.number="TradeDetail.spotprice"
+            v-model.number="TradeDetail.price"
             class="
               form-control
               bg-transparent
               border border-secondary
               text-white
             "
-            id="formSpotPrice"
+           
           />
         </div>
       </div>
@@ -120,7 +120,7 @@
           type="number"
           v-model.number="TradeDetail.note"
           class="form-control bg-transparent border border-secondary text-white"
-          id="formSpotPrice"
+         
         ></textarea>
       </div>
       <div class="d-flex mt-2 float-right">

@@ -1,9 +1,9 @@
 var utilitymixins = {
   methods: {
-    GenerateChartPoint: function (strategy, todyaSpotPrice) {
+    GenerateChartPoint: function (strategy, todaySpotPrice) {
       if (strategy && strategy.trades && strategy.trades.length) {
         var tradeCount = strategy.trades.length;
-        var _spotPrice = strategy.spotprice;
+
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
           let _strikeprice = currentTrade.strikepricemin;
@@ -13,7 +13,7 @@ var utilitymixins = {
 
             if (currentTrade.tradetype == "Call") {
 
-              _intrinsicValue = _strikeprice - todyaSpotPrice > 0 ? 0 : _strikeprice - todyaSpotPrice;
+              _intrinsicValue = _strikeprice - todaySpotPrice > 0 ? 0 : _strikeprice - todaySpotPrice;
               PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.spotprice : currentTrade.spotprice - _intrinsicValue
               netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL)
               console.log({ 'strikeprice': _strikeprice, "intrinsicValue": _intrinsicValue, "NetPnL": netPnL });

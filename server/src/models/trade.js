@@ -33,7 +33,7 @@ const tradeSchema = schema({
   selectedstrike: {
     type: Number,
   },
-  spotprice: {
+  price: {
     type: Number,
   },
   note : {

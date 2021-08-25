@@ -120,10 +120,10 @@
 
         <td>
           <span class="view">
-            {{ item.spotprice }}
+            {{ item.price }}
           </span>
           <input
-            v-model="item.spotprice"
+            v-model="item.price"
             type="text"
             class="form-control edit"
           />
@@ -131,8 +131,8 @@
         <td>
           {{
             item.buyorsell == "Buy"
-              ? -(item.spotprice * (item.lotsize * item.quantity)).toFixed(2)
-              : (item.spotprice * (item.lotsize * item.quantity)).toFixed(2)
+              ? -(item.price * (item.lotsize * item.quantity)).toFixed(2)
+              : (item.price * (item.lotsize * item.quantity)).toFixed(2)
           }}
         </td>
         <td hidden>{{ item.note }}</td>
@@ -224,8 +224,8 @@ export default {
       this.PropStrategy.trades.forEach((_e) => {
         price =
           _e.buyorsell == "Buy"
-            ? price - _e.spotprice * (_e.lotsize * _e.quantity)
-            : price + _e.spotprice * (_e.lotsize * _e.quantity);
+            ? price - _e.price * (_e.lotsize * _e.quantity)
+            : price + _e.price * (_e.lotsize * _e.quantity);
       });
       return price.toFixed(2);
     },
