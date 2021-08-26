@@ -15,7 +15,7 @@ Webapi uses Mongodb Atlas, change the connectionstring in .env file to point to 
  ## Build 
  Client build (npm run build) will build app and move the dist to '/server/public' folder.
 
-> :warning: Authentication and Authorization in not implemeted, will implement SAML/OAuth  in futurechit .
+> :warning: Authentication and Authorization in not implemeted, will implement SSO(SAML/OAuth) support in future.
 
 > :warning: Delete functionality won't ask for conformation.
 

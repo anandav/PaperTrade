@@ -132,7 +132,7 @@ export default {
       var _startegyClone = { ...this.PropStrategy };
       _startegyClone._id = null;
       _startegyClone.trades.forEach((t) => {
-        t._id = null;
+        t._id = undefined;
       });
       this.EditStrategy(_startegyClone);
     },

@@ -4,10 +4,13 @@ var utilitymixins = {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         var tradeCount = strategy.trades.length;
         var chartData = [];
+        console.clear();
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
+          console.log(JSON.stringify(currentTrade));
           let _strikePrice = currentTrade.strikepricemin;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
+         
           // if (true) {
           //   ///have to pass a parameter from u
           //   _strikePrice = currentTrade.strikepricemin - (currentTrade.strikepricestep - currentTrade.price);
@@ -26,8 +29,6 @@ var utilitymixins = {
             PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
             netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
 
-
-
             if (chartData[j]) {
               chartData[j].netPnL += netPnL;
               chartData[j].PnL = PnL;
@@ -42,12 +43,6 @@ var utilitymixins = {
                 "price": currentTrade.price
               });
             }
-
-            if(i== 3){
-              console.log('_strikePrice, netPnL, _intrinsicValue :>> ', _strikePrice, netPnL, _intrinsicValue);
-
-            }
-
             j += 1;
             _strikePrice += currentTrade.strikepricestep;
           }

@@ -194,6 +194,7 @@ export default {
   methods: {
     ...mapActions(["AddEditTrade", "DeleteTrade"]),
     onDeleteTrade: function (sid, tid) {
+      console.log('sid,tid :>> ', sid,tid);
       this.DeleteTrade({ sid, tid });
     },
     onInlineEditTrade: function (trade) {
