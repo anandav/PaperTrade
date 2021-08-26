@@ -1,5 +1,5 @@
 # PaperTrade
-Do papertrade with out losing your capital. Inspired by Sensibull and Tradingview paper trades.
+Do papertrade without losing your capital. Inspired by Sensibull, Tradingview paper trades and tastyworks.
 
 [![Papertrade](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml)
 
@@ -13,5 +13,11 @@ Client folder contains SPA code and it's runs on port 8080. To start App use "np
 Webapi uses Mongodb Atlas, change the connectionstring in .env file to point to your mongodb instance (not tested in local instances).
  
  ## Build 
- Client build (npm run build) will build app and move the dist to '/server/public' folder
+ Client build (npm run build) will build app and move the dist to '/server/public' folder.
+
+> :warning: Authentication and Authorization in not implemeted, will implement SAML/OAuth  in futurechit .
+
+> :warning: Delete functionality won't ask for conformation.
+
+ 
 

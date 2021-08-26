@@ -26,9 +26,7 @@ var utilitymixins = {
             PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
             netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
 
-if(i== 3){
 
-}
 
             if (chartData[j]) {
               chartData[j].netPnL += netPnL;
