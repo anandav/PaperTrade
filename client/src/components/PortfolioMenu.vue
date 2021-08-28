@@ -36,7 +36,7 @@
                   @click="onMenuSelectedPortfolio(item)"
                   :class="{ 'font-weight-bold' : Portfolio  && item._id == Portfolio._id }"
                  
-                  class="pt-5 view"
+                  class=" view"
                   >{{ item.name }}</a
                 >
               </div>

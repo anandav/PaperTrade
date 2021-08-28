@@ -1,16 +1,47 @@
+import * as d3 from "d3";
 var utilitymixins = {
+  data: function () {
+    return {
+      MARGIN: {
+        LEFT: 10,
+        RIGHT: 10,
+        TOP: 5,
+        BOTTOM: 5
+      },
+      WIDTH: 800,
+      HEIGHT: 500,
+
+      BUYORSELL: {
+        1: "Buy",
+        2: "Sell",
+      },
+      TRADETYPE: {
+        1: "Call",
+        2: "Put",
+        3: "Future",
+        // 4:"Stocks",
+      },
+      EXCHANGE: {
+        1: "NSE",
+        4: "CDS",
+        3: "BSE",
+        5: "MCX",
+        2: "CBOE",
+      }
+    }
+  },
   methods: {
     GenerateChartPoint: function (strategy) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         var tradeCount = strategy.trades.length;
         var chartData = [];
-        console.clear();
+        //console.clear();
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
-          console.log(JSON.stringify(currentTrade));
+          //console.log(JSON.stringify(currentTrade));
           let _strikePrice = currentTrade.strikepricemin;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
-         
+
           // if (true) {
           //   ///have to pass a parameter from u
           //   _strikePrice = currentTrade.strikepricemin - (currentTrade.strikepricestep - currentTrade.price);
@@ -48,10 +79,35 @@ var utilitymixins = {
           }
           while (currentTrade.strikepricemax >= _strikePrice)
         }
-        console.log(chartData);
+        //console.log(chartData);
         return chartData;
       }
     },
+    GenerateChart: function (strategy) {
+      var chartData = this.GenerateChartPoint(strategy);
+      var _paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
+      d3.selectAll(_paretnId + " > *").remove();
+      const svg = d3.select(_paretnId).append("svg")
+        .attr("width", this.WIDTH)
+        .attr("height", this.HEIGHT)
+        .append("g");
+      //.append("transform",`translate(${this.MARGIN.LEFT}, ${this.MARGIN.RIGHT})`);
+
+      const rect = svg.selectAll("rect").data(chartData);
+      const y = d3.scaleLinear().domain([0, 10000]).range([0, 400]);
+      ///Strike price Band
+      const x = d3.scaleBand().domain(
+        chartData.map(c => c.strikePrice)
+      ).range([0, 400]).paddingInner(0.1);
+
+      rect.enter().append("rect")
+        .attr("x", (d) => x(d.strikePrice))
+        .attr("y", 10)
+        .attr("width", 10)
+        .attr("height", (d) => y(d.netPnL))
+        .attr("fill", "yellow");
+    },
+
     GetTodayDate: function () {
       /// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
       var d = new Date();
@@ -61,44 +117,8 @@ var utilitymixins = {
       console.log(`${da}-${mo}-${ye}`);
     }
 
-    // conflicting: function () {
-    //   console.log("from mixin");
-    // },
-    // ThisWeekExpiryDate: function () {
-    //   var fromDate = new Date();
-    //   var daystoNextThursday = (4 - fromDate.getDay()) % 7;
-    //   if (daystoNextThursday < 0) {
-    //     daystoNextThursday = daystoNextThursday + 7;
-    //   }
-    //   fromDate.setDate(fromDate.getDate() + daystoNextThursday);
-    //   return fromDate;
-    // },
-    // NextWeekExpiryDate: function () {
-    //   var nextExpryDate = this.ThisWeekExpiryDate();
-    //   nextExpryDate.setDate(nextExpryDate.getDate() + 7);
-    //   return nextExpryDate();
-    // }
+
   },
-  data: function () {
-    return {
-      BUYORSELL: {
-        1: "Buy",
-        2: "Sell",
-      },
-      TRADETYPE: {
-        1: "Call",
-        2: "Put",
-        3: "Future",
-        // 4:"Stocks",
-      },
-      EXCHANGE: {
-        1: "NSE",
-        4: "CDS",
-        3: "BSE",
-        5: "MCX",
-        2: "CBOE",
-      }
-    }
-  }
+
 };
 export default utilitymixins;

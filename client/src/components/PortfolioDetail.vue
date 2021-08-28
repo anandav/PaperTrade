@@ -17,8 +17,8 @@
 
       <!-- <StrategiesList /> -->
       <div class="mt-3">
-        <div :key="item._id" v-for="item in Strategies">
-          <StrategyDetail :PropStrategy="item" />
+        <div v-bind:id="'strategy_'+item._id" :key="item._id" v-for="item in Strategies"  >
+          <StrategyDetail :PropStrategy="item"  />
           <hr />
         </div>
       </div>

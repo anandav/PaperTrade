@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-12 row">
+  <div class="col-lg-12 row bg-gray-750">
     <PortfolioMenu style="margin-top: 70px" />
     <PortfolioDetail style="margin-top: 70px" />
     <TradeAddEdit />

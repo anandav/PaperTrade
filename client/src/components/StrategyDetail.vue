@@ -1,96 +1,99 @@
 <template>
   <!-- @click="SelectedStrategy(PropStrategy)" -->
-  <div>
-    <div
-      class="card mb-2 bg-grey-custom"
-      :class="{ isStrategyEdit: PropStrategy == editStrategy }"
-    >
-      <div class="card-header">
-        <div class="d-flex justify-content-between bd-highlight">
-          <div class="">
-            <span class="view">
-              {{ PropStrategy.name }}
-            </span>
+
+  <div
+    class="card mb-2 bg-grey-custom"
+    :class="{ isStrategyEdit: PropStrategy == editStrategy }"
+  >
+    <div class="card-header">
+      <div class="d-flex justify-content-between bd-highlight">
+        <div class="">
+          <span class="view">
+            {{ PropStrategy.name }}
+          </span>
+          <input
+            class="form-control edit"
+            placeholder="Strategy Name"
+            v-model="PropStrategy.name"
+            @keydown.enter="onSaveStrategy()"
+          />
+        </div>
+
+        <div class="" v-if="!PropStrategy.ismultiplesymbol">
+          <span class="view">
+            {{ PropStrategy.symbol }}
+          </span>
+
+          <input
+            class="form-control edit"
+            placeholder="Symbol"
+            v-model="PropStrategy.symbol"
+            @keydown.enter="onSaveStrategy()"
+          />
+        </div>
+        <div class="">
+          <label>
             <input
-              class="form-control edit"
-              placeholder="Strategy Name"
-              v-model="PropStrategy.name"
-              @keydown.enter="onSaveStrategy()"
+              type="checkbox"
+              v-model="PropStrategy.ismultiplesymbol"
+              @click="onSaveStrategy()"
             />
-          </div>
-
-
-          <div class="" v-if="!PropStrategy.ismultiplesymbol">
-            <span class="view">
-              {{ PropStrategy.symbol }}
-            </span>
-
-            <input
-              class="form-control edit"
-              placeholder="Symbol"
-              v-model="PropStrategy.symbol"
-              @keydown.enter="onSaveStrategy()"
-            />
-          </div>
-          <div class="">
-            <label>
-              <input
-                type="checkbox"
-                v-model="PropStrategy.ismultiplesymbol"
-                @click="onSaveStrategy()"
-              />
-              Is Multiple Symbol
-            </label>
-          </div>
-          <div class="">
-            Created On:
-            {{ PropStrategy.CreatedOn }}
-          </div>
+            Is Multiple Symbol
+          </label>
+        </div>
+        <div class="">
+          Created On:
+          {{ PropStrategy.CreatedOn }}
         </div>
       </div>
+    </div>
 
-      <div class="card-body">
-        <TradeList :PropStrategy="PropStrategy" />
+    <div class="card-body">
+      <div class="flex">
+        <div class="">
+          <TradeList :PropStrategy="PropStrategy" />
+        </div>
+        <div class="chartplaceholder">chart place holder</div>
       </div>
-      <div class="card-footer text-dark">
-        <div class="p-2 float-left">
-          <a class="btn btn-danger ml-2" @click="onDeleteStrategy()">
-            <i class="bi bi-trash"></i>
-          </a>
-        </div>
-        <div class="p-2 float-left">
-          <a class="btn btn-warning ml-2" @click="onDuplicateStrategy()">
-            <i class="bi bi-clipboard-plus"></i>
-          </a>
-        </div>
-        <div class="float-right">
-          <a
-            v-if="!PropStrategy.ismultiplesymbol"
-            class="btn btn-warning ml-2 view"
-            @click="onShowChart()"
-          >
-            <i class="bi bi-graph-up"></i>
-            {{ txtShowChart }}
-          </a>
+    </div>
+    <div class="card-footer text-dark">
+      <div class="p-2 float-left">
+        <a class="btn btn-danger ml-2" @click="onDeleteStrategy()">
+          <i class="bi bi-trash"></i>
+        </a>
+      </div>
+      <div class="p-2 float-left">
+        <a class="btn btn-warning ml-2" @click="onDuplicateStrategy()">
+          <i class="bi bi-clipboard-plus"></i>
+        </a>
+      </div>
+      <div class="float-right">
+        <a
+          v-if="!PropStrategy.ismultiplesymbol"
+          class="btn btn-warning ml-2 view"
+          @click="onShowChart()"
+        >
+          <i class="bi bi-graph-up"></i>
+          {{ txtShowStratergyDiagram }}
+        </a>
 
-          <a class="btn btn-warning ml-2" @click="onBindAddEditTrade()">
-            <i class="bi-plus-square"></i>
-            {{ txtAddTrade }}
-          </a>
+        <a class="btn btn-warning ml-2" @click="onBindAddEditTrade()">
+          <i class="bi-plus-square"></i>
+          {{ txtAddTrade }}
+        </a>
 
-          <a
-            class="btn btn-warning ml-2 view"
-            @click="onEditStrategy(PropStrategy)"
-          >
-            <i class="bi bi-pencil"></i>
-            {{ txtEditStrategy }}
-          </a>
+        <a
+          class="btn btn-warning ml-2 view"
+          @click="onEditStrategy(PropStrategy)"
+        >
+          <i class="bi bi-pencil"></i>
+          {{ txtEditStrategy }}
+        </a>
 
-          <a class="btn btn-warning ml-2 edit" @click="onSaveStrategy()">
-            <i class="bi bi-save"></i>
-            {{ txtSaveStrategy }}
-          </a>
-        </div>
+        <a class="btn btn-warning ml-2 edit" @click="onSaveStrategy()">
+          <i class="bi bi-save"></i>
+          {{ txtSaveStrategy }}
+        </a>
       </div>
     </div>
   </div>
@@ -100,6 +103,7 @@ import { mapActions, mapState } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
 import myMixins from "../shared/utilitymixins";
+
 export default {
   name: "StrategyDetail",
   components: { TradeList },
@@ -111,7 +115,7 @@ export default {
     return {
       txtEditStrategy: this.$getConst("editStrategy"),
       txtSaveStrategy: this.$getConst("saveStrategy"),
-      txtShowChart: this.$getConst("showChart"),
+      txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
       txtAddTrade: this.$getConst("addTrade"),
       editStrategy: null,
     };
@@ -141,12 +145,11 @@ export default {
         this.BindAddEditTrade(null);
       } else {
         this.BindAddEditTrade(this.PropStrategy);
-        
       }
     },
     onShowChart() {
-      console.log("show Chart clicked");
-      this.GenerateChartPoint(this.PropStrategy, 16400 ); //16624
+      //var areaObj = this.$el.querySelector(".sm");
+      this.GenerateChart(this.PropStrategy);
     },
   },
   mixins: [myMixins],
