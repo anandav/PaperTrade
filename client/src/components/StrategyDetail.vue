@@ -53,7 +53,8 @@
         <div class="">
           <TradeList :PropStrategy="PropStrategy" />
         </div>
-        <div class="chartplaceholder">chart place holder</div>
+        <div class="chartplaceholder">
+          </div>
       </div>
     </div>
     <div class="card-footer text-dark">
@@ -110,7 +111,8 @@ export default {
   computed: {
     ...mapState(["TradeDetail"]),
   },
-  created: function () {},
+  created: function () {
+  },
   data: function () {
     return {
       txtEditStrategy: this.$getConst("editStrategy"),
@@ -148,7 +150,6 @@ export default {
       }
     },
     onShowChart() {
-      //var areaObj = this.$el.querySelector(".sm");
       this.GenerateChart(this.PropStrategy);
     },
   },
