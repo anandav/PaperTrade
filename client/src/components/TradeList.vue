@@ -4,6 +4,7 @@
       <tr>
         <th v-show="PropStrategy.ismultiplesymbol" scope="col">Symbol</th>
         <th scope="col">Lot Size</th>
+        <th scope="col" class="d-none" >Strike Step</th>
         <th scope="col">Selected Strike</th>
         <th scope="col">Trade Type</th>
         <th scope="col">Buy/Sell</th>
@@ -11,7 +12,6 @@
         <th scope="col">Spot Price</th>
         <th scope="col">Total Price</th>
         <th scope="col" hidden>Note</th>
-
         <th scope="col"></th>
       </tr>
     </thead>
@@ -35,18 +35,37 @@
           </span>
           <input v-model="item.lotsize" type="text" class="form-control edit" />
         </td>
+        <td class="d-none">
+          <span class="view">
+            {{ item.strikepricestep }}
+          </span>
+          <input
+            v-model="item.strikepricestep"
+            type="number"
+            class="form-control edit"
+          />
+        </td>
 
         <td>
           <span class="view">
             {{ item.selectedstrike }}
           </span>
 
-          <div class="">
-            <input
-              v-model="item.selectedstrike"
-              type="text"
-              class="form-control edit"
-            />
+          <div class="edit">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <a class="input-group-text text-dark" @click="onDec(item)">-</a>
+              </div>
+              <input
+                v-model="item.selectedstrike"
+                type="text"
+                class="form-control"
+              />
+              <div class="input-group-append">
+                <a class="input-group-text text-dark" @click="onInc(item)">+</a>
+              </div>
+            </div>
+
             <input
               v-model="item.selectedstrike"
               type="range"
@@ -122,11 +141,7 @@
           <span class="view">
             {{ item.price }}
           </span>
-          <input
-            v-model="item.price"
-            type="text"
-            class="form-control edit"
-          />
+          <input v-model="item.price" type="text" class="form-control edit" />
         </td>
         <td>
           {{
@@ -194,7 +209,7 @@ export default {
   methods: {
     ...mapActions(["AddEditTrade", "DeleteTrade"]),
     onDeleteTrade: function (sid, tid) {
-      console.log('sid,tid :>> ', sid,tid);
+      console.log("sid,tid :>> ", sid, tid);
       this.DeleteTrade({ sid, tid });
     },
     onInlineEditTrade: function (trade) {
@@ -212,6 +227,12 @@ export default {
       console.log(trade);
       console.log(_exitTrade);
       this.AddEditTrade(_exitTrade);
+    },
+    onInc(trade) {
+      trade.selectedstrike += parseFloat(trade.strikepricestep);
+    },
+    onDec(trade) {
+      trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
   },
   data: function () {

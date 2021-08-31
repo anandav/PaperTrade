@@ -31,6 +31,19 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
+
+        <div class="" v-if="!PropStrategy.ismultiplesymbol">
+          <span class="view">
+            {{ PropStrategy.ste }}
+          </span>
+
+          <input
+            class="form-control edit"
+            placeholder="Symbol"
+            v-model="PropStrategy.symbol"
+            @keydown.enter="onSaveStrategy()"
+          />
+        </div>
         <div class="">
           <label>
             <input
@@ -53,8 +66,7 @@
         <div class="">
           <TradeList :PropStrategy="PropStrategy" />
         </div>
-        <div class="chartplaceholder">
-          </div>
+        <div class=" ml-5 chartplaceholder "></div>
       </div>
     </div>
     <div class="card-footer text-dark">
@@ -111,8 +123,7 @@ export default {
   computed: {
     ...mapState(["TradeDetail"]),
   },
-  created: function () {
-  },
+  created: function () {},
   data: function () {
     return {
       txtEditStrategy: this.$getConst("editStrategy"),

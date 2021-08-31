@@ -31,7 +31,20 @@ var utilitymixins = {
     }
   },
   methods: {
+    GenerateChart: function (strategy) {
+      console.clear();
+      var chartData = this.GenerateChartPoint(strategy);
+      var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
+      // console.log(document.querySelectorAll(paretnId));
+      d3.selectAll(paretnId + " > *").remove();
+      //this._generateBarChart(chartData, paretnId);
+      //this._generateLineChart(chartData, paretnId);
+      this._generateLineChart2(chartData, paretnId);
+
+    },
+
     GenerateChartPoint: function (strategy) {
+
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         var tradeCount = strategy.trades.length;
         var chartData = [];
@@ -41,6 +54,8 @@ var utilitymixins = {
           //console.log(JSON.stringify(currentTrade));
           let _strikePrice = currentTrade.strikepricemin;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
+
+          //currentTrade.strikepricestep = 1;
 
           // if (true) {
           //   ///have to pass a parameter from u
@@ -82,17 +97,6 @@ var utilitymixins = {
         //console.log(chartData);
         return chartData;
       }
-    },
-    GenerateChart: function (strategy) {
-      //console.clear();
-      var chartData = this.GenerateChartPoint(strategy);
-      var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
-      console.log(document.querySelectorAll(paretnId));
-      d3.selectAll(paretnId + " > *").remove();
-      this._generateBarChart(chartData, paretnId);
-      this._generateLineChart(chartData, paretnId);
-      //this._generateLineChart2(chartData, paretnId);
-
     },
 
     // POC: BarChart
@@ -183,11 +187,10 @@ var utilitymixins = {
     ///POC : Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
     _generateLineChart2: function (chartData, paretnId) {
-      debugger;
       const inputs = ({
         id: '',
-        width: 940,
-        height: 450,
+        // width: 940,
+        // height: 450,
         dimension: 'date',
         metric: 'index',
         title: 'Test Title',
@@ -231,6 +234,7 @@ var utilitymixins = {
           .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
           .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
 
+
       const lg = svg
         .append("defs")
         .append("linearGradient") // linear gradient
@@ -251,25 +255,22 @@ var utilitymixins = {
 
       const area = d3
         .area()
-        .curve(d3.curveCardinal.tension(0.95))
+        .curve(d3.curveCardinal.tension(0.5))
         .defined(function (d) {
-          console.log('d :>> ', d);
-          return d[netPnL] >= 0;
+          return d.netPnL >= 0;
         })
         .x(function (d) {
-          return x(d[strikePrice]);
+          return x(d.strikePrice);
         })
         .y0(this.HEIGHT - this.MARGIN.BOTTOM)
         .y1(function (d) {
-          return y(d[netPnL]);
+          return y(d.netPnL);
         });
-
       const line = d3
         .line()
-        .defined(d => !isNaN(d[netPnL]))
-        .x(d => x(d[strikePrice]))
-        .y(d => y(d[netPnL]));
-
+        .defined(d => !isNaN(d.netPnL))
+        .x(d => x(d.strikePrice))
+        .y(d => y(d.netPnL));
       svg
         .append("g")
         .attr("class", "x axis")
@@ -280,11 +281,10 @@ var utilitymixins = {
         .attr("dx", "-.6em")
         .attr("dy", ".5em")
         .attr("transform", "rotate(-45)");
-
       svg
         .append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + this.MARGIN.LEFT + ", 0)")
+         .attr("transform", "translate(" + this.MARGIN.LEFT + ", 0)")
         .call(
           yAxisCall
           // d3.axisLeft(y).tickFormat(d => {
@@ -301,8 +301,6 @@ var utilitymixins = {
         )
         .selectAll("text")
         .attr("dx", "-5");
-
-
       svg
         .append("path")
         .datum(chartData)

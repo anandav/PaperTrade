@@ -22,13 +22,36 @@
           <input
             class="
               form-control
+              border-warning
               bg-transparent
               border border-secondary
               text-white
             "
-            type="text"
-            v-model="TradeDetail.selectedstrike"
+            placeholder="Strike Step"
+            type="number"
+            v-model="TradeDetail.strikepricestep"
           />
+        </div>
+        <div class="col-sm">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <a class="input-group-text bg-dark" @click="onDec(TradeDetail);">-</a>
+            </div>
+            <input
+              v-model="TradeDetail.selectedstrike"
+              type="text"
+              class="
+                form-control text-white
+                border-warning
+                bg-transparent
+                border border-secondary
+              "
+            />
+            <div class="input-group-append">
+              <a class="input-group-text bg-dark" @click="onInc(TradeDetail);">+</a>
+            </div>
+          </div>
+
           <input
             placeholder="Strike Price"
             type="range"
@@ -36,7 +59,7 @@
             :max="TradeDetail.strikepricemax"
             :step="TradeDetail.strikepricestep"
             v-model.number="TradeDetail.selectedstrike"
-            class="form-control-range"
+            class="form-control-range "
             id="formControlRange"
           />
         </div>
@@ -82,7 +105,9 @@
             </label>
           </div>
         </div>
+      </div>
 
+      <div class="d-flex mt-2">
         <div class="col-sm">
           <input
             placeholder="Quantity"
@@ -94,7 +119,6 @@
               border border-secondary
               text-white
             "
-           
           />
         </div>
 
@@ -109,33 +133,18 @@
               border border-secondary
               text-white
             "
-           
           />
         </div>
-      </div>
-
-      <div class="d-flex mt-2">
-        <textarea
+        <!-- <textarea
           placeholder="Note"
           type="number"
           v-model.number="TradeDetail.note"
           class="form-control bg-transparent border border-secondary text-white"
-         
-        ></textarea>
+        ></textarea> -->
       </div>
       <div class="d-flex mt-2 float-right">
-        <a
-          class="btn btn-warning "
-          @click="onAddEditTrade()"
-          href="#"
-        >
-          Save
-        </a>
-        <a
-          class="btn btn-warning ml-1"
-          @click="bindAddEditTrade()"
-          href="#"
-        >
+        <a class="btn btn-warning" @click="onAddEditTrade()" href="#"> Save </a>
+        <a class="btn btn-warning ml-1" @click="bindAddEditTrade()" href="#">
           Cancel
         </a>
       </div>
@@ -151,25 +160,31 @@ export default {
     PropStrategy: {},
   },
   computed: {
-    ...mapState([ "TradeDetail"]),
+    ...mapState(["TradeDetail"]),
   },
   methods: {
     ...mapActions(["AddEditTrade", "BindAddEditTrade"]),
     onAddEditTrade: function () {
-      this.AddEditTrade(this.TradeDetail).then(()=>{
+      this.AddEditTrade(this.TradeDetail).then(() => {
         this.BindAddEditTrade(null);
-      })
+      });
     },
     bindAddEditTrade: function () {
       this.BindAddEditTrade(null);
     },
     onMyMouseDown: function () {
       console.log("console log");
+    }
+    ,
+    onInc(trade) {
+      trade.selectedstrike += parseFloat(trade.strikepricestep);
+    },
+    onDec(trade) {
+      trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
   },
   mixins: [myMixins],
-  created() {
-  },
+  created() {},
 };
 </script>
 <style scoped>
