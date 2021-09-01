@@ -13,7 +13,7 @@
           />
         </div>
         <div class="float-right">
-          <a class="btn btn-warning" href="#" @click="onAddNewPortfolio()">
+          <a class="btn btn-secondary " href="#" @click="onAddNewPortfolio()">
             <i v-show="!isEdit" class="bi bi-plus-square"></i>
             <i v-show="isEdit" class="bi bi-save"></i>
             <span class="d-none d-lg-inline d-xl-inline">
@@ -49,20 +49,20 @@
               />
             </div>
             <div class="col-sm">
-              <div class="float-right text-dark">
+              <div class="float-right ">
                 <a
-                  class="btn btn-warning view"
+                  class="btn btn-secondary text-warning view"
                   @click="onInlineEditPortfolio(item)"
                 >
                   <i class="bi bi-pencil"></i>
                 </a>
                 <a
-                  class="btn btn-warning edit"
+                  class="btn btn-secondary  text-warning edit"
                   @click="onInlineSavePortfolio(item)"
                 >
                   <i class="bi bi-save"></i>
                 </a>
-                <a class="btn btn-danger ml-2" @click="onDeletePortfolio(item)">
+                <a class="btn btn-secondary text-danger ml-2" @click="onDeletePortfolio(item)">
                   <i class="bi bi-trash"></i>
                 </a>
               </div>

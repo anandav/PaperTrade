@@ -304,8 +304,7 @@ var utilitymixins = {
       svg
         .append("path")
         .datum(chartData)
-        .attr("fill", "none")
-        .attr("stroke", color)
+        .attr("fill", "none")        .attr("stroke", color)
         .attr("stroke-width", 1.5)
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")

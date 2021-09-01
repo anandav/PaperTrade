@@ -69,41 +69,41 @@
         <div class=" ml-5 chartplaceholder "></div>
       </div>
     </div>
-    <div class="card-footer text-dark">
+    <div class="card-footer ">
       <div class="p-2 float-left">
-        <a class="btn btn-danger ml-2" @click="onDeleteStrategy()">
+        <a class="btn btn-secondary text-danger ml-2" @click="onDeleteStrategy()">
           <i class="bi bi-trash"></i>
         </a>
       </div>
       <div class="p-2 float-left">
-        <a class="btn btn-warning ml-2" @click="onDuplicateStrategy()">
+        <a class="btn btn-secondary  ml-2" @click="onDuplicateStrategy()">
           <i class="bi bi-clipboard-plus"></i>
         </a>
       </div>
       <div class="float-right">
         <a
           v-if="!PropStrategy.ismultiplesymbol"
-          class="btn btn-warning ml-2 view"
+          class="btn btn-secondary  ml-2 view"
           @click="onShowChart()"
         >
           <i class="bi bi-graph-up"></i>
           {{ txtShowStratergyDiagram }}
         </a>
 
-        <a class="btn btn-warning ml-2" @click="onBindAddEditTrade()">
+        <a class="btn btn-secondary  ml-2" @click="onBindAddEditTrade()">
           <i class="bi-plus-square"></i>
           {{ txtAddTrade }}
         </a>
 
         <a
-          class="btn btn-warning ml-2 view"
+          class="btn btn-secondary  ml-2 view"
           @click="onEditStrategy(PropStrategy)"
         >
           <i class="bi bi-pencil"></i>
           {{ txtEditStrategy }}
         </a>
 
-        <a class="btn btn-warning ml-2 edit" @click="onSaveStrategy()">
+        <a class="btn btn-secondary  ml-2 edit" @click="onSaveStrategy()">
           <i class="bi bi-save"></i>
           {{ txtSaveStrategy }}
         </a>

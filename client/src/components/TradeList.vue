@@ -152,28 +152,28 @@
         </td>
         <td hidden>{{ item.note }}</td>
 
-        <td>
+        <td class="text-white">
           <a
-            class="btn btn-warning ml-2 text-dark view"
+            class="btn btn-secondary  ml-2 view"
             @click="onInlineExitTrade(item)"
           >
             <i class="bi bi-box-arrow-right"></i>
           </a>
           <a
-            class="btn btn-warning ml-2 text-dark view"
+            class="btn btn-secondary text-warning ml-2 view"
             @click="onInlineEditTrade(item)"
           >
             <i class="bi bi-pencil"></i>
           </a>
           <a
-            class="btn btn-warning ml-2 text-dark edit"
+            class="btn btn-secondary text-warning ml-2 edit"
             @click="onInlineSaveTrade(item)"
           >
             <i class="bi bi-plus-square"></i>
           </a>
 
           <a
-            class="btn btn-danger ml-2 text-dark"
+            class="btn btn-secondary ml-2 text-danger"
             @click="onDeleteTrade(PropStrategy._id, item._id)"
           >
             <i class="bi bi-trash"></i>

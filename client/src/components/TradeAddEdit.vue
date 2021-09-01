@@ -143,8 +143,8 @@
         ></textarea> -->
       </div>
       <div class="d-flex mt-2 float-right">
-        <a class="btn btn-warning" @click="onAddEditTrade()" href="#"> Save </a>
-        <a class="btn btn-warning ml-1" @click="bindAddEditTrade()" href="#">
+        <a class="btn btn-secondary " @click="onAddEditTrade()" href="#"> Save </a>
+        <a class="btn btn-secondary  ml-1" @click="bindAddEditTrade()" href="#">
           Cancel
         </a>
       </div>

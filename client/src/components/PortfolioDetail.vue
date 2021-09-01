@@ -4,10 +4,10 @@
       <h3 class="display-4">Please select a portfolio.</h3>
     </div>
     <div v-if="Portfolio" class="text-white rounded">
-      <div class="bg-secondary p-4 rounded">
+      <div class="bg-grey-custom p-4 rounded">
         {{ Portfolio.name }}
         <a
-          class="btn btn-warning float-right text-dark"
+          class="btn btn-secondary float-right"
           @click="onAddNewStrategy()"
         >
           <i class="bi bi-plus-square"></i>
