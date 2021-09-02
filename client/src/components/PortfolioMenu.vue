@@ -1,75 +1,76 @@
 <template>
-  <div class="col-lg-3 col-md-5">
-    <div class="card text-white bg-grey-custom">
-      <div class="card-header">
-        <div class="float-left">
-          <input
-            class="form-control"
-            v-show="isEdit"
-            placeholder="Portfolio Name"
-            type="text"
-            v-model="portfolioName"
-            @keyup.enter="onAddNewPortfolio()"
-          />
-        </div>
-        <div class="float-right">
-          <a class="btn btn-secondary " href="#" @click="onAddNewPortfolio()">
-            <i v-show="!isEdit" class="bi bi-plus-square"></i>
-            <i v-show="isEdit" class="bi bi-save"></i>
-            <span class="d-none d-lg-inline d-xl-inline">
-              {{ txtAddEditPortfolio }}
-            </span>
-          </a>
+  <div class="">
+    <div class="">
+      <div class="float-left">
+        <input
+          class="form-control"
+          placeholder="Portfolio Name"
+          type="text"
+          v-model="portfolioName"
+          @keyup.enter="onAddNewPortfolio()"
+        />
+      </div>
+      <!-- <div class="float-right">
+        <a class="btn btn-secondary" href="#" @click="onAddNewPortfolio()">
+          <i v-show="!isEdit" class="bi bi-plus-square"></i>
+          <i v-show="isEdit" class="bi bi-save"></i>
+          <span class="d-none d-lg-inline d-xl-inline">
+            {{ txtAddEditPortfolio }}
+          </span>
+        </a>
+      </div> -->
+    </div>
+    <div class="">
+      <div class="">
+        <div v-show="isLoading" class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <div class="card-body">
-        <div class="d-flex justify-content-center">
-          <div v-show="isLoading" class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-        <div class="mt-2" :key="item._id" v-for="item in Portfolios">
-          <div class="row" :class="{ isPortfolioEdit: item == editPortfolio }">
-            <div class="col-sm">
-              <div class="">
-                <a
-                  @click="onMenuSelectedPortfolio(item)"
-                  :class="{ 'font-weight-bold' : Portfolio  && item._id == Portfolio._id }"
-                 
-                  class=" view"
-                  >{{ item.name }}</a
-                >
-              </div>
-              <input
-                class="form-control edit"
-                placeholder="Edit Portfolio Name"
-                type="text"
-                v-model="item.name"
-                @keyup.enter="onInlineSavePortfolio(item)"
-              />
+      <div class="mt-2" :key="item._id" v-for="item in Portfolios">
+        <div class="" :class="{ isPortfolioEdit: item == editPortfolio }">
+          <div class="">
+            <div class="">
+              <a
+                @click="onMenuSelectedPortfolio(item)"
+                :class="{
+                  'font-weight-bold': Portfolio && item._id == Portfolio._id,
+                }"
+                class="view"
+                >{{ item.name }}</a
+              >
             </div>
-            <div class="col-sm">
-              <div class="float-right ">
-                <a
-                  class="btn btn-secondary text-warning view"
-                  @click="onInlineEditPortfolio(item)"
-                >
-                  <i class="bi bi-pencil"></i>
-                </a>
-                <a
-                  class="btn btn-secondary  text-warning edit"
-                  @click="onInlineSavePortfolio(item)"
-                >
-                  <i class="bi bi-save"></i>
-                </a>
-                <a class="btn btn-secondary text-danger ml-2" @click="onDeletePortfolio(item)">
-                  <i class="bi bi-trash"></i>
-                </a>
-              </div>
+            <input
+              class="form-control edit"
+              placeholder="Edit Portfolio Name"
+              type="text"
+              v-model="item.name"
+              @keyup.enter="onInlineSavePortfolio(item)"
+            />
+          </div>
+          <div class="col-sm">
+            <div class="float-right">
+              <a
+                class="btn btn-secondary text-warning view"
+                @click="onInlineEditPortfolio(item)"
+              >
+                <i class="bi bi-pencil"></i>
+              </a>
+              <a
+                class="btn btn-secondary text-warning edit"
+                @click="onInlineSavePortfolio(item)"
+              >
+                <i class="bi bi-save"></i>
+              </a>
+              <a
+                class="btn btn-secondary text-danger ml-2"
+                @click="onDeletePortfolio(item)"
+              >
+                <i class="bi bi-trash"></i>
+              </a>
             </div>
           </div>
-          <hr />
         </div>
+        <hr />
       </div>
     </div>
   </div>

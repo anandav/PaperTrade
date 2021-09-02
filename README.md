@@ -1,7 +1,9 @@
 # PaperTrade
 Do papertrade without losing your capital. Inspired by Sensibull, Tradingview paper trades and tastyworks.
 
-[![Papertrade](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml)
+![PaperTrade CI](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
+<!-- 
+[![Papertrade](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml) -->
 
 ## Server
 Server folder contains API code and it's runs on port 9090. To start API use "npm run dev" in server folder.

@@ -1,9 +1,9 @@
 <template>
-  <div class="col-lg-9 col-md-7">
+  <div class="">
     <div v-if="!Portfolio" class="jumbotron">
       <h3 class="display-4">Please select a portfolio.</h3>
     </div>
-    <div v-if="Portfolio" class="text-white rounded">
+    <div v-if="Portfolio" class="rounded">
       <div class="bg-grey-custom p-4 rounded">
         {{ Portfolio.name }}
         <a

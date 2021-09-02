@@ -1,8 +1,10 @@
 <template>
-  <div class="col-lg-12 row bg-gray-750">
-    <PortfolioMenu style="margin-top: 70px" />
-    <PortfolioDetail style="margin-top: 70px" />
-    <TradeAddEdit />
+  <div class="container mx-auto h-auto bg-gray-100 dark:bg-gray-700">
+    <div class="grid grid-cols-5">
+      <PortfolioMenu class="col-span-1" />
+      <PortfolioDetail class="" />
+      <TradeAddEdit />
+    </div>
   </div>
 </template>
 <style scoped>
@@ -17,7 +19,6 @@
 import PortfolioMenu from "./PortfolioMenu";
 import PortfolioDetail from "./PortfolioDetail";
 import TradeAddEdit from "./TradeAddEdit";
-
 
 export default {
   name: "PaperTrade",

@@ -6,7 +6,7 @@ module.exports = {
     './src/**/*.js',
     './src/**/*.{vue,js,ts,jsx,tsx}',
   ],
-  darkMode: true, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {},
   },
