@@ -1,19 +1,17 @@
 <template>
   <div class="container mx-auto h-auto bg-gray-100 dark:bg-gray-700">
-    <div class="grid grid-cols-5">
-      <PortfolioMenu class="col-span-1" />
-      <PortfolioDetail class="" />
+    <div class="grid grid-cols-12">
+      <PortfolioMenu class="col-span-3" />
+      <PortfolioDetail class="col-span-9" />
       <TradeAddEdit />
     </div>
+
+
+    <div class="hidden bg-gray-300 dark:bg-gray-600 border-red-300"></div>
   </div>
 </template>
 <style scoped>
-.wrapper {
-  padding: 0;
-  width: 100%;
-  margin: 0 auto;
-  max-width: 1200px;
-}
+
 </style>
 <script>
 import PortfolioMenu from "./PortfolioMenu";

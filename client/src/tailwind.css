@@ -1,7 +1,15 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
 
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities"; 
+
+.btn {
+    @apply inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium rounded-md text-white bg-gray-500 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+}
+
+.btn i{
+    font-size: 18px;
+}
+
+
+
+@tailwind utilities; 

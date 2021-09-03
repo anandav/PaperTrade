@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+<html lang="en" class="dark">
 
-    <title><%= htmlWebpackPlugin.options.title %></title>
-    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <!-- <link href="./css/all.min.css" rel="stylesheet" /> -->
-    <link href="./css/custom.css"  rel="stylesheet" />
-    <link href="./css/bootstrap-icons.css" rel="stylesheet" />
-    <script src="./js/jquery-3.5.0.min.js"></script>
-    <script src="./js/bootstrap.min.js"></script>
-  </head>
-  <body >
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app" class="testing"></div>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
 
-    <!-- built files will be auto injected -->
-  </body>
+</head>
+
+<body class="bg-gray-300 dark:bg-gray-600">
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work without JavaScript enabled. Please
+        enable it to continue.</strong>
+  </noscript>
+  <div id="app" class="">
+
+  </div>
+
+  <!-- built files will be auto injected -->
+</body>
+
 </html>

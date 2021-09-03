@@ -1,25 +1,29 @@
 <template>
-  <div class="">
-    <div v-if="!Portfolio" class="jumbotron">
-      <h3 class="display-4">Please select a portfolio.</h3>
+  <div class="mt-5">
+    <div v-if="!Portfolio" class="ht-48 drop-shadow-md dark:bg-gray-700">
+      <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>
-    <div v-if="Portfolio" class="rounded">
-      <div class="bg-grey-custom p-4 rounded">
-        {{ Portfolio.name }}
-        <a
-          class="btn btn-secondary float-right"
-          @click="onAddNewStrategy()"
-        >
-          <i class="bi bi-plus-square"></i>
-          {{ txtAddStrategy }}</a
-        >
+    <div v-if="Portfolio" class="">
+      <div class="border-b-2 border-gray-300 dark:border-gray-600 ht-48 drop-shadow-md pl-5 pb-5 dark:bg-gray-700">
+        <span class="text-xl">
+          {{ Portfolio.name }}
+        </span>
+        <div class="float-right pr-5">
+          <a class="btn" @click="onAddNewStrategy()">
+            <i class="bi bi-plus-square"></i>
+            {{ txtAddStrategy }}</a
+          >
+        </div>
       </div>
 
-      <!-- <StrategiesList /> -->
       <div class="mt-3">
-        <div v-bind:id="'strategy_'+item._id" :key="item._id" v-for="item in Strategies"  >
-          <StrategyDetail :PropStrategy="item"  />
-          <hr />
+        <div
+          v-bind:id="'strategy_' + item._id"
+          :key="item._id"
+          v-for="item in Strategies"
+        >
+          <StrategyDetail :PropStrategy="item" />
+          
         </div>
       </div>
     </div>

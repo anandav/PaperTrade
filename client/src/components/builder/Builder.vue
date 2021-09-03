@@ -1,150 +1,154 @@
 <template>
   <div>
-    <div class=" lg:ml-8 lg:block lg:self-stretch">
-      <div class="h-full flex space-x-8">
-        <div
-          v-for="category in navigation.categories"
-          :key="category.name"
-          class="flex"
-         
-        >
-          <div class="relative flex">
-            <button
-              :class="[
-                open
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-700 hover:text-gray-800',
-                'relative z-10 flex items-center transition-colors ease-out duration-200 text-sm font-medium border-b-2 -mb-px pt-px',
-              ]"
-            >
-              {{ category.name }}
-            </button>
-          </div>
+    <h2 class="font-black text-3xl text-gray-900 mb-2">Solid</h2>
+    <h3
+      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
+    >
+      Small
+    </h3>
 
-          <transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
-            <div
-              class="absolute top-full inset-x-0 text-sm text-gray-500"
-            >
-              <!-- Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow -->
-              <div
-                class="absolute inset-0 top-1/2 bg-white shadow"
-                aria-hidden="true"
-              />
-
-              <div class="relative bg-white">
-                <div class="max-w-7xl mx-auto px-8">
-                  <div class="grid grid-cols-2 gap-y-10 gap-x-8 py-16">
-                    <div class="col-start-2 grid grid-cols-2 gap-x-8">
-                      <div
-                        v-for="item in category.featured"
-                        :key="item.name"
-                        class="group relative text-base sm:text-sm"
-                      >
-                        <div
-                          class="
-                            aspect-w-1 aspect-h-1
-                            rounded-lg
-                            bg-gray-100
-                            overflow-hidden
-                            group-hover:opacity-75
-                          "
-                        >
-                          <img
-                            :src="item.imageSrc"
-                            :alt="item.imageAlt"
-                            class="object-center object-cover"
-                          />
-                        </div>
-                        <a
-                          :href="item.href"
-                          class="mt-6 block font-medium text-gray-900"
-                        >
-                          <span
-                            class="absolute z-10 inset-0"
-                            aria-hidden="true"
-                          />
-                          {{ item.name }}
-                        </a>
-                        <p aria-hidden="true" class="mt-1">Shop now</p>
-                      </div>
-                    </div>
-                    <div
-                      class="
-                        row-start-1
-                        grid grid-cols-3
-                        gap-y-10 gap-x-8
-                        text-sm
-                      "
-                    >
-                      <div
-                        v-for="section in category.sections"
-                        :key="section.name"
-                      >
-                        <p
-                          :id="`${section.name}-heading`"
-                          class="font-medium text-gray-900"
-                        >
-                          {{ section.name }}
-                        </p>
-                        <ul
-                          role="list"
-                          :aria-labelledby="`${section.name}-heading`"
-                          class="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                        >
-                          <li
-                            v-for="item in section.items"
-                            :key="item.name"
-                            class="flex"
-                          >
-                            <a :href="item.href" class="hover:text-gray-800">
-                              {{ item.name }}
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </transition>
-        </div>
-
-        <a
-          v-for="page in navigation.pages"
-          :key="page.name"
-          :href="page.href"
-          class="
-            flex
-            items-center
-            text-sm
-            font-medium
-            text-gray-700
-            hover:text-gray-800
-          "
-          >{{ page.name }}</a
-        >
-      </div>
+    <div class="mb-6">
+      <button class="btn btn-primary btn-sm mr-4">Primary</button>
+      <button class="btn btn-secondary btn-sm mr-4">Secondary</button>
+      <button class="btn btn-tertiary btn-sm">Tertiary</button>
     </div>
+
+    <div class="mb-6">
+      <h3
+        class="
+          uppercase
+          text-sm
+          font-semibold
+          tracking-wider
+          text-gray-700
+          mb-2
+        "
+      >
+        Default
+      </h3>
+
+      <button class="btn btn-primary mr-4">Primary</button>
+      <button class="btn btn-secondary mr-4">Secondary</button>
+      <button class="btn btn-tertiary">Tertiary</button>
+    </div>
+
+    <h3
+      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
+    >
+      Large
+    </h3>
+
+    <button class="btn btn-primary btn-lg mr-4">Primary</button>
+    <button class="btn btn-secondary btn-lg mr-4">Secondary</button>
+    <button class="btn btn-tertiary btn-lg">Tertiary</button>
+ <h2 class="font-black text-3xl text-gray-900 mb-2">Outline</h2>
+
+  <div class="mb-6">
+    <h3
+      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
+    >
+      Small
+    </h3>
+    <button class="btn btn-primary btn-sm btn-outline mr-4">Primary</button>
+    <button class="btn btn-secondary btn-sm btn-outline mr-4">Secondary</button>
+    <button class="btn btn-tertiary btn-sm btn-outline mr-4">Tertiary</button>
+  </div>
+
+  <div class="mb-6">
+    <h3
+      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
+    >
+      Default
+    </h3>
+    <button class="btn btn-primary btn-outline mr-4">Primary</button>
+    <button class="btn btn-secondary btn-outline mr-4">Secondary</button>
+    <button class="btn btn-tertiary btn-outline mr-4">Tertiary</button>
+  </div>
+
+  <div class="mb-6">
+    <h3
+      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
+    >
+      Large
+    </h3>
+    <button class="btn btn-primary btn-lg btn-outline mr-4">Primary</button>
+    <button class="btn btn-secondary btn-lg btn-outline mr-4">Secondary</button>
+    <button class="btn btn-tertiary btn-lg btn-outline mr-4">Tertiary</button>
+  </div>
+
+<h2 class="font-black text-3xl text-gray-900 mb-2">Grouped</h2>
+
+  <div class="flex items-center">
+    <button
+      class="btn border-l rounded-r-none border-b border-t rounded-l hover:bg-gray-100"
+    >
+      One
+    </button>
+    <button class="btn border rounded-none hover:bg-gray-100">Two</button>
+    <button
+      class="btn border-t border-r border-b rounded-l-none rounded-r hover:bg-gray-100"
+    >
+      Three
+    </button>
+
+
+    <h2 class="font-black text-3xl text-gray-900 mb-4">Dropdowns</h2>
+  <button
+    class="btn btn-primary flex items-center justify-between pr-3"
+    @click.prevent="active = !active"
+  >
+    Dropdown
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      class="w-5 h-5 text-white fill-current ml-2 transform transition duration-200"
+      :class="{ 'rotate-180': active }"
+    >
+      <title>chevron-down</title>
+
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"
+      ></path>
+    </svg>
+  </button>
+
+  <ul
+    v-if="active"
+    class="list-reset bg-white border p-4 rounded-b-lg shadow-xl w-64"
+  >
+    <li>
+      <a href="#" class="px-3 py-2 hover:bg-gray-100 rounded block mb-1"
+        >Item 1</a
+      >
+    </li>
+    <li>
+      <a href="#" class="px-3 py-2 hover:bg-gray-100 rounded block mb-1"
+        >Item 2</a
+      >
+    </li>
+    <li>
+      <a href="#" class="px-3 py-2 hover:bg-gray-100 rounded block mb-1"
+        >Item 3</a
+      >
+    </li>
+  </ul>
+  </div>
+
+
   </div>
 </template>
 
 <script>
-import PortfolioMenu from "../PortfolioMenu";
 import myMixins from "../../shared/utilitymixins";
 //import * as d3js from 'd3';
 export default {
   name: "Builder",
-  components: {
-    PortfolioMenu,
-  },
+  components: {},
   computed: {
     //   ...mapState(["TradeDetail","Portfolio"])
   },
@@ -153,8 +157,9 @@ export default {
   },
   data() {
     return {
-      open : false,
-      navigation : {categories :["Home","Home2","Home3"]}
+      active : true,
+      open: false,
+      navigation: { categories: ["Home", "Home2", "Home3"] },
     };
   },
   methods: {},

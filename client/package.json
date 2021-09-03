@@ -5,9 +5,11 @@
   "description": "Papper Trade Client using VUE.",
   "scripts": {
     "dev": "vue-cli-service serve",
+    "devcss": "postcss src/tailwind.css -o public/tailwind.css",
+    "devcss2": "tailwindcss build -i src/tailwind.css -o myindex.css",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "buildcss": "tailwindcss build index.css -o myindex.css",
+    "build:css": "postcss src/tailwind.css -o public/tailwind.css",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -31,7 +33,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "postcss": "^7.0.36",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.8",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.9",
     "vue-template-compiler": "^2.6.12"
   },
   "eslintConfig": {

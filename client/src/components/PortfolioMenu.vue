@@ -1,76 +1,87 @@
 <template>
-  <div class="">
-    <div class="">
-      <div class="float-left">
+  <div class="border-r-2 border-gray-300 dark:border-gray-600">
+    <div class="flex items-center mt-5">
+      <div class="flex-initial">
         <input
-          class="form-control"
+          class="ml-2 pl-2 py-1 rounded"
           placeholder="Portfolio Name"
           type="text"
           v-model="portfolioName"
           @keyup.enter="onAddNewPortfolio()"
         />
       </div>
-      <!-- <div class="float-right">
-        <a class="btn btn-secondary" href="#" @click="onAddNewPortfolio()">
-          <i v-show="!isEdit" class="bi bi-plus-square"></i>
-          <i v-show="isEdit" class="bi bi-save"></i>
-          <span class="d-none d-lg-inline d-xl-inline">
-            {{ txtAddEditPortfolio }}
-          </span>
+
+      <div class="flex-initial">
+        <a
+          class="btn ml-1 invisible lg:visible"
+          href="#"
+          @click="onAddNewPortfolio()"
+        >
+          <i v-show="!isEdit" class="material-icons">add</i>
+          <i v-show="isEdit" class="material-icons">save</i>
+          {{ txtAddEditPortfolio }}
         </a>
-      </div> -->
+      </div>
     </div>
-    <div class="">
+    <div class="mt-5">
       <div class="">
         <div v-show="isLoading" class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <div class="mt-2" :key="item._id" v-for="item in Portfolios">
-        <div class="" :class="{ isPortfolioEdit: item == editPortfolio }">
-          <div class="">
-            <div class="">
-              <a
-                @click="onMenuSelectedPortfolio(item)"
-                :class="{
-                  'font-weight-bold': Portfolio && item._id == Portfolio._id,
-                }"
-                class="view"
-                >{{ item.name }}</a
-              >
+      <div
+        class=""
+        :key="item._id"
+        v-for="item in Portfolios"
+        :class="{
+          'border-l-2 border-red-300': Portfolio && item._id == Portfolio._id,
+        }"
+      >
+        <div
+          class="px-2 leading-10 cursor-pointer"
+          @click="onMenuSelectedPortfolio(item)"
+          :class="{ isPortfolioEdit: item == editPortfolio }"
+        >
+          <div class="inline-block">
+            <div
+              class="view"
+              :class="{
+                'font-black': Portfolio && item._id == Portfolio._id,
+              }"
+            >
+              {{ item.name }}
             </div>
             <input
-              class="form-control edit"
+              class="edit"
               placeholder="Edit Portfolio Name"
               type="text"
               v-model="item.name"
               @keyup.enter="onInlineSavePortfolio(item)"
             />
           </div>
-          <div class="col-sm">
-            <div class="float-right">
+          <div class="inline-block float-right">
+            <div class="">
               <a
-                class="btn btn-secondary text-warning view"
+                class="btn view "
                 @click="onInlineEditPortfolio(item)"
               >
-                <i class="bi bi-pencil"></i>
+                <i class="material-icons">edit</i>
               </a>
               <a
-                class="btn btn-secondary text-warning edit"
+                class="btn edit"
                 @click="onInlineSavePortfolio(item)"
               >
-                <i class="bi bi-save"></i>
+                <i class="material-icons">save</i>
               </a>
               <a
-                class="btn btn-secondary text-danger ml-2"
+                class="btn ml-2"
                 @click="onDeletePortfolio(item)"
               >
-                <i class="bi bi-trash"></i>
+                <i class="material-icons">delete</i>
               </a>
             </div>
           </div>
         </div>
-        <hr />
       </div>
     </div>
   </div>
