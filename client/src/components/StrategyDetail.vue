@@ -1,13 +1,11 @@
 <template>
-  <!-- @click="SelectedStrategy(PropStrategy)" -->
-
   <div
-    class="card mb-2 bg-grey-custom"
+    class="mx-3 mt-1 mb-10 rounded bg-gray-200 dark:bg-gray-600"
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
-    <div class="card-header">
-      <div class="d-flex justify-content-between bd-highlight">
-        <div class="">
+    <div class="p-3 border-b-2 border-gray-300 dark:border-gray-400">
+      <div class="grid grid-cols-8">
+        <div class="col-span-2">
           <span class="view">
             {{ PropStrategy.name }}
           </span>
@@ -18,8 +16,7 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-
-        <div class="" v-if="!PropStrategy.ismultiplesymbol">
+        <div class="col-span-2" v-if="!PropStrategy.ismultiplesymbol">
           <span class="view">
             {{ PropStrategy.symbol }}
           </span>
@@ -31,20 +28,7 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-
-        <div class="" v-if="!PropStrategy.ismultiplesymbol">
-          <span class="view">
-            {{ PropStrategy.ste }}
-          </span>
-
-          <input
-            class="form-control edit"
-            placeholder="Symbol"
-            v-model="PropStrategy.symbol"
-            @keydown.enter="onSaveStrategy()"
-          />
-        </div>
-        <div class="">
+        <div class="col-span-2">
           <label>
             <input
               type="checkbox"
@@ -54,57 +38,55 @@
             Is Multiple Symbol
           </label>
         </div>
-        <div class="">
+        <div class="col-span-2">
           Created On:
           {{ PropStrategy.CreatedOn }}
         </div>
       </div>
     </div>
 
-    <div class="card-body">
-      <div class="flex">
+    <div class="p-3">
+      <div class="">
         <div class="">
           <TradeList :PropStrategy="PropStrategy" />
         </div>
-        <div class=" ml-5 chartplaceholder "></div>
+        <div class="ml-5 chartplaceholder"></div>
       </div>
     </div>
-    <div class="card-footer ">
-      <div class="p-2 float-left">
-        <a class="btn btn-secondary text-danger ml-2" @click="onDeleteStrategy()">
-          <i class="bi bi-trash"></i>
+    <div class="p-3">
+      <div class="float-left">
+        <a class="btn text-red-600" @click="onDeleteStrategy()">
+          <i class="material-icons">delete</i>
         </a>
       </div>
-      <div class="p-2 float-left">
-        <a class="btn btn-secondary  ml-2" @click="onDuplicateStrategy()">
-          <i class="bi bi-clipboard-plus"></i>
+      <div class="float-left ml-2">
+        <a class="btn" @click="onDuplicateStrategy()">
+          <i class="material-icons">content_copy</i>
+          {{ txtDuplicateStrategy }}
         </a>
       </div>
       <div class="float-right">
         <a
           v-if="!PropStrategy.ismultiplesymbol"
-          class="btn btn-secondary  ml-2 view"
+          class="btn ml-2 view"
           @click="onShowChart()"
         >
-          <i class="bi bi-graph-up"></i>
+          <i class="material-icons">show_chart</i>
           {{ txtShowStratergyDiagram }}
         </a>
 
-        <a class="btn btn-secondary  ml-2" @click="onBindAddEditTrade()">
-          <i class="bi-plus-square"></i>
+        <a class="btn ml-2" @click="onBindAddEditTrade()">
+          <i class="material-icons">add</i>
           {{ txtAddTrade }}
         </a>
 
-        <a
-          class="btn btn-secondary  ml-2 view"
-          @click="onEditStrategy(PropStrategy)"
-        >
-          <i class="bi bi-pencil"></i>
+        <a class="btn ml-2 view" @click="onEditStrategy(PropStrategy)">
+          <i class="material-icons">edit</i>
           {{ txtEditStrategy }}
         </a>
 
-        <a class="btn btn-secondary  ml-2 edit" @click="onSaveStrategy()">
-          <i class="bi bi-save"></i>
+        <a class="btn ml-2 edit" @click="onSaveStrategy()">
+          <i class="material-icons">save</i>
           {{ txtSaveStrategy }}
         </a>
       </div>
@@ -130,6 +112,7 @@ export default {
       txtSaveStrategy: this.$getConst("saveStrategy"),
       txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
       txtAddTrade: this.$getConst("addTrade"),
+      txtDuplicateStrategy : this.$getConst("duplicateStrategy"),
       editStrategy: null,
     };
   },

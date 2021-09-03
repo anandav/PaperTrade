@@ -1,11 +1,12 @@
 const Resource = {
-	addNewPortfolio: "Add New Portfolio",
+	addNewPortfolio: "New Portfolio",
 	savePortfolio: "Save Portfolio",
-	addNewStrategy: "Add New Strategy",
+	addNewStrategy: "New Strategy",
 	editStrategy: "Edit Strategy",
 	saveStrategy: "Save Strategy",
-	addTrade : "Add New Trade",
-	showStrategyDiagram : "Strategy Diagram"
+	duplicateStrategy : "Duplicate Strategy",
+	addTrade : "New Trade",
+	showStrategyDiagram : "Strategy Diagram",
 };
 
 Resource.install = function (Vue) {
