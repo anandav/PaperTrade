@@ -6,12 +6,10 @@
       <TradeAddEdit />
     </div>
 
-
-    <div class="hidden bg-gray-300 dark:bg-gray-600 border-red-300"></div>
+    <!-- <div class="hidden bg-gray-300 dark:bg-gray-600 border-red-300"></div> -->
   </div>
 </template>
 <style scoped>
-
 </style>
 <script>
 import PortfolioMenu from "./PortfolioMenu";
@@ -29,6 +27,7 @@ export default {
   //   ...mapState(["TradeDetail","Portfolio"])
   // },
   created() {},
+
 };
 </script>
 

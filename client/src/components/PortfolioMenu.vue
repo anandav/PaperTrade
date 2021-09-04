@@ -38,7 +38,7 @@
         }"
       >
         <div
-          class="px-2 leading-10 cursor-pointer"
+          class="px-2 leading-10 "
           @click="onMenuSelectedPortfolio(item)"
           :class="{ isPortfolioEdit: item == editPortfolio }"
         >
@@ -74,7 +74,7 @@
                 <i class="material-icons">save</i>
               </a>
               <a
-                class="btn ml-2"
+                class="btn ml-2 text-red-600"
                 @click="onDeletePortfolio(item)"
               >
                 <i class="material-icons">delete</i>

@@ -9,8 +9,8 @@ var utilitymixins = {
         TOP: 15,
         BOTTOM: 35
       },
-      WIDTH: 900,
-      HEIGHT: 500,
+      WIDTH: 450,
+      HEIGHT: 300,
 
       BUYORSELL: {
         1: "Buy",
@@ -188,27 +188,27 @@ var utilitymixins = {
     ///POC : Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
     _generateLineChart2: function (chartData, paretnId) {
-      const inputs = ({
-        id: '',
+      // const inputs = ({
+      //   id: '',
 
-        dimension: 'date',
-        metric: 'index',
-        title: 'Test Title',
-        color: '#ff00ff',
-        xAxisHidden: true,
-        yAxisHidden: false,
-        nonzeroMinY: true,
-        mark: '2020-03-18',
-        markText: 'COVID-19',
-        mouseover: true,
-        indicator: true
-      });
+      //   dimension: 'date',
+      //   metric: 'index',
+      //   title: 'Test Title',
+      //   color: '#ff00ff',
+      //   xAxisHidden: true,
+      //   yAxisHidden: false,
+      //   nonzeroMinY: true,
+      //   mark: '2020-03-18',
+      //   markText: 'COVID-19',
+      //   mouseover: true,
+      //   indicator: true
+      // });
       //const width = inputs.width == 'auto' ? autoWidth : inputs.width;
       //const height = inputs.height;
-      const dimension = inputs.dimension;
-      const metric = inputs.metric;
+      //const dimension = inputs.dimension;
+      //const metric = inputs.metric;
       //const title = inputs.title;
-      const color = inputs.color;
+      const color = "green";
       // const xAxisHidden = inputs.xAxisHidden;
       // const yAxisHidden = inputs.yAxisHidden;
       // const mark = inputs.mark;
@@ -225,7 +225,8 @@ var utilitymixins = {
         .domain([d3.min(chartData, d => d.netPnL) - 1000, d3.max(chartData, d => d.netPnL) + 1000]).nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
       const xAxisCall = d3.axisBottom(x);
-      const yAxisCall = d3.axisLeft(y).tickSizeInner(-this.WIDTH).tickFormat(d=> d).tickValues([0]);//.tickSize(-this.WIDTH);
+      const yAxisCall = d3.axisLeft(y).tickSize(-this.WIDTH);
+      //.tickSizeInner(-this.WIDTH).tickFormat(d=> d).tickValues([0]);//.tickSize(-this.WIDTH);
 
 
 
@@ -238,38 +239,38 @@ var utilitymixins = {
           .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
 
 
-      // const lg = svg
-      //   .append("defs")
-      //   .append("linearGradient") // linear gradient
-      //   .attr("id", "mygrad")
-      //   .attr("x1", "0%")
-      //   .attr("x2", "0%")
-      //   .attr("y1", "0%")
-      //   .attr("y2", "100%");
-      // lg.append("stop")
-      //   .attr("offset", "0%")
-      //   .style("stop-color", color)
-      //   .style("stop-opacity", 0.15);
+      const lg = svg
+        .append("defs")
+        .append("linearGradient") // linear gradient
+        .attr("id", "mygrad")
+        .attr("x1", "0%")
+        .attr("x2", "0%")
+        .attr("y1", "0%")
+        .attr("y2", "100%");
+      lg.append("stop")
+        .attr("offset", "0%")
+        .style("stop-color", color)
+        .style("stop-opacity", 0.5);
 
-      // lg.append("stop")
-      //   .attr("offset", "100%")
-      //   .style("stop-color", color)
-      //   .style("stop-opacity", 0.01);
+      lg.append("stop")
+        .attr("offset", "100%")
+        .style("stop-color", color)
+        .style("stop-opacity", 0.05);
 
 
-      // const area = d3
-      //   .area()
-      //   .curve(d3.curveCardinal.tension(1))
-      //   .defined(function (d) {
-      //     return d.netPnL >= 0;
-      //   })
-      //   .x(function (d) {
-      //     return x(d.strikePrice);
-      //   })
-      //   .y0(this.HEIGHT - this.MARGIN.BOTTOM)
-      //   .y1(function (d) {
-      //     return y(d.netPnL);
-      //   });
+      const area = d3
+        .area()
+        .curve(d3.curveCardinal.tension(1))
+        .defined(function (d) {
+          return d.netPnL >= 0;
+        })
+        .x(function (d) {
+          return x(d.strikePrice);
+        })
+        .y0(this.HEIGHT - this.MARGIN.BOTTOM)
+        .y1(function (d) {
+          return y(d.netPnL);
+        });
       const line = d3
         .line()
         .defined(d => !isNaN(d.netPnL))
@@ -297,20 +298,20 @@ var utilitymixins = {
         .append("path")
         .datum(chartData)
         .attr("fill", "none")
-        .attr("stroke", "#00ff00")
-        .attr("stroke-width", 1.5)
+        .attr("stroke", "#ff00ff")
+        .attr("stroke-width", 2)
         .attr("transform", "translate(" + this.MARGIN.LEFT + ",0)")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
 
-      // svg
-      //   .append("path")
-      //   .datum(chartData)
-      //   .style("fill", "url(#mygrad)")
-      //   .attr("transform", "translate("+this.MARGIN.LEFT +",0)")
-      //   .style("stroke", "none")
-      //   .attr("d", area);
+      svg
+        .append("path")
+        .datum(chartData)
+        .style("fill", "url(#mygrad)")
+        .attr("transform", "translate("+this.MARGIN.LEFT +",0)")
+        .style("stroke", "none")
+        .attr("d", area);
 
 
 

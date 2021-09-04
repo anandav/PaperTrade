@@ -1,9 +1,9 @@
 <template>
   <div
-    class="mx-3 mt-1 mb-10 rounded bg-gray-200 dark:bg-gray-600"
+    class="mx-3 mt-1 rounded bg-gray-200 dark:bg-gray-600"
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
-    <div class="p-3 border-b-2 border-gray-300 dark:border-gray-400">
+    <div class=" p-3 border- border-b-2 border-gray-300 dark:border-gray-400">
       <div class="grid grid-cols-8">
         <div class="col-span-2">
           <span class="view">
@@ -46,49 +46,54 @@
     </div>
 
     <div class="p-3">
-      <div class="">
-        <div class="">
+      <div class="grid grid-cols-2">
+        <div class="col-span-1">
           <TradeList :PropStrategy="PropStrategy" />
         </div>
-        <div class="ml-5 chartplaceholder"></div>
+        <div class="col-span-1">
+          <div class="ml-5 chartplaceholder"></div>
+        </div>
       </div>
     </div>
-    <div class="p-3">
-      <div class="float-left">
-        <a class="btn text-red-600" @click="onDeleteStrategy()">
-          <i class="material-icons">delete</i>
-        </a>
+
+    <div class="p-3 grid grid-cols-2">
+      <div class="col-span-1">
+        <div class="float-left">
+          <a class="btn text-red-600" @click="onDeleteStrategy()">
+            <i class="material-icons">delete</i>
+          </a>
+          <a class="btn ml-1" @click="onDuplicateStrategy()">
+            <i class="material-icons">content_copy</i>
+            {{ txtDuplicateStrategy }}
+          </a>
+        </div>
       </div>
-      <div class="float-left ml-2">
-        <a class="btn" @click="onDuplicateStrategy()">
-          <i class="material-icons">content_copy</i>
-          {{ txtDuplicateStrategy }}
-        </a>
-      </div>
-      <div class="float-right">
-        <a
-          v-if="!PropStrategy.ismultiplesymbol"
-          class="btn ml-2 view"
-          @click="onShowChart()"
-        >
-          <i class="material-icons">show_chart</i>
-          {{ txtShowStratergyDiagram }}
-        </a>
+      <div class="col-span-1">
+        <div class="float-right">
+          <a
+            v-if="!PropStrategy.ismultiplesymbol"
+            class="btn ml-2 view"
+            @click="onShowChart()"
+          >
+            <i class="material-icons">show_chart</i>
+            {{ txtShowStratergyDiagram }}
+          </a>
 
-        <a class="btn ml-2" @click="onBindAddEditTrade()">
-          <i class="material-icons">add</i>
-          {{ txtAddTrade }}
-        </a>
+          <a class="btn ml-2" @click="onBindAddEditTrade()">
+            <i class="material-icons">add</i>
+            {{ txtAddTrade }}
+          </a>
 
-        <a class="btn ml-2 view" @click="onEditStrategy(PropStrategy)">
-          <i class="material-icons">edit</i>
-          {{ txtEditStrategy }}
-        </a>
+          <a class="btn ml-2 view" @click="onEditStrategy(PropStrategy)">
+            <i class="material-icons">edit</i>
+            {{ txtEditStrategy }}
+          </a>
 
-        <a class="btn ml-2 edit" @click="onSaveStrategy()">
-          <i class="material-icons">save</i>
-          {{ txtSaveStrategy }}
-        </a>
+          <a class="btn ml-2 edit" @click="onSaveStrategy()">
+            <i class="material-icons">save</i>
+            {{ txtSaveStrategy }}
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -112,7 +117,7 @@ export default {
       txtSaveStrategy: this.$getConst("saveStrategy"),
       txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
       txtAddTrade: this.$getConst("addTrade"),
-      txtDuplicateStrategy : this.$getConst("duplicateStrategy"),
+      txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
       editStrategy: null,
     };
   },

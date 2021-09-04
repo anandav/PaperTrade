@@ -1,18 +1,23 @@
 <template>
-  <table class="table text-light">
+  <table class="min-w-full divide-y divide-gray-400">
     <thead>
-      <tr>
-        <th v-show="PropStrategy.ismultiplesymbol" scope="col">Symbol</th>
-        <th scope="col">Lot Size</th>
-        <th scope="col" class="d-none" >Strike Step</th>
-        <th scope="col">Selected Strike</th>
-        <th scope="col">Trade Type</th>
-        <th scope="col">Buy/Sell</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Spot Price</th>
-        <th scope="col">Total Price</th>
-        <th scope="col" hidden>Note</th>
-        <th scope="col"></th>
+      <tr class="text-left">
+        <th class="w-1/12 view">
+          <label><input type="checkbox" /> </label>
+        </th>
+        <th class="w-1/12" v-show="PropStrategy.ismultiplesymbol">Symbol</th>
+        <th class="w-1/12">Lot Size</th>
+        <th class="w-1/12" v-show="!PropStrategy.ismultiplesymbol">
+          Strike Step
+        </th>
+        <th class="w-1/12">Selected Strike</th>
+        <th class="w-1/12">Type</th>
+        <th class="w-1/12">Buy/Sell</th>
+        <th class="w-1/12">Qty</th>
+        <th class="w-1/12">Spot Price</th>
+        <th class="w-1/12">Total Price</th>
+        <th class="w-1/12" hidden>Note</th>
+        <th class="w-5/12"></th>
       </tr>
     </thead>
     <tbody>
@@ -22,27 +27,32 @@
         :class="{ isTradeEdit: item == editTrade }"
         v-cloak
       >
+        <td class="w-1/12 view">
+          <label>
+            <input type="checkbox" name="" id="" />
+          </label>
+        </td>
         <td v-show="PropStrategy.ismultiplesymbol">
           <span class="view">
             {{ item.symbol }}
           </span>
-          <input type="text" class="form-control edit" v-model="item.symbol" />
+          <input type="text" class="w-10 edit" v-model="item.symbol" />
         </td>
 
         <td>
           <span class="view">
             {{ item.lotsize }}
           </span>
-          <input v-model="item.lotsize" type="text" class="form-control edit" />
+          <input v-model="item.lotsize" type="text" class="mini-edit edit" />
         </td>
-        <td class="d-none">
+        <td v-show="!PropStrategy.ismultiplesymbol" class="d-none">
           <span class="view">
             {{ item.strikepricestep }}
           </span>
           <input
             v-model="item.strikepricestep"
             type="number"
-            class="form-control edit"
+            class="mini-edit edit"
           />
         </td>
 
@@ -59,7 +69,7 @@
               <input
                 v-model="item.selectedstrike"
                 type="text"
-                class="form-control"
+                class="mini-edit"
               />
               <div class="input-group-append">
                 <a class="input-group-text text-dark" @click="onInc(item)">+</a>
@@ -104,6 +114,7 @@
           <span class="view">
             {{ item.buyorsell }}
           </span>
+          <switchbutton :Trade="item" />
           <div class="btn-group btn-group-toggle edit">
             <label
               class="btn btn btn-secondary"
@@ -130,18 +141,14 @@
           <span class="view">
             {{ item.quantity }}
           </span>
-          <input
-            v-model="item.quantity"
-            type="text"
-            class="form-control edit"
-          />
+          <input v-model="item.quantity" type="text" class="mini-edit edit" />
         </td>
 
         <td>
           <span class="view">
             {{ item.price }}
           </span>
-          <input v-model="item.price" type="text" class="form-control edit" />
+          <input v-model="item.price" type="text" class="mini-edit edit" />
         </td>
         <td>
           {{
@@ -152,40 +159,33 @@
         </td>
         <td hidden>{{ item.note }}</td>
 
-        <td class="text-white">
-          <a
-            class="btn btn-secondary  ml-2 view"
-            @click="onInlineExitTrade(item)"
-          >
-            <i class="bi bi-box-arrow-right"></i>
+        <td class="">
+          <a class="btn ml-2 view" @click="onInlineExitTrade(item)">
+            <i class="material-icons">close</i>
           </a>
-          <a
-            class="btn btn-secondary text-warning ml-2 view"
-            @click="onInlineEditTrade(item)"
-          >
-            <i class="bi bi-pencil"></i>
+          <a class="btn ml-2 view" @click="onInlineEditTrade(item)">
+            <i class="material-icons">edit</i>
           </a>
-          <a
-            class="btn btn-secondary text-warning ml-2 edit"
-            @click="onInlineSaveTrade(item)"
-          >
-            <i class="bi bi-plus-square"></i>
+          <a class="btn ml-2 edit" @click="onInlineSaveTrade(item)">
+            <i class="material-icons">save</i>
           </a>
 
           <a
-            class="btn btn-secondary ml-2 text-danger"
+            class="btn ml-2 text-red-600"
             @click="onDeleteTrade(PropStrategy._id, item._id)"
           >
-            <i class="bi bi-trash"></i>
+            <i class="material-icons">delete</i>
           </a>
         </td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
+        <td></td>
         <td v-show="PropStrategy.ismultiplesymbol"></td>
         <td></td>
         <td></td>
+        <td v-show="!PropStrategy.ismultiplesymbol"></td>
         <td></td>
         <td></td>
         <td></td>
@@ -202,9 +202,14 @@
 <script>
 import { mapActions } from "vuex";
 import myMixins from "../shared/utilitymixins";
+import switchbutton from "./ui/switchbutton";
 export default {
   name: "TradeList",
   mixins: [myMixins],
+  components: {
+    switchbutton
+    
+  },
   props: { PropStrategy: {} },
   methods: {
     ...mapActions(["AddEditTrade", "DeleteTrade"]),
@@ -255,9 +260,6 @@ export default {
 };
 </script>
 <style scoped>
-.form-control {
-  width: 100px;
-}
 [v-cloak] {
   display: none;
 }

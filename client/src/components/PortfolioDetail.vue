@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-5">
+  <div class="my-5 overscroll-auto">
     <div v-if="!Portfolio" class="ht-48 drop-shadow-md dark:bg-gray-700">
       <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>
