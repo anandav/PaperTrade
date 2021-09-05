@@ -1,5 +1,6 @@
 import * as d3 from "d3";
-import { tickFormat, ticks, tickStep } from "d3";
+
+
 var utilitymixins = {
   data: function () {
     return {
@@ -10,7 +11,7 @@ var utilitymixins = {
         BOTTOM: 35
       },
       WIDTH: 450,
-      HEIGHT: 300,
+      HEIGHT: 250,
 
       BUYORSELL: {
         1: "Buy",
@@ -33,7 +34,7 @@ var utilitymixins = {
   },
   methods: {
     GenerateChart: function (strategy) {
-      console.clear();
+      //console.clear();
       var chartData = this.GenerateChartPoint(strategy);
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
       console.log('chartData :>> ', chartData);
@@ -56,7 +57,7 @@ var utilitymixins = {
           let _strikePrice = currentTrade.strikepricemin;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
 
-          //currentTrade.strikepricestep = 1;
+          // currentTrade.strikepricestep = 1;
 
           // if (true) {
           //   ///have to pass a parameter from u
@@ -188,104 +189,40 @@ var utilitymixins = {
     ///POC : Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
     _generateLineChart2: function (chartData, paretnId) {
-      // const inputs = ({
-      //   id: '',
-
-      //   dimension: 'date',
-      //   metric: 'index',
-      //   title: 'Test Title',
-      //   color: '#ff00ff',
-      //   xAxisHidden: true,
-      //   yAxisHidden: false,
-      //   nonzeroMinY: true,
-      //   mark: '2020-03-18',
-      //   markText: 'COVID-19',
-      //   mouseover: true,
-      //   indicator: true
-      // });
-      //const width = inputs.width == 'auto' ? autoWidth : inputs.width;
-      //const height = inputs.height;
-      //const dimension = inputs.dimension;
-      //const metric = inputs.metric;
-      //const title = inputs.title;
-      const color = "green";
-      // const xAxisHidden = inputs.xAxisHidden;
-      // const yAxisHidden = inputs.yAxisHidden;
-      // const mark = inputs.mark;
-      // const markText = inputs.markText;
-      // const mouseover = inputs.mouseover;
-      // const indicator = inputs.indicator;
-
-
-
-
-      const x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
-
-      const y = d3.scaleLinear()
+      if (!chartData || !paretnId)
+        return;
+      //const color = "#f0fff0";
+      const linecolor = "stroke-current text-yellow-600";
+      var x, y, xAxisCall, yAxisCall;
+      x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
+      y = d3.scaleLinear()
         .domain([d3.min(chartData, d => d.netPnL) - 1000, d3.max(chartData, d => d.netPnL) + 1000]).nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
-      const xAxisCall = d3.axisBottom(x);
-      const yAxisCall = d3.axisLeft(y).tickSize(-this.WIDTH);
-      //.tickSizeInner(-this.WIDTH).tickFormat(d=> d).tickValues([0]);//.tickSize(-this.WIDTH);
+      xAxisCall = d3.axisBottom(x);
+      yAxisCall = d3.axisLeft(y);
 
+      const svg = d3.select(paretnId).append("svg")
+        .attr("class", "line")
+        .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+        .attr("height", this.HEIGHT);
 
-
-
-      const svg =
-        d3.select(paretnId).append("svg")
-          //d3.create("svg")
-          .attr("class", "line")
-          .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
-          .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
-
-
-      const lg = svg
-        .append("defs")
-        .append("linearGradient") // linear gradient
-        .attr("id", "mygrad")
-        .attr("x1", "0%")
-        .attr("x2", "0%")
-        .attr("y1", "0%")
-        .attr("y2", "100%");
-      lg.append("stop")
-        .attr("offset", "0%")
-        .style("stop-color", color)
-        .style("stop-opacity", 0.5);
-
-      lg.append("stop")
-        .attr("offset", "100%")
-        .style("stop-color", color)
-        .style("stop-opacity", 0.05);
-
-
-      const area = d3
-        .area()
-        .curve(d3.curveCardinal.tension(1))
-        .defined(function (d) {
-          return d.netPnL >= 0;
-        })
-        .x(function (d) {
-          return x(d.strikePrice);
-        })
-        .y0(this.HEIGHT - this.MARGIN.BOTTOM)
-        .y1(function (d) {
-          return y(d.netPnL);
-        });
-      const line = d3
+      var line = d3
         .line()
         .defined(d => !isNaN(d.netPnL))
         .x(d => x(d.strikePrice))
         .y(d => y(d.netPnL));
+
       svg
         .append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(" + this.MARGIN.LEFT + "," + (this.HEIGHT - this.MARGIN.BOTTOM) + ")")
+        //.attr("transform", "translate(" + this.MARGIN.LEFT + "," + (this.HEIGHT) / 2 + ")")
         .call(xAxisCall)
         .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("dx", "-.6em")
-        .attr("dy", ".5em")
-        .attr("transform", "rotate(-45)");
+        .style("text-anchor", "begin")
+        .attr("dx", "2em")
+        .attr("dy", "0em")
+        .attr("transform", "rotate(40)");
       svg
         .append("g")
         .attr("class", "y axis")
@@ -298,24 +235,12 @@ var utilitymixins = {
         .append("path")
         .datum(chartData)
         .attr("fill", "none")
-        .attr("stroke", "#ff00ff")
+        .attr("class", linecolor)
         .attr("stroke-width", 2)
         .attr("transform", "translate(" + this.MARGIN.LEFT + ",0)")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
-
-      svg
-        .append("path")
-        .datum(chartData)
-        .style("fill", "url(#mygrad)")
-        .attr("transform", "translate("+this.MARGIN.LEFT +",0)")
-        .style("stroke", "none")
-        .attr("d", area);
-
-
-
-
     },
 
 

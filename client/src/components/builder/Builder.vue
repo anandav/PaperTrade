@@ -1,217 +1,136 @@
 <template>
-  <div>
-    <h2 class="font-black text-3xl text-gray-900 mb-2">Solid</h2>
-    <h3
-      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
-    >
-      Small
-    </h3>
-
-    <div class="mb-6">
-      <button class="btn btn-primary btn-sm mr-4">Primary</button>
-      <button class="btn btn-secondary btn-sm mr-4">Secondary</button>
-      <button class="btn btn-tertiary btn-sm">Tertiary</button>
-    </div>
-
-    <div class="mb-6">
-      <h3
-        class="
-          uppercase
-          text-sm
-          font-semibold
-          tracking-wider
-          text-gray-700
-          mb-2
-        "
-      >
-        Default
-      </h3>
-
-      <button class="btn btn-primary mr-4">Primary</button>
-      <button class="btn btn-secondary mr-4">Secondary</button>
-      <button class="btn btn-tertiary">Tertiary</button>
-    </div>
-
-    <h3
-      class="uppercase text-sm font-semibold tracking-wider text-gray-700 mb-2"
-    >
-      Large
-    </h3>
-
-    <button class="btn btn-primary btn-lg mr-4">Primary</button>
-    <button class="btn btn-secondary btn-lg mr-4">Secondary</button>
-    <button class="btn btn-tertiary btn-lg">Tertiary</button>
-    <h2 class="font-black text-3xl text-gray-900 mb-2">Outline</h2>
-
-    <div class="mb-6">
-      <h3
-        class="
-          uppercase
-          text-sm
-          font-semibold
-          tracking-wider
-          text-gray-700
-          mb-2
-        "
-      >
-        Small
-      </h3>
-      <button class="btn btn-primary btn-sm btn-outline mr-4">Primary</button>
-      <button class="btn btn-secondary btn-sm btn-outline mr-4">
-        Secondary
-      </button>
-      <button class="btn btn-tertiary btn-sm btn-outline mr-4">Tertiary</button>
-    </div>
-
-    <div class="mb-6">
-      <h3
-        class="
-          uppercase
-          text-sm
-          font-semibold
-          tracking-wider
-          text-gray-700
-          mb-2
-        "
-      >
-        Default
-      </h3>
-      <button class="btn btn-primary btn-outline mr-4">Primary</button>
-      <button class="btn btn-secondary btn-outline mr-4">Secondary</button>
-      <button class="btn btn-tertiary btn-outline mr-4">Tertiary</button>
-    </div>
-
-    <div class="mb-6">
-      <h3
-        class="
-          uppercase
-          text-sm
-          font-semibold
-          tracking-wider
-          text-gray-700
-          mb-2
-        "
-      >
-        Large
-      </h3>
-      <button class="btn btn-primary btn-lg btn-outline mr-4">Primary</button>
-      <button class="btn btn-secondary btn-lg btn-outline mr-4">
-        Secondary
-      </button>
-      <button class="btn btn-tertiary btn-lg btn-outline mr-4">Tertiary</button>
-    </div>
-
-    <h2 class="font-black text-3xl text-gray-900 mb-2">Grouped</h2>
-
-    <div class="flex items-center">
-      <button
-        class="
-          btn
-          border-l
-          rounded-r-none
-          border-b border-t
-          rounded-l
-          hover:bg-gray-100
-        "
-      >
-        One
-      </button>
-      <button class="btn border rounded-none hover:bg-gray-100">Two</button>
-      <button
-        class="
-          btn
-          border-t border-r border-b
-          rounded-l-none rounded-r
-          hover:bg-gray-100
-        "
-      >
-        Three
-      </button>
-
-      <h2 class="font-black text-3xl text-gray-900 mb-4">Dropdowns</h2>
-      <button
-        class="btn btn-primary flex items-center justify-between pr-3"
-        @click.prevent="active = !active"
-      >
-        Dropdown
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          class="
-            w-5
-            h-5
-            text-white
-            fill-current
-            ml-2
-            transform
-            transition
-            duration-200
-          "
-          :class="{ 'rotate-180': active }"
-        >
-          <title>chevron-down</title>
-
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"
-          ></path>
-        </svg>
-      </button>
-
-      <ul
-        v-if="active"
-        class="list-reset bg-white border p-4 rounded-b-lg shadow-xl w-64"
-      >
-        <li>
-          <a href="#" class="px-3 py-2 hover:bg-gray-100 rounded block mb-1"
-            >Item 1</a
-          >
-        </li>
-        <li>
-          <a href="#" class="px-3 py-2 hover:bg-gray-100 rounded block mb-1"
-            >Item 2</a
-          >
-        </li>
-        <li>
-          <a href="#" class="px-3 py-2 hover:bg-gray-100 rounded block mb-1"
-            >Item 3</a
-          >
-        </li>
-      </ul>
-    </div>
-
-<div>
-
-    
-  </div>
-  </div>
+  <div class="chart"></div>
 </template>
 
 <script>
 import myMixins from "../../shared/utilitymixins";
-//import * as d3js from 'd3';
+//import * as d3 from "d3";
 export default {
   name: "Builder",
   components: {},
   computed: {
     //   ...mapState(["TradeDetail","Portfolio"])
   },
-  created() {
-    //console.log(d3js);
-  },
+  created() {},
   data() {
     return {
-      isOn : false,
+      isOn: false,
       active: true,
       open: false,
       navigation: { categories: ["Home", "Home2", "Home3"] },
     };
   },
-  methods: {},
+  methods: {
+    onLoad: function () {
+      // var margin = { top: 20, right: 20, bottom: 50, left: 70 };
+      // var width = 500 - margin.left - margin.right;
+      // var height = 200 - margin.top - margin.bottom;
+
+      // //add svg with margin !important
+      // //this is svg is actually group
+      // var svg = d3
+      //   .select(".chart")
+      //   .append("svg")
+      //   .attr("width", width + margin.left + margin.right)
+      //   .attr("height", height + margin.top + margin.bottom)
+      //   .append("g") //add group to leave margin for axis
+      //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      // var dataset = [4, 2, -6, 13, 4, 8, -23, 19, 10, -12, 2, 15];
+      // var maxHeight = d3.max(dataset, function (d) {
+      //   return Math.abs(d);
+      // });
+      // var minHeight = d3.min(dataset, function (d) {
+      //   return Math.abs(d);
+      // });
+
+      // //set y scale
+      // var yScale = d3
+      //   .scaleLinear()
+      //   .rangeRound([0, height])
+      //   .domain([maxHeight, -maxHeight]); //show negative
+      // //add x axis
+      // var xScale = d3.scaleBand().rangeRound([0, width]).padding(0.1); //scaleBand is used for  bar chart
+      // xScale.domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]); //value in this array must be unique
+      // /*if domain is specified, sets the domain to the specified array of values. The first element in domain will be mapped to the first band, the second domain value to the second band, and so on. Domain values are stored internally in a map from stringified value to index; the resulting index is then used to determine the band. Thus, a band scale’s values must be coercible to a string, and the stringified version of the domain value uniquely identifies the corresponding band. If domain is not specified, this method returns the current domain.*/
+
+      // var barpadding = 2;
+      // var bars = svg.selectAll("rect").data(dataset).enter().append("rect");
+      // bars
+      //   .attr("x", function (d, i) {
+      //     return xScale(i); //i*(width/dataset.length);
+      //   })
+      //   .attr("y", function (d) {
+      //     if (d < 0) {
+      //       return height / 2;
+      //     } else {
+      //       return yScale(d);
+      //     }
+      //   }) //for bottom to top
+      //   .attr("width", xScale.bandwidth() /*width/dataset.length-barpadding*/)
+      //   .attr("height", function (d) {
+      //     return height / 2 - yScale(Math.abs(d));
+      //   });
+      // bars.attr("fill", function (d) {
+      //   if (d >= 0) {
+      //     return "green";
+      //   } else {
+      //     return "orange";
+      //   }
+      // });
+
+      // //add tag to every bar
+      // var tags = svg
+      //   .selectAll("text")
+      //   .data(dataset)
+      //   .enter()
+      //   .append("text")
+      //   .text(function (d) {
+      //     return d;
+      //   });
+      // tags
+      //   .attr("x", function (d, i) {
+      //     return xScale(i) + 8;
+      //   })
+      //   .attr("y", function (d) {
+      //     if (d >= 0) {
+      //       return yScale(d) + 12;
+      //     } else {
+      //       return height - yScale(Math.abs(d)) - 2;
+      //     }
+      //   }) //for bottom to top
+      //   .attr("fill", "white");
+
+      // //add x and y axis
+      // var yAxis = d3.axisLeft(yScale);
+      // svg.append("g").call(yAxis);
+
+      // var xAxis = d3.axisBottom(xScale); /*.tickFormat("");remove tick label*/
+      // svg
+      //   .append("g")
+      //   .call(xAxis)
+      //   .attr("transform", "translate(0," + height / 2 + ")");
+
+      // //add label for x axis and y axis
+      // svg
+      //   .append("text")
+      //   .text("Y Label")
+      //   .attr("x", 0 - height / 2)
+      //   .attr("y", 0 - margin.left)
+      //   .attr("dy", "1em")
+      //   .style("text-anchor", "middle")
+      //   .attr("transform", "rotate(-90)");
+      // svg
+      //   .append("text")
+      //   .text("X Label")
+      //   .attr("x", width / 2)
+      //   .attr("y", height + margin.bottom)
+      //   .style("text-anchor", "middle");
+    },
+  },
+  mounted() {
+    this.onLoad();
+  },
   mixins: [myMixins],
   props: {},
 };

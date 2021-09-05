@@ -110,7 +110,9 @@ export default {
   computed: {
     ...mapState(["TradeDetail"]),
   },
-  created: function () {},
+  mounted: function () {
+    this.onShowChart();
+  },
   data: function () {
     return {
       txtEditStrategy: this.$getConst("editStrategy"),

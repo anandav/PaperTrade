@@ -20,14 +20,15 @@
         <th class="w-5/12"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="divide-y divide-gray-400 ">
       <tr
         v-for="item in PropStrategy.trades"
         :key="item._id"
         :class="{ isTradeEdit: item == editTrade }"
         v-cloak
+        class=""
       >
-        <td class="w-1/12 view">
+        <td class=" view ">
           <label>
             <input type="checkbox" name="" id="" />
           </label>
@@ -114,8 +115,8 @@
           <span class="view">
             {{ item.buyorsell }}
           </span>
-          <switchbutton :Trade="item" />
-          <div class="btn-group btn-group-toggle edit">
+          <SwitchButton :PropTrade="item" />
+          <!-- <div class="btn-group btn-group-toggle edit">
             <label
               class="btn btn btn-secondary"
               v-for="(value, key) in BUYORSELL"
@@ -135,7 +136,7 @@
               />
               {{ value }}
             </label>
-          </div>
+          </div> -->
         </td>
         <td>
           <span class="view">
@@ -202,13 +203,12 @@
 <script>
 import { mapActions } from "vuex";
 import myMixins from "../shared/utilitymixins";
-import switchbutton from "./ui/switchbutton";
+import SwitchButton from "./ui/SwitchButton";
 export default {
   name: "TradeList",
   mixins: [myMixins],
   components: {
-    switchbutton
-    
+    SwitchButton
   },
   props: { PropStrategy: {} },
   methods: {
