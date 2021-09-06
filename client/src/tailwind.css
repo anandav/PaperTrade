@@ -9,12 +9,24 @@
     focus:outline-none focus:ring-2 focus:ring-offset-2 ;
 }
 
+.btn-nonrounded {
+    @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium 
+    dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
+    bg-gray-300 hover:bg-gray-400 hover:text-gray-200
+    focus:outline-none focus:ring-2 focus:ring-offset-2 ;
+}
+
 .btn i{
     font-size: 15px;
 }
 
 .mini-edit{
     @apply w-12 px-1 py-1 rounded-sm;
+}
+
+
+.mini-edit-nonrounded {
+    @apply w-12 px-1 py-1;
 }
 
 

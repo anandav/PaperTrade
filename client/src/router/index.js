@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import PaperTrade from '../components/PaperTrade';
-import Builder from '../components/builder/Builder';
+import PaperTrade from '../views/PaperTrade';
+import Builder from '../views/builder/Builder';
 
 Vue.use(VueRouter)
 

@@ -1,10 +1,10 @@
 <template>
-  <div class="my-5 overscroll-auto">
-    <div v-if="!Portfolio" class="ht-48 drop-shadow-md dark:bg-gray-700">
+  <div class="mt-3">
+    <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-700">
       <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>
     <div v-if="Portfolio" class="">
-      <div class="border-b-2 border-gray-300 dark:border-gray-600 ht-48 drop-shadow-md pl-5 pb-5 dark:bg-gray-700">
+      <div class="border-b-2 drop-shadow-md pl-5 pb-5 border-gray-300 dark:border-gray-600  dark:bg-gray-700">
         <span class="text-xl">
           {{ Portfolio.name }}
         </span>

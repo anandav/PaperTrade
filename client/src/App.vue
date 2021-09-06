@@ -34,6 +34,8 @@ export default {
     },
   },
   mounted() {
+    
+
     // console.log('localStroage.isdark :>> before ');
     // if (localStorage != undefined && localStorage.isdark) {
     //   console.log('localStroage.isdark :>> ', localStroage.isdark);

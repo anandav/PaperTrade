@@ -3,7 +3,6 @@
     class="relative focus:outline-none edit"
     x-cloak
     @click="onRadioChange()"
-    
   >
     <div
       class="
@@ -64,7 +63,10 @@ export default {
       this.PropTrade.buyorsell = this.IsBuy;
     },
   },
-  props: { PropTrade: { type: Object } },
+  props: {
+    PropTrade: { type: Object },
+    //DefaultValue: { type: String, default: "Buy" },
+  },
 };
 </script>
 

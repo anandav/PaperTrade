@@ -57,39 +57,39 @@
     </div>
 
     <div class="p-3 grid grid-cols-2">
-      <div class="col-span-1">
-        <div class="float-left">
-          <a class="btn text-red-600" @click="onDeleteStrategy()">
+      <div class="col-span-1 space-x-2">
+        
+          <a class="btn inline-block text-red-600" @click="onDeleteStrategy()">
             <i class="material-icons">delete</i>
           </a>
-          <a class="btn ml-1" @click="onDuplicateStrategy()">
+          <a class="btn inline-block" @click="onDuplicateStrategy()">
             <i class="material-icons">content_copy</i>
             {{ txtDuplicateStrategy }}
           </a>
-        </div>
+       
       </div>
       <div class="col-span-1">
-        <div class="float-right">
+        <div class="float-right space-x-2">
           <a
             v-if="!PropStrategy.ismultiplesymbol"
-            class="btn ml-2 view"
+            class="btn inline-block view"
             @click="onShowChart()"
           >
             <i class="material-icons">show_chart</i>
             {{ txtShowStratergyDiagram }}
           </a>
 
-          <a class="btn ml-2" @click="onBindAddEditTrade()">
+          <a class="btn inline-block" @click="onBindAddEditTrade()">
             <i class="material-icons">add</i>
             {{ txtAddTrade }}
           </a>
 
-          <a class="btn ml-2 view" @click="onEditStrategy(PropStrategy)">
+          <a class="btn inline-block view" @click="onEditStrategy(PropStrategy)">
             <i class="material-icons">edit</i>
             {{ txtEditStrategy }}
           </a>
 
-          <a class="btn ml-2 edit" @click="onSaveStrategy()">
+          <a class="btn inline-block edit" @click="onSaveStrategy()">
             <i class="material-icons">save</i>
             {{ txtSaveStrategy }}
           </a>

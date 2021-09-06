@@ -3,7 +3,7 @@
     <div class="flex items-center mt-5">
       <div class="flex-initial">
         <input
-          class="ml-2 pl-2 py-1 rounded"
+          class="ml-2 pl-2 py-1  rounded"
           placeholder="Portfolio Name"
           type="text"
           v-model="portfolioName"
@@ -11,14 +11,13 @@
         />
       </div>
 
-      <div class="flex-initial">
+      <div class="flex-initial float-right">
         <a
-          class="btn ml-1 invisible lg:visible"
+          class="btn ml-1 invisible lg:visible "
           href="#"
           @click="onAddNewPortfolio()"
         >
-          <i v-show="!isEdit" class="material-icons">add</i>
-          <i v-show="isEdit" class="material-icons">save</i>
+          <i class="material-icons">save</i>
           {{ txtAddEditPortfolio }}
         </a>
       </div>
@@ -59,10 +58,10 @@
               @keyup.enter="onInlineSavePortfolio(item)"
             />
           </div>
-          <div class="inline-block float-right">
-            <div class="">
+          <div class="float-right">
+            <div class="space-x-1">
               <a
-                class="btn view "
+                class="btn  view "
                 @click="onInlineEditPortfolio(item)"
               >
                 <i class="material-icons">edit</i>
@@ -104,7 +103,7 @@ export default {
       this.GetAllStrategies(item);
     },
     onAddNewPortfolio() {
-      if (this.isEdit && this.portfolioName) {
+      if ( this.portfolioName) {
         this.SavePortfolio({
           _id: 0,
           name: this.portfolioName,
@@ -113,10 +112,6 @@ export default {
         });
         this.portfolioName = "";
       }
-      this.isEdit = !this.isEdit;
-      this.txtAddEditPortfolio = this.isEdit
-        ? this.$getConst("savePortfolio")
-        : this.$getConst("addNewPortfolio");
     },
     onInlineEditPortfolio(portfolio) {
       this.editPortfolio = portfolio;
@@ -132,9 +127,8 @@ export default {
   data: function () {
     return {
       portfolioName: "",
-      txtAddEditPortfolio: this.$getConst("addNewPortfolio"),
+      txtAddEditPortfolio: this.$getConst("savePortfolio"),
       isLoading: true,
-      isEdit: false,
       editPortfolio: null,
     };
   },

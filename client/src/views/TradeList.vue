@@ -20,7 +20,7 @@
         <th class="w-5/12"></th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-gray-400 ">
+    <tbody class="divide-y divide-gray-400">
       <tr
         v-for="item in PropStrategy.trades"
         :key="item._id"
@@ -28,7 +28,7 @@
         v-cloak
         class=""
       >
-        <td class=" view ">
+        <td class="view">
           <label>
             <input type="checkbox" name="" id="" />
           </label>
@@ -161,22 +161,24 @@
         <td hidden>{{ item.note }}</td>
 
         <td class="">
-          <a class="btn ml-2 view" @click="onInlineExitTrade(item)">
-            <i class="material-icons">close</i>
-          </a>
-          <a class="btn ml-2 view" @click="onInlineEditTrade(item)">
-            <i class="material-icons">edit</i>
-          </a>
-          <a class="btn ml-2 edit" @click="onInlineSaveTrade(item)">
-            <i class="material-icons">save</i>
-          </a>
+          <div class="space-x-1">
+            <a class="btn inline-block view" @click="onInlineExitTrade(item)">
+              <i class="material-icons">close</i>
+            </a>
+            <a class="btn inline-block view" @click="onInlineEditTrade(item)">
+              <i class="material-icons">edit</i>
+            </a>
+            <a class="btn inline-block edit" @click="onInlineSaveTrade(item)">
+              <i class="material-icons">save</i>
+            </a>
 
-          <a
-            class="btn ml-2 text-red-600"
-            @click="onDeleteTrade(PropStrategy._id, item._id)"
-          >
-            <i class="material-icons">delete</i>
-          </a>
+            <a
+              class="btn inline-block text-red-600"
+              @click="onDeleteTrade(PropStrategy._id, item._id)"
+            >
+              <i class="material-icons">delete</i>
+            </a>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -203,12 +205,12 @@
 <script>
 import { mapActions } from "vuex";
 import myMixins from "../shared/utilitymixins";
-import SwitchButton from "./ui/SwitchButton";
+import SwitchButton from "../components/ui/SwitchButton";
 export default {
   name: "TradeList",
   mixins: [myMixins],
   components: {
-    SwitchButton
+    SwitchButton,
   },
   props: { PropStrategy: {} },
   methods: {
