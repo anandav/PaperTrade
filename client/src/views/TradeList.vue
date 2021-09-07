@@ -3,7 +3,7 @@
     <thead>
       <tr class="text-left">
         <th class="w-1/12 view">
-          <label><input type="checkbox" /> </label>
+          <label><input type="checkbox" v-model="SelectAll" /> </label>
         </th>
         <th class="w-1/12" v-show="PropStrategy.ismultiplesymbol">Symbol</th>
         <th class="w-1/12">Lot Size</th>
@@ -30,7 +30,12 @@
       >
         <td class="view">
           <label>
-            <input type="checkbox" name="" id="" />
+            <input
+              type="checkbox"
+              :value="item._id"
+              v-model="selectedIDs"
+              checked
+            />
           </label>
         </td>
         <td v-show="PropStrategy.ismultiplesymbol">
@@ -203,7 +208,7 @@
   </table>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import myMixins from "../shared/utilitymixins";
 import SwitchButton from "../components/ui/SwitchButton";
 export default {
@@ -212,9 +217,15 @@ export default {
   components: {
     SwitchButton,
   },
-  props: { PropStrategy: {} },
+  data: function () {
+    return {
+      editTrade: null,
+      selectedIDs: [],
+    };
+  },
+  props: { PropStrategy: {}, PropSelectedTraded: {type :Array}  },
   methods: {
-    ...mapActions(["AddEditTrade", "DeleteTrade"]),
+    ...mapActions(["AddEditTrade", "DeleteTrade" ]),
     onDeleteTrade: function (sid, tid) {
       console.log("sid,tid :>> ", sid, tid);
       this.DeleteTrade({ sid, tid });
@@ -235,28 +246,58 @@ export default {
       console.log(_exitTrade);
       this.AddEditTrade(_exitTrade);
     },
-    onInc(trade) {
+    onInc: function (trade) {
       trade.selectedstrike += parseFloat(trade.strikepricestep);
     },
-    onDec(trade) {
+    onDec: function (trade) {
       trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
   },
-  data: function () {
-    return {
-      editTrade: null,
-    };
+  mounted (){
+    this.SelectAll = true;
+
   },
+
   computed: {
+    ...mapState(["TradeSelectChange"]),
+    SelectAll: {
+      ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
+      get: function () {
+        this.PropSelectedTraded = this.selectedIDs;
+        return this.PropStrategy.trades
+          ? this.PropStrategy.trades.length == this.selectedIDs.length
+          : false;
+      },
+      set: function (value) {
+        var selected = [];
+
+        if (value) {
+          this.PropStrategy.trades.forEach(function (t) {
+            selected.push(t._id);
+          });
+        }
+        this.selectedIDs = selected;
+        /// நாளை  இங்குஇருது  துவங்கவும்  
+        //TradeSelectChange = this.???????????
+      },
+    },
+
     TotalAmount: function () {
-      var price = 0;
-      this.PropStrategy.trades.forEach((_e) => {
-        price =
-          _e.buyorsell == "Buy"
-            ? price - _e.price * (_e.lotsize * _e.quantity)
-            : price + _e.price * (_e.lotsize * _e.quantity);
-      });
-      return price.toFixed(2);
+      if (this.selectedIDs) {
+        var price = 0;
+        this.PropStrategy.trades.forEach((_e) => {
+          this.selectedIDs.forEach((_f) => {
+            if (_e._id == _f) {
+              price =
+                _e.buyorsell == "Buy"
+                  ? price - _e.price * (_e.lotsize * _e.quantity)
+                  : price + _e.price * (_e.lotsize * _e.quantity);
+            }
+          });
+        });
+        return price.toFixed(2);
+      }
+      return 0;
     },
   },
 };

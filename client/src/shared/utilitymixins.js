@@ -37,7 +37,6 @@ var utilitymixins = {
       //console.clear();
       var chartData = this.GenerateChartPoint(strategy);
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
-      console.log('chartData :>> ', chartData);
       d3.selectAll(paretnId + " > *").remove();
       //this._generateBarChart(chartData, paretnId);
       //this._generateLineChart(chartData, paretnId);
@@ -244,17 +243,20 @@ var utilitymixins = {
     },
 
 
-    GetTodayDate: function () {
-      /// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
-      var d = new Date();
-      var ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-      var mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-      var da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-      console.log(`${da}-${mo}-${ye}`);
-    }
+    
 
 
   },
 
 };
 export default utilitymixins;
+
+
+/// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
+function GetTodayDate() {
+  var d = new Date();
+  var ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+  var mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+  var da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  console.log(`${da}-${mo}-${ye}`);
+}

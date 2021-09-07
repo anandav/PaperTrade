@@ -19,7 +19,7 @@
     <div
       id="header"
       class="bg-clip-border rounded-t p-3 border-b-2 cursor-move"
-      :class="TradeDetail.buyorsell == 'Sell' ?  'bg-gradient-to-r from-red-700 to-red-800' : 'bg-gradient-to-r from-green-700 to-green-800'"
+      :class="TradeDetail.buyorsell == 'Sell' ?  'bg-gradient-to-r from-yellow-800 to-yellow-700' : 'bg-gradient-to-r from-green-700 to-green-800'"
       @mousedown="onMouseDownUp($event)"
     >
       <div class="grid grid-cols-12">

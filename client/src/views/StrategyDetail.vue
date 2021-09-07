@@ -3,7 +3,7 @@
     class="mx-3 mt-1 rounded bg-gray-200 dark:bg-gray-600"
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
-    <div class=" p-3 border- border-b-2 border-gray-300 dark:border-gray-400">
+    <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-400">
       <div class="grid grid-cols-8">
         <div class="col-span-2">
           <span class="view">
@@ -48,7 +48,10 @@
     <div class="p-3">
       <div class="grid grid-cols-2">
         <div class="col-span-1">
-          <TradeList :PropStrategy="PropStrategy" />
+          <TradeList
+            :PropStrategy="PropStrategy"
+            :PropSelectedTraded="SelectedTraded"
+          />
         </div>
         <div class="col-span-1">
           <div class="ml-5 chartplaceholder"></div>
@@ -58,15 +61,13 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        
-          <a class="btn inline-block text-red-600" @click="onDeleteStrategy()">
-            <i class="material-icons">delete</i>
-          </a>
-          <a class="btn inline-block" @click="onDuplicateStrategy()">
-            <i class="material-icons">content_copy</i>
-            {{ txtDuplicateStrategy }}
-          </a>
-       
+        <a class="btn inline-block text-red-600" @click="onDeleteStrategy()">
+          <i class="material-icons">delete</i>
+        </a>
+        <a class="btn inline-block" @click="onDuplicateStrategy()">
+          <i class="material-icons">content_copy</i>
+          {{ txtDuplicateStrategy }}
+        </a>
       </div>
       <div class="col-span-1">
         <div class="float-right space-x-2">
@@ -84,7 +85,10 @@
             {{ txtAddTrade }}
           </a>
 
-          <a class="btn inline-block view" @click="onEditStrategy(PropStrategy)">
+          <a
+            class="btn inline-block view"
+            @click="onEditStrategy(PropStrategy)"
+          >
             <i class="material-icons">edit</i>
             {{ txtEditStrategy }}
           </a>
@@ -155,7 +159,11 @@ export default {
     },
   },
   mixins: [myMixins],
-  props: { PropStrategy: { type: Object }, PropTrade: { type: Object } },
+  props: {
+    PropStrategy: { type: Object },
+    PropTrade: { type: Object },
+    SelectedTraded: { type: Array },
+  },
 };
 </script>
 

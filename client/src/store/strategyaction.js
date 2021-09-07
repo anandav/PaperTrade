@@ -20,8 +20,9 @@ export default {
         });
     },
     AddStrategy({ commit }, _pid) {
+     
         var item = {
-            name: "NEW",
+            name: "Strategy",
             description: "",
             symbol: "NIFTY",
             portfolio: _pid,

@@ -27,6 +27,11 @@ const state = {
   Strategies: [],
   Portfolio: undefined,
   TradeDetail: undefined,
+  இலாகாக்கள் : [],
+  உத்திகள் : [],
+  வர்த்தகங்கள் : undefined,
+  சோதனை: undefined,
+  
 };
 const mutations = {
   [GETALLPORTFOLIOS](state, _portfolios) {
