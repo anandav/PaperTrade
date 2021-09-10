@@ -1,5 +1,5 @@
 # PaperTrade
-Do papertrade without losing your capital. Inspired by Sensibull, Tradingview paper trades and tastyworks.
+Do papertrade without losing your capital. Inspired from the Sensibull papertade, Tradingview papertrade and tastyworks.
 
 ![PaperTrade CI](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
 <!-- 

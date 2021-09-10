@@ -54,7 +54,7 @@
           />
         </div>
         <div class="col-span-1">
-          <div class="ml-5 chartplaceholder"></div>
+          <div class="chartplaceholder"></div>
         </div>
       </div>
     </div>

@@ -263,7 +263,7 @@ export default {
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
       get: function () {
-        this.PropSelectedTraded = this.selectedIDs;
+        //this.PropSelectedTraded = this.selectedIDs;
         return this.PropStrategy.trades
           ? this.PropStrategy.trades.length == this.selectedIDs.length
           : false;

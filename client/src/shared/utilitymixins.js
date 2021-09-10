@@ -187,63 +187,192 @@ var utilitymixins = {
 
     ///POC : Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
+    ///ref: https://gist.github.com/llad/3766585 && http://jsfiddle.net/samselikoff/Jqmzd/2/
     _generateLineChart2: function (chartData, paretnId) {
       if (!chartData || !paretnId)
         return;
-      //const color = "#f0fff0";
+      const lgcolor = "#f0fff0";
       const linecolor = "stroke-current text-yellow-600";
-      var x, y, xAxisCall, yAxisCall;
-      x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
-      y = d3.scaleLinear()
-        .domain([d3.min(chartData, d => d.netPnL) - 1000, d3.max(chartData, d => d.netPnL) + 1000]).nice()
+
+      var xScale, yScale, xAxisCall, yAxisCall;//, xAxisCall2;
+      var minPnL = d3.min(chartData, d => d.netPnL);
+      var maxPnL = d3.max(chartData, d => d.netPnL);
+      var minSP = d3.min(chartData, d => d.strikePrice);
+      var maxSP = d3.max(chartData, d => d.strikePrice);
+
+
+      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH - this.MARGIN.RIGHT]);
+      // xScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
+      yScale = d3.scaleLinear()
+        .domain([minPnL - 1000, maxPnL + 1000]).nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
-      xAxisCall = d3.axisBottom(x);
-      yAxisCall = d3.axisLeft(y);
+      xAxisCall = d3.axisBottom(xScale);
+      yAxisCall = d3.axisLeft(yScale);
+      // xAxisCall2 = d3.axisBottom(xScale);
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
-        .attr("height", this.HEIGHT);
+        .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
 
       var line = d3
         .line()
         .defined(d => !isNaN(d.netPnL))
-        .x(d => x(d.strikePrice))
-        .y(d => y(d.netPnL));
+        .x(d => xScale(d.strikePrice))
+        .y(d => yScale(d.netPnL));
 
       svg
         .append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(" + this.MARGIN.LEFT + "," + (this.HEIGHT - this.MARGIN.BOTTOM) + ")")
-        //.attr("transform", "translate(" + this.MARGIN.LEFT + "," + (this.HEIGHT) / 2 + ")")
         .call(xAxisCall)
         .selectAll("text")
         .style("text-anchor", "begin")
         .attr("dx", "2em")
         .attr("dy", "0em")
         .attr("transform", "rotate(40)");
+
       svg
         .append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + this.MARGIN.LEFT + ", 0)")
         .call(yAxisCall)
-        //.call(yAxisCall2)
         .selectAll("text")
         .attr("dx", "-5");
+
+
+      svg.append("g")
+        .attr("class", "x axis zero")
+        .attr("transform", "translate(" + this.MARGIN.LEFT + "," + yScale(0) + ")")
+        .call(xAxisCall.tickSize(0).tickFormat(""));
+
       svg
         .append("path")
         .datum(chartData)
         .attr("fill", "none")
         .attr("class", linecolor)
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1)
         .attr("transform", "translate(" + this.MARGIN.LEFT + ",0)")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
+
+
+
+
+
+        const tooltip = svg.append("g");
+      const bisect = d3.bisector(d => d.strikePrice).left;
+      svg.on("touchmove mousemove", function (e) {
+        const x0 = xScale.invert(d3.pointer(e)[0]);
+        const i = bisect(chartData, x0, 1);
+
+        tooltip
+          .attr("transform", `translate(${xScale(x0)},${yScale(d.netPnL)})`)
+         
+      });
+
+
+
+
+
+
+
+      // svg
+      //   .append("rect")
+      //   .attr("class", "overlay")
+      //   .attr("x", this.MARGIN.LEFT)
+      //   .attr("width", this.WIDTH - this.MARGIN.RIGHT - 1)
+      //   .attr("height", this.HEIGHT)
+      //   .style("fill", "none")
+      //   .style("pointer-events", "all")
+      //   .on("mouseover", () => focus.style("display", null))
+      //   .on("mouseout", () => focus.style("display", "none"))
+      //   // .on("mousemove", (e) => {
+      //   //   console.log('d3.mouse(this) :>> ', d3.pointer(e)[0]);
+      //   // });
+      //   .on("mousemove", mousemove);
+
+      // const focus = svg
+      //   .append('g')
+      //   .attr('class', 'focus')
+      //   .style('display', 'none');
+
+      // const bisectDate = d3.bisector(d => d.netPnL).left;
+
+      // function mousemove(e) {
+      //   var data = chartData;
+      //   const x0 = xScale.invert(d3.pointer(e)[0]);
+      //   console.log('x0 new:>> ', x0);
+      //   const i = bisectDate(data, x0, 1);
+      //   const d0 = data[i - 1];
+      //   const d1 = data[i];
+
+      // }
+
+
+      /// 
+      /// தேவையில்லாத ஆணி  
+      //
+
+      // // svg
+      // // .append("path")
+      // // .datum(chartData)
+      // // .attr("fill",  function (d,i) { return linecolor; })
+      // // .attr("class", linecolor)
+      // // .attr("transform", "translate(" + this.MARGIN.LEFT + "," + yScale(0) + ")")
+
+      // const lg = svg
+      //   .append("defs")
+      //   .append("linearGradient") // linear gradient
+      //   .attr("id", "mygrad")
+      //   .attr("x1", "0%")
+      //   .attr("x2", "0%")
+      //   .attr("y1", "0%")
+      //   .attr("y2", "100%");
+      // lg.append("stop")
+      //   .attr("offset", "0%")
+      //   .style("stop-color", lgcolor)
+      //   .style("stop-opacity", 0.15);
+      // lg.append("stop")
+      //   .attr("offset", "100%")
+      //   .style("stop-color", lgcolor)
+      //   .style("stop-opacity", 0.01);
+
+
+      // var lgxScale, lgyScale, lgxAxisCall, lgyAxisCall;
+      // lgxScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
+      // lgyScale = d3.scaleLinear()
+      //   .domain([d3.min(chartData, d => d.netPnL) - 1000, 0]).nice()
+      //   .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
+      // lgxAxisCall = d3.axisBottom(lgxScale);
+      // lgyAxisCall = d3.axisLeft(lgyScale);
+      // //xAxisCall2 = d3.axisBottom(xScale);
+      // var lgline = d3
+      // .line()
+      // .defined(d => !isNaN(d.netPnL))
+      // .x(d => lgxScale(d.strikePrice))
+      // .y(d => lgyScale(d.netPnL));
+
+      // svg
+      //   .append("path")
+      //   .datum(chartData)
+      //   .attr("fill", "url(#mygrad)")
+      //   .attr("class", linecolor)
+      //   .attr("transform", "translate(" + this.MARGIN.LEFT + "," + lgyScale(0) + ")")
+      //   .attr("stroke-linejoin", "round")
+      //   .attr("stroke-linecap", "round")
+      //   .attr("d", lgline);
+
+
+
+
+
+
     },
 
 
-    
+
 
 
   },

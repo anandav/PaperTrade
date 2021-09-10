@@ -15,15 +15,15 @@ export default {
             var _trade = {
                 symbol: !_strategy.ismultiplesymbol ? _strategy.symbol : undefined,
                 sid: _strategy._id,
-                lotsize: 50,
+                lotsize: 1000,
                 expiry: null,
-                strikepricemin: 15900,
-                strikepricemax: 17000,
-                strikepricestep: 50,
+                strikepricemin: 70,
+                strikepricemax: 75,
+                strikepricestep: 0.25,
                 buyorsell: "Sell", //Buy/Sell
                 tradetype: "Call", //Call/Put/Future
                 quantity: 1,
-                selectedstrike: 16500,
+                selectedstrike: 73.25,
                 price: 30,
                 note: "",
             };
