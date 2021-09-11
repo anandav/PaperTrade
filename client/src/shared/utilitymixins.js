@@ -7,11 +7,14 @@ var utilitymixins = {
       MARGIN: {
         LEFT: 50,
         RIGHT: 50,
-        TOP: 15,
-        BOTTOM: 35
+        TOP: 10,
+        BOTTOM: 30
       },
-      WIDTH: 450,
-      HEIGHT: 250,
+      ChartSettings: {
+        TOOLTIP: false,
+      },
+      WIDTH: 500,
+      HEIGHT: 300,
 
       BUYORSELL: {
         1: "Buy",
@@ -191,7 +194,7 @@ var utilitymixins = {
     _generateLineChart2: function (chartData, paretnId) {
       if (!chartData || !paretnId)
         return;
-      const lgcolor = "#f0fff0";
+      //const lgcolor = "#f0fff0";
       const linecolor = "stroke-current text-yellow-600";
 
       var xScale, yScale, xAxisCall, yAxisCall;//, xAxisCall2;
@@ -201,7 +204,7 @@ var utilitymixins = {
       var maxSP = d3.max(chartData, d => d.strikePrice);
 
 
-      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH - this.MARGIN.RIGHT]);
+      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
       // xScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
       yScale = d3.scaleLinear()
         .domain([minPnL - 1000, maxPnL + 1000]).nice()
@@ -212,8 +215,8 @@ var utilitymixins = {
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
-        .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
-        .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
+        .attr("width", this.WIDTH)
+        .attr("height", this.HEIGHT);
 
       var line = d3
         .line()
@@ -257,112 +260,70 @@ var utilitymixins = {
         .attr("stroke-linecap", "round")
         .attr("d", line);
 
-
-
-
+      if (this.ChartSettings.TOOLTIP) {
+        /// 
+        /// இன்னும் சில பிரச்னை இருக்கு 
+        ///
 
         const tooltip = svg.append("g");
-      const bisect = d3.bisector(d => d.strikePrice).left;
-      svg.on("touchmove mousemove", function (e) {
-        const x0 = xScale.invert(d3.pointer(e)[0]);
-        const i = bisect(chartData, x0, 1);
 
-        tooltip
-          .attr("transform", `translate(${xScale(x0)},${yScale(d.netPnL)})`)
-         
-      });
+        const bisect = d3.bisector(d => d.strikePrice).left;
+        const callout = (g, value) => {
 
+          if (!value) return g.style("display", "none");
 
+          g.style("display", null)
+            .style("pointer-events", "none")
+            .style("font", "10px sans-serif");
 
+          const path = g.selectAll("path")
+            .data([null])
+            .join("path")
+            .attr("fill", "white")
+            .attr("stroke", "black");
 
+          const text = g.selectAll("text")
+            .data([null])
+            .join("text")
+            .call(text => text
+              .selectAll("tspan")
+              .data((value + "").split(/\n/))
+              .join("tspan")
+              .attr("x", 0)
+              .attr("y", (d, i) => `${i * 1.1}em`)
+              .style("font-weight", (_, i) => i ? null : "bold")
+              .text(d => d));
 
+          const { y, width: w, height: h } = text.node().getBBox();
 
+          text.attr("transform", `translate(${-w / 2},${15 - y})`);
+          path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+        }
 
-      // svg
-      //   .append("rect")
-      //   .attr("class", "overlay")
-      //   .attr("x", this.MARGIN.LEFT)
-      //   .attr("width", this.WIDTH - this.MARGIN.RIGHT - 1)
-      //   .attr("height", this.HEIGHT)
-      //   .style("fill", "none")
-      //   .style("pointer-events", "all")
-      //   .on("mouseover", () => focus.style("display", null))
-      //   .on("mouseout", () => focus.style("display", "none"))
-      //   // .on("mousemove", (e) => {
-      //   //   console.log('d3.mouse(this) :>> ', d3.pointer(e)[0]);
-      //   // });
-      //   .on("mousemove", mousemove);
+      var _this = this;
+        svg.on("touchmove mousemove", function (e) {
+          //console.log('d3.pointer(e)[0] :>> ', d3.pointer(e)[0]+50);
+          console.log('this.MARGIN.RIGHT :>> ', _this.MARGIN.LEFT);
+          var x0 = xScale.invert(d3.pointer(e)[0]);
+          // console.log('x0 :>> ', x0);
+          // console.log('typeof(x0) :>> ', typeof(x0));
+          // x0 = Number.parseFloat(x0) + 50;
+          // console.log('x0 :>> ', x0);
+          const index = bisect(chartData, x0, 1);
+          const a = chartData[index - 1];
+          const b = chartData[index];
+          var val = b && (x0 - a.strikePrice > b.strikePrice - x0) ? b : a;
+          tooltip
+            .attr("transform", `translate(${xScale(x0)},${yScale(val.netPnL)})`)
+            .call(callout, `${val.netPnL}\n ${x0}`);
 
-      // const focus = svg
-      //   .append('g')
-      //   .attr('class', 'focus')
-      //   .style('display', 'none');
-
-      // const bisectDate = d3.bisector(d => d.netPnL).left;
-
-      // function mousemove(e) {
-      //   var data = chartData;
-      //   const x0 = xScale.invert(d3.pointer(e)[0]);
-      //   console.log('x0 new:>> ', x0);
-      //   const i = bisectDate(data, x0, 1);
-      //   const d0 = data[i - 1];
-      //   const d1 = data[i];
-
-      // }
-
-
-      /// 
-      /// தேவையில்லாத ஆணி  
-      //
-
-      // // svg
-      // // .append("path")
-      // // .datum(chartData)
-      // // .attr("fill",  function (d,i) { return linecolor; })
-      // // .attr("class", linecolor)
-      // // .attr("transform", "translate(" + this.MARGIN.LEFT + "," + yScale(0) + ")")
-
-      // const lg = svg
-      //   .append("defs")
-      //   .append("linearGradient") // linear gradient
-      //   .attr("id", "mygrad")
-      //   .attr("x1", "0%")
-      //   .attr("x2", "0%")
-      //   .attr("y1", "0%")
-      //   .attr("y2", "100%");
-      // lg.append("stop")
-      //   .attr("offset", "0%")
-      //   .style("stop-color", lgcolor)
-      //   .style("stop-opacity", 0.15);
-      // lg.append("stop")
-      //   .attr("offset", "100%")
-      //   .style("stop-color", lgcolor)
-      //   .style("stop-opacity", 0.01);
+        });
+      }
 
 
-      // var lgxScale, lgyScale, lgxAxisCall, lgyAxisCall;
-      // lgxScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
-      // lgyScale = d3.scaleLinear()
-      //   .domain([d3.min(chartData, d => d.netPnL) - 1000, 0]).nice()
-      //   .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
-      // lgxAxisCall = d3.axisBottom(lgxScale);
-      // lgyAxisCall = d3.axisLeft(lgyScale);
-      // //xAxisCall2 = d3.axisBottom(xScale);
-      // var lgline = d3
-      // .line()
-      // .defined(d => !isNaN(d.netPnL))
-      // .x(d => lgxScale(d.strikePrice))
-      // .y(d => lgyScale(d.netPnL));
 
-      // svg
-      //   .append("path")
-      //   .datum(chartData)
-      //   .attr("fill", "url(#mygrad)")
-      //   .attr("class", linecolor)
-      //   .attr("transform", "translate(" + this.MARGIN.LEFT + "," + lgyScale(0) + ")")
-      //   .attr("stroke-linejoin", "round")
-      //   .attr("stroke-linecap", "round")
-      //   .attr("d", lgline);
+
+
 
 
 
@@ -381,11 +342,11 @@ var utilitymixins = {
 export default utilitymixins;
 
 
-/// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
-function GetTodayDate() {
-  var d = new Date();
-  var ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-  var mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-  var da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-  console.log(`${da}-${mo}-${ye}`);
-}
+// /// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
+// function GetTodayDate() {
+//   var d = new Date();
+//   var ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+//   var mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+//   var da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+//   console.log(`${da}-${mo}-${ye}`);
+// }

@@ -42,24 +42,27 @@
           <span class="view">
             {{ item.symbol }}
           </span>
-          <input type="text" class="w-10 edit" v-model="item.symbol" />
+          <!-- <input type="text" class="w-10 edit" v-model="item.symbol" /> -->
         </td>
 
         <td>
-          <span class="view">
+          <span>
+            <!-- class="view" -->
             {{ item.lotsize }}
           </span>
-          <input v-model="item.lotsize" type="text" class="mini-edit edit" />
+          <!-- <input v-model="item.lotsize" type="text" class="mini-edit edit" /> -->
         </td>
         <td v-show="!PropStrategy.ismultiplesymbol" class="d-none">
-          <span class="view">
+          <span>
+            
+            <!-- class="view" -->
             {{ item.strikepricestep }}
           </span>
-          <input
+          <!-- <input test
             v-model="item.strikepricestep"
             type="number"
             class="mini-edit edit"
-          />
+          /> -->
         </td>
 
         <td>
@@ -68,28 +71,30 @@
           </span>
 
           <div class="edit">
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <a class="input-group-text text-dark" @click="onDec(item)">-</a>
+            <div class="">
+              <div class="btn-nonrounded rounded-l-sm inline-block">
+                <a class="" @click="onDec(item)">-</a>
               </div>
               <input
                 v-model="item.selectedstrike"
+                @keydown.up="onInc(item)"
+                @keydown.down="onDec(item)"
                 type="text"
-                class="mini-edit"
+                class="text-right mini-edit-nonrounded inline-block"
               />
-              <div class="input-group-append">
-                <a class="input-group-text text-dark" @click="onInc(item)">+</a>
+              <div class="btn-nonrounded rounded-r-sm inline-block">
+                <a class="" @click="onInc(item)">+</a>
               </div>
             </div>
 
-            <input
+            <!-- <input
               v-model="item.selectedstrike"
               type="range"
               class="edit"
               :min="item.strikepricemin"
               :max="item.strikepricemax"
               :step="item.strikepricestep"
-            />
+            /> -->
           </div>
         </td>
 
@@ -223,9 +228,9 @@ export default {
       selectedIDs: [],
     };
   },
-  props: { PropStrategy: {}, PropSelectedTraded: {type :Array}  },
+  props: { PropStrategy: {}, PropSelectedTraded: { type: Array } },
   methods: {
-    ...mapActions(["AddEditTrade", "DeleteTrade" ]),
+    ...mapActions(["AddEditTrade", "DeleteTrade"]),
     onDeleteTrade: function (sid, tid) {
       console.log("sid,tid :>> ", sid, tid);
       this.DeleteTrade({ sid, tid });
@@ -253,9 +258,8 @@ export default {
       trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
   },
-  mounted (){
+  mounted() {
     this.SelectAll = true;
-
   },
 
   computed: {
@@ -277,7 +281,7 @@ export default {
           });
         }
         this.selectedIDs = selected;
-        /// நாளை  இங்குஇருது  துவங்கவும்  
+        /// நாளை  இங்குஇருது  துவங்கவும்
         //TradeSelectChange = this.???????????
       },
     },
