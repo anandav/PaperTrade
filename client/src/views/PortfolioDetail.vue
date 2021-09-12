@@ -30,7 +30,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import StrategyDetail from "./StrategyDetail.vue";
 import myMixins from "../shared/utilitymixins";
 export default {
@@ -39,7 +39,7 @@ export default {
     StrategyDetail,
   },
   computed: {
-    ...mapState(["Portfolio", "Strategies"]),
+    ...mapGetters(["Portfolio", "Strategies"]),
   },
   methods: {
     ...mapActions(["AddStrategy"]),

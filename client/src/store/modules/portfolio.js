@@ -5,18 +5,20 @@ import {
     GETALLPORTFOLIOS,
     SETPORTFOLIO,
     DELETEPORTFOLIE,
-} from "./mutationtype";
+} from "../mutationtype";
 
-
-
-export default {
+const portfolioModule = {
+    namespaced : true,
     state: {
         Portfolios: [],
         Portfolio: undefined,
     },
     getters: {
-        value: state => {
-            return state.value;
+        Portfolios: state => {
+            return state.Portfolios;
+        },
+        Portfolio: state => {
+            return state.Portfolio;
         }
     },
     mutations: {
@@ -65,11 +67,11 @@ export default {
             }).catch(e => { console.log(e); });
         },
         async DeletePortfolio({ commit }, item) {
-            console.log("Porfolio Delete Action called")
+            // console.log("Porfolio Delete Action called")
 
             axios.post(apiUrl + "portfolio/delete", item)
                 .then(function () {
-                    console.log("Porfolio Delete callback called")
+                    // console.log("Porfolio Delete callback called")
                     commit(DELETEPORTFOLIE, item);
                 });
 
@@ -77,3 +79,5 @@ export default {
         }
     }
 };
+
+export default portfolioModule;

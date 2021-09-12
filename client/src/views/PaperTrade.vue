@@ -1,9 +1,11 @@
 <template>
   <div>
-    <div class="pb-52 container min-h-screen mx-auto bg-gray-100 dark:bg-gray-700">
+    <div
+      class="pb-52 container min-h-screen mx-auto bg-gray-100 dark:bg-gray-700"
+    >
       <div class="grid grid-cols-12 mb-22">
         <PortfolioMenu class="col-span-3" />
-        <PortfolioDetail class="col-span-9 " />
+        <PortfolioDetail class="col-span-9" />
       </div>
     </div>
     <TradeAddEdit />
@@ -23,7 +25,11 @@ export default {
     PortfolioDetail,
     TradeAddEdit,
   },
-  // computed: {
+mounted (){
+console.log('mounted');
+console.log('this.$store :>> ', this.$store);
+},
+// computed: {
   //   ...mapState(["TradeDetail","Portfolio"])
   // },
   created() {},

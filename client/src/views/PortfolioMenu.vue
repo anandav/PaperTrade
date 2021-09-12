@@ -3,7 +3,7 @@
     <div class="flex items-center mt-5">
       <div class="flex-initial">
         <input
-          class="ml-2 pl-2 py-1  rounded"
+          class="ml-2 pl-2 py-1 rounded"
           placeholder="Portfolio Name"
           type="text"
           v-model="portfolioName"
@@ -13,7 +13,7 @@
 
       <div class="flex-initial float-right">
         <a
-          class="btn ml-1 invisible lg:visible "
+          class="btn ml-1 invisible lg:visible"
           href="#"
           @click="onAddNewPortfolio()"
         >
@@ -37,7 +37,7 @@
         }"
       >
         <div
-          class="px-2 leading-10 "
+          class="px-2 leading-10"
           @click="onMenuSelectedPortfolio(item)"
           :class="{ isPortfolioEdit: item == editPortfolio }"
         >
@@ -60,22 +60,13 @@
           </div>
           <div class="float-right">
             <div class="space-x-1">
-              <a
-                class="btn  view "
-                @click="onInlineEditPortfolio(item)"
-              >
+              <a class="btn view" @click="onInlineEditPortfolio(item)">
                 <i class="material-icons">edit</i>
               </a>
-              <a
-                class="btn edit"
-                @click="onInlineSavePortfolio(item)"
-              >
+              <a class="btn edit" @click="onInlineSavePortfolio(item)">
                 <i class="material-icons">save</i>
               </a>
-              <a
-                class="btn ml-2 text-red-600"
-                @click="onDeletePortfolio(item)"
-              >
+              <a class="btn ml-2 text-red-600" @click="onDeletePortfolio(item)">
                 <i class="material-icons">delete</i>
               </a>
             </div>
@@ -86,7 +77,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "PortfolioMenu",
@@ -103,7 +94,7 @@ export default {
       this.GetAllStrategies(item);
     },
     onAddNewPortfolio() {
-      if ( this.portfolioName) {
+      if (this.portfolioName) {
         this.SavePortfolio({
           _id: 0,
           name: this.portfolioName,
@@ -130,42 +121,24 @@ export default {
       txtAddEditPortfolio: this.$getConst("savePortfolio"),
       isLoading: true,
       editPortfolio: null,
+      Portfolios : this["portfolioModule/Portfolios"]
     };
   },
 
   created() {
+
+    console.log('Portfolios :>> ', this.Portfolios);
     this.GetAllPortfolios().then(() => {
+  
       this.isLoading = false;
     });
   },
   computed: {
-    ...mapState(["Portfolios", "Portfolio"]),
+    ...mapGetters(["portfolioModule/Portfolios", "portfolioModule/Portfolio"]),
   },
 };
 </script>
 <style scoped>
-/* .portfolioitem {
-  min-height: 560px;
-  overflow-y: hidden;
-}
-
-.portforlio-menu-item {
-  font-size: 14px;
-}
-
-.portforlio-menu-item:hover {
-  color: #bebebe !important;
-}
-.active {
-  color: #ffffff !important;
-  background-color: #6c757d;
-  border-color: #6c757d;
-}
-
-.active :hover {
-  color: #ffffff !important;
-} */
-
 [v-cloak] {
   display: none;
 }
