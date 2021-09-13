@@ -1,12 +1,12 @@
 import "dotenv/config";
-const axios = require("axios");
-const apiUrl = process.env.VUE_APP_APIURL || "/";
 import {
     GETALLSTRATEGIES,
     ADDEDITSTRATEGY,
     DELETESTRATEGY
 } from "../mutationtype";
 
+const axios = require("axios");
+const apiUrl = process.env.VUE_APP_APIURL || "/";
 const strategyModule = {
     namespaced : true,
     state: {
@@ -16,6 +16,7 @@ const strategyModule = {
         Strategies: state => {
             return state.Strategies;
         },
+        
     },
     mutations: {
         [GETALLSTRATEGIES](state, _strategies) {

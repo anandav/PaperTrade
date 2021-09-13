@@ -1,5 +1,5 @@
 <template>
-  <div class="border-r-2 border-gray-300 dark:border-gray-600">
+  <div class="border-r-2 border-gray-300 dark:border-gray-700">
     <div class="flex items-center mt-5">
       <div class="flex-initial">
         <input
@@ -82,13 +82,13 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "PortfolioMenu",
   methods: {
-    ...mapActions([
-      "GetAllPortfolios",
-      "GetPortfolioById",
-      "SavePortfolio",
-      "DeletePortfolio",
-      "GetAllStrategies",
-    ]),
+    ...mapActions({
+      GetAllPortfolios: "portfolioModule/GetAllPortfolios",
+      GetPortfolioById: "portfolioModule/GetPortfolioById",
+      SavePortfolio: "portfolioModule/SavePortfolio",
+      DeletePortfolio: "portfolioModule/DeletePortfolio",
+      GetAllStrategies: "strategyModule/GetAllStrategies",
+    }),
     onMenuSelectedPortfolio(item) {
       this.GetPortfolioById(item);
       this.GetAllStrategies(item);
@@ -121,20 +121,19 @@ export default {
       txtAddEditPortfolio: this.$getConst("savePortfolio"),
       isLoading: true,
       editPortfolio: null,
-      Portfolios : this["portfolioModule/Portfolios"]
     };
   },
 
-  created() {
-
-    console.log('Portfolios :>> ', this.Portfolios);
+  mounted() {
     this.GetAllPortfolios().then(() => {
-  
       this.isLoading = false;
     });
   },
   computed: {
-    ...mapGetters(["portfolioModule/Portfolios", "portfolioModule/Portfolio"]),
+    ...mapGetters({
+      Portfolio: "portfolioModule/Portfolio",
+      Portfolios: "portfolioModule/Portfolios",
+    }),
   },
 };
 </script>

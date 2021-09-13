@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mx-3 mt-1 rounded bg-gray-200 dark:bg-gray-600"
+    class="mx-3 mt-1 rounded bg-gray-200 dark:bg-gray-700"
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
     <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-400">
@@ -103,7 +103,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
 import myMixins from "../shared/utilitymixins";
@@ -112,7 +112,7 @@ export default {
   name: "StrategyDetail",
   components: { TradeList },
   computed: {
-    ...mapState(["TradeDetail"]),
+    ...mapGetters({ TradeDetail: "tradeModule/TradeDetail" }),
   },
   mounted: function () {
     this.onShowChart();
@@ -128,7 +128,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["EditStrategy", "DeleteStrategy", "BindAddEditTrade"]),
+    ...mapActions({
+      EditStrategy: "strategyModule/EditStrategy",
+      DeleteStrategy: "strategyModule/DeleteStrategy",
+      BindAddEditTrade: "tradeModule/BindAddEditTrade",
+    }),
     onEditStrategy(strategy) {
       this.editStrategy = strategy;
     },

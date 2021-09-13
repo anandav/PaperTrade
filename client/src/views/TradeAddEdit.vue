@@ -2,6 +2,7 @@
   <div
     id="neworderpanel"
     class="
+      drop-shadow-lg
       h-96
       absolute
       bottom-0
@@ -13,13 +14,18 @@
       dark:bg-gray-700
       edit
     "
+    style="bottom:0;"
     @keydown.esc="bindAddEditTrade()"
     v-if="TradeDetail"
   >
     <div
       id="header"
       class="bg-clip-border rounded-t p-3 border-b-2 cursor-move"
-      :class="TradeDetail.buyorsell == 'Sell' ?  'bg-gradient-to-r from-yellow-800 to-yellow-700' : 'bg-gradient-to-r from-green-700 to-green-800'"
+      :class="
+        TradeDetail.buyorsell == 'Sell'
+          ? 'bg-gradient-to-r from-yellow-800 to-yellow-700'
+          : 'bg-gradient-to-r from-green-700 to-green-800'
+      "
       @mousedown="onMouseDownUp($event)"
     >
       <div class="grid grid-cols-12">
@@ -27,12 +33,12 @@
           {{ TradeDetail.symbol }}
         </div>
         <div class="col-span-1">
-           <div class="float-right">
-          <SwitchButton :PropTrade="TradeDetail" />
-        </div>
+          <div class="float-right">
+            <SwitchButton :PropTrade="TradeDetail" />
+          </div>
         </div>
         <div class="col-span-1">
-          <div class="float-right">
+          <div class="float-right cursor-pointer">
             <a @click="bindAddEditTrade()" aria-label="Close">
               <i class="material-icons">close</i>
             </a>
@@ -99,7 +105,7 @@
             {{ value }}
           </label>
         </div>
-         <!-- <div class="">
+        <!-- <div class="">
         
 
          <div class="btn-group btn-group-toggle">
@@ -173,7 +179,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import SwitchButton from "../components/ui/SwitchButton";
 import myMixins from "../shared/utilitymixins";
 export default {
@@ -191,13 +197,16 @@ export default {
     PropStrategy: {},
   },
   computed: {
-    ...mapState(["TradeDetail"]),
+    ...mapGetters({ TradeDetail: "tradeModule/TradeDetail" }),
   },
   components: {
     SwitchButton,
   },
   methods: {
-    ...mapActions(["AddEditTrade", "BindAddEditTrade"]),
+    ...mapActions({
+      AddEditTrade: "tradeModule/AddEditTrade",
+      BindAddEditTrade: "tradeModule/BindAddEditTrade",
+    }),
     onAddEditTrade: function () {
       this.AddEditTrade(this.TradeDetail).then(() => {
         this.BindAddEditTrade(null);
@@ -224,7 +233,7 @@ export default {
       this.panel.style.top = this.panel.offsetTop - this.movementY + "px";
       this.panel.style.left = this.panel.offsetLeft - this.movementX + "px";
     },
-    onMouseLeave: function (_e) {
+    onMouseLeave: function () {
       document.onmouseup = null;
       document.onmousemove = null;
     },
@@ -252,24 +261,4 @@ export default {
 };
 </script>
 <style scoped>
-/* .order-window {
-  position: fixed;
-  bottom: 0px;
-  top: auto;
-  left: 500px;
-  width: 800px;
-  height: 250px;
-} */
-
-/* [v-cloak] {
-  display: none;
-}
-.edit {
-  display: none;
-}
-.isTradeWindowEdit.edit {
-   The above  class ("isTradeWindowEdit" and "edit") 
-  is applied ONLY for Root node  of edit window  
-  display: inline-block;
-} */
 </style>

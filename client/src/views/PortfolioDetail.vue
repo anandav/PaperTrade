@@ -1,10 +1,20 @@
 <template>
   <div class="mt-3">
-    <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-700">
+    <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-800">
       <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>
     <div v-if="Portfolio" class="">
-      <div class="border-b-2 drop-shadow-md pl-5 pb-5 border-gray-300 dark:border-gray-600  dark:bg-gray-700">
+      <div
+        class="
+          border-b-2
+          drop-shadow-md
+          pl-5
+          pb-5
+          border-gray-300
+          dark:bg-gray-800
+          dark:border-gray-700
+        "
+      >
         <span class="text-xl">
           {{ Portfolio.name }}
         </span>
@@ -23,7 +33,6 @@
           v-for="item in Strategies"
         >
           <StrategyDetail :PropStrategy="item" />
-          
         </div>
       </div>
     </div>
@@ -39,10 +48,13 @@ export default {
     StrategyDetail,
   },
   computed: {
-    ...mapGetters(["Portfolio", "Strategies"]),
+    ...mapGetters({
+      Portfolio: "portfolioModule/Portfolio",
+      Strategies: "strategyModule/Strategies",
+    }),
   },
   methods: {
-    ...mapActions(["AddStrategy"]),
+    ...mapActions({ AddStrategy: "strategyModule/AddStrategy" }),
     onAddNewStrategy: function () {
       this.isEdit = !this.isEdit;
       this.AddStrategy(this.Portfolio._id);

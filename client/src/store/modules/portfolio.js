@@ -1,12 +1,12 @@
 import "dotenv/config";
-const axios = require("axios");
-const apiUrl = process.env.VUE_APP_APIURL || "/";
 import {
     GETALLPORTFOLIOS,
     SETPORTFOLIO,
     DELETEPORTFOLIE,
 } from "../mutationtype";
 
+const axios = require("axios");
+const apiUrl = process.env.VUE_APP_APIURL || "/";
 const portfolioModule = {
     namespaced : true,
     state: {

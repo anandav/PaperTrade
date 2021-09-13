@@ -1,8 +1,4 @@
 import "dotenv/config";
-import { mapGetters } from "vuex";
-
-const axios = require("axios");
-const apiUrl = process.env.VUE_APP_APIURL || "/";
 import {
     BINDADDEDITTRADE,
     ADDEDITTRADE,
@@ -10,27 +6,21 @@ import {
 
 } from "../mutationtype";
 
+
+const axios = require("axios");
+const apiUrl = process.env.VUE_APP_APIURL || "/";
+
 const tradeModule = {
     namespaced: true,
-    computed: {
-        ...mapGetters(
-            ["Strategies"]
-
-            //     [
-            //     'some/nested/module/someGetter', // -> this['some/nested/module/someGetter']
-            //     'some/nested/module/someOtherGetter', // -> this['some/nested/module/someOtherGetter']
-            //   ]
-        )
-        //...mapGetters('strategyModule',["Strategies"]),
-    },
-   
     state: {
         TradeDetail: undefined,
     },
     getters: {
-        TradeDetail: (state) => {
+        TradeDetail: function (state) {
             return state.TradeDetail;
-        }
+        },
+        
+
 
     }
     ,
@@ -38,16 +28,18 @@ const tradeModule = {
         [BINDADDEDITTRADE](state, _tradeDetail) {
             state.TradeDetail = _tradeDetail;
         },
-        [ADDEDITTRADE](state, _strategy) {
-            var strategyIndex = this.Strategies.findIndex(x => x._id == _strategy._id);
+        [ADDEDITTRADE]({ state, rootState }, _strategy) {
+
+            var strategyIndex = this.getStrategies.findIndex(x => x._id == _strategy._id);
             if (strategyIndex > -1) {
                 this.Strategies[strategyIndex].trades = _strategy.trades;
             }
         },
-        [DELETETRADE](state, { sid, tid }) {
-            var foundIndex = this.Strategies.findIndex(x => x._id == sid);
+        [DELETETRADE](state, {_rootGetters, sid, tid }) {
+
+            var foundIndex = _rootGetters.strategyModule.Strategies.findIndex(x => x._id == sid);
             if (foundIndex > -1) {
-                var strategy = this.Strategies[foundIndex];
+                var strategy = _rootGetters.Strategies[foundIndex];
                 var tradeIndex = strategy.trades.findIndex(y => y._id == tid);
                 if (tradeIndex > -1) {
                     strategy.trades.splice(tradeIndex, 1);
@@ -89,11 +81,16 @@ const tradeModule = {
                 });
             }
         },
-        DeleteTrade({ commit }, { sid, tid }) {
+        DeleteTrade({ commit, rootGetters }, { sid, tid }) {
             if (sid && tid) {
                 axios.post(apiUrl + "trade/delete", { tid }).then(function (res) {
                     if (res.status == 200) {
-                        commit(DELETETRADE, { sid, tid });
+                        //console.log('Delete rootState.Strategies :>> ', rootState.strategyModule.Strategies);
+                        console.log('_rootGetters :>> ', rootGetters);
+                        debugger;
+                        console.log('_rootGetters.strategyModule :>> ', rootGetters.strategyModule);
+                        console.log('_rootGetters.strategyModule.Strategies :>> ', rootGetters.strategyModule.Strategies);
+                        commit(DELETETRADE, { rootGetters, sid, tid });
                     }
                 });
             }

@@ -54,7 +54,6 @@
         </td>
         <td v-show="!PropStrategy.ismultiplesymbol" class="d-none">
           <span>
-            
             <!-- class="view" -->
             {{ item.strikepricestep }}
           </span>
@@ -230,9 +229,11 @@ export default {
   },
   props: { PropStrategy: {}, PropSelectedTraded: { type: Array } },
   methods: {
-    ...mapActions(["AddEditTrade", "DeleteTrade"]),
+    ...mapActions({
+      AddEditTrade: "tradeModule/AddEditTrade",
+      DeleteTrade: "tradeModule/DeleteTrade",
+    }),
     onDeleteTrade: function (sid, tid) {
-      console.log("sid,tid :>> ", sid, tid);
       this.DeleteTrade({ sid, tid });
     },
     onInlineEditTrade: function (trade) {

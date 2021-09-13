@@ -20,6 +20,7 @@ module.exports = {
       yellow: colors.amber,
       green : colors.green,
       white : colors.white,
+      pink : colors.pink,
       
     }
   },

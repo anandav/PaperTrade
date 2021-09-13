@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="text-sm font-medium text-gray-500 dark:text-gray-400">
-    <nav class="drop-shadow-md py-5 bg-gray-200 dark:bg-gray-700">
+    <nav class="drop-shadow-md py-5 bg-gray-200 dark:bg-gray-800">
       <div class="container mx-auto">
         <router-link to="/papertrade" class="pl-5">Paper Trade</router-link>
         <router-link to="/builder" class="pl-5">Builder</router-link>
