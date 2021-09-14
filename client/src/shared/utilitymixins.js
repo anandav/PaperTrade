@@ -37,7 +37,6 @@ var utilitymixins = {
   },
   methods: {
     GenerateChart: function (strategy) {
-      //console.clear();
       var chartData = this.GenerateChartPoint(strategy);
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
       d3.selectAll(paretnId + " > *").remove();
@@ -76,8 +75,14 @@ var utilitymixins = {
             else if (currentTrade.tradetype == "Put") {
               _intrinsicValue = currentTrade.selectedstrike - _strikePrice > 0 ? currentTrade.selectedstrike - _strikePrice : 0;
             }
-            PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
-            netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+
+            if (currentTrade.tradetype == "Future") {
+              PnL = currentTrade.buyorsell == "Buy" ? _strikePrice - currentTrade.price : currentTrade.price - _strikePrice;
+              netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+            } else {
+              PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
+              netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+            }
 
             if (chartData[j]) {
               chartData[j].netPnL += netPnL;
@@ -300,10 +305,9 @@ var utilitymixins = {
           path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
         }
 
-      var _this = this;
+        var _this = this;
         svg.on("touchmove mousemove", function (e) {
-          //console.log('d3.pointer(e)[0] :>> ', d3.pointer(e)[0]+50);
-          console.log('this.MARGIN.RIGHT :>> ', _this.MARGIN.LEFT);
+          // console.log('this.MARGIN.RIGHT :>> ', _this.MARGIN.LEFT);
           var x0 = xScale.invert(d3.pointer(e)[0]);
           // console.log('x0 :>> ', x0);
           // console.log('typeof(x0) :>> ', typeof(x0));

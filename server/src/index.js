@@ -5,9 +5,10 @@ const mongoose = require("mongoose");
 const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
+const tradeController = require("./controller/tradecontroller");
+const dataapiController = require("./controller/dataapiController");
 const port = process.env.PORT || 9090;
 
-const tradeController = require("./controller/tradecontroller");
 
 app.use(express.json());
 //app.use(express.urlencoded({extended : true}));
@@ -26,6 +27,7 @@ app.use("/", (req, res, next) => {
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
+app.use("/dataapi", dataapiController);
 app.use("/", express.static('public'));
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,

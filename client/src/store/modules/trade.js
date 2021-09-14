@@ -19,7 +19,7 @@ const tradeModule = {
         TradeDetail: function (state) {
             return state.TradeDetail;
         },
-        
+
 
 
     }
@@ -28,18 +28,17 @@ const tradeModule = {
         [BINDADDEDITTRADE](state, _tradeDetail) {
             state.TradeDetail = _tradeDetail;
         },
-        [ADDEDITTRADE]({ state, rootState }, _strategy) {
-
-            var strategyIndex = this.getStrategies.findIndex(x => x._id == _strategy._id);
-            if (strategyIndex > -1) {
-                this.Strategies[strategyIndex].trades = _strategy.trades;
+        [ADDEDITTRADE](state, { strategies, _strategy }) {
+            debugger
+            var foundIndex = strategies.findIndex(x => x._id == _strategy._id);
+            if (foundIndex > -1) {
+                strategies[foundIndex].trades = _strategy.trades;
             }
         },
-        [DELETETRADE](state, {_rootGetters, sid, tid }) {
-
-            var foundIndex = _rootGetters.strategyModule.Strategies.findIndex(x => x._id == sid);
+        [DELETETRADE](state, { strategies, sid, tid }) {
+            var foundIndex = strategies.findIndex(x => x._id == sid);
             if (foundIndex > -1) {
-                var strategy = _rootGetters.Strategies[foundIndex];
+                var strategy = strategies[foundIndex];
                 var tradeIndex = strategy.trades.findIndex(y => y._id == tid);
                 if (tradeIndex > -1) {
                     strategy.trades.splice(tradeIndex, 1);
@@ -70,13 +69,14 @@ const tradeModule = {
                 commit(BINDADDEDITTRADE, null)
             }
         },
-        AddEditTrade({ commit }, _tradeDetail) {
+        AddEditTrade({ commit, rootGetters }, _tradeDetail) {
             if (_tradeDetail) {
                 axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                     if (res.status == 200) {
-                        ///res.data is strategy
-                        res.data.name = "anand";
-                        commit(ADDEDITTRADE, res.data);
+                        var strategies = rootGetters["strategyModule/Strategies"];
+                        var _strategy = res.data;
+                        debugger;
+                        commit(ADDEDITTRADE, { strategies, _strategy });
                     }
                 });
             }
@@ -85,12 +85,8 @@ const tradeModule = {
             if (sid && tid) {
                 axios.post(apiUrl + "trade/delete", { tid }).then(function (res) {
                     if (res.status == 200) {
-                        //console.log('Delete rootState.Strategies :>> ', rootState.strategyModule.Strategies);
-                        console.log('_rootGetters :>> ', rootGetters);
-                        debugger;
-                        console.log('_rootGetters.strategyModule :>> ', rootGetters.strategyModule);
-                        console.log('_rootGetters.strategyModule.Strategies :>> ', rootGetters.strategyModule.Strategies);
-                        commit(DELETETRADE, { rootGetters, sid, tid });
+                        var strategies = rootGetters["strategyModule/Strategies"];
+                        commit(DELETETRADE, { strategies, sid, tid });
                     }
                 });
             }

@@ -3,7 +3,7 @@
     id="neworderpanel"
     class="
       drop-shadow-lg
-      h-96
+      h-44
       absolute
       bottom-0
       items-center
@@ -14,17 +14,17 @@
       dark:bg-gray-700
       edit
     "
-    style="bottom:0;"
-    @keydown.esc="bindAddEditTrade()"
+    style="bottom: 0"
+    @keydown.esc="onBindAddEditTrade()"
     v-if="TradeDetail"
   >
     <div
       id="header"
-      class="bg-clip-border rounded-t p-3 border-b-2 cursor-move"
+      class="bg-clip-border rounded-t p-3 cursor-move border-b-2 border-gray-500"
       :class="
         TradeDetail.buyorsell == 'Sell'
-          ? 'bg-gradient-to-r from-yellow-800 to-yellow-700'
-          : 'bg-gradient-to-r from-green-700 to-green-800'
+          ? 'bg-gradient-to-r from-gray-700 to-yellow-700'
+          : 'bg-gradient-to-r from-gray-700 to-green-800'
       "
       @mousedown="onMouseDownUp($event)"
     >
@@ -39,7 +39,7 @@
         </div>
         <div class="col-span-1">
           <div class="float-right cursor-pointer">
-            <a @click="bindAddEditTrade()" aria-label="Close">
+            <a @click="onBindAddEditTrade()" aria-label="Close">
               <i class="material-icons">close</i>
             </a>
           </div>
@@ -77,16 +77,7 @@
             >
           </div>
 
-          <!-- <input
-            placeholder="Strike Price"
-            type="range"
-            :min="TradeDetail.strikepricemin"
-            :max="TradeDetail.strikepricemax"
-            :step="TradeDetail.strikepricestep"
-            v-model.number="TradeDetail.selectedstrike"
-            class="mt-3"
-            id="formControlRange"
-          /> -->
+          
         </div>
         <div class="inline-block">
           <label
@@ -105,45 +96,13 @@
             {{ value }}
           </label>
         </div>
-        <!-- <div class="">
-        
-
-         <div class="btn-group btn-group-toggle">
-            <label
-              class="btn btn btn-secondary"
-              v-for="(value, key) in BUYORSELL"
-              :key="key"
-              :class="{
-                'text-success': key == 1,
-                'text-danger': key == 2,
-                active: value == [TradeDetail.buyorsell],
-              }"
-            >
-              <input
-                type="radio"
-                name="tradeTypename"
-                :value="value"
-                :id="'trade_' + value"
-                v-model="TradeDetail.buyorsell"
-              />
-              {{ value }}
-            </label>
-          </div>
-        </div> -->
-      </div>
-
-      <div class="flex flex-row">
+     
         <div class="">
           <input
             placeholder="Quantity"
             type="number"
             v-model.number="TradeDetail.quantity"
-            class="
-              form-control
-              bg-transparent
-              border border-secondary
-              text-white
-            "
+            class="mini-edit text-right"
           />
         </div>
 
@@ -152,26 +111,20 @@
             placeholder="Price"
             type="number"
             v-model.number="TradeDetail.price"
-            class="
-              form-control
-              bg-transparent
-              border border-secondary
-              text-white
-            "
+            class="mini-edit text-right"
           />
         </div>
-        <!-- <textarea
-          placeholder="Note"
-          type="number"
-          v-model.number="TradeDetail.note"
-          class="form-control bg-transparent border border-secondary text-white"
-        ></textarea> -->
+       
       </div>
-      <div class="flex flex-row">
+      <div class="flex flex-row float-right mr-5">
         <a class="btn btn-secondary" @click="onAddEditTrade()" href="#">
           Save
         </a>
-        <a class="btn btn-secondary ml-1" @click="bindAddEditTrade()" href="#">
+        <a
+          class="btn btn-secondary ml-1"
+          @click="onBindAddEditTrade()"
+          href="#"
+        >
           Cancel
         </a>
       </div>
@@ -212,7 +165,7 @@ export default {
         this.BindAddEditTrade(null);
       });
     },
-    bindAddEditTrade: function () {
+    onBindAddEditTrade: function () {
       this.BindAddEditTrade(null);
     },
     onMouseDownUp: function (_e) {
@@ -229,7 +182,6 @@ export default {
       this.movementY = this.clientY - _e.clientY;
       this.clientX = _e.clientX;
       this.clientY = _e.clientY;
-      console.log("this.panel :>> ", this.panel.style);
       this.panel.style.top = this.panel.offsetTop - this.movementY + "px";
       this.panel.style.left = this.panel.offsetLeft - this.movementX + "px";
     },
