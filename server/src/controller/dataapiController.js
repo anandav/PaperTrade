@@ -4,14 +4,13 @@ const dataapicontroller = express.Router();
 require("dotenv/config");
 
 dataapicontroller.get("/", async (req, res) => {
-  console.log('NSE_INDACES_API :>> ', process.env.NSE_INDACES_API);
   var request = http.request({
-    host: process.env.NSE_INDACES_API,
+    host: "இங்கே API கால் பண்ணவும்",
     method: 'GET',
     headers: {
-      // headers such as "Cookie" can be extracted from req object and sent to /test
+     
     }
-    
+
   }, function(response) {
     var data = '';
     response.setEncoding('utf8');
