@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mx-3 mt-1 rounded bg-gray-200 dark:bg-gray-700"
+    class="mx-3 my-3 rounded shadow-xl bg-gray-200 dark:bg-gray-700"
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
     <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-400">

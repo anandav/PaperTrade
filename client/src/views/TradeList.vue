@@ -35,6 +35,7 @@
               :value="item._id"
               v-model="selectedIDs"
               checked
+              @change="onCheckStateChanged(item)"
             />
           </label>
         </td>
@@ -50,7 +51,7 @@
             <!-- class="view" -->
             {{ item.lotsize }}
           </span>
-          <!-- <input v-model="item.lotsize" type="text" class="mini-edit edit" /> -->
+          <input v-model="item.lotsize" type="text" class="mini-edit edit" />
         </td>
         <td v-show="!PropStrategy.ismultiplesymbol" class="d-none">
           <span>
@@ -232,6 +233,7 @@ export default {
     ...mapActions({
       AddEditTrade: "tradeModule/AddEditTrade",
       DeleteTrade: "tradeModule/DeleteTrade",
+      CheckStateChanged : "tradeModule/CheckStateChanged",
     }),
     onDeleteTrade: function (sid, tid) {
       this.DeleteTrade({ sid, tid });
@@ -258,6 +260,9 @@ export default {
     onDec: function (trade) {
       trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
+    onCheckStateChanged : function(trade){
+      this.CheckStateChanged(trade);
+    }
   },
   mounted() {
     this.SelectAll = true;

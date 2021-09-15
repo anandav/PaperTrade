@@ -10,3 +10,4 @@ export const DELETESTRATEGY = 'DeleteStrategy';
 export const BINDADDEDITTRADE = 'BindAddEditTrade';
 export const ADDEDITTRADE = 'AddEditTrade';
 export const DELETETRADE = 'DeleteTrade';
+export const CHANGECHECKSTATE = 'ChangeCheckState';

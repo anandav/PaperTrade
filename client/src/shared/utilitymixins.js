@@ -12,6 +12,7 @@ var utilitymixins = {
       },
       ChartSettings: {
         TOOLTIP: false,
+        OFFSET: true,
       },
       WIDTH: 500,
       HEIGHT: 300,
@@ -47,16 +48,35 @@ var utilitymixins = {
     },
 
     GenerateChartPoint: function (strategy) {
-
+      console.clear();
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         var tradeCount = strategy.trades.length;
         var chartData = [];
-        //console.clear();
+        var leastPrice = strategy.trades.map((t) => {
+          if (t.tradetype == "Future") {
+            return t.price;
+          } else {
+            return t.selectedstrike;
+          }
+        })
+
+
+
+        const { _strikepricemin, _strikepricemax } = this.getoffsetprices(leastPrice);
+        console.log('min :>> ', _strikepricemin);
+        console.log('max :>> ', _strikepricemax);
+
+
+
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
-          //console.log(JSON.stringify(currentTrade));
-          let _strikePrice = currentTrade.strikepricemin;
+          let _strikePrice = _strikepricemin;
+
+          // let _strikePrice = currentTrade.strikepricemin;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
+
+          console.log('currentTrade.strikepricemin :>> ', currentTrade.strikepricemin);
+          console.log('currentTrade.strikepricemax :>> ', currentTrade.strikepricemax);
 
           // currentTrade.strikepricestep = 1;
 
@@ -101,7 +121,8 @@ var utilitymixins = {
             j += 1;
             _strikePrice += currentTrade.strikepricestep;
           }
-          while (currentTrade.strikepricemax >= _strikePrice)
+          while (_strikepricemax >= _strikePrice)
+          // while (currentTrade.strikepricemax >= _strikePrice)
         }
         //console.log(chartData);
         return chartData;
@@ -197,6 +218,7 @@ var utilitymixins = {
     ///ref: https://observablehq.com/@simulmedia/line-chart
     ///ref: https://gist.github.com/llad/3766585 && http://jsfiddle.net/samselikoff/Jqmzd/2/
     _generateLineChart2: function (chartData, paretnId) {
+
       if (!chartData || !paretnId)
         return;
       //const lgcolor = "#f0fff0";
@@ -208,15 +230,16 @@ var utilitymixins = {
       var minSP = d3.min(chartData, d => d.strikePrice);
       var maxSP = d3.max(chartData, d => d.strikePrice);
 
+      minPnL = minPnL - (minPnL / 10);
+      maxPnL = maxPnL + (maxPnL / 10);
 
       xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
       // xScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
       yScale = d3.scaleLinear()
-        .domain([minPnL - 1000, maxPnL + 1000]).nice()
+        .domain([minPnL, maxPnL]).nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
       xAxisCall = d3.axisBottom(xScale);
       yAxisCall = d3.axisLeft(yScale);
-      // xAxisCall2 = d3.axisBottom(xScale);
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
@@ -305,7 +328,6 @@ var utilitymixins = {
           path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
         }
 
-        var _this = this;
         svg.on("touchmove mousemove", function (e) {
           // console.log('this.MARGIN.RIGHT :>> ', _this.MARGIN.LEFT);
           var x0 = xScale.invert(d3.pointer(e)[0]);
@@ -335,6 +357,31 @@ var utilitymixins = {
 
 
     },
+
+    getoffsetprices: function (leastPrice) {
+      var _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
+      var _mindiglen = this.ChartSettings.OFFSET ? Math.ceil(Math.log10(_min + 1)) : 0;
+      //var _maxdiglen = Math.ceil(Math.log10(_max + 1));
+      var n = 1;
+      switch (_mindiglen) {
+        case 1:
+        case 2:
+          n = 1;
+          break;
+        case 3:
+        case 4:
+        case 5:
+          n = 100;
+          break;
+        default:
+          n = 0;
+          break;
+      }
+
+      var _strikepricemin = _min - n;
+      var _strikepricemax = _max + n;
+      return { _strikepricemin, _strikepricemax };
+    }
 
 
 

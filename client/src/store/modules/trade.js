@@ -3,6 +3,7 @@ import {
     BINDADDEDITTRADE,
     ADDEDITTRADE,
     DELETETRADE,
+    CHANGECHECKSTATE,
 
 } from "../mutationtype";
 
@@ -19,9 +20,6 @@ const tradeModule = {
         TradeDetail: function (state) {
             return state.TradeDetail;
         },
-
-
-
     }
     ,
     mutations: {
@@ -29,7 +27,6 @@ const tradeModule = {
             state.TradeDetail = _tradeDetail;
         },
         [ADDEDITTRADE](state, { strategies, _strategy }) {
-            debugger
             var foundIndex = strategies.findIndex(x => x._id == _strategy._id);
             if (foundIndex > -1) {
                 strategies[foundIndex].trades = _strategy.trades;
@@ -45,6 +42,11 @@ const tradeModule = {
                 }
             }
         },
+        [CHANGECHECKSTATE](state, trade) {
+            if(trade.isChecked === undefined) {trade.isChecked = true;}
+            trade.isChecked = !trade.isChecked;
+        }
+
     },
     actions: {
         BindAddEditTrade({ commit }, _strategy) {
@@ -54,8 +56,8 @@ const tradeModule = {
                     sid: _strategy._id,
                     lotsize: 1000,
                     expiry: null,
-                    strikepricemin: 70,
-                    strikepricemax: 75,
+                    strikepricemin: 0,
+                    strikepricemax: 1,
                     strikepricestep: 0.25,
                     buyorsell: "Sell", //Buy/Sell
                     tradetype: "Call", //Call/Put/Future
@@ -75,7 +77,6 @@ const tradeModule = {
                     if (res.status == 200) {
                         var strategies = rootGetters["strategyModule/Strategies"];
                         var _strategy = res.data;
-                        debugger;
                         commit(ADDEDITTRADE, { strategies, _strategy });
                     }
                 });
@@ -89,6 +90,11 @@ const tradeModule = {
                         commit(DELETETRADE, { strategies, sid, tid });
                     }
                 });
+            }
+        },
+        CheckStateChanged({ commit }, trade) {
+            if (trade) {
+                commit(CHANGECHECKSTATE, trade);
             }
         }
     }

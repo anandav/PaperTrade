@@ -2,14 +2,17 @@
   <div
     id="neworderpanel"
     class="
-      drop-shadow-lg
-      h-44
+     ring ring-gray-400
+     ring-opacity-50
+      h-40
+      md:h-60
       absolute
       bottom-0
       items-center
-      w-1/3
+      w-2/5
+      
       left-1/3
-      rounded-t-md
+      rounded-md
       bg-gray-400
       dark:bg-gray-700
       edit
@@ -23,7 +26,7 @@
       class="bg-clip-border rounded-t p-3 cursor-move border-b-2 border-gray-500"
       :class="
         TradeDetail.buyorsell == 'Sell'
-          ? 'bg-gradient-to-r from-gray-700 to-yellow-700'
+          ? 'bg-gradient-to-r from-gray-700 to-red-700'
           : 'bg-gradient-to-r from-gray-700 to-green-800'
       "
       @mousedown="onMouseDownUp($event)"
@@ -47,7 +50,7 @@
       </div>
     </div>
     <div class="">
-      <div class="m-5 flex flex-row space-x-4">
+      <div class="m-5 flex flex-row space-x-4 justify-around">
         <div class="inline-block">
           <input
             class="mini-edit text-right"
@@ -66,7 +69,7 @@
             <input
               v-model="TradeDetail.selectedstrike"
               type="text"
-              class="w-24 text-right mini-edit-nonrounded inline-block"
+              class="text-right mini-edit-nonrounded inline-block"
               @keydown.up="onInc(TradeDetail)"
               @keydown.down="onDec(TradeDetail)"
             />
