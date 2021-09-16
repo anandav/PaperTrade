@@ -15,6 +15,7 @@ var utilitymixins = {
         OFFSET: true,
       },
       WIDTH: 500,
+      WIDTHP: "100%",
       HEIGHT: 300,
 
       BUYORSELL: {
@@ -38,7 +39,7 @@ var utilitymixins = {
   },
   methods: {
     GenerateChart: function (strategy) {
-      var chartData = this.GenerateChartPoint(strategy);
+      var chartData = this.GenerateChartPoint(strategy, { x0: 0, x1: 20000 });
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
       d3.selectAll(paretnId + " > *").remove();
       //this._generateBarChart(chartData, paretnId);
@@ -47,8 +48,60 @@ var utilitymixins = {
 
     },
 
-    GenerateChartPoint: function (strategy) {
-      console.clear();
+
+
+    getoffsetprices: function (leastPrice) {
+      var _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
+      console.log('{_min, _max} :>> ', _min, _max);
+      var strikepricemin = this.getdigits(_min, true), strikepricemax = this.getdigits(_max);
+      console.log('{strikepricemin, strikepricemax} :>> ', strikepricemin, strikepricemax);
+      return { strikepricemin, strikepricemax };
+    },
+
+    getdigits: function (value, ismin) {
+
+      var _valdiglen = 0;
+      if (ismin) {
+        _valdiglen = this.ChartSettings.OFFSET ?
+          Math.ceil(Math.log10(value - 1)) : 0;
+      } else {
+        _valdiglen = this.ChartSettings.OFFSET ?
+          Math.ceil(Math.log10(value + 1)) : 0;
+      }
+      var offset = 0;
+
+      switch (_valdiglen) {
+        case 1:
+          offset = 0.2
+          break;
+        case 2:
+          offset = 1;
+          break;
+        case 3:
+          offset = 10;
+          break;
+        case 4:
+          offset = 100;
+          break;
+        case 5:
+          offset = 500;
+          break;
+        default:
+          offset = 0;
+          break;
+      }
+      if (ismin) {
+        value -= offset;
+      }
+      else {
+        value += offset;
+      }
+      return value;
+    },
+
+
+
+    GenerateChartPoint: function (strategy, range) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         var tradeCount = strategy.trades.length;
         var chartData = [];
@@ -58,34 +111,18 @@ var utilitymixins = {
           } else {
             return t.selectedstrike;
           }
-        })
+        });
 
-
-
-        const { _strikepricemin, _strikepricemax } = this.getoffsetprices(leastPrice);
-        console.log('min :>> ', _strikepricemin);
-        console.log('max :>> ', _strikepricemax);
-
-
+        console.log('range :>> ', range);
+        if (range.x0 == 0 || range.x1 == 0) {
+          var { strikepricemin, strikepricemax } = this.getoffsetprices(leastPrice);
+          range = { x0: strikepricemin, x1: strikepricemax }
+        }
 
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
-          let _strikePrice = _strikepricemin;
-
-          // let _strikePrice = currentTrade.strikepricemin;
+          var _strikePrice = range.x0;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
-
-          console.log('currentTrade.strikepricemin :>> ', currentTrade.strikepricemin);
-          console.log('currentTrade.strikepricemax :>> ', currentTrade.strikepricemax);
-
-          // currentTrade.strikepricestep = 1;
-
-          // if (true) {
-          //   ///have to pass a parameter from u
-          //   _strikePrice = currentTrade.strikepricemin - (currentTrade.strikepricestep - currentTrade.price);
-          //   console.log('_strikePrice :>> ', _strikePrice);
-          // }
-
           let j = 0;
           do {
 
@@ -121,10 +158,10 @@ var utilitymixins = {
             j += 1;
             _strikePrice += currentTrade.strikepricestep;
           }
-          while (_strikepricemax >= _strikePrice)
-          // while (currentTrade.strikepricemax >= _strikePrice)
+          //while (currentTrade.strikepricemax >= _strikePrice)
+          while (range.x1 >= _strikePrice)
         }
-        //console.log(chartData);
+        console.log('chartData :>> ', chartData);
         return chartData;
       }
     },
@@ -135,6 +172,7 @@ var utilitymixins = {
       var _numbers = chartData.map(c => c.netPnL);
       var _max = Math.max(..._numbers) + 2000;
       var _min = Math.min(..._numbers) - 1000;
+
       const svg = d3.select(paretnId).append("svg")
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
         .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
@@ -357,31 +395,6 @@ var utilitymixins = {
 
 
     },
-
-    getoffsetprices: function (leastPrice) {
-      var _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
-      var _mindiglen = this.ChartSettings.OFFSET ? Math.ceil(Math.log10(_min + 1)) : 0;
-      //var _maxdiglen = Math.ceil(Math.log10(_max + 1));
-      var n = 1;
-      switch (_mindiglen) {
-        case 1:
-        case 2:
-          n = 1;
-          break;
-        case 3:
-        case 4:
-        case 5:
-          n = 100;
-          break;
-        default:
-          n = 0;
-          break;
-      }
-
-      var _strikepricemin = _min - n;
-      var _strikepricemax = _max + n;
-      return { _strikepricemin, _strikepricemax };
-    }
 
 
 

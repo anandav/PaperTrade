@@ -8,11 +8,11 @@
         <th class="w-1/12" v-show="PropStrategy.ismultiplesymbol">Symbol</th>
         <th class="w-1/12">Lot Size</th>
         <th class="w-1/12" v-show="!PropStrategy.ismultiplesymbol">
-          Strike Step
+          Step
         </th>
-        <th class="w-1/12">Selected Strike</th>
+        <th class="w-1/12">Strike Price</th>
         <th class="w-1/12">Type</th>
-        <th class="w-1/12">Buy/Sell</th>
+        <th class="w-1/12">B/S</th>
         <th class="w-1/12">Qty</th>
         <th class="w-1/12">Spot Price</th>
         <th class="w-1/12">Total Price</th>
@@ -28,8 +28,8 @@
         v-cloak
         class=""
       >
-        <td class="view">
-          <label>
+        <td>
+          <label class="view">
             <input
               type="checkbox"
               :value="item._id"
@@ -47,22 +47,20 @@
         </td>
 
         <td>
-          <span>
-            <!-- class="view" -->
+          <span class="view">
             {{ item.lotsize }}
           </span>
           <input v-model="item.lotsize" type="text" class="mini-edit edit" />
         </td>
         <td v-show="!PropStrategy.ismultiplesymbol" class="d-none">
-          <span>
-            <!-- class="view" -->
+          <span class="view">
             {{ item.strikepricestep }}
           </span>
-          <!-- <input test
+          <input
             v-model="item.strikepricestep"
             type="number"
             class="mini-edit edit"
-          /> -->
+          />
         </td>
 
         <td>
@@ -71,8 +69,8 @@
           </span>
 
           <div class="edit">
-            <div class="">
-              <div class="btn-nonrounded rounded-l-sm inline-block">
+            <div v-show="item.tradetype != 'Future'" class="flex flex-col">
+              <div class="btn-nonrounded rounded-t-sm w-12">
                 <a class="" @click="onDec(item)">-</a>
               </div>
               <input
@@ -80,21 +78,12 @@
                 @keydown.up="onInc(item)"
                 @keydown.down="onDec(item)"
                 type="text"
-                class="text-right mini-edit-nonrounded inline-block"
+                class="text-right mini-edit-nonrounded"
               />
-              <div class="btn-nonrounded rounded-r-sm inline-block">
+              <div class="btn-nonrounded rounded-b-sm w-12">
                 <a class="" @click="onInc(item)">+</a>
               </div>
             </div>
-
-            <!-- <input
-              v-model="item.selectedstrike"
-              type="range"
-              class="edit"
-              :min="item.strikepricemin"
-              :max="item.strikepricemax"
-              :step="item.strikepricestep"
-            /> -->
           </div>
         </td>
 
@@ -102,14 +91,15 @@
           <span class="view">
             {{ item.tradetype }}
           </span>
-          <div class="col-sm btn-group btn-group-toggle">
+          <div class="">
             <label
-              class="btn btn-secondary text-white edit"
+              class="btn w-12 text-center edit "
               v-for="(value, key) in TRADETYPE"
               :key="key"
-              :class="{ active: value == [item.tradetype] }"
+              :class="{ 'active text-green-400 dark:text-green-400': value == [item.tradetype] }"
             >
               <input
+                class="hidden"
                 type="radio"
                 :name="TRADETYPE"
                 :value="value"
@@ -233,7 +223,7 @@ export default {
     ...mapActions({
       AddEditTrade: "tradeModule/AddEditTrade",
       DeleteTrade: "tradeModule/DeleteTrade",
-      CheckStateChanged : "tradeModule/CheckStateChanged",
+      CheckStateChanged: "tradeModule/CheckStateChanged",
     }),
     onDeleteTrade: function (sid, tid) {
       this.DeleteTrade({ sid, tid });
@@ -260,9 +250,10 @@ export default {
     onDec: function (trade) {
       trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
-    onCheckStateChanged : function(trade){
+    onCheckStateChanged: function (trade) {
+      /// இதுவும் முடிக்கலே
       this.CheckStateChanged(trade);
-    }
+    },
   },
   mounted() {
     this.SelectAll = true;
@@ -273,7 +264,6 @@ export default {
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
       get: function () {
-        //this.PropSelectedTraded = this.selectedIDs;
         return this.PropStrategy.trades
           ? this.PropStrategy.trades.length == this.selectedIDs.length
           : false;

@@ -68,6 +68,12 @@
           <i class="material-icons">content_copy</i>
           {{ txtDuplicateStrategy }}
         </a>
+        <select class="btn" >
+          <option value="Select" >Move To Othet Portfolio</option>
+          <option :key="item._id" v-for="item in Portfolios">
+            {{ item.name }}
+          </option>
+        </select>
       </div>
       <div class="col-span-1">
         <div class="float-right space-x-2">
@@ -112,7 +118,10 @@ export default {
   name: "StrategyDetail",
   components: { TradeList },
   computed: {
-    ...mapGetters({ TradeDetail: "tradeModule/TradeDetail" }),
+    ...mapGetters({
+      TradeDetail: "tradeModule/TradeDetail",
+      Portfolios: "portfolioModule/Portfolios",
+    }),
   },
   mounted: function () {
     this.onShowChart();
@@ -132,6 +141,7 @@ export default {
       EditStrategy: "strategyModule/EditStrategy",
       DeleteStrategy: "strategyModule/DeleteStrategy",
       BindAddEditTrade: "tradeModule/BindAddEditTrade",
+      MoveToOtherPortfolio: "strategyModule/MoveStrategy",
     }),
     onEditStrategy(strategy) {
       this.editStrategy = strategy;

@@ -57,7 +57,7 @@ const tradeModule = {
                     lotsize: 1000,
                     expiry: null,
                     strikepricemin: 0,
-                    strikepricemax: 1,
+                    strikepricemax: 0,
                     strikepricestep: 0.25,
                     buyorsell: "Sell", //Buy/Sell
                     tradetype: "Call", //Call/Put/Future
