@@ -4,7 +4,7 @@
   "private": true,
   "description": "Papper Trade Client using VUE.",
   "scripts": {
-    "dev": "vue-cli-service serve --fix",
+    "dev": "vue-cli-service serve",
     "devcss": "postcss src/tailwind.css -o public/tailwind.css",
     "devcss2": "tailwindcss build -i src/tailwind.css -o myindex.css",
     "serve": "vue-cli-service serve",

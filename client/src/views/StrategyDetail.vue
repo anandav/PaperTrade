@@ -4,7 +4,7 @@
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
     <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-400">
-      <div class="grid grid-cols-8">
+      <div class="grid grid-cols-10">
         <div class="col-span-2">
           <span class="view">
             {{ PropStrategy.name }}
@@ -42,6 +42,22 @@
           Created On:
           {{ PropStrategy.CreatedOn }}
         </div>
+        <div class="col-span-2">
+          <div class="float-right">
+            <a
+              class="btn inline-block view"
+              @click="onEditStrategy(PropStrategy)"
+            >
+              <i class="material-icons">edit</i>
+              {{ txtEditStrategy }}
+            </a>
+
+            <a class="btn inline-block edit" @click="onSaveStrategy()">
+              <i class="material-icons">save</i>
+              {{ txtSaveStrategy }}
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -54,7 +70,25 @@
           />
         </div>
         <div class="col-span-1">
-          <div class="chartplaceholder"></div>
+          <div class="chartplaceholder">
+            <div class="col-span-1">
+              <input
+                type="number"
+                v-model.number="RangeX0"
+                placeholder="min"
+                min="0"
+                class="mini-edit x0"
+              />
+              <input
+                type="number"
+               v-model.number="RangeX1"
+                placeholder="max"
+                min="0"
+                class="mini-edit float-right x1"
+              />
+            </div>
+            <!-- CHART COMES HERE -->
+          </div>
         </div>
       </div>
     </div>
@@ -68,8 +102,8 @@
           <i class="material-icons">content_copy</i>
           {{ txtDuplicateStrategy }}
         </a>
-        <select class="btn" >
-          <option value="Select" >Move To Othet Portfolio</option>
+        <select class="btn">
+          <option value="Select">Move To Othet Portfolio</option>
           <option :key="item._id" v-for="item in Portfolios">
             {{ item.name }}
           </option>
@@ -89,19 +123,6 @@
           <a class="btn inline-block" @click="onBindAddEditTrade()">
             <i class="material-icons">add</i>
             {{ txtAddTrade }}
-          </a>
-
-          <a
-            class="btn inline-block view"
-            @click="onEditStrategy(PropStrategy)"
-          >
-            <i class="material-icons">edit</i>
-            {{ txtEditStrategy }}
-          </a>
-
-          <a class="btn inline-block edit" @click="onSaveStrategy()">
-            <i class="material-icons">save</i>
-            {{ txtSaveStrategy }}
           </a>
         </div>
       </div>
@@ -134,6 +155,8 @@ export default {
       txtAddTrade: this.$getConst("addTrade"),
       txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
       editStrategy: null,
+      RangeX0: 0,
+      RangeX1: 0,
     };
   },
   methods: {
@@ -169,7 +192,8 @@ export default {
       }
     },
     onShowChart() {
-      this.GenerateChart(this.PropStrategy);
+      console.log("{ x0: RangeX0, x1: RangeX1 } :>> ", this.RangeX0, this.RangeX1);
+      //this.GenerateChart(this.PropStrategy, { x0: this.RangeX0, x1: this.RangeX1 });
     },
   },
   mixins: [myMixins],

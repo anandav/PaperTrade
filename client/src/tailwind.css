@@ -6,14 +6,14 @@
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium rounded-sm 
     dark:text-white dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 dark:drop-shadow-sm
      bg-gray-300 hover:bg-gray-400 hover:text-gray-200 
-    focus:outline-none focus:ring-2 focus:ring-offset-2 ;
+    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none;
 }
 
 .btn-nonrounded {
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium 
     dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
     bg-gray-300 hover:bg-gray-400 hover:text-gray-200
-    focus:outline-none focus:ring-2 focus:ring-offset-2 ;
+    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none;
 }
 
 .btn i{
@@ -21,12 +21,12 @@
 }
 
 .mini-edit{
-    @apply w-12 px-1 py-1 rounded-sm;
+    @apply w-12 px-1 py-1 rounded-sm focus:outline-none;
 }
 
 
 .mini-edit-nonrounded {
-    @apply w-12 px-1 py-1;
+    @apply w-12 px-1 py-1 focus:outline-none;
 }
 
 

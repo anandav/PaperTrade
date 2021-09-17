@@ -2,15 +2,13 @@
   <div
     id="neworderpanel"
     class="
-     ring ring-gray-400
-     ring-opacity-50
+      ring ring-gray-400 ring-opacity-50
       h-40
       md:h-60
       absolute
       bottom-0
       items-center
       w-2/5
-      
       left-1/3
       rounded-md
       bg-gray-400
@@ -23,7 +21,13 @@
   >
     <div
       id="header"
-      class="bg-clip-border rounded-t p-3 cursor-move border-b-2 border-gray-500"
+      class="
+        bg-clip-border
+        rounded-t
+        p-3
+        cursor-move
+        border-b-2 border-gray-500
+      "
       :class="
         TradeDetail.buyorsell == 'Sell'
           ? 'bg-gradient-to-r from-gray-700 to-red-700'
@@ -31,15 +35,15 @@
       "
       @mousedown="onMouseDownUp($event)"
     >
-      <div class="grid grid-cols-12">
-        <div class="col-span-10">
+      <div class="grid grid-cols-3">
+        <div class="col-span-2">
           {{ TradeDetail.symbol }}
         </div>
-        <div class="col-span-1">
+        <!-- <div class="col-span-1">
           <div class="float-right">
             <SwitchButton :PropTrade="TradeDetail" />
           </div>
-        </div>
+        </div> -->
         <div class="col-span-1">
           <div class="float-right cursor-pointer">
             <a @click="onBindAddEditTrade()" aria-label="Close">
@@ -50,8 +54,19 @@
       </div>
     </div>
     <div class="">
-      <div class="m-5 flex flex-row space-x-4 justify-around">
+      <div class="mt-2 flex flex-row space-x-4 justify-around">
         <div class="inline-block">
+          <label class="block my-2"> Lot Size </label>
+          <input
+            class="mini-edit text-right"
+            placeholder="Strike Step"
+            type="number"
+            v-model="TradeDetail.lotsize"
+          />
+        </div>
+
+        <div class="inline-block">
+          <label class="block my-2"> Step </label>
           <input
             class="mini-edit text-right"
             placeholder="Strike Step"
@@ -60,9 +75,10 @@
           />
         </div>
         <div class="inline-block mx-3">
+          <label class="block my-2"> Strike Price </label>
           <div class="">
             <a
-              class="btn-nonrounded rounded-l-sm inline-block"
+-              class="btn-nonrounded rounded-l-sm inline-block"
               @click="onDec(TradeDetail)"
               >-</a
             >
@@ -79,19 +95,22 @@
               >+</a
             >
           </div>
-
-          
         </div>
         <div class="inline-block">
+          <label class="block my-2"> Type </label>
           <label
             class="btn-nonrounded"
             v-for="(value, key) in TRADETYPE"
             :key="key"
-            :class="{ active: value == [TradeDetail.tradetype] }"
+            :class="{
+              'active text-green-400 dark:text-green-400':
+                value == [TradeDetail.tradetype],
+            }"
           >
             <input
               type="radio"
               name="TRADETYPE"
+              class="hidden"
               :value="value"
               :id="'tradeSymbol_' + value"
               v-model="TradeDetail.tradetype"
@@ -99,8 +118,13 @@
             {{ value }}
           </label>
         </div>
-     
+        <div class="inline-block">
+          <label class="block my-2"> Buy/Sell </label>
+          <SwitchButton :PropTrade="TradeDetail" />
+        </div>
+
         <div class="">
+          <label class="block my-2"> Quantity </label>
           <input
             placeholder="Quantity"
             type="number"
@@ -110,6 +134,7 @@
         </div>
 
         <div class="">
+          <label class="block my-2"> Price </label>
           <input
             placeholder="Price"
             type="number"
@@ -117,9 +142,9 @@
             class="mini-edit text-right"
           />
         </div>
-       
       </div>
-      <div class="flex flex-row float-right mr-5">
+
+      <div class="flex flex-row float-right my-2 mr-5">
         <a class="btn btn-secondary" @click="onAddEditTrade()" href="#">
           Save
         </a>

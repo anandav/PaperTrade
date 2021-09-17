@@ -15,7 +15,7 @@ var utilitymixins = {
         OFFSET: true,
       },
       WIDTH: 500,
-      WIDTHP: "100%",
+
       HEIGHT: 300,
 
       BUYORSELL: {
@@ -38,10 +38,11 @@ var utilitymixins = {
     }
   },
   methods: {
-    GenerateChart: function (strategy) {
+    GenerateChart: function (strategy, {x0,x1}) {
+      
       var chartData = this.GenerateChartPoint(strategy, { x0: 0, x1: 20000 });
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder";
-      d3.selectAll(paretnId + " > *").remove();
+      d3.selectAll(paretnId + " > svg").remove();
       //this._generateBarChart(chartData, paretnId);
       //this._generateLineChart(chartData, paretnId);
       this._generateLineChart2(chartData, paretnId);
@@ -52,9 +53,7 @@ var utilitymixins = {
 
     getoffsetprices: function (leastPrice) {
       var _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
-      console.log('{_min, _max} :>> ', _min, _max);
       var strikepricemin = this.getdigits(_min, true), strikepricemax = this.getdigits(_max);
-      console.log('{strikepricemin, strikepricemax} :>> ', strikepricemin, strikepricemax);
       return { strikepricemin, strikepricemax };
     },
 
@@ -118,6 +117,7 @@ var utilitymixins = {
           var { strikepricemin, strikepricemax } = this.getoffsetprices(leastPrice);
           range = { x0: strikepricemin, x1: strikepricemax }
         }
+        console.log('range :>> ', range);
 
         for (let i = 0; i < tradeCount; i++) {
           let currentTrade = strategy.trades[i];
@@ -156,12 +156,13 @@ var utilitymixins = {
               });
             }
             j += 1;
-            _strikePrice += currentTrade.strikepricestep;
+            //  _strikePrice += 1;
+             _strikePrice +=   currentTrade.strikepricestep;
           }
           //while (currentTrade.strikepricemax >= _strikePrice)
           while (range.x1 >= _strikePrice)
         }
-        console.log('chartData :>> ', chartData);
+        //console.log('chartData :>> ', chartData);
         return chartData;
       }
     },
@@ -206,7 +207,6 @@ var utilitymixins = {
     // POC: Line Chart
     ///Ref: https://observablehq.com/@d3/line-chart
     _generateLineChart: function (chartData, paretnId) {
-      console.log('chartData :>> ', chartData);
       const line = d3.line()
         .defined(d => !isNaN(d.netPnL))
         .x(d => x(d.strikePrice))
@@ -257,6 +257,7 @@ var utilitymixins = {
     ///ref: https://gist.github.com/llad/3766585 && http://jsfiddle.net/samselikoff/Jqmzd/2/
     _generateLineChart2: function (chartData, paretnId) {
 
+
       if (!chartData || !paretnId)
         return;
       //const lgcolor = "#f0fff0";
@@ -268,10 +269,20 @@ var utilitymixins = {
       var minSP = d3.min(chartData, d => d.strikePrice);
       var maxSP = d3.max(chartData, d => d.strikePrice);
 
-      minPnL = minPnL - (minPnL / 10);
-      maxPnL = maxPnL + (maxPnL / 10);
 
-      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
+    
+      // console.log('minPnL :>> ', minPnL);
+      // minPnL = minPnL - (minPnL / 10);
+      // console.log('minPnL :>> ', minPnL);
+      // console.log('maxPnL :>> ', maxPnL);
+      // maxPnL = maxPnL + (maxPnL / 10);
+      // console.log('maxPnL :>> ', maxPnL);
+      // if (maxPnL < 0) {
+      //   maxPnL = 10000;
+      // }
+
+
+      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH ]);
       // xScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
       yScale = d3.scaleLinear()
         .domain([minPnL, maxPnL]).nice()
@@ -281,8 +292,9 @@ var utilitymixins = {
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
-        .attr("width", this.WIDTH)
+        .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
         .attr("height", this.HEIGHT);
+      // .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM) ;
 
       var line = d3
         .line()
@@ -335,9 +347,7 @@ var utilitymixins = {
 
         const bisect = d3.bisector(d => d.strikePrice).left;
         const callout = (g, value) => {
-
           if (!value) return g.style("display", "none");
-
           g.style("display", null)
             .style("pointer-events", "none")
             .style("font", "10px sans-serif");
