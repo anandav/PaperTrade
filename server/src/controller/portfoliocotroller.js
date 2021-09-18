@@ -48,8 +48,10 @@ portfolicontroller.post("/save", async (req, res) => {
 
 
 portfolicontroller.post("/delete", async (req, res) => {
-  if (req.body._id) {
-    Portfolio.deleteOne({ _id: req.body._id }, (err, doc) => {
+  var pid = req.body._id;
+  if (pid) {
+    commonUtility.DeleteStrategyUsingPortfolioID(pid);
+    Portfolio.deleteOne({ _id: pid }, (err, doc) => {
       res.send(doc);
     });
   }

@@ -4,7 +4,7 @@
 
 .btn {
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium rounded-sm 
-    dark:text-white dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 dark:drop-shadow-sm
+    dark:text-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 dark:drop-shadow-sm
      bg-gray-300 hover:bg-gray-400 hover:text-gray-200 
     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none;
 }
@@ -27,6 +27,10 @@
 
 .mini-edit-nonrounded {
     @apply w-12 px-1 py-1 focus:outline-none;
+}
+
+.chart-mini-edit{
+  @apply  w-16 px-1 py-1 rounded-sm  border-2 border-gray-600 m-0 bg-transparent focus:outline-none;
 }
 
 

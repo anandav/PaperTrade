@@ -3,7 +3,7 @@
     <div class="flex items-center mt-5">
       <div class="flex-initial">
         <input
-          class="ml-2 pl-2 py-1 rounded"
+          class="ml-2 pl-2 py-1 bg-gray-600 focus:outline-none rounded"
           placeholder="Portfolio Name"
           type="text"
           v-model="portfolioName"
@@ -18,7 +18,7 @@
           @click="onAddNewPortfolio()"
         >
           <i class="material-icons">save</i>
-          {{ txtAddEditPortfolio }}
+          <!-- {{ txtAddEditPortfolio }} -->
         </a>
       </div>
     </div>

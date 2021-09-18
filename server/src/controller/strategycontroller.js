@@ -17,8 +17,8 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id, portfolio, name, description, symbol,ismultiplesymbol, trades, createdon} = req.body;
-  
+  const { _id, portfolio, name, description, symbol, ismultiplesymbol, trades, createdon } = req.body;
+
   if (_id) {
     var _data = {
       _id,
@@ -33,15 +33,15 @@ strategycontoller.post("/save", async (req, res) => {
     if (trades) {
       _data.trades = trades;
     }
-    
+
     var _strategyObject = await Strategy.updateOne(
       { _id: _id },
       {
         $set: _data,
       }
-      );
-      console.log("_data");
-      console.log(_data);
+    );
+    console.log("_data");
+    console.log(_data);
 
     res.send(_data);
   } else {
@@ -66,22 +66,18 @@ strategycontoller.post("/save", async (req, res) => {
 
 strategycontoller.post("/delete", async (req, res) => {
   var { _id } = req.body;
+  var doc = DeleteStrategy(_id);
+  res.json(doc);
+});
+
+
+function DeleteStrategy(_id) {
   if (_id) {
     Strategy.deleteOne({ _id: _id }, (err, doc) => {
-      res.json(doc);
+      return doc;
     });
   }
-});
-
-
-strategycontoller.post("/deleteusingportfolio", async (req, res) => {
-  var { portfolio } = req.body;
-  if (_id) {
-    Strategy.deleteOne({ portfolio }, (err, doc) => {
-      res.json(doc);
-    });
-  }
-});
+};
 
 
 module.exports = strategycontoller;

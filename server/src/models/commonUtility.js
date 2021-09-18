@@ -21,4 +21,13 @@ module.exports = {
     });
     return tradeObject;
   },
+
+  DeleteStrategyUsingPortfolioID: function(pid) {
+    if (pid) {
+      Strategy.remove({ portfolio: pid }, (err, doc) => {
+        return doc;
+      });
+    }
+  },
+  
 };

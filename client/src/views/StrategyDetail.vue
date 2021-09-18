@@ -1,9 +1,9 @@
 <template>
   <div
-    class="mx-3 my-3 rounded shadow-xl bg-gray-200 dark:bg-gray-700"
+    class="mx-3 my-3 rounded drop-shadow-md bg-gray-200 dark:bg-gray-700"
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
-    <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-400">
+    <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-600">
       <div class="grid grid-cols-10">
         <div class="col-span-2">
           <span class="view">
@@ -71,23 +71,25 @@
         </div>
         <div class="col-span-1">
           <div class="chartplaceholder">
+            <div class="chart">
+              <!-- CHART COMES HERE -->
+            </div>
             <div class="col-span-1">
               <input
                 type="number"
-                v-model.number="RangeX0"
+                v-model="PropStrategy.x0"
                 placeholder="min"
                 min="0"
-                class="mini-edit x0"
+                class="chart-mini-edit "
               />
               <input
                 type="number"
-               v-model.number="RangeX1"
+                v-model="PropStrategy.x1"
                 placeholder="max"
                 min="0"
-                class="mini-edit float-right x1"
+                class="chart-mini-edit  float-right "
               />
             </div>
-            <!-- CHART COMES HERE -->
           </div>
         </div>
       </div>
@@ -102,9 +104,13 @@
           <i class="material-icons">content_copy</i>
           {{ txtDuplicateStrategy }}
         </a>
-        <select class="btn">
-          <option value="Select">Move To Othet Portfolio</option>
-          <option :key="item._id" v-for="item in Portfolios">
+        <select class="btn" @change="onMoveStrategy($event)">
+          <option value="Select">Move To Other Portfolio</option>
+          <option
+            :key="item._id"
+            v-for="item in Portfolios"
+            v-bind:value="item._id"
+          >
             {{ item.name }}
           </option>
         </select>
@@ -155,8 +161,6 @@ export default {
       txtAddTrade: this.$getConst("addTrade"),
       txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
       editStrategy: null,
-      RangeX0: 0,
-      RangeX1: 0,
     };
   },
   methods: {
@@ -164,7 +168,7 @@ export default {
       EditStrategy: "strategyModule/EditStrategy",
       DeleteStrategy: "strategyModule/DeleteStrategy",
       BindAddEditTrade: "tradeModule/BindAddEditTrade",
-      MoveToOtherPortfolio: "strategyModule/MoveStrategy",
+      MoveStrategy: "strategyModule/MoveStrategy",
     }),
     onEditStrategy(strategy) {
       this.editStrategy = strategy;
@@ -192,8 +196,16 @@ export default {
       }
     },
     onShowChart() {
-      console.log("{ x0: RangeX0, x1: RangeX1 } :>> ", this.RangeX0, this.RangeX1);
-      //this.GenerateChart(this.PropStrategy, { x0: this.RangeX0, x1: this.RangeX1 });
+      this.GenerateChart(this.PropStrategy, {
+        x0: this.PropStrategy.x0,
+        x1: this.PropStrategy.x1,
+      });
+    },
+    onMoveStrategy(event) {
+      this.MoveStrategy({
+        Strategy: this.PropStrategy,
+        PortfolioID: event.target.value,
+      });
     },
   },
   mixins: [myMixins],

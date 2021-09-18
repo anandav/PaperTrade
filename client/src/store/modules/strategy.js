@@ -2,13 +2,13 @@ import "dotenv/config";
 import {
     GETALLSTRATEGIES,
     ADDEDITSTRATEGY,
-    DELETESTRATEGY
+    DELETESTRATEGY,
 } from "../mutationtype";
 
 const axios = require("axios");
 const apiUrl = process.env.VUE_APP_APIURL || "/";
 const strategyModule = {
-    namespaced : true,
+    namespaced: true,
     state: {
         Strategies: [],
     },
@@ -16,11 +16,16 @@ const strategyModule = {
         Strategies: state => {
             return state.Strategies;
         },
-        
+
     },
     mutations: {
         [GETALLSTRATEGIES](state, _strategies) {
             state.Strategies = _strategies;
+            state.Strategies.forEach(s => {
+                s.x0 = s.x1 = undefined;
+                s.trades.forEach(t => { t.checked = true; });
+
+            });
         },
         [ADDEDITSTRATEGY](state, _strategy) {
             var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
@@ -65,7 +70,6 @@ const strategyModule = {
                 }
             });
         },
-
         EditStrategy({ commit }, item) {
             axios.post(apiUrl + "strategy/save", item).then(function (res) {
                 if (res.status == 200) {
@@ -80,6 +84,15 @@ const strategyModule = {
                 }
 
             })
+        },
+        MoveStrategy({ commit }, { Strategy, PortfolioID }) {
+            Strategy.portfolio = PortfolioID;
+            axios.post(apiUrl + "strategy/save", Strategy).then(function (res) {
+                if (res.status == 200) {
+                    commit(DELETESTRATEGY, res.data._id);
+                }
+            });
+
         },
     }
 };

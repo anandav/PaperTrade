@@ -20,8 +20,7 @@ const tradeModule = {
         TradeDetail: function (state) {
             return state.TradeDetail;
         },
-    }
-    ,
+    },
     mutations: {
         [BINDADDEDITTRADE](state, _tradeDetail) {
             state.TradeDetail = _tradeDetail;

@@ -1,5 +1,5 @@
 <template>
-  <table class="min-w-full divide-y divide-gray-400">
+  <table class="min-w-full divide-y divide-gray-500">
     <thead>
       <tr class="text-left">
         <th class="w-1/12 view">
@@ -7,9 +7,7 @@
         </th>
         <th class="w-1/12" v-show="PropStrategy.ismultiplesymbol">Symbol</th>
         <th class="w-1/12">Lot Size</th>
-        <th class="w-1/12" v-show="!PropStrategy.ismultiplesymbol">
-          Step
-        </th>
+        <th class="w-1/12" v-show="!PropStrategy.ismultiplesymbol">Step</th>
         <th class="w-1/12">Strike Price</th>
         <th class="w-1/12">Type</th>
         <th class="w-1/12">B/S</th>
@@ -20,7 +18,7 @@
         <th class="w-5/12"></th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-gray-400">
+    <tbody class="divide-y divide-gray-600">
       <tr
         v-for="item in PropStrategy.trades"
         :key="item._id"
@@ -33,10 +31,10 @@
             <input
               type="checkbox"
               :value="item._id"
-              v-model="selectedIDs"
-              checked
+              v-model="item.checked"
               @change="onCheckStateChanged(item)"
             />
+            <!-- v-model="selectedIDs" -->
           </label>
         </td>
         <td v-show="PropStrategy.ismultiplesymbol">
@@ -93,10 +91,13 @@
           </span>
           <div class="">
             <label
-              class="btn w-12 text-center edit "
+              class="btn w-12 text-center edit"
               v-for="(value, key) in TRADETYPE"
               :key="key"
-              :class="{ 'active text-green-400 dark:text-green-400': value == [item.tradetype] }"
+              :class="{
+                'active text-green-400 dark:text-green-400':
+                  value == [item.tradetype],
+              }"
             >
               <input
                 class="hidden"
@@ -269,6 +270,7 @@ export default {
           : false;
       },
       set: function (value) {
+        console.log("this.selectedIDs :>> ", value);
         var selected = [];
 
         if (value) {
@@ -276,9 +278,8 @@ export default {
             selected.push(t._id);
           });
         }
+        console.log('selected :>> ', selected);
         this.selectedIDs = selected;
-        /// நாளை  இங்குஇருது  துவங்கவும்
-        //TradeSelectChange = this.???????????
       },
     },
 
