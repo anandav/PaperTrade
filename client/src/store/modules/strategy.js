@@ -23,7 +23,7 @@ const strategyModule = {
             state.Strategies = _strategies;
             state.Strategies.forEach(s => {
                 s.x0 = s.x1 = undefined;
-                s.trades.forEach(t => { t.checked = true; });
+                s.trades.forEach(t => { t.checked = undefined; });
 
             });
         },

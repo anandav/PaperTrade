@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 
 
+
 var utilitymixins = {
   data: function () {
     return {
@@ -38,17 +39,75 @@ var utilitymixins = {
     }
   },
   methods: {
-    GenerateChart: function (strategy, x) {
-      var chartData = this.GenerateChartPoint(strategy, { x0: parseFloat(x.x0), x1: parseFloat(x.x1) });
+    GenerateChart: function (strategy) {
+      var chartData = this.GenerateChartPoint(strategy);
+      // console.log('chartData :>> ', chartData);
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
       d3.selectAll(paretnId + " > *").remove();
-      //this._generateBarChart(chartData, paretnId);
-      //this._generateLineChart(chartData, paretnId);
-      this._generateLineChart2(chartData, paretnId);
+      if (chartData.length > 0) {
+        //this._generateBarChart(chartData, paretnId);
+        //this._generateLineChart(chartData, paretnId);
+        this._generateLineChart2(chartData, paretnId);
+        this.GetPnL(strategy, null);
+      }
+      else {
+
+        var placeholder = [{
+          "strikePrice": 1,
+          "intrinsicValue": 0,
+          "PnL": 1,
+          "netPnL": 1,
+          "qty": 1,
+          "lot": 1,
+          "price": 1
+        }];
+        this._generateLineChart2(placeholder, paretnId);
+
+      }
 
     },
 
+    GetPnL: function (strategy, chartData) {
 
+      strategy.x0 = null;
+      strategy.x1 = null;
+      // var strikePrices = this.getAllStrikePrices(strategy);
+      // var range = this.getoffsetprices(strikePrices);
+      // console.log('strikePrices :>> ', strikePrices);
+      // console.log('range :>> ', range);
+
+      // strategy.x0 = range.x0;
+      // strategy.x1 = range.x1;
+
+
+
+      if (strategy && !chartData) {
+        chartData = this.GenerateChartPoint(strategy);
+      } else if (!strategy && !chartData) {
+        console.error("Stragy and chart data are null");
+      }
+      
+      //var _min = Math.min(...strikePrices), _max = Math.max(...strikePrices);
+
+      chartData.forEach(x => {
+        if (x.strikePrice >= range.x0 && x.strikePrice <= range.x1) {
+          console.log('x :>> ', x);
+
+        }
+
+        // if (_min < x.strikePrice) {
+        //  console.log('MIN _min, x :>> ', _min, x);
+        // }
+        // if (_max > x.strikePrice) {
+        //   console.log('MAX _max, x :>> ', _max, x);
+
+        // }
+
+      });
+
+
+
+    },
 
     getoffsetprices: function (leastPrice) {
       var _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
@@ -57,13 +116,14 @@ var utilitymixins = {
       return { x0: strikepricemin, x1: strikepricemax, xstep: incrementby };
     },
 
+
     getdigits: function (value, ismin) {
       var _valdiglen = this.ChartSettings.OFFSET ? Math.ceil(Math.log10(value + 1)) : 0;
       var offset = 0;
       var incrementby = 1;
       switch (_valdiglen) {
         case 1:
-          offset = 0.2
+          offset = 0.05
           incrementby = 0.05;
           break;
         case 2:
@@ -99,26 +159,32 @@ var utilitymixins = {
       return value;
     },
 
+    getAllStrikePrices: function (strategy) {
+      var strikePrices = strategy.trades.map((t) => {
+        if (t.tradetype == "Future") {
+          return t.price;
+        } else {
+          return t.selectedstrike;
+        }
+      });
+      return strikePrices;
+    },
 
 
-    GenerateChartPoint: function (strategy, range) {
+    GenerateChartPoint: function (strategy) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
+        var range = { x0: parseFloat(strategy.x0), x1: parseFloat(strategy.x1) }
         var tradeCount = strategy.trades.length;
         var chartData = [];
-        var leastPrice = strategy.trades.map((t) => {
-          if (t.tradetype == "Future") {
-            return t.price;
-          } else {
-            return t.selectedstrike;
-          }
-        });
-        var _range = this.getoffsetprices(leastPrice);
+        var strikePrices = this.getAllStrikePrices(strategy);
+        var _range = this.getoffsetprices(strikePrices);
         var xStep = _range.xstep;
         range = {
           x0: isNaN(range.x0) ? _range.x0 : range.x0
           , x1: isNaN(range.x1) ? _range.x1 : range.x1
         }
         for (let i = 0; i < tradeCount; i++) {
+          if (!strategy.trades[i].checked) { continue }
           let currentTrade = strategy.trades[i];
           var _strikePrice = range.x0;
           var _intrinsicValue = 0, PnL = 0, netPnL = 0;
@@ -146,7 +212,7 @@ var utilitymixins = {
             } else {
               chartData.push({
                 "strikePrice": _strikePrice,
-                "intrinsicValue": _intrinsicValue,
+                "intrinsicValue": parseFloat(_intrinsicValue),
                 "PnL": PnL,
                 "netPnL": netPnL,
                 "qty": currentTrade.quantity,

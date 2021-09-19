@@ -151,7 +151,7 @@ export default {
     }),
   },
   mounted: function () {
-    this.onShowChart();
+    //this.onShowChart();
   },
   data: function () {
     return {
@@ -196,10 +196,7 @@ export default {
       }
     },
     onShowChart() {
-      this.GenerateChart(this.PropStrategy, {
-        x0: this.PropStrategy.x0,
-        x1: this.PropStrategy.x1,
-      });
+      this.GenerateChart(this.PropStrategy);
     },
     onMoveStrategy(event) {
       this.MoveStrategy({

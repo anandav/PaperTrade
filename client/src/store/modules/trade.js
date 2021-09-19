@@ -41,9 +41,11 @@ const tradeModule = {
                 }
             }
         },
-        [CHANGECHECKSTATE](state, trade) {
-            if(trade.isChecked === undefined) {trade.isChecked = true;}
-            trade.isChecked = !trade.isChecked;
+        [CHANGECHECKSTATE](state, items) {
+            var foundIndex = items.strategies.findIndex(x => x._id == items.strategy._id);
+            if (foundIndex > -1) {
+                items.strategies[foundIndex] = items.strategy
+            }
         }
 
     },
@@ -91,10 +93,9 @@ const tradeModule = {
                 });
             }
         },
-        CheckStateChanged({ commit }, trade) {
-            if (trade) {
-                commit(CHANGECHECKSTATE, trade);
-            }
+        CheckStateChanged({ commit, rootGetters }, _strategy) {
+            var strategies = rootGetters["strategyModule/Strategies"];
+            commit(CHANGECHECKSTATE, { strategies, strategy: _strategy });
         }
     }
 };

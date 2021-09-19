@@ -31,7 +31,7 @@
             <input
               type="checkbox"
               :value="item._id"
-              v-model="item.checked"
+              v-model="selectedIDs"
               @change="onCheckStateChanged(item)"
             />
             <!-- v-model="selectedIDs" -->
@@ -252,8 +252,9 @@ export default {
       trade.selectedstrike -= parseFloat(trade.strikepricestep);
     },
     onCheckStateChanged: function (trade) {
-      /// இதுவும் முடிக்கலே
-      this.CheckStateChanged(trade);
+      trade.checked = !trade.checked;
+      this.CheckStateChanged(this.PropStrategy);
+      this.GenerateChart(this.PropStrategy);
     },
   },
   mounted() {
@@ -270,16 +271,16 @@ export default {
           : false;
       },
       set: function (value) {
-        console.log("this.selectedIDs :>> ", value);
         var selected = [];
-
-        if (value) {
-          this.PropStrategy.trades.forEach(function (t) {
+        this.PropStrategy.trades.forEach(function (t) {
+          if (value) {
             selected.push(t._id);
-          });
-        }
-        console.log('selected :>> ', selected);
+          }
+          t.checked = value;
+        });
         this.selectedIDs = selected;
+        this.CheckStateChanged(this.PropStrategy);
+        this.GenerateChart(this.PropStrategy);
       },
     },
 
