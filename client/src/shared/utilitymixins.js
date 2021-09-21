@@ -44,17 +44,17 @@ var utilitymixins = {
       // console.log('chartData :>> ', chartData);
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
       d3.selectAll(paretnId + " > *").remove();
-      if (chartData.length > 0) {
+      if (chartData && chartData.length > 0) {
         //this._generateBarChart(chartData, paretnId);
         //this._generateLineChart(chartData, paretnId);
         this._generateLineChart2(chartData, paretnId);
-        this.GetPnL(strategy, null);
+        //this.GetPnL(strategy, null);
       }
       else {
 
         var placeholder = [{
           "strikePrice": 1,
-          "intrinsicValue": 0,
+          //"intrinsicValue": 0,
           "PnL": 1,
           "netPnL": 1,
           "qty": 1,
@@ -71,8 +71,9 @@ var utilitymixins = {
 
       strategy.x0 = null;
       strategy.x1 = null;
-      // var strikePrices = this.getAllStrikePrices(strategy);
-      // var range = this.getoffsetprices(strikePrices);
+      var strikePrices = this.getAllStrikePrices(strategy);
+      //var _min  = Math.min(...strikePrices), _max = Math.max(...strikePrices);
+      var range = this.getoffsetprices(strikePrices);
       // console.log('strikePrices :>> ', strikePrices);
       // console.log('range :>> ', range);
 
@@ -86,7 +87,7 @@ var utilitymixins = {
       } else if (!strategy && !chartData) {
         console.error("Stragy and chart data are null");
       }
-      
+
       //var _min = Math.min(...strikePrices), _max = Math.max(...strikePrices);
 
       chartData.forEach(x => {
@@ -203,7 +204,9 @@ var utilitymixins = {
               netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
             } else {
               PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
+              PnL = parseFloat(PnL.toFixed());
               netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+              netPnL = parseFloat(netPnL.toFixed());
             }
 
             if (chartData[j]) {
@@ -211,8 +214,8 @@ var utilitymixins = {
               chartData[j].PnL = PnL;
             } else {
               chartData.push({
-                "strikePrice": _strikePrice,
-                "intrinsicValue": parseFloat(_intrinsicValue),
+                "strikePrice": parseFloat(_strikePrice.toFixed(2)),
+                // "intrinsicValue": _intrinsicValue,
                 "PnL": PnL,
                 "netPnL": netPnL,
                 "qty": currentTrade.quantity,
@@ -227,7 +230,7 @@ var utilitymixins = {
           //while (currentTrade.strikepricemax >= _strikePrice)
           while (range.x1 >= _strikePrice)
         }
-        //console.log('chartData :>> ', chartData);
+        console.log('chartData :>> ', chartData);
         return chartData;
       }
     },
@@ -353,7 +356,10 @@ var utilitymixins = {
         .domain([minPnL, maxPnL]).nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
       xAxisCall = d3.axisBottom(xScale);
-      yAxisCall = d3.axisLeft(yScale);
+      yAxisCall = d3.axisLeft(yScale)
+
+        .ticks(10)
+        .tickFormat(d3.formatPrefix(".1", 1e5));
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
@@ -385,6 +391,7 @@ var utilitymixins = {
         .call(yAxisCall)
         .selectAll("text")
         .attr("dx", "-5");
+      //.attr("width","500");
 
 
       svg.append("g")

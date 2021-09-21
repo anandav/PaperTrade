@@ -20,8 +20,9 @@
         </span>
         <div class="float-right pr-5">
           <a class="btn" @click="onAddNewStrategy()">
-            <i class="bi bi-plus-square"></i>
-            {{ txtAddStrategy }}</a
+             <i class="material-icons">insights</i> &nbsp;
+            <!-- <i class="material-icons-outlined">insights</i>  -->
+             {{ txtAddStrategy }}</a
           >
         </div>
       </div>

@@ -78,7 +78,7 @@
           <label class="block my-2"> Strike Price </label>
           <div class="">
             <a
--              class="btn-nonrounded rounded-l-sm inline-block"
+              class="btn-nonrounded rounded-l-sm inline-block"
               @click="onDec(TradeDetail)"
               >-</a
             >

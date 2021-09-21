@@ -78,6 +78,9 @@ const tradeModule = {
                     if (res.status == 200) {
                         var strategies = rootGetters["strategyModule/Strategies"];
                         var _strategy = res.data;
+                        _strategy.trades.forEach(t => {
+                            t.checked = true;
+                        });
                         commit(ADDEDITTRADE, { strategies, _strategy });
                     }
                 });
