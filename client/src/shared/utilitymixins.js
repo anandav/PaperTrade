@@ -12,7 +12,7 @@ var utilitymixins = {
         BOTTOM: 30
       },
       ChartSettings: {
-        TOOLTIP: false,
+        TOOLTIP: true,
         OFFSET: true,
       },
       WIDTH: 500,
@@ -76,7 +76,6 @@ var utilitymixins = {
       var range = this.getoffsetprices(strikePrices);
       // console.log('strikePrices :>> ', strikePrices);
       // console.log('range :>> ', range);
-
       // strategy.x0 = range.x0;
       // strategy.x1 = range.x1;
 
@@ -204,7 +203,7 @@ var utilitymixins = {
               netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
             } else {
               PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
-              PnL = parseFloat(PnL.toFixed());
+              //PnL = parseFloat(PnL.toFixed());
               netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
               netPnL = parseFloat(netPnL.toFixed());
             }
@@ -329,6 +328,8 @@ var utilitymixins = {
       if (!chartData || !paretnId)
         return;
       //const lgcolor = "#f0fff0";
+      //const linecolor = "#FA86C4";
+
       const linecolor = "stroke-current text-yellow-600";
 
       var xScale, yScale, xAxisCall, yAxisCall;//, xAxisCall2;
@@ -337,35 +338,18 @@ var utilitymixins = {
       var minSP = d3.min(chartData, d => d.strikePrice);
       var maxSP = d3.max(chartData, d => d.strikePrice);
 
-
-
-      // console.log('minPnL :>> ', minPnL);
-      // minPnL = minPnL - (minPnL / 10);
-      // console.log('minPnL :>> ', minPnL);
-      // console.log('maxPnL :>> ', maxPnL);
-      // maxPnL = maxPnL + (maxPnL / 10);
-      // console.log('maxPnL :>> ', maxPnL);
-      // if (maxPnL < 0) {
-      //   maxPnL = 10000;
-      // }
-
-
       xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
-      // xScale = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
+
       yScale = d3.scaleLinear()
         .domain([minPnL, maxPnL]).nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
       xAxisCall = d3.axisBottom(xScale);
-      yAxisCall = d3.axisLeft(yScale)
-
-        .ticks(10)
-        .tickFormat(d3.formatPrefix(".1", 1e5));
+      yAxisCall = d3.axisLeft(yScale).ticks(10).tickFormat(d3.formatPrefix(".1", 1e5));
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
         .attr("height", this.HEIGHT);
-      // .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM) ;
 
       var line = d3
         .line()
@@ -391,8 +375,7 @@ var utilitymixins = {
         .call(yAxisCall)
         .selectAll("text")
         .attr("dx", "-5");
-      //.attr("width","500");
-
+    
 
       svg.append("g")
         .attr("class", "x axis zero")
@@ -404,6 +387,7 @@ var utilitymixins = {
         .datum(chartData)
         .attr("fill", "none")
         .attr("class", linecolor)
+        .attr("stroke", linecolor)
         .attr("stroke-width", 1)
         .attr("transform", "translate(" + this.MARGIN.LEFT + ",0)")
         .attr("stroke-linejoin", "round")
@@ -416,8 +400,8 @@ var utilitymixins = {
         ///
 
         const tooltip = svg.append("g");
-
         const bisect = d3.bisector(d => d.strikePrice).left;
+
         const callout = (g, value) => {
           if (!value) return g.style("display", "none");
           g.style("display", null)
@@ -447,15 +431,14 @@ var utilitymixins = {
           text.attr("transform", `translate(${-w / 2},${15 - y})`);
           path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
         }
-
+        var _this = this;
         svg.on("touchmove mousemove", function (e) {
-          // console.log('this.MARGIN.RIGHT :>> ', _this.MARGIN.LEFT);
           var x0 = xScale.invert(d3.pointer(e)[0]);
-          // console.log('x0 :>> ', x0);
-          // console.log('typeof(x0) :>> ', typeof(x0));
-          // x0 = Number.parseFloat(x0) + 50;
-          // console.log('x0 :>> ', x0);
           const index = bisect(chartData, x0, 1);
+          console.clear();
+          console.log('index :>> ', index);
+          console.log('x0 :>> ', x0);
+          console.log('d3.pointer(e)[0] :>> ', d3.pointer(e)[0] + _this.MARGIN.LEFT);
           const a = chartData[index - 1];
           const b = chartData[index];
           var val = b && (x0 - a.strikePrice > b.strikePrice - x0) ? b : a;

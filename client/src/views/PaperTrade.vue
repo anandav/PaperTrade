@@ -3,9 +3,13 @@
     <div
       class="pb-52 container min-h-screen mx-auto bg-gray-100 dark:bg-gray-800"
     >
-      <div class="grid grid-cols-10 mb-22">
+      <!-- <div class="grid grid-cols-10 mb-22">
         <PortfolioMenu class="col-span-2" />
         <PortfolioDetail class="col-span-8" />
+      </div> -->
+      <div class="flex">
+        <PortfolioMenu class="flex-auto" />
+        <PortfolioDetail class="flex-auto" />
       </div>
     </div>
     <TradeAddEdit />
