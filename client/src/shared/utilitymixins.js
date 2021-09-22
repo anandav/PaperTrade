@@ -395,9 +395,16 @@ var utilitymixins = {
         .attr("stroke-linecap", "round")
         .attr("d", line);
 
+
+
+
+
       if (this.ChartSettings.TOOLTIP) {
 
-        const tooltip = svg.append("g").attr("class","tooltip");
+        const tooltip = svg.append("g").classed("tooltip", true);
+        const toolline = svg.append('line').classed('hoverLine', true)
+        const tooltipdot = svg.append('circle').classed('hoverPoint', true);
+
         const bisect = d3.bisector(d => d.strikePrice).left;
 
 
@@ -431,10 +438,12 @@ var utilitymixins = {
           text.attr("transform", `translate(${-w / 2},${15 - y})`);
           path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
         }
+
+
+
+
+
         var _this = this;
-
-
-
 
         svg.on('mousemove', function (e) {
           const mouse = d3.pointer(e)
@@ -455,13 +464,31 @@ var utilitymixins = {
           tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
             .call(callout, `${val.netPnL}\n ${xInv}`);
 
+
+
+          svg.selectAll('.hoverLine')
+            .attr('x1', xScale(xInv))
+            .attr('y1', _this.MARGIN.TOP)
+            .attr('x2', xScale(xInv))
+            .attr('y2', _this.HEIGHT - _this.MARGIN.BOTTOM)
+            .attr('stroke', '#ffffff')
+            .attr('fill', '#00ffff');
+
+          svg.selectAll('.hoverPoint')
+            .attr('cx', xScale(xInv))
+            .attr('cy', yScale(val.netPnL))
+            .attr('r', '7')
+            .attr('fill', '#ff00ff');
+
+
+
         });
-        svg.on('mouseout', function (e) { 
-console.log('mouseout :>> ');
-        });
-        svg.on('mouseenter', function (e) { 
-console.log("mouse enter");
-        });
+        // svg.on('mouseout', function (e) {
+        //   console.log('mouseout :>> ');
+        // });
+        // svg.on('mouseenter', function (e) {
+        //   console.log("mouse enter");
+        // });
 
 
 
