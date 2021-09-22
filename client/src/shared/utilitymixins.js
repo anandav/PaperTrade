@@ -338,7 +338,8 @@ var utilitymixins = {
       var minSP = d3.min(chartData, d => d.strikePrice);
       var maxSP = d3.max(chartData, d => d.strikePrice);
 
-      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
+      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([this.MARGIN.LEFT, this.WIDTH + this.MARGIN.RIGHT]);
+      //xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
 
       yScale = d3.scaleLinear()
         .domain([minPnL, maxPnL]).nice()
@@ -360,7 +361,7 @@ var utilitymixins = {
       svg
         .append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(" + this.MARGIN.LEFT + "," + (this.HEIGHT - this.MARGIN.BOTTOM) + ")")
+        .attr("transform", "translate(0," + (this.HEIGHT - this.MARGIN.BOTTOM) + ")")
         .call(xAxisCall)
         .selectAll("text")
         .style("text-anchor", "begin")
@@ -375,11 +376,11 @@ var utilitymixins = {
         .call(yAxisCall)
         .selectAll("text")
         .attr("dx", "-5");
-    
+
 
       svg.append("g")
         .attr("class", "x axis zero")
-        .attr("transform", "translate(" + this.MARGIN.LEFT + "," + yScale(0) + ")")
+        .attr("transform", "translate(0," + yScale(0) + ")")
         .call(xAxisCall.tickSize(0).tickFormat(""));
 
       svg
@@ -389,18 +390,17 @@ var utilitymixins = {
         .attr("class", linecolor)
         .attr("stroke", linecolor)
         .attr("stroke-width", 1)
-        .attr("transform", "translate(" + this.MARGIN.LEFT + ",0)")
+        .attr("transform", "translate(0,0)")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
 
       if (this.ChartSettings.TOOLTIP) {
-        /// 
-        /// இன்னும் சில பிரச்னை இருக்கு 
-        ///
 
-        const tooltip = svg.append("g");
+        const tooltip = svg.append("g").attr("class","tooltip");
         const bisect = d3.bisector(d => d.strikePrice).left;
+
+
 
         const callout = (g, value) => {
           if (!value) return g.style("display", "none");
@@ -432,21 +432,40 @@ var utilitymixins = {
           path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
         }
         var _this = this;
-        svg.on("touchmove mousemove", function (e) {
-          var x0 = xScale.invert(d3.pointer(e)[0]);
-          const index = bisect(chartData, x0, 1);
-          console.clear();
-          console.log('index :>> ', index);
-          console.log('x0 :>> ', x0);
-          console.log('d3.pointer(e)[0] :>> ', d3.pointer(e)[0] + _this.MARGIN.LEFT);
-          const a = chartData[index - 1];
-          const b = chartData[index];
-          var val = b && (x0 - a.strikePrice > b.strikePrice - x0) ? b : a;
-          tooltip
-            .attr("transform", `translate(${xScale(x0)},${yScale(val.netPnL)})`)
-            .call(callout, `${val.netPnL}\n ${x0}`);
+
+
+
+
+        svg.on('mousemove', function (e) {
+          const mouse = d3.pointer(e)
+          const [
+            x0,
+            y0,
+          ] = mouse;
+
+          const xInv = parseFloat(xScale.invert(x0).toFixed(0));
+          if (xScale(xInv) < _this.MARGIN.LEFT ||
+            xScale(xInv) > _this.WIDTH + _this.MARGIN.RIGHT) {
+            return;
+          }
+          const xIndex = bisect(chartData, xInv, 1);
+          const a = chartData[xIndex - 1];
+          const b = chartData[xIndex];
+          var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
+          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
+            .call(callout, `${val.netPnL}\n ${xInv}`);
 
         });
+        svg.on('mouseout', function (e) { 
+console.log('mouseout :>> ');
+        });
+        svg.on('mouseenter', function (e) { 
+console.log("mouse enter");
+        });
+
+
+
+
       }
 
 
@@ -460,7 +479,16 @@ var utilitymixins = {
 
 
     },
-
+    mouseMove: function () {
+      d3.event.preventDefault();
+      const mouse = d3.mouse(d3.event.target);
+      const [
+        xCoord,
+        yCoord,
+      ] = mouse;
+      console.log('xCoord, yCoord :>> ', xCoord, yCoord);
+      console.log(':>> ');
+    }
 
 
 
