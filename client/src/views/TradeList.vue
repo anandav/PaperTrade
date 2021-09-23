@@ -164,7 +164,8 @@
         <td class="">
           <div class="space-x-1">
             <a class="btn inline-block view" @click="onInlineExitTrade(item)">
-              <i class="material-icons">close</i>
+              <!-- <i class="material-icons">close</i> -->
+              <i class="material-icons">door_back</i>
             </a>
             <a class="btn inline-block view" @click="onInlineEditTrade(item)">
               <i class="material-icons">edit</i>

@@ -14,6 +14,20 @@ var utilitymixins = {
       ChartSettings: {
         TOOLTIP: true,
         OFFSET: true,
+        COLOURS: {
+          Line: "stroke-current text-yellow-500",
+          PositiveToolTip: "fill-current text-green-700 opacity-50",
+          //PositiveToolTipText: "stroke-current text-",
+          NegativeToolTip: "fill-current text-red-700  opacity-50",
+          //NegativeToolTipText: "stroke-current text-white",
+          ToolTipDot: "fill-current text-red-700  opacity-30",
+          ToolTipLine: "stroke-current text-yellow-400 opacity-30",
+          PositiveRegion: "fill-current text-green-700 opacity-10 ",
+          NegativeRegion: "fill-current text-red-700 opacity-10",
+        },
+        DIMENSION: {
+          Line: 1
+        },
       },
       WIDTH: 500,
 
@@ -48,12 +62,14 @@ var utilitymixins = {
         //this._generateBarChart(chartData, paretnId);
         //this._generateLineChart(chartData, paretnId);
         this._generateLineChart2(chartData, paretnId);
-        //this.GetPnL(strategy, null);
+        //this.GetPnL(strategy, chartData);
       }
       else {
 
         var placeholder = [{
           "strikePrice": 1,
+          "symbol": "Nifty",
+          "name": "Strategy - 1",
           //"intrinsicValue": 0,
           "PnL": 1,
           "netPnL": 1,
@@ -68,42 +84,48 @@ var utilitymixins = {
     },
 
     GetPnL: function (strategy, chartData) {
-
-      strategy.x0 = null;
-      strategy.x1 = null;
-      var strikePrices = this.getAllStrikePrices(strategy);
-      //var _min  = Math.min(...strikePrices), _max = Math.max(...strikePrices);
-      var range = this.getoffsetprices(strikePrices);
-      // console.log('strikePrices :>> ', strikePrices);
-      // console.log('range :>> ', range);
-      // strategy.x0 = range.x0;
-      // strategy.x1 = range.x1;
+      var minSP = d3.min(chartData, d => d.strikePrice);
+      var tminSP = d3.min(strategy.trades, d => d.selectedstrike);
+      var maxSP = d3.max(chartData, d => d.strikePrice);
+      var tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
 
 
 
-      if (strategy && !chartData) {
-        chartData = this.GenerateChartPoint(strategy);
-      } else if (!strategy && !chartData) {
-        console.error("Stragy and chart data are null");
-      }
+      // strategy.x0 = null;
+      // strategy.x1 = null;
+      // var strikePrices = this.getAllStrikePrices(strategy);
+      // //var _min  = Math.min(...strikePrices), _max = Math.max(...strikePrices);
+      // var range = this.getoffsetprices(strikePrices);
+      // // console.log('strikePrices :>> ', strikePrices);
+      // // console.log('range :>> ', range);
+      // // strategy.x0 = range.x0;
+      // // strategy.x1 = range.x1;
 
-      //var _min = Math.min(...strikePrices), _max = Math.max(...strikePrices);
 
-      chartData.forEach(x => {
-        if (x.strikePrice >= range.x0 && x.strikePrice <= range.x1) {
-          console.log('x :>> ', x);
 
-        }
+      // if (strategy && !chartData) {
+      //   chartData = this.GenerateChartPoint(strategy);
+      // } else if (!strategy && !chartData) {
+      //   console.error("Stragy and chart data are null");
+      // }
 
-        // if (_min < x.strikePrice) {
-        //  console.log('MIN _min, x :>> ', _min, x);
-        // }
-        // if (_max > x.strikePrice) {
-        //   console.log('MAX _max, x :>> ', _max, x);
+      // //var _min = Math.min(...strikePrices), _max = Math.max(...strikePrices);
 
-        // }
+      // chartData.forEach(x => {
+      //   if (x.strikePrice >= range.x0 && x.strikePrice <= range.x1) {
+      //     console.log('x :>> ', x);
 
-      });
+      //   }
+
+      //   // if (_min < x.strikePrice) {
+      //   //  console.log('MIN _min, x :>> ', _min, x);
+      //   // }
+      //   // if (_max > x.strikePrice) {
+      //   //   console.log('MAX _max, x :>> ', _max, x);
+
+      //   // }
+
+      // });
 
 
 
@@ -124,15 +146,15 @@ var utilitymixins = {
       switch (_valdiglen) {
         case 1:
           offset = 0.05
-          incrementby = 0.05;
+          incrementby = 0.01;
           break;
         case 2:
           offset = 1;
-          incrementby = 1;
+          incrementby = 0.1;
           break;
         case 3:
           offset = 10;
-          incrementby = 5;
+          incrementby = 0.1;
           break;
         case 4:
           offset = 100;
@@ -179,7 +201,6 @@ var utilitymixins = {
         var strikePrices = this.getAllStrikePrices(strategy);
         var _range = this.getoffsetprices(strikePrices);
         var xStep = _range.xstep;
-        console.log('xStep :>> ', xStep);
         range = {
           x0: isNaN(range.x0) ? _range.x0 : range.x0
           , x1: isNaN(range.x1) ? _range.x1 : range.x1
@@ -232,7 +253,6 @@ var utilitymixins = {
           //while (currentTrade.strikepricemax >= _strikePrice)
           while (range.x1 >= _strikePrice)
         }
-        console.log('chartData :>> ', chartData);
         return chartData;
       }
     },
@@ -324,29 +344,22 @@ var utilitymixins = {
 
     ///POC : Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
-    ///ref: https://gist.github.com/llad/3766585 && http://jsfiddle.net/samselikoff/Jqmzd/2/
+    ///ref: https://gist.github.com/llad/3766585 
+    ///reg: http://jsfiddle.net/samselikoff/Jqmzd/2/
     ///ref: https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     // ref: https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
     _generateLineChart2: function (chartData, paretnId) {
-      // console.log('chartData :>> ', chartData);
-
       if (!chartData || !paretnId)
         return;
-      //const lgcolor = "#f0fff0";
-      //const linecolor = "#FA86C4";
 
-      const linecolor = "stroke-current text-yellow-500";
-      const tooltipdotcolor = "fill-current text-red-700";
-      const tooltiplinecolor = "stroke-current text-yellow-400";
-
-      var xScale, yScale, xAxisCall, yAxisCall;//, xAxisCall2;
+      var xScale, yScale, xAxisCall, yAxisCall;
       var minPnL = d3.min(chartData, d => d.netPnL);
       var maxPnL = d3.max(chartData, d => d.netPnL);
       var minSP = d3.min(chartData, d => d.strikePrice);
       var maxSP = d3.max(chartData, d => d.strikePrice);
 
+
       xScale = d3.scaleLinear().domain([minSP, maxSP]).range([this.MARGIN.LEFT, this.WIDTH + this.MARGIN.RIGHT]);
-      //xScale = d3.scaleLinear().domain([minSP, maxSP]).range([0, this.WIDTH]);
 
       yScale = d3.scaleLinear()
         .domain([minPnL, maxPnL]).nice()
@@ -368,7 +381,7 @@ var utilitymixins = {
       svg
         .append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + (this.HEIGHT - this.MARGIN.BOTTOM) + ")")
+        .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM})`)
         .call(xAxisCall)
         .selectAll("text")
         .style("text-anchor", "begin")
@@ -379,7 +392,7 @@ var utilitymixins = {
       svg
         .append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + this.MARGIN.LEFT + ", 0)")
+        .attr("transform", `translate(${this.MARGIN.LEFT}, 0)`)
         .call(yAxisCall)
         .selectAll("text")
         .attr("dx", "-5");
@@ -387,16 +400,15 @@ var utilitymixins = {
 
       svg.append("g")
         .attr("class", "x axis zero")
-        .attr("transform", "translate(0," + yScale(0) + ")")
+        .attr("transform", `translate(0, ${yScale(0)})`)
         .call(xAxisCall.tickSize(0).tickFormat(""));
 
       svg
         .append("path")
         .datum(chartData)
         .attr("fill", "none")
-        .attr("class", linecolor)
-        .attr("stroke", linecolor)
-        .attr("stroke-width", 2)
+        .classed(this.ChartSettings.COLOURS.Line, true)
+        .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
         .attr("transform", "translate(0,0)")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
@@ -411,65 +423,33 @@ var utilitymixins = {
       const areaNeg = d3.area()
         .curve(d3.curveLinear)
         .x(d => xScale(d.strikePrice))
-        .y0(yScale(0.1))
+        .y0(yScale(1))
         .y1(d => yScale(Math.min(0.1, d.netPnL)))
 
       svg.append("path")
         .datum(chartData)
-        .attr("fill", "rgba(49, 207, 255, 0.1)")
+        .attr("class", this.ChartSettings.COLOURS.PositiveRegion)
         .attr("d", areaPos);
+
       svg.append("path")
         .datum(chartData)
-        .attr("fill", "rgba(216, 137, 137, 0.1)")
+        .attr("class", this.ChartSettings.COLOURS.NegativeRegion)
         .attr("d", areaNeg);
-
-
-
-
-
-
 
       if (this.ChartSettings.TOOLTIP) {
 
-        const tooltip = svg.append("g").classed("hovertooltip", true);
         const tooltipline = svg.append('line').classed('hoverline', true)
         const tooltipdot = svg.append('circle').classed('hoverdot', true);
+        const tooltip = svg.append("g").classed("hovertooltip", true);
         const bisect = d3.bisector(d => d.strikePrice).left;
-        const callout = (g, value) => {
-          if (!value) return g.style("display", "none");
-          g.style("display", null)
-            .style("pointer-events", "none")
-            .style("font", "10px sans-serif");
 
-          const path = g.selectAll("path")
-            .data([null])
-            .join("path")
-            .attr("fill", "white")
-            .attr("stroke", "black");
 
-          const text = g.selectAll("text")
-            .data([null])
-            .join("text")
-            .call(text => text
-              .selectAll("tspan")
-              .data((value + "").split(/\n/))
-              .join("tspan")
-              .attr("x", 0)
-              .attr("y", (d, i) => `${i * 1.1}em`)
-              .style("font-weight", (_, i) => i ? null : "bold")
-              .text(d => d));
-          const { y, width: w, height: h } = text.node().getBBox();
-          text.attr("transform", `translate(${-w / 2},${15 - y})`);
-          path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
-        }
         var _this = this;
         svg.on('mousemove', function (e) {
           const mouse = d3.pointer(e)
           const [
             x0,
           ] = mouse;
-          //y0,
-
           const xInv = parseFloat(xScale.invert(x0).toFixed(0));
           if (xScale(xInv) < _this.MARGIN.LEFT ||
             xScale(xInv) > _this.WIDTH + _this.MARGIN.RIGHT) {
@@ -479,23 +459,19 @@ var utilitymixins = {
           const a = chartData[xIndex - 1];
           const b = chartData[xIndex];
           var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
-
-          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
-            .call(callout, `${val.netPnL}\n${xInv}`);
-
           tooltipline.attr('x1', xScale(xInv))
             .attr('y1', _this.MARGIN.TOP)
             .attr('x2', xScale(xInv))
             .attr('y2', _this.HEIGHT - _this.MARGIN.BOTTOM)
-            .classed(tooltiplinecolor, true);
-
+            .classed(_this.ChartSettings.COLOURS.ToolTipLine, true);
           tooltipdot.attr('cx', xScale(xInv))
             .attr('cy', yScale(val.netPnL))
             .attr('r', '7')
-            .classed(tooltipdotcolor, true);
-          //.attr('fill', '#ff00ff');
-
+            .classed(_this.ChartSettings.COLOURS.ToolTipDot, true);
+          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
+            .call(_this.callout, `P&L:${val.netPnL}\nStrike Price:${xInv}`, val.netPnL);
         });
+        //svg.on('mousemove', this.mouseMove);
         svg.on('mouseleave', function (e) {
           svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden")
         });
@@ -518,14 +494,63 @@ var utilitymixins = {
 
 
 
+
+
     },
-    mouseMove: function () {
+    callout: function (g, value, price) {
+      if (!value) return g.style("display", "none");
+      g.style("display", null)
+        .style("pointer-events", "none")
+        .style("font", "10px sans-serif");
 
+      const path = g.selectAll("path")
+        .data([null])
+        .join("path")
+        .attr("class", price > 0 ? this.ChartSettings.COLOURS.PositiveToolTip : this.ChartSettings.COLOURS.NegativeToolTip);
+
+      const text = g.selectAll("text")
+        .data([null])
+        .join("text")
+        .call(text => text
+          .selectAll("tspan")
+          .data((value + "").split(/\n/))
+          .join("tspan")
+          .attr("x", 0)
+          .attr("y", (d, i) => `${i * 1.1}em`)
+          .style("font-weight", (_, i) => i ? null : "bold")
+          // .attr("stroke", "black")
+          .text(d => d));
+      const { y, width: w, height: h } = text.node().getBBox();
+      text.attr("transform", `translate(${-w / 2},${15 - y})`);
+      path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+    },
+
+    mouseMove: function (e) {
+      const mouse = d3.pointer(e)
+      const [
+        x0,
+      ] = mouse;
+      const xInv = parseFloat(xScale.invert(x0).toFixed(0));
+      if (xScale(xInv) < _this.MARGIN.LEFT ||
+        xScale(xInv) > _this.WIDTH + _this.MARGIN.RIGHT) {
+        return;
+      }
+      const xIndex = bisect(chartData, xInv, 1);
+      const a = chartData[xIndex - 1];
+      const b = chartData[xIndex];
+      var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
+      tooltipline.attr('x1', xScale(xInv))
+        .attr('y1', _this.MARGIN.TOP)
+        .attr('x2', xScale(xInv))
+        .attr('y2', _this.HEIGHT - _this.MARGIN.BOTTOM)
+        .classed(_this.ChartSettings.COLOURS.ToolTipLine, true);
+      tooltipdot.attr('cx', xScale(xInv))
+        .attr('cy', yScale(val.netPnL))
+        .attr('r', '7')
+        .classed(_this.ChartSettings.COLOURS.ToolTipDot, true);
+      tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
+        .call(_this.callout, `P&L:${val.netPnL}\nStrike Price:${xInv}`, val.netPnL);
     }
-
-
-
-
   },
 
 };
