@@ -30,7 +30,7 @@
 }
 
 .chart-mini-edit{
-  @apply  w-16 px-1 py-1 rounded-sm  border-2 border-gray-600 m-0 bg-transparent focus:outline-none;
+  @apply  w-16 px-1 py-1 rounded-md  border-2 border-gray-300 bg-gray-400 dark:border-gray-600 m-0 bg-transparent focus:outline-none;
 }
 
 

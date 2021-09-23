@@ -179,6 +179,7 @@ var utilitymixins = {
         var strikePrices = this.getAllStrikePrices(strategy);
         var _range = this.getoffsetprices(strikePrices);
         var xStep = _range.xstep;
+        console.log('xStep :>> ', xStep);
         range = {
           x0: isNaN(range.x0) ? _range.x0 : range.x0
           , x1: isNaN(range.x1) ? _range.x1 : range.x1
@@ -215,6 +216,8 @@ var utilitymixins = {
               chartData.push({
                 "strikePrice": parseFloat(_strikePrice.toFixed(2)),
                 // "intrinsicValue": _intrinsicValue,
+                "name": strategy.name,
+                "symbol": strategy.symbol,
                 "PnL": PnL,
                 "netPnL": netPnL,
                 "qty": currentTrade.quantity,
@@ -322,6 +325,8 @@ var utilitymixins = {
     ///POC : Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
     ///ref: https://gist.github.com/llad/3766585 && http://jsfiddle.net/samselikoff/Jqmzd/2/
+    ///ref: https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
+    // ref: https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
     _generateLineChart2: function (chartData, paretnId) {
       // console.log('chartData :>> ', chartData);
 
@@ -330,7 +335,9 @@ var utilitymixins = {
       //const lgcolor = "#f0fff0";
       //const linecolor = "#FA86C4";
 
-      const linecolor = "stroke-current text-yellow-600";
+      const linecolor = "stroke-current text-yellow-500";
+      const tooltipdotcolor = "fill-current text-red-700";
+      const tooltiplinecolor = "stroke-current text-yellow-400";
 
       var xScale, yScale, xAxisCall, yAxisCall;//, xAxisCall2;
       var minPnL = d3.min(chartData, d => d.netPnL);
@@ -389,11 +396,34 @@ var utilitymixins = {
         .attr("fill", "none")
         .attr("class", linecolor)
         .attr("stroke", linecolor)
-        .attr("stroke-width", 1)
+        .attr("stroke-width", 2)
         .attr("transform", "translate(0,0)")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
+
+
+      const areaPos = d3.area()
+        .curve(d3.curveLinear)
+        .x(d => xScale(d.strikePrice))
+        .y0(yScale(0.1))
+        .y1(d => yScale(Math.max(0.1, d.netPnL)))
+      const areaNeg = d3.area()
+        .curve(d3.curveLinear)
+        .x(d => xScale(d.strikePrice))
+        .y0(yScale(0.1))
+        .y1(d => yScale(Math.min(0.1, d.netPnL)))
+
+      svg.append("path")
+        .datum(chartData)
+        .attr("fill", "rgba(49, 207, 255, 0.1)")
+        .attr("d", areaPos);
+      svg.append("path")
+        .datum(chartData)
+        .attr("fill", "rgba(216, 137, 137, 0.1)")
+        .attr("d", areaNeg);
+
+
 
 
 
@@ -401,14 +431,10 @@ var utilitymixins = {
 
       if (this.ChartSettings.TOOLTIP) {
 
-        const tooltip = svg.append("g").classed("tooltip", true);
-        const toolline = svg.append('line').classed('hoverLine', true)
-        const tooltipdot = svg.append('circle').classed('hoverPoint', true);
-
+        const tooltip = svg.append("g").classed("hovertooltip", true);
+        const tooltipline = svg.append('line').classed('hoverline', true)
+        const tooltipdot = svg.append('circle').classed('hoverdot', true);
         const bisect = d3.bisector(d => d.strikePrice).left;
-
-
-
         const callout = (g, value) => {
           if (!value) return g.style("display", "none");
           g.style("display", null)
@@ -432,25 +458,17 @@ var utilitymixins = {
               .attr("y", (d, i) => `${i * 1.1}em`)
               .style("font-weight", (_, i) => i ? null : "bold")
               .text(d => d));
-
           const { y, width: w, height: h } = text.node().getBBox();
-
           text.attr("transform", `translate(${-w / 2},${15 - y})`);
           path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
         }
-
-
-
-
-
         var _this = this;
-
         svg.on('mousemove', function (e) {
           const mouse = d3.pointer(e)
           const [
             x0,
-            y0,
           ] = mouse;
+          //y0,
 
           const xInv = parseFloat(xScale.invert(x0).toFixed(0));
           if (xScale(xInv) < _this.MARGIN.LEFT ||
@@ -461,34 +479,29 @@ var utilitymixins = {
           const a = chartData[xIndex - 1];
           const b = chartData[xIndex];
           var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
+
           tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
-            .call(callout, `${val.netPnL}\n ${xInv}`);
+            .call(callout, `${val.netPnL}\n${xInv}`);
 
-
-
-          svg.selectAll('.hoverLine')
-            .attr('x1', xScale(xInv))
+          tooltipline.attr('x1', xScale(xInv))
             .attr('y1', _this.MARGIN.TOP)
             .attr('x2', xScale(xInv))
             .attr('y2', _this.HEIGHT - _this.MARGIN.BOTTOM)
-            .attr('stroke', '#ffffff')
-            .attr('fill', '#00ffff');
+            .classed(tooltiplinecolor, true);
 
-          svg.selectAll('.hoverPoint')
-            .attr('cx', xScale(xInv))
+          tooltipdot.attr('cx', xScale(xInv))
             .attr('cy', yScale(val.netPnL))
             .attr('r', '7')
-            .attr('fill', '#ff00ff');
-
-
+            .classed(tooltipdotcolor, true);
+          //.attr('fill', '#ff00ff');
 
         });
-        // svg.on('mouseout', function (e) {
-        //   console.log('mouseout :>> ');
-        // });
-        // svg.on('mouseenter', function (e) {
-        //   console.log("mouse enter");
-        // });
+        svg.on('mouseleave', function (e) {
+          svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden")
+        });
+        svg.on('mouseenter', function (e) {
+          svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible")
+        });
 
 
 
@@ -507,14 +520,7 @@ var utilitymixins = {
 
     },
     mouseMove: function () {
-      d3.event.preventDefault();
-      const mouse = d3.mouse(d3.event.target);
-      const [
-        xCoord,
-        yCoord,
-      ] = mouse;
-      console.log('xCoord, yCoord :>> ', xCoord, yCoord);
-      console.log(':>> ');
+
     }
 
 

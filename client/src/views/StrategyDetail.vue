@@ -4,8 +4,8 @@
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
     <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-600">
-      <div class="grid grid-cols-10">
-        <div class="col-span-2">
+      <div class="flex ">
+        <div class="flex-1">
           <span class="view">
             {{ PropStrategy.name }}
           </span>
@@ -16,7 +16,7 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-        <div class="col-span-2" v-if="!PropStrategy.ismultiplesymbol">
+        <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
           <span class="view">
             {{ PropStrategy.symbol }}
           </span>
@@ -28,7 +28,7 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-        <div class="col-span-2">
+        <!-- <div class="flex-1">
           <label>
             <input
               type="checkbox"
@@ -37,12 +37,12 @@
             />
             Is Multiple Symbol
           </label>
-        </div>
-        <div class="col-span-2">
+        </div> -->
+        <div class="flex-1">
           Created On:
           {{ PropStrategy.CreatedOn }}
         </div>
-        <div class="col-span-2">
+        <div class="flex-1">
           <div class="float-right">
             <a
               class="btn inline-block view"
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="p-3">
+    <div class="p-3 ">
       <div class="grid grid-cols-2">
         <div class="col-span-1">
           <TradeList
@@ -70,7 +70,7 @@
           />
         </div>
         <div class="col-span-1">
-          <div class="chartplaceholder">
+          <div class="chartplaceholder ">
             <div class="chart">
               <!-- CHART COMES HERE -->
             </div>
@@ -97,7 +97,7 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        <a class="btn inline-block text-red-600" @click="onDeleteStrategy()">
+        <a class="btn inline-block text-red-700 dark:text-red-700" @click="onDeleteStrategy()">
           <i class="material-icons">delete</i>
         </a>
         <a class="btn inline-block" @click="onDuplicateStrategy()">

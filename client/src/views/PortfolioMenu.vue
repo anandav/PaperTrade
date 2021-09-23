@@ -3,7 +3,9 @@
     <div class="flex items-center mt-5">
       <div class="flex-initial">
         <input
-          class="ml-2 pl-2 py-1 bg-gray-600 focus:outline-none rounded"
+          class="ml-2 pl-2 py-1 bg-gray-200 dark:bg-gray-600 
+
+          focus:outline-none rounded"
           placeholder="Portfolio Name"
           type="text"
           v-model="portfolioName"
@@ -66,7 +68,7 @@
               <a class="btn edit" @click="onInlineSavePortfolio(item)">
                 <i class="material-icons">save</i>
               </a>
-              <a class="btn ml-2 text-red-600" @click="onDeletePortfolio(item)">
+              <a class="btn ml-2 text-red-700 dark:text-red-700" @click="onDeletePortfolio(item)">
                 <i class="material-icons">delete</i>
               </a>
             </div>
