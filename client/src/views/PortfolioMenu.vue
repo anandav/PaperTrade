@@ -1,11 +1,18 @@
 <template>
   <div class="border-r-2 border-gray-300 dark:border-gray-700">
     <div class="flex items-center mt-5">
-      <div class="flex-initial">
+      <div class="w-5/6">
         <input
-          class="ml-2 pl-2 py-1 bg-gray-200 dark:bg-gray-600 
-
-          focus:outline-none rounded"
+          class="
+            mx-2
+            pl-2
+            p-1
+            w-full
+            bg-gray-200
+            dark:bg-gray-600
+            focus:outline-none
+            rounded
+          "
           placeholder="Portfolio Name"
           type="text"
           v-model="portfolioName"
@@ -13,9 +20,9 @@
         />
       </div>
 
-      <div class="flex-initial float-right">
+      <div class="w-1/6 ">
         <a
-          class="btn ml-1 invisible lg:visible"
+          class="btn mx-2 invisible lg:visible float-right"
           href="#"
           @click="onAddNewPortfolio()"
         >
@@ -31,17 +38,17 @@
         </div>
       </div>
       <div
-        class=""
+        class="flex-initial"
         :key="item._id"
         v-for="item in Portfolios"
-        :class="{
-          'border-l-2 border-red-300': Portfolio && item._id == Portfolio._id,
-        }"
+        :class="{ isPortfolioEdit: item == editPortfolio }"
       >
         <div
-          class="px-2 leading-10"
+          class="m-1 p-2 leading-10 bg-gray-200 dark:bg-gray-700 rounded-md "
           @click="onMenuSelectedPortfolio(item)"
-          :class="{ isPortfolioEdit: item == editPortfolio }"
+          :class="{
+            'border-l-2 border-red-300': Portfolio && item._id == Portfolio._id,
+          }"
         >
           <div class="inline-block">
             <div
@@ -53,7 +60,7 @@
               {{ item.name }}
             </div>
             <input
-              class="edit"
+              class="edit ml-2 pl-2 py-1 bg-gray-200 dark:bg-gray-600 focus:outline-none rounded"
               placeholder="Edit Portfolio Name"
               type="text"
               v-model="item.name"
@@ -68,7 +75,10 @@
               <a class="btn edit" @click="onInlineSavePortfolio(item)">
                 <i class="material-icons">save</i>
               </a>
-              <a class="btn ml-2 text-red-700 dark:text-red-700" @click="onDeletePortfolio(item)">
+              <a
+                class="btn ml-2 text-red-700 dark:text-red-700"
+                @click="onDeletePortfolio(item)"
+              >
                 <i class="material-icons">delete</i>
               </a>
             </div>

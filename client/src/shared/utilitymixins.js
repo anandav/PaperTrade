@@ -15,13 +15,13 @@ var utilitymixins = {
         TOOLTIP: true,
         OFFSET: true,
         COLOURS: {
-          Line: "stroke-current text-yellow-500",
-          PositiveToolTip: "fill-current text-green-700 opacity-50",
-          //PositiveToolTipText: "stroke-current text-",
-          NegativeToolTip: "fill-current text-red-700  opacity-50",
+          Line: "stroke-current text-yellow-500 ",
+          PositiveToolTip: "fill-current text-green-700 opacity-80",
+          //PositiveToolTipText: "stroke-current text-black",
+          NegativeToolTip: "fill-current text-red-700  opacity-80",
           //NegativeToolTipText: "stroke-current text-white",
           ToolTipDot: "fill-current text-red-700  opacity-30",
-          ToolTipLine: "stroke-current text-yellow-400 opacity-30",
+          ToolTipLine: "stroke-current text-gray-5  00 dark:text-yellow-400 opacity-30",
           PositiveRegion: "fill-current text-green-700 opacity-10 ",
           NegativeRegion: "fill-current text-red-700 opacity-10",
         },
@@ -30,9 +30,7 @@ var utilitymixins = {
         },
       },
       WIDTH: 500,
-
       HEIGHT: 300,
-
       BUYORSELL: {
         1: "Buy",
         2: "Sell",
@@ -55,14 +53,14 @@ var utilitymixins = {
   methods: {
     GenerateChart: function (strategy) {
       var chartData = this.GenerateChartPoint(strategy);
-      // console.log('chartData :>> ', chartData);
       var paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
       d3.selectAll(paretnId + " > *").remove();
       if (chartData && chartData.length > 0) {
         //this._generateBarChart(chartData, paretnId);
         //this._generateLineChart(chartData, paretnId);
         this._generateLineChart2(chartData, paretnId);
-        //this.GetPnL(strategy, chartData);
+        this.GetMaxMinPnL(strategy, chartData);
+        console.log('chartData :>> ', chartData);
       }
       else {
 
@@ -83,49 +81,23 @@ var utilitymixins = {
 
     },
 
-    GetPnL: function (strategy, chartData) {
-      var minSP = d3.min(chartData, d => d.strikePrice);
+    GetMaxMinPnL: function (strategy, chartData) {
       var tminSP = d3.min(strategy.trades, d => d.selectedstrike);
-      var maxSP = d3.max(chartData, d => d.strikePrice);
       var tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
 
+      // console.log('tminSP, tmaxSP :>> ', typeof (tminSP), tminSP, typeof (tmaxSP), tmaxSP);
+      var minStriketrade1 = strategy.trades.find(t => t.selectedstrike == tminSP);
+      var maxStriketrade = strategy.trades.find(t => t.selectedstrike == tmaxSP);
+      //console.log('maxStriketrade :>> ', maxStriketrade);
+      
+      var minStriketrade2 = { ...minStriketrade1 }
+      minStriketrade2.selectedstrike = minStriketrade2.selectedstrike - 10;
+
+      var minpnl = this.getNetPnL(minStriketrade1.selectedstrike, minStriketrade1);
+      var minpnlNeg = this.getNetPnL( minStriketrade2.selectedstrike, minStriketrade2);
+      console.log('minpnl, minpnlNeg :>> ', minpnl, minpnlNeg);
 
 
-      // strategy.x0 = null;
-      // strategy.x1 = null;
-      // var strikePrices = this.getAllStrikePrices(strategy);
-      // //var _min  = Math.min(...strikePrices), _max = Math.max(...strikePrices);
-      // var range = this.getoffsetprices(strikePrices);
-      // // console.log('strikePrices :>> ', strikePrices);
-      // // console.log('range :>> ', range);
-      // // strategy.x0 = range.x0;
-      // // strategy.x1 = range.x1;
-
-
-
-      // if (strategy && !chartData) {
-      //   chartData = this.GenerateChartPoint(strategy);
-      // } else if (!strategy && !chartData) {
-      //   console.error("Stragy and chart data are null");
-      // }
-
-      // //var _min = Math.min(...strikePrices), _max = Math.max(...strikePrices);
-
-      // chartData.forEach(x => {
-      //   if (x.strikePrice >= range.x0 && x.strikePrice <= range.x1) {
-      //     console.log('x :>> ', x);
-
-      //   }
-
-      //   // if (_min < x.strikePrice) {
-      //   //  console.log('MIN _min, x :>> ', _min, x);
-      //   // }
-      //   // if (_max > x.strikePrice) {
-      //   //   console.log('MAX _max, x :>> ', _max, x);
-
-      //   // }
-
-      // });
 
 
 
@@ -213,49 +185,57 @@ var utilitymixins = {
           let j = 0;
           do {
 
-            if (currentTrade.tradetype == "Call") {
-              _intrinsicValue = _strikePrice - currentTrade.selectedstrike > 0 ? _strikePrice - currentTrade.selectedstrike : 0;
-            }
-            else if (currentTrade.tradetype == "Put") {
-              _intrinsicValue = currentTrade.selectedstrike - _strikePrice > 0 ? currentTrade.selectedstrike - _strikePrice : 0;
-            }
-
-            if (currentTrade.tradetype == "Future") {
-              PnL = currentTrade.buyorsell == "Buy" ? _strikePrice - currentTrade.price : currentTrade.price - _strikePrice;
-              netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
-            } else {
-              PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
-              //PnL = parseFloat(PnL.toFixed());
-              netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
-              netPnL = parseFloat(netPnL.toFixed());
-            }
-
+            var PnlObj = this.getNetPnL(_strikePrice, currentTrade);
             if (chartData[j]) {
-              chartData[j].netPnL += netPnL;
-              chartData[j].PnL = PnL;
+              chartData[j].netPnL += PnlObj.netPnL;
+              chartData[j].PnL = PnlObj.PnL;
             } else {
               chartData.push({
                 "strikePrice": parseFloat(_strikePrice.toFixed(2)),
-                // "intrinsicValue": _intrinsicValue,
-                "name": strategy.name,
-                "symbol": strategy.symbol,
-                "PnL": PnL,
-                "netPnL": netPnL,
+                //"name": strategy.name,
+                //"symbol": strategy.symbol,
+                
                 "qty": currentTrade.quantity,
                 "lot": currentTrade.lotsize,
-                "price": currentTrade.price
+                "price": currentTrade.price, 
+                ...PnlObj
               });
             }
             j += 1;
             _strikePrice += xStep;
-            //_strikePrice += currentTrade.strikepricestep;
           }
-          //while (currentTrade.strikepricemax >= _strikePrice)
           while (range.x1 >= _strikePrice)
         }
         return chartData;
       }
     },
+    getNetPnL: function (_strikePrice, currentTrade) {
+
+      var _intrinsicValue = 0, PnL = 0, netPnL = 0;
+     
+      if (currentTrade.tradetype == "Call") {
+        _intrinsicValue = _strikePrice - currentTrade.selectedstrike > 0 ? _strikePrice - currentTrade.selectedstrike : 0;
+      }
+      else if (currentTrade.tradetype == "Put") {
+        _intrinsicValue = currentTrade.selectedstrike - _strikePrice > 0 ? currentTrade.selectedstrike - _strikePrice : 0;
+      }
+
+      if (currentTrade.tradetype == "Future") {
+        PnL = currentTrade.buyorsell == "Buy" ? _strikePrice - currentTrade.price : currentTrade.price - _strikePrice;
+        netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+      } else {
+        PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
+        //PnL = parseFloat(PnL.toFixed());
+        netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+        netPnL = parseFloat(netPnL.toFixed());
+      }
+      if(_strikePrice == 16300 && currentTrade.selectedstrike == 16300){
+        console.log('{ PnL, netPnL, _strikePrice } :>> ',  PnL, netPnL, _strikePrice );
+      }
+
+      return { PnL, netPnL, _strikePrice };
+    },
+
 
     // POC: BarChart
     _generateBarChart: function (chartData, paretnId) {
@@ -301,9 +281,6 @@ var utilitymixins = {
         .defined(d => !isNaN(d.netPnL))
         .x(d => x(d.strikePrice))
         .y(d => y(d.netPnL))
-      // const x = d3.scaleBand()
-      //   .domain(chartData.map(c => c.strikePrice))
-      //   .range([this.MARGIN.LEFT, this.WIDTH - this.MARGIN.RIGHT])
       const x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
 
       const y = d3.scaleLinear()
@@ -352,31 +329,79 @@ var utilitymixins = {
       if (!chartData || !paretnId)
         return;
 
-      var xScale, yScale, xAxisCall, yAxisCall;
-      var minPnL = d3.min(chartData, d => d.netPnL);
-      var maxPnL = d3.max(chartData, d => d.netPnL);
-      var minSP = d3.min(chartData, d => d.strikePrice);
-      var maxSP = d3.max(chartData, d => d.strikePrice);
+      const minPnL = d3.min(chartData, d => d.netPnL);
+      const maxPnL = d3.max(chartData, d => d.netPnL);
+      const minSP = d3.min(chartData, d => d.strikePrice);
+      const maxSP = d3.max(chartData, d => d.strikePrice);
+      const xScale = d3.scaleLinear().domain([minSP, maxSP]).range([this.MARGIN.LEFT, this.WIDTH + this.MARGIN.RIGHT]);
+      const yScale = d3.scaleLinear().domain([minPnL, maxPnL]).nice().range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
+      const xAxisCall = d3.axisBottom(xScale);
+      const yAxisCall = d3.axisLeft(yScale).ticks(10).tickFormat(d3.formatPrefix(".1", 1e5));
+      const areaPos = d3.area().curve(d3.curveLinear).x(d => xScale(d.strikePrice)).y0(yScale(0.1)).y1(d => yScale(Math.max(0.1, d.netPnL)))
+      const areaNeg = d3.area().curve(d3.curveLinear).x(d => xScale(d.strikePrice)).y0(yScale(1)).y1(d => yScale(Math.min(0.1, d.netPnL)))
+      const bisect = d3.bisector(d => d.strikePrice).left;
 
-
-      xScale = d3.scaleLinear().domain([minSP, maxSP]).range([this.MARGIN.LEFT, this.WIDTH + this.MARGIN.RIGHT]);
-
-      yScale = d3.scaleLinear()
-        .domain([minPnL, maxPnL]).nice()
-        .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
-      xAxisCall = d3.axisBottom(xScale);
-      yAxisCall = d3.axisLeft(yScale).ticks(10).tickFormat(d3.formatPrefix(".1", 1e5));
+      const callout = (g, value, price) => {
+        if (!value) return g.style("display", "none");
+        g.style("display", null)
+          .style("pointer-events", "none")
+          .style("font", "10px sans-serif");
+        const path = g.selectAll("path")
+          .data([null])
+          .join("path")
+          .attr("class", price > 0 ? this.ChartSettings.COLOURS.PositiveToolTip : this.ChartSettings.COLOURS.NegativeToolTip);
+        const text = g.selectAll("text")
+          .data([null])
+          .join("text")
+          .call(text => text
+            .selectAll("tspan")
+            .data((value + "").split(/\n/))
+            .join("tspan")
+            .attr("x", 0)
+            .attr("y", (d, i) => `${i * 1.1}em`)
+            .style("font-weight", (_, i) => i ? null : "bold")
+            // .attr("stroke", "black")
+            .text(d => d));
+        const { y, width: w, height: h } = text.node().getBBox();
+        text.attr("transform", `translate(${-w / 2},${15 - y})`);
+        path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+      };
+      const onMouseMove = (e) => {
+        const mouse = d3.pointer(e)
+        const [
+          x0,
+        ] = mouse;
+        const xInv = parseFloat(xScale.invert(x0).toFixed(0));
+        if (xScale(xInv) < this.MARGIN.LEFT ||
+          xScale(xInv) > this.WIDTH + this.MARGIN.RIGHT) {
+          return;
+        }
+        const xIndex = bisect(chartData, xInv, 1);
+        const a = chartData[xIndex - 1];
+        const b = chartData[xIndex];
+        var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
+        tooltipline.attr('x1', xScale(xInv))
+          .attr('y1', this.MARGIN.TOP)
+          .attr('x2', xScale(xInv))
+          .attr('y2', this.HEIGHT - this.MARGIN.BOTTOM)
+          .classed(this.ChartSettings.COLOURS.ToolTipLine, true);
+        tooltipdot.attr('cx', xScale(xInv))
+          .attr('cy', yScale(val.netPnL))
+          .attr('r', '7')
+          .classed(this.ChartSettings.COLOURS.ToolTipDot, true);
+        tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
+          .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+      };
+      const onMouseLeave = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden"); };
+      const onMouseEnter = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible"); };
 
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
         .attr("height", this.HEIGHT);
+      const line = d3.line().defined(d => !isNaN(d.netPnL)).x(d => xScale(d.strikePrice)).y(d => yScale(d.netPnL));
 
-      var line = d3
-        .line()
-        .defined(d => !isNaN(d.netPnL))
-        .x(d => xScale(d.strikePrice))
-        .y(d => yScale(d.netPnL));
+
 
       svg
         .append("g")
@@ -414,18 +439,6 @@ var utilitymixins = {
         .attr("stroke-linecap", "round")
         .attr("d", line);
 
-
-      const areaPos = d3.area()
-        .curve(d3.curveLinear)
-        .x(d => xScale(d.strikePrice))
-        .y0(yScale(0.1))
-        .y1(d => yScale(Math.max(0.1, d.netPnL)))
-      const areaNeg = d3.area()
-        .curve(d3.curveLinear)
-        .x(d => xScale(d.strikePrice))
-        .y0(yScale(1))
-        .y1(d => yScale(Math.min(0.1, d.netPnL)))
-
       svg.append("path")
         .datum(chartData)
         .attr("class", this.ChartSettings.COLOURS.PositiveRegion)
@@ -436,121 +449,19 @@ var utilitymixins = {
         .attr("class", this.ChartSettings.COLOURS.NegativeRegion)
         .attr("d", areaNeg);
 
+
+      const tooltipdot = svg.append('circle').classed('hoverdot', true);
+      const tooltip = svg.append("g").classed("hovertooltip", true);
+      const tooltipline = svg.append('line').classed('hoverline', true)
+
       if (this.ChartSettings.TOOLTIP) {
-
-        const tooltipline = svg.append('line').classed('hoverline', true)
-        const tooltipdot = svg.append('circle').classed('hoverdot', true);
-        const tooltip = svg.append("g").classed("hovertooltip", true);
-        const bisect = d3.bisector(d => d.strikePrice).left;
-
-
-        var _this = this;
-        svg.on('mousemove', function (e) {
-          const mouse = d3.pointer(e)
-          const [
-            x0,
-          ] = mouse;
-          const xInv = parseFloat(xScale.invert(x0).toFixed(0));
-          if (xScale(xInv) < _this.MARGIN.LEFT ||
-            xScale(xInv) > _this.WIDTH + _this.MARGIN.RIGHT) {
-            return;
-          }
-          const xIndex = bisect(chartData, xInv, 1);
-          const a = chartData[xIndex - 1];
-          const b = chartData[xIndex];
-          var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
-          tooltipline.attr('x1', xScale(xInv))
-            .attr('y1', _this.MARGIN.TOP)
-            .attr('x2', xScale(xInv))
-            .attr('y2', _this.HEIGHT - _this.MARGIN.BOTTOM)
-            .classed(_this.ChartSettings.COLOURS.ToolTipLine, true);
-          tooltipdot.attr('cx', xScale(xInv))
-            .attr('cy', yScale(val.netPnL))
-            .attr('r', '7')
-            .classed(_this.ChartSettings.COLOURS.ToolTipDot, true);
-          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
-            .call(_this.callout, `P&L:${val.netPnL}\nStrike Price:${xInv}`, val.netPnL);
-        });
-        //svg.on('mousemove', this.mouseMove);
-        svg.on('mouseleave', function (e) {
-          svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden")
-        });
-        svg.on('mouseenter', function (e) {
-          svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible")
-        });
-
-
-
-
+        svg.on('mousemove', onMouseMove);
+        svg.on('mouseleave', onMouseLeave);
+        svg.on('mouseenter', onMouseEnter);
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    },
-    callout: function (g, value, price) {
-      if (!value) return g.style("display", "none");
-      g.style("display", null)
-        .style("pointer-events", "none")
-        .style("font", "10px sans-serif");
-
-      const path = g.selectAll("path")
-        .data([null])
-        .join("path")
-        .attr("class", price > 0 ? this.ChartSettings.COLOURS.PositiveToolTip : this.ChartSettings.COLOURS.NegativeToolTip);
-
-      const text = g.selectAll("text")
-        .data([null])
-        .join("text")
-        .call(text => text
-          .selectAll("tspan")
-          .data((value + "").split(/\n/))
-          .join("tspan")
-          .attr("x", 0)
-          .attr("y", (d, i) => `${i * 1.1}em`)
-          .style("font-weight", (_, i) => i ? null : "bold")
-          // .attr("stroke", "black")
-          .text(d => d));
-      const { y, width: w, height: h } = text.node().getBBox();
-      text.attr("transform", `translate(${-w / 2},${15 - y})`);
-      path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
     },
 
-    mouseMove: function (e) {
-      const mouse = d3.pointer(e)
-      const [
-        x0,
-      ] = mouse;
-      const xInv = parseFloat(xScale.invert(x0).toFixed(0));
-      if (xScale(xInv) < _this.MARGIN.LEFT ||
-        xScale(xInv) > _this.WIDTH + _this.MARGIN.RIGHT) {
-        return;
-      }
-      const xIndex = bisect(chartData, xInv, 1);
-      const a = chartData[xIndex - 1];
-      const b = chartData[xIndex];
-      var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
-      tooltipline.attr('x1', xScale(xInv))
-        .attr('y1', _this.MARGIN.TOP)
-        .attr('x2', xScale(xInv))
-        .attr('y2', _this.HEIGHT - _this.MARGIN.BOTTOM)
-        .classed(_this.ChartSettings.COLOURS.ToolTipLine, true);
-      tooltipdot.attr('cx', xScale(xInv))
-        .attr('cy', yScale(val.netPnL))
-        .attr('r', '7')
-        .classed(_this.ChartSettings.COLOURS.ToolTipDot, true);
-      tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
-        .call(_this.callout, `P&L:${val.netPnL}\nStrike Price:${xInv}`, val.netPnL);
-    }
+
   },
 
 };
