@@ -1,5 +1,167 @@
 <template>
-  <div class="table text-right w-full border-collapse">
+  <!-- <div class="rounded-xl overflow-hidden bg-gradient-to-r from-pink-50 to-pink-100 p-10"></div> -->
+  <div class="table w-full shadow-md border-collapse">
+    <div class="table-row-group">
+      <div class="table-row text-white text-center">
+        <div class="table-cell px-1 py-4">
+          <label><input type="checkbox" v-model="SelectAll" /> </label>
+        </div>
+        <div class="table-cell px-1 py-4 hidden">Symbol</div>
+        <div class="table-cell px-1 py-4">Lot Size</div>
+        <div class="table-cell px-1 py-4">Step</div>
+        <div class="table-cell px-1 py-4">Strike Price</div>
+        <div class="table-cell px-1 py-4">Type</div>
+        <div class="table-cell px-1 py-4">B/S</div>
+        <div class="table-cell px-1 py-4">Qty</div>
+        <div class="table-cell px-1 py-4">Spot Price</div>
+        <div class="table-cell px-1 py-4">Total Price</div>
+        <div class="table-cell px-1 w-28">Action</div>
+      </div>
+    </div>
+    <div class="table-row-group">
+      <div
+        class="table-row text-center"
+        v-for="item in PropStrategy.trades"
+        :key="item._id"
+        :class="{ isTradeEdit: item == editTrade }"
+        v-cloak
+      >
+        <div class="table-cell px-1 py-4">
+          <label
+            ><input
+              type="checkbox"
+              :value="item._id"
+              v-model="selectedIDs"
+              @change="onCheckStateChanged(item)"
+            />
+          </label>
+        </div>
+        <div class="table-cell px-1 py-4 hidden">{{ item.symbol }}</div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.lotsize }}
+          </span>
+          <input v-model="item.lotsize" type="text" class="mini-edit edit" />
+        </div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.strikepricestep }}
+          </span>
+          <input
+            v-model="item.strikepricestep"
+            type="number"
+            class="mini-edit edit"
+          />
+        </div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.selectedstrike }}
+          </span>
+
+          <div class="edit">
+            <div v-show="item.tradetype != 'Future'" class="flex flex-col">
+              <!-- <div class="btn-nonrounded rounded-t-sm w-12">
+                <a class="" @click="onDec(item)">-</a>
+              </div> -->
+              <input
+                v-model="item.selectedstrike"
+                @keydown.up="onInc(item)"
+                @keydown.down="onDec(item)"
+                type="text"
+                class="mini-edit text-right mini-edit-nonrounded"
+              />
+              <!-- <div class="btn-nonrounded rounded-b-sm w-12">
+                <a class="" @click="onInc(item)">+</a>
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.tradetype }}
+          </span>
+          <div class="">
+            <select class="btn edit" v-model="item.tradetype">
+              <option
+                :key="key"
+                v-for="(value, key) in TRADETYPE"
+                v-bind:value="value"
+              >
+                {{ value }}
+              </option>
+            </select>
+            
+            <!-- <label
+              class="btn-mini edit"
+              v-for="(value, key) in TRADETYPE"
+              :key="key"
+              :class="{
+                'active text-green-400 dark:text-green-400':
+                  value == [item.tradetype],
+              }"
+            >
+              <input
+                class="hidden"
+                type="radio"
+                :name="TRADETYPE"
+                :value="value"
+                :id="'tradeSymbol_' + value"
+                v-model="item.tradetype"
+              />
+              {{ value }}
+            </label> -->
+          </div>
+        </div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.buyorsell }}
+          </span>
+          <SwitchButton :PropTrade="item" />
+        </div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.quantity }}
+          </span>
+          <input v-model="item.quantity" type="text" class="mini-edit edit" />
+        </div>
+        <div class="table-cell px-1 py-4">
+          <span class="view">
+            {{ item.price }}
+          </span>
+          <input v-model="item.price" type="text" class="mini-edit edit" />
+        </div>
+        <div class="table-cell px-1 py-4">
+          {{
+            item.buyorsell == "Buy"
+              ? -(item.price * (item.lotsize * item.quantity)).toFixed(2)
+              : (item.price * (item.lotsize * item.quantity)).toFixed(2)
+          }}
+        </div>
+        <div class="table-cell px-1">
+          <div class="space-x-1">
+            <a class="btn inline-block view" @click="onInlineExitTrade(item)">
+              <i class="material-icons">door_back</i>
+            </a>
+            <a class="btn inline-block view" @click="onInlineEditTrade(item)">
+              <i class="material-icons">edit</i>
+            </a>
+            <a class="btn inline-block edit" @click="onInlineSaveTrade(item)">
+              <i class="material-icons">save</i>
+            </a>
+
+            <a
+              class="btn inline-block text-red-600 dark:text-red-700"
+              @click="onDeleteTrade(PropStrategy._id, item._id)"
+            >
+              <i class="material-icons">delete</i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="table text-right w-full border-collapse">
     <div class="table-row-group">
       <div class="table-row border-b-2 border-gray-600">
         <div class="table-cell">
@@ -165,7 +327,7 @@
         <div class="table-cell"></div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!--<table class="min-w-full divide-y divide-gray-500">
     <thead>

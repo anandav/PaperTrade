@@ -15,6 +15,7 @@ var utilitymixins = {
         TOOLTIP: true,
         PATTERN: false,
         OFFSET: true,
+        TOOLTIPLOCATION: "BOTTOM",//"FOLLOW",//
         COLOURS: {
           Line: "stroke-current text-yellow-500 ",
           PositiveToolTip: "fill-current text-green-700 opacity-80",
@@ -24,7 +25,7 @@ var utilitymixins = {
           ToolTipDot: "fill-current text-red-700  opacity-30",
           ToolTipLine: "stroke-current text-gray-5  00 dark:text-yellow-400 opacity-30",
           PositiveRegion: "fill-current text-green-700 opacity-20 ",
-          PositiveRegionOnlyOpacity: "opacity-100 ",
+          PositiveRegionOnlyOpacity: "opacity-100",
           NegativeRegion: "fill-current text-red-700 opacity-20",
           NegativeRegionOnlyOpacity: "opacity-100",
         },
@@ -46,10 +47,10 @@ var utilitymixins = {
       },
       EXCHANGE: {
         1: "NSE",
-        4: "CDS",
-        3: "BSE",
+        2: "CDS",
+        3: "CBOE",
+        4: "BSE",
         5: "MCX",
-        2: "CBOE",
       }
     }
   },
@@ -410,6 +411,7 @@ var utilitymixins = {
         const a = chartData[xIndex - 1];
         const b = chartData[xIndex];
         var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
+
         tooltipline.attr('x1', xScale(xInv))
           .attr('y1', this.MARGIN.TOP)
           .attr('x2', xScale(xInv))
@@ -420,8 +422,21 @@ var utilitymixins = {
           .attr('r', '7')
           .classed(this.ChartSettings.COLOURS.ToolTipDot, true);
 
-        tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
-          .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+        const { height, width, x, y } = tooltip.node().getBBox();
+        if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
+
+          tooltip.attr("transform", `translate(${xScale(xInv)},${this.HEIGHT - height})`)
+            .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+        }
+        else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
+          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
+            .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+        } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
+          tooltip.attr("transform", `translate(${xScale(xInv)},${height}) rotate(-180)`)
+            .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+        }
+
+
       };
       const onMouseLeave = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden"); };
       const onMouseEnter = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible"); };
@@ -508,7 +523,7 @@ var utilitymixins = {
           .attr('fill', 'url(#saffron)')
           .attr("class", this.ChartSettings.COLOURS.NegativeRegionOnlyOpacity)
           .attr("d", areaNeg);
-      }else{
+      } else {
 
         svg.append("path")
           .datum(chartData)
