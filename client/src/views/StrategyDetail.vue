@@ -189,11 +189,15 @@ export default {
       this.EditStrategy(_startegyClone);
     },
     onBindAddEditTrade() {
-      if (this.TradeDetail) {
-        this.BindAddEditTrade(null);
-      } else {
-        this.BindAddEditTrade(this.PropStrategy);
-      }
+      // if (this.TradeDetail) {
+      //   this.BindAddEditTrade(null);
+      // } else {
+      //   this.BindAddEditTrade(this.PropStrategy);
+      // }
+      
+      this.BindAddEditTrade(this.PropStrategy).then(()=>{
+        console.log('object :>> ');
+      });
     },
     onShowChart() {
       this.GenerateChart(this.PropStrategy);

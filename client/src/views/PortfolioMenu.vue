@@ -44,10 +44,10 @@
         :class="{ isPortfolioEdit: item == editPortfolio }"
       >
         <div
-          class="m-1 p-2 leading-10 bg-gray-200 dark:bg-gray-700 rounded-md "
+          class="mt-1 p-2 leading-10 rounded-sm cursor-pointer  "
           @click="onMenuSelectedPortfolio(item)"
           :class="{
-            'border-l-2 border-red-300': Portfolio && item._id == Portfolio._id,
+            'border-l-2  border-red-300': Portfolio && item._id == Portfolio._id,
           }"
         >
           <div class="inline-block">
@@ -60,7 +60,7 @@
               {{ item.name }}
             </div>
             <input
-              class="edit ml-2 pl-2 py-1 bg-gray-200 dark:bg-gray-600 focus:outline-none rounded"
+              class="edit ml-2 pl-2 py-1 bg-gray-200 dark:bg-gray-700 focus:outline-none rounded"
               placeholder="Edit Portfolio Name"
               type="text"
               v-model="item.name"

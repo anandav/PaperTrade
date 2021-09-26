@@ -1,5 +1,173 @@
 <template>
-  <table class="min-w-full divide-y divide-gray-500">
+  <div class="table text-right w-full border-collapse">
+    <div class="table-row-group">
+      <div class="table-row border-b-2 border-gray-600">
+        <div class="table-cell">
+          <label><input type="checkbox" v-model="SelectAll" /> </label>
+        </div>
+        <div class="table-cell hidden">Symbol</div>
+        <div class="table-cell">Lot Size</div>
+        <div class="table-cell">Step</div>
+        <div class="table-cell">Strike Price</div>
+        <div class="table-cell">Type</div>
+        <div class="table-cell">B/S</div>
+        <div class="table-cell">Qty</div>
+        <div class="table-cell">Spot Price</div>
+        <div class="table-cell">Total Price</div>
+        <div class="table-cell">Action</div>
+      </div>
+    </div>
+
+    <div class="table-row-group">
+      <div
+        class="table-row border-b-2 border-gray-600"
+        v-for="item in PropStrategy.trades"
+        :key="item._id"
+        :class="{ isTradeEdit: item == editTrade }"
+        v-cloak
+      >
+        <div class="table-cell">
+          <input
+            type="checkbox"
+            :value="item._id"
+            v-model="selectedIDs"
+            @change="onCheckStateChanged(item)"
+          />
+        </div>
+        <div class="table-cell hidden">
+          <span class="view">
+            {{ item.symbol }}
+          </span>
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.lotsize }}
+          </span>
+          <input v-model="item.lotsize" type="text" class="mini-edit edit" />
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.strikepricestep }}
+          </span>
+          <input
+            v-model="item.strikepricestep"
+            type="number"
+            class="mini-edit edit"
+          />
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.selectedstrike }}
+          </span>
+
+          <div class="edit">
+            <div v-show="item.tradetype != 'Future'" class="flex flex-col">
+              <div class="btn-nonrounded rounded-t-sm w-12">
+                <a class="" @click="onDec(item)">-</a>
+              </div>
+              <input
+                v-model="item.selectedstrike"
+                @keydown.up="onInc(item)"
+                @keydown.down="onDec(item)"
+                type="text"
+                class="text-right mini-edit-nonrounded"
+              />
+              <div class="btn-nonrounded rounded-b-sm w-12">
+                <a class="" @click="onInc(item)">+</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.tradetype }}
+          </span>
+          <div class="">
+            <label
+              class="btn w-12 text-center edit"
+              v-for="(value, key) in TRADETYPE"
+              :key="key"
+              :class="{
+                'active text-green-400 dark:text-green-400':
+                  value == [item.tradetype],
+              }"
+            >
+              <input
+                class="hidden"
+                type="radio"
+                :name="TRADETYPE"
+                :value="value"
+                :id="'tradeSymbol_' + value"
+                v-model="item.tradetype"
+              />
+              {{ value }}
+            </label>
+          </div>
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.buyorsell }}
+          </span>
+          <SwitchButton :PropTrade="item" />
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.quantity }}
+          </span>
+          <input v-model="item.quantity" type="text" class="mini-edit edit" />
+        </div>
+        <div class="table-cell">
+          <span class="view">
+            {{ item.price }}
+          </span>
+          <input v-model="item.price" type="text" class="mini-edit edit" />
+        </div>
+        <div class="table-cell">
+          {{
+            item.buyorsell == "Buy"
+              ? -(item.price * (item.lotsize * item.quantity)).toFixed(2)
+              : (item.price * (item.lotsize * item.quantity)).toFixed(2)
+          }}
+        </div>
+        <div class="table-cell">
+          <div class="space-x-1">
+            <a class="btn inline-block view" @click="onInlineExitTrade(item)">
+              <i class="material-icons">door_back</i>
+            </a>
+            <a class="btn inline-block view" @click="onInlineEditTrade(item)">
+              <i class="material-icons">edit</i>
+            </a>
+            <a class="btn inline-block edit" @click="onInlineSaveTrade(item)">
+              <i class="material-icons">save</i>
+            </a>
+
+            <a
+              class="btn inline-block text-red-600 dark:text-red-700"
+              @click="onDeleteTrade(PropStrategy._id, item._id)"
+            >
+              <i class="material-icons">delete</i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="table-row">
+        <div class="table-cell"></div>
+        <div class="table-cell hidden"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell">{{ TotalAmount }}</div>
+        <div class="table-cell"></div>
+        <div class="table-cell"></div>
+      </div>
+    </div>
+  </div>
+
+  <!--<table class="min-w-full divide-y divide-gray-500">
     <thead>
       <tr class="text-left">
         <th class="w-1/12 view">
@@ -34,14 +202,14 @@
               v-model="selectedIDs"
               @change="onCheckStateChanged(item)"
             />
-            <!-- v-model="selectedIDs" -->
+         
           </label>
         </td>
         <td v-show="PropStrategy.ismultiplesymbol">
           <span class="view">
             {{ item.symbol }}
           </span>
-          <!-- <input type="text" class="w-10 edit" v-model="item.symbol" /> -->
+     
         </td>
 
         <td>
@@ -117,27 +285,7 @@
             {{ item.buyorsell }}
           </span>
           <SwitchButton :PropTrade="item" />
-          <!-- <div class="btn-group btn-group-toggle edit">
-            <label
-              class="btn btn btn-secondary"
-              v-for="(value, key) in BUYORSELL"
-              :key="key"
-              :class="{
-                'text-success': key == 1,
-                'text-danger': key == 2,
-                active: value == [item.buyorsell],
-              }"
-            >
-              <input
-                type="radio"
-                name="tradeTypename"
-                :value="value"
-                :id="'trade_' + value"
-                v-model="item.buyorsell"
-              />
-              {{ value }}
-            </label>
-          </div> -->
+        
         </td>
         <td>
           <span class="view">
@@ -164,7 +312,7 @@
         <td class="">
           <div class="space-x-1">
             <a class="btn inline-block view" @click="onInlineExitTrade(item)">
-              <!-- <i class="material-icons">close</i> -->
+            
               <i class="material-icons">door_back</i>
             </a>
             <a class="btn inline-block view" @click="onInlineEditTrade(item)">
@@ -202,25 +350,30 @@
         <td></td>
       </tr>
     </tfoot>
-  </table>
+  </table> -->
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
 import myMixins from "../shared/utilitymixins";
 import SwitchButton from "../components/ui/SwitchButton";
+import TradeListRow from "./TradeListRow";
 export default {
   name: "TradeList",
   mixins: [myMixins],
   components: {
     SwitchButton,
+    TradeListRow,
   },
   data: function () {
     return {
-      editTrade: null,
       selectedIDs: [],
     };
   },
-  props: { PropStrategy: {}, PropSelectedTraded: { type: Array } },
+  props: {
+    PropStrategy: {},
+    PropSelectedTraded: { type: Array },
+    editTrade: null,
+  },
   methods: {
     ...mapActions({
       AddEditTrade: "tradeModule/AddEditTrade",

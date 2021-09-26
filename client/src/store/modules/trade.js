@@ -22,8 +22,10 @@ const tradeModule = {
         },
     },
     mutations: {
-        [BINDADDEDITTRADE](state, _tradeDetail) {
-            state.TradeDetail = _tradeDetail;
+        [BINDADDEDITTRADE](state, { _strategy, _trade }) {
+            // state.TradeDetail = _tradeDetail;
+            _strategy.trades.push(_trade);
+
         },
         [ADDEDITTRADE](state, { strategies, _strategy }) {
             var foundIndex = strategies.findIndex(x => x._id == _strategy._id);
@@ -50,10 +52,10 @@ const tradeModule = {
 
     },
     actions: {
-        BindAddEditTrade({ commit }, _strategy) {
+        BindAddEditTrade({ commit, rootGetters }, _strategy) {
             if (_strategy) {
-                var _trade = {
-                    symbol: !_strategy.ismultiplesymbol ? _strategy.symbol : undefined,
+                var _tradeDetail = {
+                    symbol: _strategy.symbol,
                     sid: _strategy._id,
                     lotsize: 1000,
                     expiry: null,
@@ -67,9 +69,19 @@ const tradeModule = {
                     price: 30,
                     note: "",
                 };
-                commit(BINDADDEDITTRADE, _trade);
+
+                axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
+                    if (res.status == 200) {
+                        var strategies = rootGetters["strategyModule/Strategies"];
+                        var _strategy = res.data;
+                        _strategy.trades.forEach(t => {
+                            t.checked = true;
+                        });
+                        commit(ADDEDITTRADE, { strategies, _strategy });
+                    }
+                });
             } else {
-                commit(BINDADDEDITTRADE, null)
+                //commit(BINDADDEDITTRADE, null)
             }
         },
         AddEditTrade({ commit, rootGetters }, _tradeDetail) {
