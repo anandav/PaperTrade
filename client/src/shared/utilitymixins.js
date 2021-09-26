@@ -13,6 +13,7 @@ var utilitymixins = {
       },
       ChartSettings: {
         TOOLTIP: true,
+        PATTERN: false,
         OFFSET: true,
         COLOURS: {
           Line: "stroke-current text-yellow-500 ",
@@ -22,13 +23,13 @@ var utilitymixins = {
           //NegativeToolTipText: "stroke-current text-white",
           ToolTipDot: "fill-current text-red-700  opacity-30",
           ToolTipLine: "stroke-current text-gray-5  00 dark:text-yellow-400 opacity-30",
-          PositiveRegion: "opacity-100 ",
-          // PositiveRegion: "fill-current text-green-700 opacity-40 ",
-          //NegativeRegion: "fill-current text-red-700 opacity-10",
-          NegativeRegion: "opacity-100",
+          PositiveRegion: "fill-current text-green-700 opacity-20 ",
+          PositiveRegionOnlyOpacity: "opacity-100 ",
+          NegativeRegion: "fill-current text-red-700 opacity-20",
+          NegativeRegionOnlyOpacity: "opacity-100",
         },
         DIMENSION: {
-          Line: 2
+          Line: 1
         },
       },
       WIDTH: 500,
@@ -455,7 +456,7 @@ var utilitymixins = {
 
       svg.append("g")
         .attr("class", "x axis zero")
-        .attr("stroke","#fff")
+        .attr("stroke", "#fff")
         .attr("transform", `translate(0, ${yScale(0)})`)
         .call(xAxisCall.tickSize(0).tickFormat(""));
 
@@ -470,43 +471,56 @@ var utilitymixins = {
         .attr("stroke-linecap", "round")
         .attr("d", line);
 
-      svg
-        .append('defs')
-        .append('pattern')
-        .attr('id', 'green')
-        .attr('patternUnits', 'userSpaceOnUse')
-        .attr('width', 4)
-        .attr('height', 4)
-        .append('path')
-        .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-        .attr("stroke", "#138808")
-        .attr('stroke-width', 1);
+
+      if (this.ChartSettings.PATTERN) {
+        svg
+          .append('defs')
+          .append('pattern')
+          .attr('id', 'green')
+          .attr('patternUnits', 'userSpaceOnUse')
+          .attr('width', 4)
+          .attr('height', 4)
+          .append('path')
+          .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+          .attr("stroke", "#138808")
+          .attr('stroke-width', 1);
 
         svg
-        .append('defs')
-        .append('pattern')
-        .attr('id', 'saffron')
-        .attr('patternUnits', 'userSpaceOnUse')
-        .attr('width', 4)
-        .attr('height', 4)
-        .append('path')
-        .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-        .attr("stroke", "#FF9933")
-        .attr('stroke-width', 1);
+          .append('defs')
+          .append('pattern')
+          .attr('id', 'saffron')
+          .attr('patternUnits', 'userSpaceOnUse')
+          .attr('width', 4)
+          .attr('height', 4)
+          .append('path')
+          .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+          .attr("stroke", "#FF9933")
+          .attr('stroke-width', 1);
 
-
-
-      svg.append("path")
-        .datum(chartData)
-        .attr('fill', 'url(#green)')
-        .attr("class", this.ChartSettings.COLOURS.PositiveRegion)
-        .attr("d", areaPos);
-        
         svg.append("path")
-        .datum(chartData)
-        .attr('fill', 'url(#saffron)')
-        .attr("class", this.ChartSettings.COLOURS.NegativeRegion)
-        .attr("d", areaNeg);
+          .datum(chartData)
+          .attr('fill', 'url(#green)')
+          .attr("class", this.ChartSettings.COLOURS.PositiveRegionOnlyOpacity)
+          .attr("d", areaPos);
+
+        svg.append("path")
+          .datum(chartData)
+          .attr('fill', 'url(#saffron)')
+          .attr("class", this.ChartSettings.COLOURS.NegativeRegionOnlyOpacity)
+          .attr("d", areaNeg);
+      }else{
+
+        svg.append("path")
+          .datum(chartData)
+          .attr("class", this.ChartSettings.COLOURS.PositiveRegion)
+          .attr("d", areaPos);
+
+        svg.append("path")
+          .datum(chartData)
+          .attr("class", this.ChartSettings.COLOURS.NegativeRegion)
+          .attr("d", areaNeg);
+
+      }
 
 
       const tooltipline = svg.append('line').classed('hoverline', true)
