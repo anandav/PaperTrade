@@ -13,9 +13,9 @@ var utilitymixins = {
       },
       ChartSettings: {
         TOOLTIP: true,
-        PATTERN: false,
+        PATTERN: true,
         OFFSET: true,
-        TOOLTIPLOCATION: "BOTTOM",//"FOLLOW",//
+        TOOLTIPLOCATION: "FOLLOW",//"BOTTOM",//"FOLLOW",//
         COLOURS: {
           Line: "stroke-current text-yellow-500 ",
           PositiveToolTip: "fill-current text-green-700 opacity-80",
@@ -25,9 +25,11 @@ var utilitymixins = {
           ToolTipDot: "fill-current text-red-700  opacity-30",
           ToolTipLine: "stroke-current text-gray-5  00 dark:text-yellow-400 opacity-30",
           PositiveRegion: "fill-current text-green-700 opacity-20 ",
-          PositiveRegionOnlyOpacity: "opacity-100",
           NegativeRegion: "fill-current text-red-700 opacity-20",
-          NegativeRegionOnlyOpacity: "opacity-100",
+          Positive : "#3DB2FF",
+          PositiveRegionOnlyOpacity: "opacity-30",
+          Nevgative : "#FF2442",
+          NegativeRegionOnlyOpacity: "opacity-30",
         },
         DIMENSION: {
           Line: 1
@@ -497,10 +499,10 @@ var utilitymixins = {
           .attr('height', 4)
           .append('path')
           .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-          .attr("stroke", "#138808")
+          .attr("stroke", this.ChartSettings.COLOURS.Positive)
           .attr('stroke-width', 1);
-
-        svg
+          
+          svg
           .append('defs')
           .append('pattern')
           .attr('id', 'saffron')
@@ -509,7 +511,7 @@ var utilitymixins = {
           .attr('height', 4)
           .append('path')
           .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-          .attr("stroke", "#FF9933")
+          .attr("stroke", this.ChartSettings.COLOURS.Nevgative)
           .attr('stroke-width', 1);
 
         svg.append("path")
