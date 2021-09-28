@@ -169,7 +169,7 @@
       </div>
     </div>
     <div class="table-row-group">
-      <div class="table-row border-t-2 border-gray-500">
+      <div class="table-row text-right border-t-2 border-gray-500">
         <div class="table-cell"></div>
         <div class="table-cell hidden"></div>
         <div class="table-cell"></div>
