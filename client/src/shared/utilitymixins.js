@@ -89,18 +89,21 @@ var utilitymixins = {
     },
 
     GetBreakEven: function (strategy) {
+      var tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
+      var netPnlArr =[];
       for (let i = 0, len = strategy.trades.length; i < len; i++) {
         var currentTrade = strategy.trades[i];
         var netPnL = 0, PnL = 0;
         for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
           var currentTrade2 = strategy.trades[j];
           var obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
-          netPnL+= obj.netPnL;
-          PnL += obj.PnL;
+          netPnlArr[i] += obj.netPnL;
+          //PnL += obj.PnL;
         }
-        
+        if (i > 0) {
 
-        
+        }
+        console.log('PnL, netPnL :>> ', PnL, netPnL);
       }
     },
 
@@ -108,9 +111,6 @@ var utilitymixins = {
       var tminSP = d3.min(strategy.trades, d => d.selectedstrike);
       var tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
       var minPrice = [tminSP - 1, tminSP];
-
-      console.log('minPrice :>> ', minPrice);
-
       var minStriketrade; //strategy.trades.find(t => t.selectedstrike == tminSP);
       //var maxStriketrade = strategy.trades.find(t => t.selectedstrike == tmaxSP);
       var tradeCount = strategy.trades.length;
@@ -131,24 +131,8 @@ var utilitymixins = {
               ...PnlObj
             };
           }
-
-          console.log('minStriketrade :>> ', minStriketrade);
         }
       });
-
-
-
-      // console.log('tminSP, tmaxSP :>> ', typeof (tminSP), tminSP, typeof (tmaxSP), tmaxSP);
-      //console.log('maxStriketrade :>> ', maxStriketrade);
-
-      // var minStriketrade2 = { ...minStriketrade1 }
-      // minStriketrade2.selectedstrike = minStriketrade2.selectedstrike - 10;
-
-      // var minpnl = this.getNetPnL(minStriketrade1.selectedstrike, minStriketrade1);
-      // var minpnlNeg = this.getNetPnL(minStriketrade2.selectedstrike, minStriketrade2);
-      // //console.log('minpnl, minpnlNeg :>> ', minpnl, minpnlNeg);
-      // //console.log("chartdata find",chartData.find(x => x.strikePrice == 16300));
-
 
 
 
