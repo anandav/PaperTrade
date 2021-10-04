@@ -6,7 +6,7 @@
         <div class="table-cell px-1 py-4">
           <label><input type="checkbox" v-model="SelectAll" /> </label>
         </div>
-        <div class="table-cell px-1 py-4 hidden">Symbol</div>
+        <div class="  px-1 py-4 hidden">Symbol</div>
         <div class="table-cell px-1 py-4">Lot Size</div>
         <div class="table-cell px-1 py-4">Step</div>
         <div class="table-cell px-1 py-4">Strike Price</div>
@@ -171,7 +171,7 @@
     <div class="table-row-group">
       <div class="table-row text-right border-t-2 border-gray-500">
         <div class="table-cell"></div>
-        <div class="table-cell hidden"></div>
+        <div class="hidden"></div>
         <div class="table-cell"></div>
         <div class="table-cell"></div>
         <div class="table-cell"></div>
@@ -543,13 +543,13 @@
 import { mapActions, mapState } from "vuex";
 import myMixins from "../shared/utilitymixins";
 import SwitchButton from "../components/ui/SwitchButton";
-import TradeListRow from "./TradeListRow";
+// import TradeListRow from "./TradeListRow";
 export default {
   name: "TradeList",
   mixins: [myMixins],
   components: {
     SwitchButton,
-    TradeListRow,
+    // TradeListRow,
   },
   data: function () {
     return {
