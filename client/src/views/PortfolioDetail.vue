@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3">
+  <div class="mt-20">
     <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-800">
       <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>
@@ -20,9 +20,9 @@
         </span>
         <div class="float-right pr-5">
           <a class="btn" @click="onAddNewStrategy()">
-             <i class="material-icons">insights</i> &nbsp;
+            <i class="material-icons">insights</i> &nbsp;
             <!-- <i class="material-icons-outlined">insights</i>  -->
-             {{ txtAddStrategy }}</a
+            {{ txtAddStrategy }}</a
           >
         </div>
       </div>

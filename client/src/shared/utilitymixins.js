@@ -2,7 +2,7 @@ import * as d3 from "d3";
 
 
 
-var utilitymixins = {
+const utilitymixins = {
   data: function () {
     return {
       MARGIN: {
@@ -58,8 +58,8 @@ var utilitymixins = {
   },
   methods: {
     GenerateChart: function (strategy) {
-      var chartData = this.GenerateChartPoint(strategy);
-      var paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
+      let chartData = this.GenerateChartPoint(strategy);
+      let paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
       d3.selectAll(paretnId + " > *").remove();
       if (chartData && chartData.length > 0) {
         //this._generateBarChart(chartData, paretnId);
@@ -71,7 +71,7 @@ var utilitymixins = {
       }
       else {
 
-        var placeholder = [{
+        let placeholder = [{
           "strikePrice": 1,
           "symbol": "Nifty",
           "name": "Strategy - 1",
@@ -89,14 +89,14 @@ var utilitymixins = {
     },
 
     GetBreakEven: function (strategy) {
-      var tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      var netPnlArr =[];
+      let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
+      let netPnlArr =[];
       for (let i = 0, len = strategy.trades.length; i < len; i++) {
-        var currentTrade = strategy.trades[i];
-        var netPnL = 0, PnL = 0;
+        let currentTrade = strategy.trades[i];
+        let netPnL = 0, PnL = 0;
         for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
-          var currentTrade2 = strategy.trades[j];
-          var obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
+          let currentTrade2 = strategy.trades[j];
+          let obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
           netPnlArr[i] += obj.netPnL;
           //PnL += obj.PnL;
         }
@@ -108,16 +108,16 @@ var utilitymixins = {
     },
 
     GetMaxMinPnL: function (strategy, chartData) {
-      var tminSP = d3.min(strategy.trades, d => d.selectedstrike);
-      var tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      var minPrice = [tminSP - 1, tminSP];
-      var minStriketrade; //strategy.trades.find(t => t.selectedstrike == tminSP);
-      //var maxStriketrade = strategy.trades.find(t => t.selectedstrike == tmaxSP);
-      var tradeCount = strategy.trades.length;
+      let tminSP = d3.min(strategy.trades, d => d.selectedstrike);
+      let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
+      let minPrice = [tminSP - 1, tminSP];
+      let minStriketrade; //strategy.trades.find(t => t.selectedstrike == tminSP);
+      //let maxStriketrade = strategy.trades.find(t => t.selectedstrike == tmaxSP);
+      let tradeCount = strategy.trades.length;
 
       minPrice.forEach(j => {
         for (let i = 0; i < tradeCount; i++) {
-          var PnlObj = this.getNetPnL(j, strategy.trades[i])
+          let PnlObj = this.getNetPnL(j, strategy.trades[i])
 
           if (minStriketrade) {
             minStriketrade.netPnL += PnlObj.netPnL;
@@ -139,17 +139,17 @@ var utilitymixins = {
     },
 
     getoffsetprices: function (leastPrice) {
-      var _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
-      var strikepricemin = this.getdigits(_min, 'min'), strikepricemax = this.getdigits(_max, 'max');
-      var incrementby = this.getdigits(((_min + _max) / 2), 'increment')
+      let _min = Math.min(...leastPrice), _max = Math.max(...leastPrice);
+      let strikepricemin = this.getdigits(_min, 'min'), strikepricemax = this.getdigits(_max, 'max');
+      let incrementby = this.getdigits(((_min + _max) / 2), 'increment')
       return { x0: strikepricemin, x1: strikepricemax, xstep: incrementby };
     },
 
 
     getdigits: function (value, ismin) {
-      var _valdiglen = this.ChartSettings.OFFSET ? Math.ceil(Math.log10(value + 1)) : 0;
-      var offset = 0;
-      var incrementby = 1;
+      let _valdiglen = this.ChartSettings.OFFSET ? Math.ceil(Math.log10(value + 1)) : 0;
+      let offset = 0;
+      let incrementby = 1;
       switch (_valdiglen) {
         case 1:
           offset = 0.05
@@ -189,7 +189,7 @@ var utilitymixins = {
     },
 
     getAllStrikePrices: function (strategy) {
-      var strikePrices = strategy.trades.map((t) => {
+      let strikePrices = strategy.trades.map((t) => {
         if (t.tradetype == "Future") {
           return t.price;
         } else {
@@ -202,12 +202,12 @@ var utilitymixins = {
 
     GenerateChartPoint: function (strategy) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
-        var range = { x0: parseFloat(strategy.x0), x1: parseFloat(strategy.x1) }
-        var tradeCount = strategy.trades.length;
-        var chartData = [];
-        var strikePrices = this.getAllStrikePrices(strategy);
-        var _range = this.getoffsetprices(strikePrices);
-        var xStep = _range.xstep;
+        let range = { x0: parseFloat(strategy.x0), x1: parseFloat(strategy.x1) }
+        let tradeCount = strategy.trades.length;
+        let chartData = [];
+        let strikePrices = this.getAllStrikePrices(strategy);
+        let _range = this.getoffsetprices(strikePrices);
+        let xStep = _range.xstep;
         range = {
           x0: isNaN(range.x0) ? _range.x0 : range.x0
           , x1: isNaN(range.x1) ? _range.x1 : range.x1
@@ -215,11 +215,11 @@ var utilitymixins = {
         for (let i = 0; i < tradeCount; i++) {
           if (!strategy.trades[i].checked) { continue }
           let currentTrade = strategy.trades[i];
-          var _strikePrice = range.x0;
+          let _strikePrice = range.x0;
 
           let j = 0;
           do {
-            var PnlObj = this.getNetPnL(_strikePrice, currentTrade);
+            let PnlObj = this.getNetPnL(_strikePrice, currentTrade);
             if (chartData[j]) {
               chartData[j].netPnL += PnlObj.netPnL;
               chartData[j].PnL = PnlObj.PnL;
@@ -245,7 +245,7 @@ var utilitymixins = {
     },
     getNetPnL: function (_strikePrice, currentTrade) {
 
-      var _intrinsicValue = 0, PnL = 0, netPnL = 0;
+      let _intrinsicValue = 0, PnL = 0, netPnL = 0;
 
       if (currentTrade.tradetype == "Call") {
         _intrinsicValue = _strikePrice - currentTrade.selectedstrike > 0 ? _strikePrice - currentTrade.selectedstrike : 0;
@@ -274,9 +274,9 @@ var utilitymixins = {
     // POC: BarChart
     _generateBarChart: function (chartData, paretnId) {
       console.log('chartData :>> ', chartData);
-      var _numbers = chartData.map(c => c.netPnL);
-      var _max = Math.max(..._numbers) + 2000;
-      var _min = Math.min(..._numbers) - 1000;
+      let _numbers = chartData.map(c => c.netPnL);
+      let _max = Math.max(..._numbers) + 2000;
+      let _min = Math.min(..._numbers) - 1000;
 
       const svg = d3.select(paretnId).append("svg")
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
@@ -413,7 +413,7 @@ var utilitymixins = {
         const xIndex = bisect(chartData, xInv, 1);
         const a = chartData[xIndex - 1];
         const b = chartData[xIndex];
-        var val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
+        let val = b && (xInv - a.strikePrice > b.strikePrice - xInv) ? b : a;
 
         tooltipline.attr('x1', xScale(xInv))
           .attr('y1', this.MARGIN.TOP)
@@ -561,9 +561,9 @@ export default utilitymixins;
 
 // /// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
 // function GetTodayDate() {
-//   var d = new Date();
-//   var ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-//   var mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-//   var da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+//   let d = new Date();
+//   let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+//   let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+//   let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
 //   console.log(`${da}-${mo}-${ye}`);
 // }

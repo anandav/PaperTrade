@@ -6,7 +6,7 @@
         <div class="table-cell px-1 py-4">
           <label><input type="checkbox" v-model="SelectAll" /> </label>
         </div>
-        <div class="  px-1 py-4 hidden">Symbol</div>
+        <div class="px-1 py-4 hidden">Symbol</div>
         <div class="table-cell px-1 py-4">Lot Size</div>
         <div class="table-cell px-1 py-4">Step</div>
         <div class="table-cell px-1 py-4">Strike Price</div>
@@ -45,7 +45,7 @@
             />
           </label>
         </div>
-        <div class="table-cell px-1 py-4 hidden">{{ item.symbol }}</div>
+        <div class="px-1 py-4 hidden">{{ item.symbol }}</div>
         <div class="table-cell px-1 py-4">
           <span class="view">
             {{ item.lotsize }}
@@ -137,7 +137,7 @@
           <span class="view">
             {{ item.price }}
           </span>
-          <input v-model="item.price" type="text" class="mini-edit edit" />
+          <input v-model="item.price" type="text" class="mini-edit edit" @keydown.enter="onInlineSaveTrade(item)" />
         </div>
         <div class="table-cell px-1 py-4">
           {{

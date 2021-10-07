@@ -1,11 +1,11 @@
 <template>
   <div>
     <div
-      class=" container min-h-screen mx-auto bg-gray-100 dark:bg-gray-800"
+      class="container min-h-screen mx-auto bg-gray-100 dark:bg-gray-800"
     >
       <div class="grid grid-cols-10">
-        <PortfolioMenu class="col-span-2 mt-16" />
-        <PortfolioDetail class="col-span-8 mt-16" />
+        <PortfolioMenu class="col-span-2" />
+        <PortfolioDetail class="col-span-8" />
       </div>
       
     </div>
