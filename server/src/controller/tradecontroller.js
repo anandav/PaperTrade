@@ -43,6 +43,15 @@ tradeController.post("/save", async (req, res) => {
   if (_id) {
     console.log('_id trade Update :>> ', _id);
     _trade._id = _id;
+
+
+    ///REMOVE THIS AFTER ALL LOTSIZE ARE MOVED FROM TRADE TO STRATEGY
+    await Strategy.updateOne(
+      { "trades._id": _id },
+      { $set: { "lotsize": lotsize, "strikepricestep":strikepricestep } }
+    );
+
+
     await Strategy.updateOne(
       { "trades._id": _id },
       { $set: { "trades.$": _trade } }
@@ -50,7 +59,6 @@ tradeController.post("/save", async (req, res) => {
     
     
     commonUtility.GetTradeById(_id).then((_result) => {
-      console.log('_result :>> ', _result);
       res.json(_result);
     });
   } else if (sid && !_id) {

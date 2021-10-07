@@ -17,9 +17,15 @@ const strategySchema = schema({
   symbol: {
     type: String,
   },
+  lotsize: {
+    type: Number
+  },
+  strikepricestep: {
+    type: Number
+  },
   ismultiplesymbol: {
     type: Boolean,
-    default : false
+    default: false
   },
   createdon: {
     type: Date,
@@ -29,7 +35,6 @@ const strategySchema = schema({
     type: Date,
     default: Date.now(),
   },
-
   trades: [tradeSchema],
   portfolio: {
     type: mongoose.Schema.Types.ObjectId,

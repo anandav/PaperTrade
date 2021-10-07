@@ -66,7 +66,7 @@ const utilitymixins = {
         //this._generateLineChart(chartData, paretnId);
         this._generateLineChart2(chartData, paretnId);
         //this.GetMaxMinPnL(strategy, chartData);
-        this.GetBreakEven(strategy);
+        //this.GetBreakEven(strategy);
         //console.log('chartData :>> ', chartData);
       }
       else {

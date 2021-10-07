@@ -7,8 +7,8 @@
           <label><input type="checkbox" v-model="SelectAll" /> </label>
         </div>
         <div class="px-1 py-4 hidden">Symbol</div>
-        <div class="table-cell px-1 py-4">Lot Size</div>
-        <div class="table-cell px-1 py-4">Step</div>
+        <div class="hidden px-1 py-4">Lot Size</div>
+        <div class="hidden px-1 py-4">Step</div>
         <div class="table-cell px-1 py-4">Strike Price</div>
         <div class="table-cell px-1 py-4">Type</div>
         <div class="table-cell px-1 py-4">B/S</div>
@@ -20,7 +20,7 @@
     </div>
     <div class="table-row-group">
       <div
-        class="table-row text-right border-t border-gray-600"
+        class="table-row text-right border-t border-gray-600 "
         v-for="item in PropStrategy.trades"
         :key="item._id"
         :class="{ isTradeEdit: item == editTrade }"
@@ -45,23 +45,7 @@
             />
           </label>
         </div>
-        <div class="px-1 py-4 hidden">{{ item.symbol }}</div>
-        <div class="table-cell px-1 py-4">
-          <span class="view">
-            {{ item.lotsize }}
-          </span>
-          <input v-model="item.lotsize" type="text" class="mini-edit edit" />
-        </div>
-        <div class="table-cell px-1 py-4">
-          <span class="view">
-            {{ item.strikepricestep }}
-          </span>
-          <input
-            v-model="item.strikepricestep"
-            type="number"
-            class="mini-edit edit"
-          />
-        </div>
+
         <div class="table-cell px-1 py-4">
           <span class="view">
             {{ item.selectedstrike }}
@@ -142,8 +126,8 @@
         <div class="table-cell px-1 py-4">
           {{
             item.buyorsell == "Buy"
-              ? -(item.price * (item.lotsize * item.quantity)).toFixed(2)
-              : (item.price * (item.lotsize * item.quantity)).toFixed(2)
+              ? -(item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2)
+              : (item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2)
           }}
         </div>
         <div class="table-cell px-1">
@@ -171,9 +155,7 @@
     <div class="table-row-group">
       <div class="table-row text-right border-t-2 border-gray-500">
         <div class="table-cell"></div>
-        <div class="hidden"></div>
-        <div class="table-cell"></div>
-        <div class="table-cell"></div>
+        
         <div class="table-cell"></div>
         <div class="table-cell"></div>
         <div class="table-cell"></div>
@@ -235,10 +217,10 @@ export default {
       this.AddEditTrade(_exitTrade);
     },
     onInc: function (trade) {
-      trade.selectedstrike += parseFloat(trade.strikepricestep);
+      trade.selectedstrike += parseFloat(this.PropStrategy.strikepricestep);
     },
     onDec: function (trade) {
-      trade.selectedstrike -= parseFloat(trade.strikepricestep);
+      trade.selectedstrike -= parseFloat(this.PropStrategy.strikepricestep);
     },
     onCheckStateChanged: function (trade) {
       trade.checked = !trade.checked;
@@ -281,8 +263,8 @@ export default {
             if (_e._id == _f) {
               price =
                 _e.buyorsell == "Buy"
-                  ? price - _e.price * (_e.lotsize * _e.quantity)
-                  : price + _e.price * (_e.lotsize * _e.quantity);
+                  ? price - _e.price * (this.PropStrategy.lotsize * _e.quantity)
+                  : price + _e.price * (this.PropStrategy.lotsize * _e.quantity);
             }
           });
         });

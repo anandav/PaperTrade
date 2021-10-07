@@ -10,7 +10,7 @@
             {{ PropStrategy.name }}
           </span>
           <input
-            class="form-control edit"
+            class="normal-edit edit"
             placeholder="Strategy Name"
             v-model="PropStrategy.name"
             @keydown.enter="onSaveStrategy()"
@@ -22,22 +22,36 @@
           </span>
 
           <input
-            class="form-control edit"
+            class="normal-edit edit"
             placeholder="Symbol"
             v-model="PropStrategy.symbol"
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-        <!-- <div class="flex-1">
-          <label>
-            <input
-              type="checkbox"
-              v-model="PropStrategy.ismultiplesymbol"
-              @click="onSaveStrategy()"
-            />
-            Is Multiple Symbol
-          </label>
-        </div> -->
+        <div class="flex-1">
+          <span class="view">
+            {{ PropStrategy.lotsize }}
+          </span>
+
+          <input
+            class="normal-edit edit"
+            placeholder="Lot Size"
+            v-model="PropStrategy.lotsize"
+            @keydown.enter="onSaveStrategy()"
+          />
+        </div>
+        <div class="flex-1">
+           <span class="view">
+            {{ PropStrategy.strikepricestep }}
+          </span>
+
+          <input
+            class="normal-edit  edit"
+            placeholder="Strike Price Step"
+            v-model="PropStrategy.strikepricestep"
+            @keydown.enter="onSaveStrategy()"
+          />
+        </div>
         <div class="flex-1">
           Created On:
           {{ PropStrategy.CreatedOn }}

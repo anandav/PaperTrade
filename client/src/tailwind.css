@@ -32,6 +32,9 @@
     @apply w-12 px-1 py-1 rounded-sm focus:outline-none;
 }
 
+.normal-edit {
+  @apply w-28 px-1 py-1 rounded-sm focus:outline-none bg-gray-200 dark:bg-gray-600;
+}
 
 .mini-edit-nonrounded {
     @apply w-12 px-1 py-1 focus:outline-none;

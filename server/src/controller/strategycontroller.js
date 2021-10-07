@@ -17,7 +17,7 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id, portfolio, name, description, symbol, ismultiplesymbol, trades, createdon } = req.body;
+  const { _id, portfolio, name, description, symbol,lotsize,strikepricestep, ismultiplesymbol, trades, createdon } = req.body;
 
   if (_id) {
     var _data = {
@@ -25,6 +25,8 @@ strategycontoller.post("/save", async (req, res) => {
       name,
       description,
       symbol,
+      lotsize,
+      strikepricestep,
       ismultiplesymbol,
       portfolio,
       createdon,
