@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen border-r border-gray-300 dark:border-gray-700">
+  <div class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-700">
     <div class="flex items-center mt-5">
       <div class="w-5/6">
         <input

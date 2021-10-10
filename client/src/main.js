@@ -8,12 +8,14 @@ import './tailwind.css';
 
 
 
+
 Vue.filter('formatDate', function (value) {
-    if (value) {
-        console.log('vue filter value  :>> ', value);
-        return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true);
-        //moment(String(value)).format('MM/DD/YYYY hh:mm')
-    }
+  if (value) {
+    console.log('vue filter value  :>> ', value);
+
+    return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true);
+    //moment(String(value)).format('MM/DD/YYYY hh:mm')
+  }
 });
 
 
@@ -23,6 +25,6 @@ Vue.use(resource);
 new Vue({
   router,
   store,
- 
+
   render: h => h(App)
 }).$mount('#app');
