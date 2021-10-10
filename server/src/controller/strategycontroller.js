@@ -52,6 +52,8 @@ strategycontoller.post("/save", async (req, res) => {
       description,
       symbol,
       ismultiplesymbol,
+      lotsize,
+      strikepricestep,
       trades,
       portfolio,
       createdon: new Date(),

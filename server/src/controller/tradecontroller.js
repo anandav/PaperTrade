@@ -45,11 +45,11 @@ tradeController.post("/save", async (req, res) => {
     _trade._id = _id;
 
 
-    ///REMOVE THIS AFTER ALL LOTSIZE ARE MOVED FROM TRADE TO STRATEGY
-    await Strategy.updateOne(
-      { "trades._id": _id },
-      { $set: { "lotsize": lotsize, "strikepricestep":strikepricestep } }
-    );
+    // ///REMOVE THIS AFTER ALL LOTSIZE ARE MOVED FROM TRADE TO STRATEGY
+    // await Strategy.updateOne(
+    //   { "trades._id": _id },
+    //   { $set: { "lotsize": lotsize, "strikepricestep":strikepricestep } }
+    // );
 
 
     await Strategy.updateOne(

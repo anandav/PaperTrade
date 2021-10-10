@@ -1,8 +1,8 @@
 <template>
   <!-- <div class="rounded-xl overflow-hidden bg-gradient-to-r from-pink-50 to-pink-100 p-10"></div> -->
-  <div class="table w-full shadow-md border-collapse">
+  <div class="table w-full shadow border-collapse">
     <div class="table-row-group">
-      <div class="table-row text-xs text-white text-center ">
+      <div class="table-row text-xs text-gray-900 dark:text-white text-center ">
         <div class="table-cell px-1 py-4">
           <label><input type="checkbox" v-model="SelectAll" /> </label>
         </div>
@@ -20,7 +20,7 @@
     </div>
     <div class="table-row-group">
       <div
-        class="table-row text-right border-t border-gray-600 "
+        class="table-row text-right border-t border-gray-400 dark:border-gray-600 "
         v-for="item in PropStrategy.trades"
         :key="item._id"
         :class="{ isTradeEdit: item == editTrade }"
@@ -153,9 +153,8 @@
       </div>
     </div>
     <div class="table-row-group">
-      <div class="table-row text-right border-t-2 border-gray-500">
+      <div class="table-row text-right border-t border-gray-900">
         <div class="table-cell"></div>
-        
         <div class="table-cell"></div>
         <div class="table-cell"></div>
         <div class="table-cell"></div>

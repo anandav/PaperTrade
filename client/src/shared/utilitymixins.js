@@ -13,7 +13,7 @@ const utilitymixins = {
       },
       ChartSettings: {
         TOOLTIP: true,
-        PATTERN: true,
+        PATTERN: false,
         OFFSET: true,
         TOOLTIPLOCATION: "FOLLOW",//"BOTTOM",//"FOLLOW",//
         COLOURS: {
@@ -32,7 +32,7 @@ const utilitymixins = {
           NegativeRegionOnlyOpacity: "opacity-30",
         },
         DIMENSION: {
-          Line: 1
+          Line: 2
         },
       },
       WIDTH: 500,
@@ -64,6 +64,8 @@ const utilitymixins = {
       if (chartData && chartData.length > 0) {
         //this._generateBarChart(chartData, paretnId);
         //this._generateLineChart(chartData, paretnId);
+        console.clear();
+        console.log('chartData :>> ', chartData);
         this._generateLineChart2(chartData, paretnId);
         //this.GetMaxMinPnL(strategy, chartData);
         //this.GetBreakEven(strategy);
@@ -90,7 +92,7 @@ const utilitymixins = {
 
     GetBreakEven: function (strategy) {
       let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      let netPnlArr =[];
+      let netPnlArr = [];
       for (let i = 0, len = strategy.trades.length; i < len; i++) {
         let currentTrade = strategy.trades[i];
         let netPnL = 0, PnL = 0;
@@ -219,7 +221,7 @@ const utilitymixins = {
 
           let j = 0;
           do {
-            let PnlObj = this.getNetPnL(_strikePrice, currentTrade);
+            let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy);
             if (chartData[j]) {
               chartData[j].netPnL += PnlObj.netPnL;
               chartData[j].PnL = PnlObj.PnL;
@@ -243,7 +245,7 @@ const utilitymixins = {
         return chartData;
       }
     },
-    getNetPnL: function (_strikePrice, currentTrade) {
+    getNetPnL: function (_strikePrice, currentTrade, strategy) {
 
       let _intrinsicValue = 0, PnL = 0, netPnL = 0;
 
@@ -256,16 +258,12 @@ const utilitymixins = {
 
       if (currentTrade.tradetype == "Future") {
         PnL = currentTrade.buyorsell == "Buy" ? _strikePrice - currentTrade.price : currentTrade.price - _strikePrice;
-        netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+        netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
       } else {
         PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
         //PnL = parseFloat(PnL.toFixed());
-        netPnL = (currentTrade.quantity * currentTrade.lotsize * PnL);
+        netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
         netPnL = parseFloat(netPnL.toFixed());
-      }
-      if (_strikePrice == 16300 && currentTrade.selectedstrike == 16300) {
-        console.log('currentTrade :>> ', currentTrade);
-        console.log('{ PnL, netPnL, _strikePrice } :>> ', PnL, netPnL, _strikePrice,);
       }
       return { PnL, netPnL };
     },
@@ -375,6 +373,7 @@ const utilitymixins = {
       const areaNeg = d3.area().curve(d3.curveLinear).x(d => xScale(d.strikePrice)).y0(yScale(1)).y1(d => yScale(Math.min(0.1, d.netPnL)));
       const bisect = d3.bisector(d => d.strikePrice).left;
 
+
       const callout = (g, value, price) => {
         if (!value) return g.style("display", "none");
         g.style("display", null)
@@ -406,6 +405,7 @@ const utilitymixins = {
           x0,
         ] = mouse;
         const xInv = parseFloat(xScale.invert(x0).toFixed(2));
+        //console.log('xInv :>> ', xInv);
         if (xScale(xInv) < this.MARGIN.LEFT ||
           xScale(xInv) > this.WIDTH + this.MARGIN.RIGHT) {
           return;
@@ -426,20 +426,18 @@ const utilitymixins = {
           .classed(this.ChartSettings.COLOURS.ToolTipDot, true);
 
         const { height, width, x, y } = tooltip.node().getBBox();
+        let pnlval = val.netPnL.toFixed(2);
         if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
-
           tooltip.attr("transform", `translate(${xScale(xInv)},${this.HEIGHT - height})`)
-            .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+            .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, pnlval);
         }
         else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
-          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(val.netPnL)})`)
-            .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(pnlval)})`)
+            .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, val.netPnL);
         } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
           tooltip.attr("transform", `translate(${xScale(xInv)},${height}) rotate(-180)`)
-            .call(callout, `P&L:${val.netPnL}\nStrike:${xInv}`, val.netPnL);
+            .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, pnlval);
         }
-
-
       };
       const onMouseLeave = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden"); };
       const onMouseEnter = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible"); };
@@ -449,7 +447,42 @@ const utilitymixins = {
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
         .attr("height", this.HEIGHT);
       const line = d3.line().defined(d => !isNaN(d.netPnL)).x(d => xScale(d.strikePrice)).y(d => yScale(d.netPnL));
+      //console.clear();
 
+
+      ////////////////////////////////////////////////////////////////////////////////
+
+      var bounds = d3.extent(chartData, d => d.strikePrice);
+      console.log('bounds :>> ', bounds);
+
+      // const linecolor = function (_data) {
+      //   let result = _data.netPnL >= 0 ? "rgb(57, 163, 136)" : "rgb(224, 36, 1)";
+      //   //console.log('_data.strikePrice :>> ', _data.strikePrice, "_data.netPnL", _data.netPnL, "_data.netPnL", _data.netPnL >= 0 ? "green" : "red");
+      //   console.log("_data.strikePrice :>>", _data.strikePrice, ', result :>> ', result);
+      //   return result;
+      // }
+      // svg.append("linearGradient")
+      //   .attr("id", "lgLine")
+      //   .attr("gradientUnits", "userSpaceOnUse")
+      //   .attr("x1", 0)
+      //   .attr("x2", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+      //   .selectAll("stop")
+      //   .data(chartData)
+      //   .join("stop")
+      //   .attr("offset", d => {
+      //     let _xsclaleDiv = xScale(d.strikePrice) / (this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT);
+      //     console.log('d.strikePrice :>>  ', d.strikePrice, ", _xsclaleDiv :>>", _xsclaleDiv);
+      //     return _xsclaleDiv;
+      //   })
+      //   .attr("stop-color", d => {
+      //     let result = d.netPnL >= 0 ? "rgb(57, 163, 136)" : "rgb(224, 36, 1)";
+      //     console.log("stop d.strikePrice :>>", d.strikePrice, ', result :>> ', result);
+      //     return result;
+      //   });
+
+
+
+      //////////////////////////////////////////////////////////////////////////////
 
 
       svg
@@ -483,6 +516,7 @@ const utilitymixins = {
         .datum(chartData)
         .attr("fill", "none")
         .classed(this.ChartSettings.COLOURS.Line, true)
+        //.attr("stroke", "url(#lgLine)")
         .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
         .attr("transform", "translate(0,0)")
         .attr("stroke-linejoin", "round")

@@ -3,8 +3,19 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import resource from './shared/resource';
-
+import dayjs from 'dayjs';
 import './tailwind.css';
+
+
+
+Vue.filter('formatDate', function (value) {
+    if (value) {
+        console.log('vue filter value  :>> ', value);
+        return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true);
+        //moment(String(value)).format('MM/DD/YYYY hh:mm')
+    }
+});
+
 
 Vue.config.productionTip = false;
 Vue.use(resource);

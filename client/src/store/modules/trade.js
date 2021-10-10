@@ -57,15 +57,11 @@ const tradeModule = {
                 var _tradeDetail = {
                     symbol: _strategy.symbol,
                     sid: _strategy._id,
-                    lotsize: 1000,
                     expiry: null,
-                    strikepricemin: 0,
-                    strikepricemax: 0,
-                    strikepricestep: 0.25,
                     buyorsell: "Sell", //Buy/Sell
                     tradetype: "Call", //Call/Put/Future
                     quantity: 1,
-                    selectedstrike: 73.25,
+                    selectedstrike: 17500,
                     price: 30,
                     note: "",
                 };

@@ -56,12 +56,13 @@ const strategyModule = {
             });
         },
         AddStrategy({ commit }, _pid) {
-
             var item = {
                 name: "Strategy",
                 description: "",
                 symbol: "NIFTY",
                 portfolio: _pid,
+                lotsize: 50,
+                strikepricestep: 50,
                 isEdit: true,
             };
             axios.post(apiUrl + "strategy/save", item).then(function (res) {

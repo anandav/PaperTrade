@@ -4,8 +4,9 @@
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
     <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-600">
-      <div class="flex ">
+      <div class="flex">
         <div class="flex-1">
+          <label class="text-xs block text-gray-500"> Name </label>
           <span class="view">
             {{ PropStrategy.name }}
           </span>
@@ -17,6 +18,7 @@
           />
         </div>
         <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
+          <label class="text-xs block text-gray-500"> Symbol </label>
           <span class="view">
             {{ PropStrategy.symbol }}
           </span>
@@ -29,6 +31,7 @@
           />
         </div>
         <div class="flex-1">
+          <label class="text-xs block text-gray-500"> Lot Size </label>
           <span class="view">
             {{ PropStrategy.lotsize }}
           </span>
@@ -41,20 +44,21 @@
           />
         </div>
         <div class="flex-1">
-           <span class="view">
+          <label class="text-xs block text-gray-500"> Strike Price Step </label>
+          <span class="view">
             {{ PropStrategy.strikepricestep }}
           </span>
 
           <input
-            class="normal-edit  edit"
+            class="normal-edit edit"
             placeholder="Strike Price Step"
             v-model="PropStrategy.strikepricestep"
             @keydown.enter="onSaveStrategy()"
           />
         </div>
         <div class="flex-1">
-          Created On:
-          {{ PropStrategy.CreatedOn }}
+          <label class="text-xs block text-gray-500"> Created On </label>
+          {{ PropStrategy.createdon | formatDate }}
         </div>
         <div class="flex-1">
           <div class="float-right">
@@ -75,7 +79,7 @@
       </div>
     </div>
 
-    <div class="p-3 ">
+    <div class="p-3">
       <div class="grid grid-cols-2">
         <div class="col-span-1">
           <TradeList
@@ -84,7 +88,7 @@
           />
         </div>
         <div class="col-span-1">
-          <div class="chartplaceholder ">
+          <div class="chartplaceholder">
             <div class="chart">
               <!-- CHART COMES HERE -->
             </div>
@@ -94,14 +98,14 @@
                 v-model="PropStrategy.x0"
                 placeholder="min"
                 min="0"
-                class="chart-mini-edit "
+                class="chart-mini-edit"
               />
               <input
                 type="number"
                 v-model="PropStrategy.x1"
                 placeholder="max"
                 min="0"
-                class="chart-mini-edit  float-right "
+                class="chart-mini-edit float-right"
               />
             </div>
           </div>
@@ -111,7 +115,10 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        <a class="btn inline-block text-red-700 dark:text-red-700" @click="onDeleteStrategy()">
+        <a
+          class="btn inline-block text-red-700 dark:text-red-700"
+          @click="onDeleteStrategy()"
+        >
           <i class="material-icons">delete</i>
         </a>
         <a class="btn inline-block" @click="onDuplicateStrategy()">
@@ -208,9 +215,9 @@ export default {
       // } else {
       //   this.BindAddEditTrade(this.PropStrategy);
       // }
-      
-      this.BindAddEditTrade(this.PropStrategy).then(()=>{
-        console.log('object :>> ');
+
+      this.BindAddEditTrade(this.PropStrategy).then(() => {
+        console.log("object :>> ");
       });
     },
     onShowChart() {
