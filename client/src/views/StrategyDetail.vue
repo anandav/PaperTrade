@@ -70,7 +70,7 @@
           <label class="text-xs block text-gray-500"> Created On </label>
           {{ PropStrategy.createdon | formatDate }}
         </div>
-       
+
         <div class="flex-1">
           <div class="float-right">
             <a
@@ -78,12 +78,16 @@
               @click="onEditStrategy(PropStrategy)"
             >
               <i class="material-icons">edit</i>
-              {{ txtEditStrategy }}
+              <!-- {{ txtEditStrategy }} -->
             </a>
 
             <a class="btn inline-block edit" @click="onSaveStrategy()">
               <i class="material-icons">save</i>
-              {{ txtSaveStrategy }}
+              <!-- {{ txtSaveStrategy }} -->
+            </a>
+            <a class="btn ml-3 inline-block" @click="onDuplicateStrategy()">
+              <i class="material-icons">content_copy</i>
+              <!-- {{ txtDuplicateStrategy }} -->
             </a>
             <a
               class="btn ml-3 inline-block text-red-700 dark:text-red-700"
@@ -132,10 +136,11 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        <a class="btn inline-block" @click="onDuplicateStrategy()">
-          <i class="material-icons">content_copy</i>
-          {{ txtDuplicateStrategy }}
+        <a class="btn inline-block" @click="onBindAddEditTrade()">
+          <i class="material-icons">add</i>
+          <!-- {{ txtAddTrade }} -->
         </a>
+
         <select class="btn" @change="onMoveStrategy($event)">
           <option value="Select">Move To Other Portfolio</option>
           <option
@@ -156,11 +161,6 @@
           >
             <i class="material-icons">show_chart</i>
             {{ txtShowStratergyDiagram }}
-          </a>
-
-          <a class="btn inline-block" @click="onBindAddEditTrade()">
-            <i class="material-icons">add</i>
-            {{ txtAddTrade }}
           </a>
         </div>
       </div>

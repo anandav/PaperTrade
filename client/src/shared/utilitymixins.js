@@ -1,7 +1,5 @@
 import * as d3 from "d3";
 
-
-
 const utilitymixins = {
   data: function () {
     return {
@@ -24,7 +22,7 @@ const utilitymixins = {
           //NegativeToolTipText: "stroke-current text-white",
           ToolTipDot: "fill-current text-green-700  opacity-30",
           ToolTipDotInner: "fill-current text-green-700",
-          ToolTipLine: "stroke-current text-gray-500 dark:text-gray-500 opacity-30",
+          ToolTipLine: "stroke-current text-gray-500 dark:text-gray-500 opacity-50",
           PositiveRegion: "fill-current text-green-700 opacity-20 ",
           NegativeRegion: "fill-current text-red-700 opacity-20",
           Positive: "#3DB2FF",
@@ -90,26 +88,22 @@ const utilitymixins = {
     },
 
     GetBreakEven: function (strategy) {
-
+      //let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
+      let netPnlArr = [];
       for (let i = 0, len = strategy.trades.length; i < len; i++) {
+        let currentTrade = strategy.trades[i];
+        let netPnL = 0, PnL = 0;
+        for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
+          let currentTrade2 = strategy.trades[j];
+          let obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
+          netPnlArr[i] += obj.netPnL;
+          //PnL += obj.PnL;
+        }
+        if (i > 0) {
 
+        }
+        console.log('PnL, netPnL :>> ', PnL, netPnL);
       }
-      // let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      // let netPnlArr = [];
-      // for (let i = 0, len = strategy.trades.length; i < len; i++) {
-      //   let currentTrade = strategy.trades[i];
-      //   let netPnL = 0, PnL = 0;
-      //   for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
-      //     let currentTrade2 = strategy.trades[j];
-      //     let obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
-      //     netPnlArr[i] += obj.netPnL;
-      //     //PnL += obj.PnL;
-      //   }
-      //   if (i > 0) {
-
-      //   }
-      //   console.log('PnL, netPnL :>> ', PnL, netPnL);
-      // }
     },
 
     GetMaxMinPnL: function (strategy, chartData) {
@@ -509,9 +503,10 @@ const utilitymixins = {
         //console.log("_data.strikePrice :>>", _data.strikePrice, ', result :>> ', result);
         return result;
       }
-      const lgGradientID = `lg_${strategy._id}`;
+      const lgdefID = `lg_${strategy._id}`;
+      const lgurlid = `url(#${lgdefID})`;
       svg.append("linearGradient")
-        .attr("id", lgGradientID)
+        .attr("id", lgdefID)
         .attr("gradientUnits", "userSpaceOnUse")
         .attr("x1", 0)
         .attr("x2", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
@@ -555,15 +550,11 @@ const utilitymixins = {
         .attr("transform", `translate(0, ${yScale(0)})`)
         .call(xAxisCall.tickSize(0).tickFormat(""));
 
-      const lgLineid = `url(#${lgGradientID})`;
-      console.log('lgLineid :>> ', lgLineid);
       svg
         .append("path")
         .datum(chartData)
         .attr("fill", "none")
-        //.classed(this.ChartSettings.COLOURS.Line, true)
-        //.attr("stroke", "url(#lgLine)")
-        .attr("stroke", lgLineid)
+        .attr("stroke", lgurlid)
         .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
         .attr("transform", "translate(0,0)")
         .attr("stroke-linejoin", "round")

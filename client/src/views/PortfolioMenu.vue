@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-700">
-    <div class="flex items-center mt-5">
+  <div class="min-h-screen mt-16 border-r sm:flex border-gray-300 dark:border-gray-700">
+    <div class="flex items-center mt-5 sm:hidden">
       <div class="w-5/6">
         <input
           class="
