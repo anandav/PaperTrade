@@ -1,3 +1,4 @@
+const { ObjectId } = require("bson");
 const mongoose = require("mongoose");
 const schema = mongoose.Schema,
   model = mongoose.model.bind(mongoose);
@@ -15,8 +16,8 @@ const tradeSchema = schema({
   symbol: {
     type: String
   },
-  lotsize :{
-    type : Number
+  lotsize: {
+    type: Number
   },
   expiry: {
     type: Date
@@ -36,20 +37,30 @@ const tradeSchema = schema({
   price: {
     type: Number,
   },
-  note : {
+  isexit: {
+    type: Boolean,
+    default: false,
+  },
+  partnerid: {
+    type: ObjectId,
+    default: null
+
+  },
+  note: {
     type: String
   },
 
+
   strikepricemin: {
-    type : Number,
+    type: Number,
     default: 0
   },
-  strikepricemax:{
-    type : Number,
+  strikepricemax: {
+    type: Number,
     default: 0
   },
-  strikepricestep:{
-    type : Number,
+  strikepricestep: {
+    type: Number,
     default: 0
   },
 

@@ -47,7 +47,7 @@
           class="mt-1 p-2 leading-10 rounded-sm cursor-pointer  "
           @click="onMenuSelectedPortfolio(item)"
           :class="{
-            'border-l-2  border-red-300': Portfolio && item._id == Portfolio._id,
+            'border-l-2  border-yellow-500': Portfolio && item._id == Portfolio._id,
           }"
         >
           <div class="inline-block">

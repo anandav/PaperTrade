@@ -13,17 +13,18 @@ const utilitymixins = {
       },
       ChartSettings: {
         TOOLTIP: true,
-        PATTERN: false,
+        PATTERN: true,
         OFFSET: true,
-        TOOLTIPLOCATION: "FOLLOW",//"BOTTOM",//"FOLLOW",//
+        TOOLTIPLOCATION: "FOLLOW",//"BOTTOM",//"FOLLOW",//"TOP"
         COLOURS: {
           Line: "stroke-current text-yellow-500 ",
           PositiveToolTip: "fill-current text-green-700 opacity-80",
           //PositiveToolTipText: "stroke-current text-black",
           NegativeToolTip: "fill-current text-red-700  opacity-80",
           //NegativeToolTipText: "stroke-current text-white",
-          ToolTipDot: "fill-current text-red-700  opacity-30",
-          ToolTipLine: "stroke-current text-gray-5  00 dark:text-yellow-400 opacity-30",
+          ToolTipDot: "fill-current text-green-700  opacity-30",
+          ToolTipDotInner: "fill-current text-green-700",
+          ToolTipLine: "stroke-current text-gray-500 dark:text-gray-500 opacity-30",
           PositiveRegion: "fill-current text-green-700 opacity-20 ",
           NegativeRegion: "fill-current text-red-700 opacity-20",
           Positive: "#3DB2FF",
@@ -66,47 +67,49 @@ const utilitymixins = {
         //this._generateLineChart(chartData, paretnId);
         console.clear();
         console.log('chartData :>> ', chartData);
-        this._generateLineChart2(chartData, paretnId);
+        this.GenerateLineChart(chartData, paretnId, strategy);
         //this.GetMaxMinPnL(strategy, chartData);
         //this.GetBreakEven(strategy);
         //console.log('chartData :>> ', chartData);
       }
       else {
-
         let placeholder = [{
           "strikePrice": 1,
           "symbol": "Nifty",
           "name": "Strategy - 1",
           //"intrinsicValue": 0,
-          "PnL": 1,
-          "netPnL": 1,
-          "qty": 1,
-          "lot": 1,
-          "price": 1
+          "PnL": 0,
+          "netPnL": 0,
+          "qty": 0,
+          "lot": 0,
+          "price": 0
         }];
-        this._generateLineChart2(placeholder, paretnId);
-
+        this.GenerateLineChart(placeholder, paretnId, strategy);
       }
 
     },
 
     GetBreakEven: function (strategy) {
-      let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      let netPnlArr = [];
-      for (let i = 0, len = strategy.trades.length; i < len; i++) {
-        let currentTrade = strategy.trades[i];
-        let netPnL = 0, PnL = 0;
-        for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
-          let currentTrade2 = strategy.trades[j];
-          let obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
-          netPnlArr[i] += obj.netPnL;
-          //PnL += obj.PnL;
-        }
-        if (i > 0) {
 
-        }
-        console.log('PnL, netPnL :>> ', PnL, netPnL);
+      for (let i = 0, len = strategy.trades.length; i < len; i++) {
+
       }
+      // let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
+      // let netPnlArr = [];
+      // for (let i = 0, len = strategy.trades.length; i < len; i++) {
+      //   let currentTrade = strategy.trades[i];
+      //   let netPnL = 0, PnL = 0;
+      //   for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
+      //     let currentTrade2 = strategy.trades[j];
+      //     let obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
+      //     netPnlArr[i] += obj.netPnL;
+      //     //PnL += obj.PnL;
+      //   }
+      //   if (i > 0) {
+
+      //   }
+      //   console.log('PnL, netPnL :>> ', PnL, netPnL);
+      // }
     },
 
     GetMaxMinPnL: function (strategy, chartData) {
@@ -146,7 +149,6 @@ const utilitymixins = {
       let incrementby = this.getdigits(((_min + _max) / 2), 'increment')
       return { x0: strikepricemin, x1: strikepricemax, xstep: incrementby };
     },
-
 
     getdigits: function (value, ismin) {
       let _valdiglen = this.ChartSettings.OFFSET ? Math.ceil(Math.log10(value + 1)) : 0;
@@ -201,7 +203,6 @@ const utilitymixins = {
       return strikePrices;
     },
 
-
     GenerateChartPoint: function (strategy) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         let range = { x0: parseFloat(strategy.x0), x1: parseFloat(strategy.x1) }
@@ -245,6 +246,7 @@ const utilitymixins = {
         return chartData;
       }
     },
+
     getNetPnL: function (_strikePrice, currentTrade, strategy) {
 
       let _intrinsicValue = 0, PnL = 0, netPnL = 0;
@@ -268,9 +270,9 @@ const utilitymixins = {
       return { PnL, netPnL };
     },
 
-
     // POC: BarChart
     _generateBarChart: function (chartData, paretnId) {
+      console.log('chartData :>> ', chartData);
       console.log('chartData :>> ', chartData);
       let _numbers = chartData.map(c => c.netPnL);
       let _max = Math.max(..._numbers) + 2000;
@@ -284,8 +286,8 @@ const utilitymixins = {
 
       const rect = g.selectAll("rect").data(chartData);
       const x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH]);//.paddingInner(0).paddingOuter(0.5);
-      //const y = d3.scaleLinear().domain([_min, _max]).range([0, this.HEIGHT]);/// Changing min & max to start chart from bottom
-      const y = d3.scaleLinear().domain([_max, _min]).range([0, this.HEIGHT]);
+      const y = d3.scaleLinear().domain([_min, _max]).range([0, this.HEIGHT]);/// Changing min & max to start chart from bottom
+      //const y = d3.scaleLinear().domain([_max, _min]).range([0, this.HEIGHT]);
 
       const xAxisCall = d3.axisBottom(x);
       const yAxisCall = d3.axisLeft(y);
@@ -308,7 +310,7 @@ const utilitymixins = {
 
     // POC: Line Chart
     ///Ref: https://observablehq.com/@d3/line-chart
-    _generateLineChart: function (chartData, paretnId) {
+    _generateLineChart1: function (chartData, paretnId) {
       const line = d3.line()
         .defined(d => !isNaN(d.netPnL))
         .x(d => x(d.strikePrice))
@@ -357,10 +359,9 @@ const utilitymixins = {
     ///reg: http://jsfiddle.net/samselikoff/Jqmzd/2/
     ///ref: https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     // ref: https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
-    _generateLineChart2: function (chartData, paretnId) {
+    GenerateLineChart: function (chartData, paretnId, strategy) {
       if (!chartData || !paretnId)
         return;
-
       const minPnL = d3.min(chartData, d => d.netPnL);
       const maxPnL = d3.max(chartData, d => d.netPnL);
       const minSP = d3.min(chartData, d => d.strikePrice);
@@ -372,23 +373,46 @@ const utilitymixins = {
       const areaPos = d3.area().curve(d3.curveLinear).x(d => xScale(d.strikePrice)).y0(yScale(1)).y1(d => yScale(Math.max(0.1, d.netPnL)));
       const areaNeg = d3.area().curve(d3.curveLinear).x(d => xScale(d.strikePrice)).y0(yScale(1)).y1(d => yScale(Math.min(0.1, d.netPnL)));
       const bisect = d3.bisector(d => d.strikePrice).left;
-
-
-      const callout = (g, value, price) => {
-        if (!value) return g.style("display", "none");
-        g.style("display", null)
-          .style("pointer-events", "none")
-          .style("font", "10px sans-serif");
+      const callout = (g, val, xInv) => {
+        if (!val) return g.style("display", "none");
+        const { height } = g.node().getBBox();
+        let pnlval = val.netPnL.toFixed(2);
+        let tooltipText = "";
+        let transYScale = 0;
         const path = g.selectAll("path")
           .data([null])
           .join("path")
-          .attr("class", price > 0 ? this.ChartSettings.COLOURS.PositiveToolTip : this.ChartSettings.COLOURS.NegativeToolTip);
+          .attr("class", val.netPnL > 0 ? this.ChartSettings.COLOURS.PositiveToolTip : this.ChartSettings.COLOURS.NegativeToolTip);
+
+        if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
+          tooltip.attr("transform", `translate(${xScale(xInv)},${this.HEIGHT - height})`);
+          tooltipText = `P&L:${pnlval}\nStrike:${xInv}`;
+        } else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
+          transYScale = yScale(pnlval);
+          let _transYScale = transYScale;
+          if (pnlval < 0) {
+            transYScale -= 50;
+            _transYScale = transYScale;
+            _transYScale = _transYScale < 0 ? _transYScale + 55 : _transYScale;
+          } else {
+            _transYScale = transYScale >= this.HEIGHT - this.MARGIN.BOTTOM ? transYScale - 55 : transYScale;
+          }
+          tooltip.attr("transform", `translate(${xScale(xInv)},${_transYScale})`);
+          tooltipText = `P&L:${pnlval}\nStrike:${xInv}`;
+        } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
+          tooltip.attr("transform", `translate(${xScale(xInv)},${-height + 35})`);
+          tooltipText = `P&L:${pnlval}\nStrike:${xInv}`;
+        }
+
+        g.style("display", null)
+          .style("pointer-events", "none")
+          .style("font", "10px sans-serif");
         const text = g.selectAll("text")
           .data([null])
           .join("text")
           .call(text => text
             .selectAll("tspan")
-            .data((value + "").split(/\n/))
+            .data((tooltipText + "").split(/\n/))
             .join("tspan")
             .attr("x", 0)
             .attr("y", (d, i) => `${i * 1.1}em`)
@@ -397,7 +421,23 @@ const utilitymixins = {
             .text(d => d));
         const { y, width: w, height: h } = text.node().getBBox();
         text.attr("transform", `translate(${-w / 2},${15 - y})`);
-        path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+        const upArrow = `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`;
+        const downArrow = `M ${w / 2 + 10},42 H 5 L 0,47 -5,42 H ${-w / 2 - 10} v ${h - 60} h ${w + 20}z`;
+        if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
+          path.attr("d", upArrow);
+        } else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
+          if (transYScale < 0) {
+            path.attr("d", upArrow);
+          } else {
+            if (transYScale >= this.HEIGHT - this.MARGIN.BOTTOM) {
+              path.attr("d", downArrow);
+            } else {
+              path.attr("d", val.netPnL >= 0 ? upArrow : downArrow);
+            }
+          }
+        } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
+          path.attr("d", downArrow);
+        }
       };
       const onMouseMove = (e) => {
         const mouse = d3.pointer(e)
@@ -405,7 +445,6 @@ const utilitymixins = {
           x0,
         ] = mouse;
         const xInv = parseFloat(xScale.invert(x0).toFixed(2));
-        //console.log('xInv :>> ', xInv);
         if (xScale(xInv) < this.MARGIN.LEFT ||
           xScale(xInv) > this.WIDTH + this.MARGIN.RIGHT) {
           return;
@@ -419,71 +458,77 @@ const utilitymixins = {
           .attr('y1', this.MARGIN.TOP)
           .attr('x2', xScale(xInv))
           .attr('y2', this.HEIGHT - this.MARGIN.BOTTOM)
-          .classed(this.ChartSettings.COLOURS.ToolTipLine, true);
+          .classed(this.ChartSettings.COLOURS.ToolTipLine, true)
+          .attr("stroke-dasharray", "10,2");
+
+
         tooltipdot.attr('cx', xScale(xInv))
           .attr('cy', yScale(val.netPnL))
           .attr('r', '7')
           .classed(this.ChartSettings.COLOURS.ToolTipDot, true);
 
-        const { height, width, x, y } = tooltip.node().getBBox();
-        let pnlval = val.netPnL.toFixed(2);
-        if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
-          tooltip.attr("transform", `translate(${xScale(xInv)},${this.HEIGHT - height})`)
-            .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, pnlval);
-        }
-        else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
-          tooltip.attr("transform", `translate(${xScale(xInv)},${yScale(pnlval)})`)
-            .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, val.netPnL);
-        } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
-          tooltip.attr("transform", `translate(${xScale(xInv)},${height}) rotate(-180)`)
-            .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, pnlval);
-        }
+        tooltipdotinner.attr('cx', xScale(xInv))
+          .attr('cy', yScale(val.netPnL))
+          .attr('r', '4')
+          .classed(this.ChartSettings.COLOURS.ToolTipDotInner, true);
+
+        tooltip.call(callout, val, xInv);
+        // const { height, width, x, y } = tooltip.node().getBBox();
+        // let pnlval = val.netPnL.toFixed(2);
+        // if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
+        //   tooltip.attr("transform", `translate(${xScale(xInv)},${this.HEIGHT - height})`)
+        //     .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, pnlval);
+        // }
+        // else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
+        //   let _transYScale = yScale(pnlval);
+        //   if (val.netPnL < 0) {
+        //     _transYScale -= 50;
+        //     console.log('_transYScale :>> ', _transYScale);
+        //   }
+        //   tooltip.attr("transform", `translate(${xScale(xInv)},${_transYScale})`)
+        //     .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, val.netPnL);
+        // } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
+        //   tooltip.attr("transform", `translate(${xScale(xInv)},${height}) rotate(-180)`)
+        //     .call(callout, `P&L:${pnlval}\nStrike:${xInv}`, pnlval);
+        // }
       };
       const onMouseLeave = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "hidden"); };
       const onMouseEnter = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible"); };
-
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
         .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
         .attr("height", this.HEIGHT);
       const line = d3.line().defined(d => !isNaN(d.netPnL)).x(d => xScale(d.strikePrice)).y(d => yScale(d.netPnL));
-      //console.clear();
-
-
-      ////////////////////////////////////////////////////////////////////////////////
-
-      var bounds = d3.extent(chartData, d => d.strikePrice);
-      console.log('bounds :>> ', bounds);
-
-      // const linecolor = function (_data) {
-      //   let result = _data.netPnL >= 0 ? "rgb(57, 163, 136)" : "rgb(224, 36, 1)";
-      //   //console.log('_data.strikePrice :>> ', _data.strikePrice, "_data.netPnL", _data.netPnL, "_data.netPnL", _data.netPnL >= 0 ? "green" : "red");
-      //   console.log("_data.strikePrice :>>", _data.strikePrice, ', result :>> ', result);
-      //   return result;
-      // }
-      // svg.append("linearGradient")
-      //   .attr("id", "lgLine")
-      //   .attr("gradientUnits", "userSpaceOnUse")
-      //   .attr("x1", 0)
-      //   .attr("x2", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
-      //   .selectAll("stop")
-      //   .data(chartData)
-      //   .join("stop")
-      //   .attr("offset", d => {
-      //     let _xsclaleDiv = xScale(d.strikePrice) / (this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT);
-      //     console.log('d.strikePrice :>>  ', d.strikePrice, ", _xsclaleDiv :>>", _xsclaleDiv);
-      //     return _xsclaleDiv;
-      //   })
-      //   .attr("stop-color", d => {
-      //     let result = d.netPnL >= 0 ? "rgb(57, 163, 136)" : "rgb(224, 36, 1)";
-      //     console.log("stop d.strikePrice :>>", d.strikePrice, ', result :>> ', result);
-      //     return result;
-      //   });
-
-
 
       //////////////////////////////////////////////////////////////////////////////
-
+      const bounds = d3.extent(chartData, d => d.strikePrice);
+      //console.log('bounds :>> ', bounds);
+      const linecolor = function (_data) {
+        let result = _data.netPnL >= 0 ? "rgb(57, 163, 136)" : "rgb(224, 36, 1)";
+        //console.log('_data.strikePrice :>> ', _data.strikePrice, "_data.netPnL", _data.netPnL, "_data.netPnL", _data.netPnL >= 0 ? "green" : "red");
+        //console.log("_data.strikePrice :>>", _data.strikePrice, ', result :>> ', result);
+        return result;
+      }
+      const lgGradientID = `lg_${strategy._id}`;
+      svg.append("linearGradient")
+        .attr("id", lgGradientID)
+        .attr("gradientUnits", "userSpaceOnUse")
+        .attr("x1", 0)
+        .attr("x2", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+        .selectAll("stop")
+        .data(chartData)
+        .join("stop")
+        .attr("offset", d => {
+          let _xsclaleDiv = xScale(d.strikePrice) / (this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT);
+          //console.log('d.strikePrice :>>  ', d.strikePrice, ", _xsclaleDiv :>>", _xsclaleDiv);
+          return _xsclaleDiv;
+        })
+        .attr("stop-color", d => {
+          let result = d.netPnL >= 0 ? "rgb(57, 163, 136)" : "rgb(224, 36, 1)";
+          //console.log("stop d.strikePrice :>>", d.strikePrice, ', result :>> ', result);
+          return result;
+        });
+      //////////////////////////////////////////////////////////////////////////////
 
       svg
         .append("g")
@@ -504,19 +549,21 @@ const utilitymixins = {
         .selectAll("text")
         .attr("dx", "-5");
 
-
       svg.append("g")
         .attr("class", "x axis zero")
         .attr("stroke", "#fff")
         .attr("transform", `translate(0, ${yScale(0)})`)
         .call(xAxisCall.tickSize(0).tickFormat(""));
 
+      const lgLineid = `url(#${lgGradientID})`;
+      console.log('lgLineid :>> ', lgLineid);
       svg
         .append("path")
         .datum(chartData)
         .attr("fill", "none")
-        .classed(this.ChartSettings.COLOURS.Line, true)
+        //.classed(this.ChartSettings.COLOURS.Line, true)
         //.attr("stroke", "url(#lgLine)")
+        .attr("stroke", lgLineid)
         .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
         .attr("transform", "translate(0,0)")
         .attr("stroke-linejoin", "round")
@@ -577,6 +624,7 @@ const utilitymixins = {
 
       const tooltipline = svg.append('line').classed('hoverline', true)
       const tooltipdot = svg.append('circle').classed('hoverdot', true);
+      const tooltipdotinner = svg.append('circle').classed('hoverdot', true);
       const tooltip = svg.append("g").classed("hovertooltip", true);
 
       if (this.ChartSettings.TOOLTIP) {

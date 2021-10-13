@@ -4,7 +4,7 @@
   "description": "Do papertrade with out losing your capital. Inspired by Sensibull and Tradingview paper trades.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "echo \"use `npm run dev` from both client and server folder \" && exit 1"
   },
   "repository": {
     "type": "git",

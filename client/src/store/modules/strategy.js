@@ -83,7 +83,6 @@ const strategyModule = {
                 if (res.status == 200) {
                     commit(DELETESTRATEGY, item._id);
                 }
-
             })
         },
         MoveStrategy({ commit }, { Strategy, PortfolioID }) {

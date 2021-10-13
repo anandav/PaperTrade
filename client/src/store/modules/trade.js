@@ -66,7 +66,7 @@ const tradeModule = {
                     note: "",
                 };
 
-                axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
+               return axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                     if (res.status == 200) {
                         var strategies = rootGetters["strategyModule/Strategies"];
                         var _strategy = res.data;
@@ -74,6 +74,7 @@ const tradeModule = {
                             t.checked = true;
                         });
                         commit(ADDEDITTRADE, { strategies, _strategy });
+                        return _strategy;
                     }
                 });
             } else {

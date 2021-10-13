@@ -1,6 +1,16 @@
 <template>
   <div
-    class="mx-3 my-3 rounded drop-shadow-md bg-gray-200 dark:bg-gray-700"
+    class="
+      mx-3
+      my-3
+      rounded
+      border
+      drop-shadow-md
+      bg-gray-200
+      dark:bg-gray-700
+      border-gray-300
+      dark:border-gray-700
+    "
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
     <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-600">
@@ -60,6 +70,7 @@
           <label class="text-xs block text-gray-500"> Created On </label>
           {{ PropStrategy.createdon | formatDate }}
         </div>
+       
         <div class="flex-1">
           <div class="float-right">
             <a
@@ -73,6 +84,12 @@
             <a class="btn inline-block edit" @click="onSaveStrategy()">
               <i class="material-icons">save</i>
               {{ txtSaveStrategy }}
+            </a>
+            <a
+              class="btn ml-3 inline-block text-red-700 dark:text-red-700"
+              @click="onDeleteStrategy()"
+            >
+              <i class="material-icons">delete</i>
             </a>
           </div>
         </div>
@@ -92,13 +109,13 @@
             <div class="chart">
               <!-- CHART COMES HERE -->
             </div>
-            <div class="col-span-1">
+            <div class="col-span-1 mt-3">
               <input
                 type="number"
                 v-model="PropStrategy.x0"
                 placeholder="min"
                 min="0"
-                class="chart-mini-edit"
+                class="chart-mini-edit ml-5"
               />
               <input
                 type="number"
@@ -115,12 +132,6 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        <a
-          class="btn inline-block text-red-700 dark:text-red-700"
-          @click="onDeleteStrategy()"
-        >
-          <i class="material-icons">delete</i>
-        </a>
         <a class="btn inline-block" @click="onDuplicateStrategy()">
           <i class="material-icons">content_copy</i>
           {{ txtDuplicateStrategy }}
@@ -216,8 +227,8 @@ export default {
       //   this.BindAddEditTrade(this.PropStrategy);
       // }
 
-      this.BindAddEditTrade(this.PropStrategy).then(() => {
-        console.log("object :>> ");
+      this.BindAddEditTrade(this.PropStrategy).then((x) => {
+        console.log("x :>> ", x);
       });
     },
     onShowChart() {
