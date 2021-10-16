@@ -6,7 +6,7 @@ const Resource = {
 	saveStrategy: "Save Strategy",
 	duplicateStrategy : "Duplicate Strategy",
 	addTrade : "New Trade",
-	showStrategyDiagram : "Strategy Graph",
+	showStrategyDiagram : "Update Graph",
 };
 
 Resource.install = function (Vue) {
