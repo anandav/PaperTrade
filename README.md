@@ -1,5 +1,5 @@
 # PaperTrade
-Do papertrade without losing your capital. Inspired by Sensibull papertade, Tradingview papertrade and tastyworks.
+Do papertrade without losing your capital. Designed for derevative market. Inspired by Sensibull papertade, Tradingview papertrade and tastyworks.
 
 ![PaperTrade CI](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
 <!-- 
@@ -19,7 +19,7 @@ Webapi uses Mongodb Atlas, change the connectionstring in .env file to point to 
 
 > :warning: Authentication and Authorization in not implemeted, will implement SSO(SAML/OAuth) support in future.
 
-> :warning: Delete functionality won't ask for conformation.
+> :warning: Delete functionality won't ask for conformation, use 'double click' to delete.
 
  
 

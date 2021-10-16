@@ -1,62 +1,88 @@
-const https = require("https");
+
 const express = require("express");
 const dataapicontroller = express.Router();
 require("dotenv/config");
 
 
 dataapicontroller.get("/", async (req, res) => {
-  var data = 'symbol=NIFTY';
-  console.log('data :>> ', data);
-  var options = {
-    host: 'www.nseindia.com',
-    port: 80,
-    path: '/api/option-chain-indices?symbol=BANKNIFTY',
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': Buffer.byteLength(data),
-      'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0'
-    },
-    body: JSON.stringify({
-      symbol: "NIFTY"
-    })
-  };
-  https.globalAgent.options.secureProtocol = 'TLSv1.2'
-  //https.globalAgent.options.secureProtocol = 'SSLv3_method'
-  var httpreq = https.request(options, function (response) {
-    console.log('response :>> ', response);
-    response.setEncoding('utf8');
-    response.on('data', function (chunk) {
-      console.log("body: " + chunk);
-    });
-    response.on('end', function () {
-      res.send('ok');
-    })
-  });
-  httpreq.on('error', function (e) {
-    console.log('error :>> ', e);
-  });
-  httpreq.write(data);
-  httpreq.end();
+  
 
-  // var request = http.request({
-  //   host: "இங்கே API கால் பண்ணவும்",
+
+
+
+
+
+  // var ocroot = "http://www.nseindia.com/";
+  // var optionsoc = {
+  //   host: 'http://www.nseindia.com',
+  //   port: 80,
+  //   path: 'option-chain',
   //   method: 'GET',
   //   headers: {
-
+  //     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
+  //   'accept-language': 'en,gu;q=0.9,hi;q=0.8',
+  //   'accept-encoding': 'gzip, deflate, br'
   //   }
 
-  // }, function (response) {
-  //   var data = '';
+
+  // };
+
+
+
+  //var data = 'symbol=NIFTY';
+
+
+  // console.log('data :>> ', data);
+  // var options = {
+  //   host: 'www.nseindia.com',
+  //   port: 80,
+  //   path: '/api/option-chain-indices?symbol=BANKNIFTY',
+  //   method: 'GET',
+  //   headers: {
+  //     'Content-Type': 'application/x-www-form-urlencoded',
+  //     'Content-Length': Buffer.byteLength(data),
+  //     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0'
+  //   },
+  //   body: JSON.stringify({
+  //     symbol: "NIFTY"
+  //   })
+  // };
+  // https.globalAgent.options.secureProtocol = 'TLSv1.2'
+  // //https.globalAgent.options.secureProtocol = 'SSLv3_method'
+  // var httpreq = https.request(options, function (response) {
+  //   console.log('response :>> ', response);
   //   response.setEncoding('utf8');
-  //   response.on('data', (chunk) => {
-  //     data += chunk;
+  //   response.on('data', function (chunk) {
+  //     console.log("body: " + chunk);
   //   });
-  //   response.on('end', () => {
-  //     res.end('check result: ' + data);
-  //   });
+  //   response.on('end', function () {
+  //     res.send('ok');
+  //   })
   // });
-  // request.end();
+  // httpreq.on('error', function (e) {
+  //   console.log('error :>> ', e);
+  // });
+  // httpreq.write(data);
+  // httpreq.end();
+
+  // // var request = http.request({
+  // //   host: "இங்கே API கால் பண்ணவும்",
+  // //   method: 'GET',
+  // //   headers: {
+
+  // //   }
+
+  // // }, function (response) {
+  // //   var data = '';
+  // //   response.setEncoding('utf8');
+  // //   response.on('data', (chunk) => {
+  // //     data += chunk;
+  // //   });
+  // //   response.on('end', () => {
+  // //     res.end('check result: ' + data);
+  // //   });
+  // // });
+  // // request.end();
 });
 
 

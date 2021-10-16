@@ -163,7 +163,7 @@
 
             <a
               class="btn inline-block text-red-600 dark:text-red-700"
-              @click="onDeleteTrade(PropStrategy._id, item._id)"
+              @dblclick="onDeleteTrade(PropStrategy._id, item._id)"
             >
               <i class="material-icons">delete</i>
             </a>

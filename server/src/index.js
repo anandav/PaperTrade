@@ -27,7 +27,7 @@ app.use("/", (req, res, next) => {
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
-app.use("/dataapi", dataapiController);
+app.use("/data/:exchange", dataapiController);
 app.use("/", express.static('public'));
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,

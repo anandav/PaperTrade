@@ -91,7 +91,7 @@
             </a>
             <a
               class="btn ml-3 inline-block text-red-700 dark:text-red-700"
-              @click="onDeleteStrategy()"
+              @dblclick="onDeleteStrategy()"
             >
               <i class="material-icons">delete</i>
             </a>
