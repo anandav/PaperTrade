@@ -6,7 +6,7 @@ const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
-const dataapiController = require("./controller/dataapiController");
+const dataProvider = require("./dataprovidercontroller/index");
 const port = process.env.PORT || 9090;
 
 
@@ -27,7 +27,8 @@ app.use("/", (req, res, next) => {
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
-app.use("/data/:exchange", dataapiController);
+app.use("/data", dataProvider);
+
 app.use("/", express.static('public'));
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,

@@ -64,11 +64,11 @@ const utilitymixins = {
       let chartData = this.GenerateChartPoint(strategy);
       let paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
       d3.selectAll(paretnId + " > *").remove();
-      if (chartData && chartData.length > 0) {
+      if (chartData?.length > 0) {
         //this._generateBarChart(chartData, paretnId);
         //this._generateLineChart(chartData, paretnId);
-        console.clear();
-        console.log('chartData :>> ', chartData);
+        // console.clear();
+        // console.log('chartData :>> ', chartData);
         this.GenerateLineChart(chartData, paretnId, strategy);
         //this.GetMaxMinPnL(strategy, chartData);
         //this.GetBreakEven(strategy);
@@ -195,6 +195,29 @@ const utilitymixins = {
       return strikePrices;
     },
 
+    getNetPnL: function (_strikePrice, currentTrade, strategy) {
+
+      let _intrinsicValue = 0, PnL = 0, netPnL = 0;
+
+      if (currentTrade.tradetype == "Call") {
+        _intrinsicValue = _strikePrice - currentTrade.selectedstrike > 0 ? _strikePrice - currentTrade.selectedstrike : 0;
+      }
+      else if (currentTrade.tradetype == "Put") {
+        _intrinsicValue = currentTrade.selectedstrike - _strikePrice > 0 ? currentTrade.selectedstrike - _strikePrice : 0;
+      }
+
+      if (currentTrade.tradetype == "Future") {
+        PnL = currentTrade.buyorsell == "Buy" ? _strikePrice - currentTrade.price : currentTrade.price - _strikePrice;
+        netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
+      } else {
+        PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
+        //PnL = parseFloat(PnL.toFixed());
+        netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
+        netPnL = parseFloat(netPnL.toFixed());
+      }
+      return { PnL, netPnL };
+    },
+
     GenerateChartPoint: function (strategy) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         let range = { x0: parseFloat(strategy.x0), x1: parseFloat(strategy.x1) }
@@ -237,29 +260,6 @@ const utilitymixins = {
         }
         return chartData;
       }
-    },
-
-    getNetPnL: function (_strikePrice, currentTrade, strategy) {
-
-      let _intrinsicValue = 0, PnL = 0, netPnL = 0;
-
-      if (currentTrade.tradetype == "Call") {
-        _intrinsicValue = _strikePrice - currentTrade.selectedstrike > 0 ? _strikePrice - currentTrade.selectedstrike : 0;
-      }
-      else if (currentTrade.tradetype == "Put") {
-        _intrinsicValue = currentTrade.selectedstrike - _strikePrice > 0 ? currentTrade.selectedstrike - _strikePrice : 0;
-      }
-
-      if (currentTrade.tradetype == "Future") {
-        PnL = currentTrade.buyorsell == "Buy" ? _strikePrice - currentTrade.price : currentTrade.price - _strikePrice;
-        netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
-      } else {
-        PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
-        //PnL = parseFloat(PnL.toFixed());
-        netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
-        netPnL = parseFloat(netPnL.toFixed());
-      }
-      return { PnL, netPnL };
     },
 
     // POC: BarChart
@@ -596,19 +596,7 @@ const utilitymixins = {
         svg.on('mouseenter', onMouseEnter);
       }
     },
-
-
   },
 
 };
 export default utilitymixins;
-
-
-// /// Ref: https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date?page=1&tab=votes#tab-top
-// function GetTodayDate() {
-//   let d = new Date();
-//   let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-//   let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-//   let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-//   console.log(`${da}-${mo}-${ye}`);
-// }
