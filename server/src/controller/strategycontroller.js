@@ -70,6 +70,7 @@ strategycontoller.post("/save", async (req, res) => {
 
 strategycontoller.post("/delete", async (req, res) => {
   var { _id } = req.body;
+  console.log('delete/_id :>> ', _id);
   var doc = DeleteStrategy(_id);
   res.json(doc);
 });

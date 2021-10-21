@@ -23,6 +23,7 @@ tradeController.post("/save", async (req, res) => {
     isexit,
     partnerid,
     note,
+    group,
     strikepricemin,
     strikepricemax,
     strikepricestep,
@@ -39,28 +40,18 @@ tradeController.post("/save", async (req, res) => {
     isexit,
     partnerid,
     note,
+    group,
     strikepricemin,
     strikepricemax,
     strikepricestep,
   });
 
   if (_id) {
-    console.log('_id trade Update :>> ', _id);
     _trade._id = _id;
-
-
-    // ///REMOVE THIS AFTER ALL LOTSIZE ARE MOVED FROM TRADE TO STRATEGY
-    // await Strategy.updateOne(
-    //   { "trades._id": _id },
-    //   { $set: { "lotsize": lotsize, "strikepricestep":strikepricestep } }
-    // );
-
-
     await Strategy.updateOne(
       { "trades._id": _id },
       { $set: { "trades.$": _trade } }
     );
-    
     
     commonUtility.GetTradeById(_id).then((_result) => {
       res.json(_result);

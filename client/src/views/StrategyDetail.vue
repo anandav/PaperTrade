@@ -138,8 +138,20 @@
       <div class="col-span-1 space-x-2">
         <a class="btn inline-block" @click="onBindAddEditTrade()">
           <i class="material-icons">add</i>
-          <!-- {{ txtAddTrade }} -->
+          {{ txtAddTrade }}
         </a>
+
+        <select class="btn" @change="onMergeStrategy($event)">
+          <option value="Select">Merge Strategy</option>
+          <option
+            :key="sta._id"
+            v-for="sta in CurrentPortfoliosStrategies"
+            v-bind:value="sta._id"
+            v-show="sta._id != PropStrategy._id"
+          >
+            {{ sta.name }}
+          </option>
+        </select>
 
         <select class="btn" @change="onMoveStrategy($event)">
           <option value="Select">Move To Other Portfolio</option>
@@ -180,6 +192,7 @@ export default {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
       Portfolios: "portfolioModule/Portfolios",
+      CurrentPortfoliosStrategies: "strategyModule/Strategies",
     }),
   },
   mounted: function () {
@@ -201,6 +214,7 @@ export default {
       DeleteStrategy: "strategyModule/DeleteStrategy",
       BindAddEditTrade: "tradeModule/BindAddEditTrade",
       MoveStrategy: "strategyModule/MoveStrategy",
+      MergeStrategy: "strategyModule/MergeStrategy",
     }),
     onEditStrategy(strategy) {
       this.editStrategy = strategy;
@@ -227,9 +241,7 @@ export default {
       //   this.BindAddEditTrade(this.PropStrategy);
       // }
 
-      this.BindAddEditTrade(this.PropStrategy).then((x) => {
-        console.log("x :>> ", x);
-      });
+      this.BindAddEditTrade(this.PropStrategy);
     },
     onShowChart() {
       this.GenerateChart(this.PropStrategy);
@@ -238,6 +250,12 @@ export default {
       this.MoveStrategy({
         Strategy: this.PropStrategy,
         PortfolioID: event.target.value,
+      });
+    },
+    onMergeStrategy(event) {
+      this.MergeStrategy({
+        SourceStrategy: this.PropStrategy,
+        DestinationStrategyID: event.target.value,
       });
     },
   },

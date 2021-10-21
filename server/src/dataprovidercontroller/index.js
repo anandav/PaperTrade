@@ -19,11 +19,11 @@ dataprovider.get("/:exchange/:segment/:symbol", async (req, res) => {
 
 function getExchangeDetail() {
     const result = [
-        { "exchange": "NSE", "isactive": true, "name": "National Stock Exchange.", "segmentendpoints": ["EQUITY", "EQUITYFUTURES", "EQUITYOPTIONS", "CURRENCYFUTURES", "CURRENCYOPTIONS", "INDICESFUTURES", "INDICESOPTIONS"] },
-        { "exchange": "CBOE", "isactive": true, "name": "Chicago Board Options Exchange.", "segmentendpoints": ["OPTIONS"] },
-        { "exchange": "BSE", "isactive": false, "name": "Bombay Stock Exchange.", "segmentendpoints": ["EQUITY", "CURRENCYFUTURES", "CURRENCYOPTIONS"] },
-        { "exchange": "MCX", "isactive": false, "name": "Multi Commodity Exchange.", "segmentendpoints": ["FUTURES"] },
-        { "exchange": "WAXIRX", "isactive": false, "name": "Crypto Exchange.", "segmentendpoints": ["CRYPTO"] }
+        { "exchange": "NSE", "isactive": true, "name": "National Stock Exchange.", "segmentendpoints": ["equity", "equityfutureslist", "equityfutures", "equityoptionschain", "currencyfutures", "currencyoptions", "indiceslist", "indicesfutures", "indicesoptions"] },
+        { "exchange": "CBOE", "isactive": true, "name": "Chicago Board Options Exchange.", "segmentendpoints": ["options"] },
+        { "exchange": "BSE", "isactive": false, "name": "Bombay Stock Exchange.", "segmentendpoints": ["equity", "currencyfutures", "currencyoptions"] },
+        { "exchange": "MCX", "isactive": false, "name": "Multi Commodity Exchange.", "segmentendpoints": ["futures"] },
+        { "exchange": "WAXIRX", "isactive": false, "name": "Crypto Exchange.", "segmentendpoints": ["crypto"] }
     ];
     return result;
 }
@@ -31,32 +31,35 @@ function getExchangeDetail() {
 
 async function get(req, res) {
     ///
-    ///இன்னும் எப்படி சரியா எழுத்தும் முடிவு பண்ணலேs
+    ///இன்னும் எப்படி சரியா எழுத்தும் முடிவு பண்ணலே
     ///
-    const exchange = req.params.exchange?.toUpperCase();
-    const segment = req.params.segment?.toUpperCase();
-    const symbol = req.params.symbol?.toUpperCase();
-    if (exchange == "NSE") {
-        if (segment == "EQUITY") {
-
-        }
-        else if (segment == "FUTURES") {
-          
-                res.json(await nse.GetEquitiesList());
-        } else if (segment == "INDICESOPTIONS") {
-            res.json(await nse.GetIndicesOptionChain(symbol));
-        } else if (segment == "CURRENCYFUTURES") {
-
-        }
-        else if (segment == "CURRENCYOPTIONS") {
+    const exchange = req.params?.exchange?.toLowerCase();
+    const segment = req.params?.segment?.toLowerCase();
+    const symbol = req.params?.symbol || null;
+    if (exchange == "nse") {
+        if (segment == "equity") {
+            res.json(await nse.GetEquitiyDetail(symbol));
+        } else if (segment == "equityfutureslist") {
+            res.json(await nse.GetEquitiesFuturesList());
+        } else if (segment == "equityfutures") {
+            res.json(await nse.GetEquityFuture(symbol));
+        } else if (segment == "equityoptionschain") {
+            res.json(await nse.GetEquityOptionChain(symbol));
+        } else if (segment == "currencyfutures") {
+            res.json(await nse.GetCurrencyFuture());
+        } else if (segment == "currencyoptions") {
             res.json(await nse.GetCurrencyOptionChain(symbol));
-
-        }
-        else if (segment == "INDICES") {
-            res.json(await nse.GetAllIndices());
+        } else if (segment == "indiceslist") {
+            res.json(await nse.GetIndicesList());
+        } else if (segment == "indicesfutures") {
+            res.json(await nse.GetIndicesFutures(symbol));
+        } else if (segment == "indicesoptions") {
+            res.json(await nse.GetIndicesOptionChain(symbol));
+        } else {
+            res.json({ "error": "Invalid segment." });
         }
     } else {
-        res.json({ "error": "not a valid request." });
+        res.json({ "error": "Not a valid request." });
     }
 }
 

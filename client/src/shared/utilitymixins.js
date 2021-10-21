@@ -35,7 +35,7 @@ const utilitymixins = {
 
         },
         DIMENSION: {
-          Line: 2
+          Line: 1
         },
       },
       WIDTH: 500,
@@ -500,7 +500,7 @@ const utilitymixins = {
       svg
         .append("g")
         .attr("class", "x axis")
-        .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM})`)
+        .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM })`)
         .call(xAxisCall)
         .selectAll("text")
         .style("text-anchor", "begin")

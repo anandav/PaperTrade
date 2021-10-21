@@ -92,6 +92,34 @@ const strategyModule = {
                     commit(DELETESTRATEGY, res.data._id);
                 }
             });
+        },
+        MergeStrategy({ commit, rootGetters }, { SourceStrategy, DestinationStrategyID }) {
+            const allStrategies = rootGetters["strategyModule/Strategies"];
+
+            let DestinationStrategy;
+            allStrategies.forEach(x => {
+                if (x._id == DestinationStrategyID) {
+                    DestinationStrategy = x;
+                }
+            })
+
+            if (DestinationStrategy && SourceStrategy.symbol == DestinationStrategy.symbol
+                && SourceStrategy.lotsize == DestinationStrategy.lotsize
+                && SourceStrategy.strikepricestep == DestinationStrategy.strikepricestep) {
+
+
+                SourceStrategy.trades.forEach(x => { x._id = undefined; });
+                DestinationStrategy.trades = [...DestinationStrategy.trades, ...SourceStrategy.trades];
+                axios.post(apiUrl + "strategy/save", DestinationStrategy).then(function () {
+                    const _id = SourceStrategy._id;
+                    axios.post(apiUrl + "strategy/delete", SourceStrategy).then(function (res2) {
+                        if (res2.status == 200) {
+                            commit(DELETESTRATEGY, SourceStrategy._id);
+                        }
+                    });
+                });
+            }
+
 
         },
     }

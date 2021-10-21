@@ -42,13 +42,19 @@ const tradeSchema = schema({
     default: false,
   },
   partnerid: {
-    type: ObjectId,
-    default: null
+    type: mongoose.Schema.Types.ObjectId,
 
   },
   note: {
     type: String
   },
+  group: {
+    type: String,
+
+  },
+
+
+
 
 
   strikepricemin: {
