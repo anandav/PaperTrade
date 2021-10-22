@@ -11,10 +11,13 @@ Server folder contains API code and it's runs on port 9090. To start API use "np
 ## Client 
 Client folder contains SPA code and it's runs on port 8080. To start App use "npm run dev" in client folder.
 
-BSD and Linux run "npm run dev" from application root
+
+BSD and Linux users can run "npm run dev" from application root directory to start both  Client & Server.
+
+  
 
 ## Backend 
-Webapi uses Mongodb Atlas, change the connectionstring in .env file to point to your mongodb instance (not tested in local instances).
+Webapi uses Mongodb Atlas, change the connectionstring in ".env" file to point to your mongodb instance (not tested in local instances).
 
  ## Build 
  Client build (npm run build) will build app and move the dist to '/server/public' folder.

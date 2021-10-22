@@ -119,7 +119,8 @@
           </label>
         </div>
         <div class="inline-block">
-          <label class="block my-2"> Buy/Sell </label>
+          <label class="block my-2">Buy/Sell</label>
+          <!-- <SwitchButton :Value="TradeDetail.buyorsell" /> -->
           <SwitchButton :PropTrade="TradeDetail" />
         </div>
 

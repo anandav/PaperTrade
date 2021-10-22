@@ -7,11 +7,6 @@
           <label class="block"
             ><input type="checkbox" v-model="SelectAll" />
           </label>
-          <!-- <div>
-            <a class="text-xxs">A </a>
-            <a class="text-xxs">N </a>
-            <a class="text-xxs">I </a>
-          </div> -->
         </div>
         <div class="px-1 py-4 hidden">Symbol</div>
         <div class="hidden px-1 py-4">Lot Size</div>
@@ -39,17 +34,19 @@
         v-cloak
       >
         <!-- <div class="table-cell px-1 py-3">
-          <svg viewBox="0 0 24 24" role="presentation">
+         <svg viewBox="0 0 24 24" role="presentation">
             <path
               d="M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z"
               style="fill: currentcolor; --darkreader-inline-fill: currentcolor"
               data-darkreader-inline-fill=""
-            ></path>
-          </svg>
+            >
+            </path>
+             </svg>
         </div> -->
         <div class="table-cell px-1 py-3">
-          <label
-            ><input
+          <label>
+          
+            <input
               type="checkbox"
               :value="item._id"
               v-model="selectedIDs"
@@ -59,25 +56,19 @@
         </div>
 
         <div class="table-cell px-1 py-3">
-          <span class="view">
+          <span v-show="item.tradetype != 'Future'" class="view">
             {{ item.selectedstrike }}
           </span>
 
           <div class="edit">
             <div v-show="item.tradetype != 'Future'" class="flex flex-col">
-              <!-- <div class="btn-nonrounded rounded-t-sm w-12">
-                <a class="" @click="onDec(item)">-</a>
-              </div> -->
               <input
                 v-model="item.selectedstrike"
-                @keydown.up="onInc(item)"
-                @keydown.down="onDec(item)"
-                type="text"
+                :step="PropStrategy.strikepricestep"
+                type="number"
                 class="mini-edit text-right mini-edit-nonrounded"
               />
-              <!-- <div class="btn-nonrounded rounded-b-sm w-12">
-                <a class="" @click="onInc(item)">+</a>
-              </div> -->
+
             </div>
           </div>
         </div>
@@ -95,26 +86,6 @@
                 {{ value }}
               </option>
             </select>
-
-            <!-- <label
-              class="btn-mini edit"
-              v-for="(value, key) in TRADETYPE"
-              :key="key"
-              :class="{
-                'active text-green-400 dark:text-green-400':
-                  value == [item.tradetype],
-              }"
-            >
-              <input
-                class="hidden"
-                type="radio"
-                :name="TRADETYPE"
-                :value="value"
-                :id="'tradeSymbol_' + value"
-                v-model="item.tradetype"
-              />
-              {{ value }}
-            </label> -->
           </div>
         </div>
         <div class="table-cell px-1 py-3">
@@ -127,7 +98,13 @@
           <span class="view">
             {{ item.quantity }}
           </span>
-          <input v-model="item.quantity" type="text" class="mini-edit edit" />
+          <input
+            v-model="item.quantity"
+            min="1"
+            type="number"
+            class="mini-edit edit text-right"
+            @keydown.enter="onInlineSaveTrade(item)"
+          />
         </div>
         <div class="table-cell px-1 py-3">
           <span class="view">
@@ -136,7 +113,7 @@
           <input
             v-model="item.price"
             type="text"
-            class="mini-edit edit"
+            class="mini-edit edit text-right"
             @keydown.enter="onInlineSaveTrade(item)"
           />
         </div>
@@ -160,7 +137,6 @@
             <a class="btn inline-block edit" @click="onInlineSaveTrade(item)">
               <i class="material-icons">save</i>
             </a>
-
             <a
               class="btn inline-block text-red-600 dark:text-red-700"
               @dblclick="onDeleteTrade(PropStrategy._id, item._id)"
@@ -211,7 +187,7 @@ export default {
   props: {
     PropStrategy: {},
     PropSelectedTraded: { type: Array },
-    EditTradeForExternal : {},
+    EditTradeForExternal: {},
   },
   methods: {
     ...mapActions({

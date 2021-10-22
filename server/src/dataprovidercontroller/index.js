@@ -32,7 +32,8 @@ function getExchangeDetail() {
 async function get(req, res) {
     ///
     ///இன்னும் எப்படி சரியா எழுத்தும் முடிவு பண்ணலே
-    ///
+    ///தேவையில்லாத ஆணிய பூடிகியாச்சு
+
     const exchange = req.params?.exchange?.toLowerCase();
     const segment = req.params?.segment?.toLowerCase();
     const symbol = req.params?.symbol || null;
