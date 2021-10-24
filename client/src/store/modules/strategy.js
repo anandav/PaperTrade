@@ -111,14 +111,16 @@ const strategyModule = {
                 SourceStrategy.trades.forEach(x => { x._id = undefined; });
                 DestinationStrategy.trades = [...DestinationStrategy.trades, ...SourceStrategy.trades];
                 axios.post(apiUrl + "strategy/save", DestinationStrategy).then(function () {
-                    const _id = SourceStrategy._id;
                     axios.post(apiUrl + "strategy/delete", SourceStrategy).then(function (res2) {
                         if (res2.status == 200) {
                             commit(DELETESTRATEGY, SourceStrategy._id);
                         }
                     });
                 });
+            }else{
+                console.error("Source and Destination Strategy are different symbol or size or strike price step.");
             }
+
 
 
         },

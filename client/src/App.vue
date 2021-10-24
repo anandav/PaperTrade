@@ -8,8 +8,9 @@
         drop-shadow-md
         py-5
         bg-gray-200
-        dark:bg-gray-800
+        dark:bg-gray-900
       "
+       role="navigation"
     >
       <div class="container mx-auto">
         <router-link to="/papertrade" class="pl-5">Paper Trade</router-link>
@@ -23,20 +24,9 @@
         </div>
       </div>
     </nav>
-    <!-- <nav class="drop-shadow-md py-5 bg-gray-200 dark:bg-gray-800">
-      <div class="container mx-auto">
-        <router-link to="/papertrade" class="pl-5">Paper Trade</router-link>
-        <router-link to="/builder" class="pl-5">Builder</router-link>
-        <router-link to="/about" class="pl-5">About</router-link>
-        <div class="float-right">
-          <label class="mr-3">
-            <input type="checkbox" v-model="isdark" @change="swiththeme()" />
-            Dark Mode
-          </label>
-        </div>
-      </div>
-    </nav> -->
-    <router-view />
+    <main role="main">
+      <router-view />
+    </main>
   </div>
 </template>
 

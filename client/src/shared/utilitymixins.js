@@ -164,7 +164,7 @@ const utilitymixins = {
           incrementby = 5;
           break;
         case 5:
-          offset = 500;
+          offset = 300;
           incrementby = 10;
           break;
         default:

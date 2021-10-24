@@ -6,14 +6,14 @@
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
     dark:text-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 dark:drop-shadow-sm
      bg-gray-300 hover:bg-gray-400 hover:text-gray-200 
-    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none;
+    focus:outline-none focus:ring-2 focus:ring-offset-2 ;
 }
 
 .btn-nonrounded {
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium 
     dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
     bg-gray-300 hover:bg-gray-400 hover:text-gray-200
-    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none;
+    focus:outline-none focus:ring-2 focus:ring-offset-2 ;
 }
 
 .btn i{
@@ -24,16 +24,15 @@
   @apply  cursor-pointer text-xs  justify-center  border border-transparent shadow-sm 
   dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
   bg-gray-300 hover:bg-gray-400 hover:text-gray-200
-  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none;
+  focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
-
 
 .mini-edit{
     @apply w-12 px-1 py-1 rounded-sm focus:outline-none;
 }
 
 .normal-edit {
-  @apply w-28 px-1 py-1 rounded-sm focus:outline-none bg-gray-200 dark:bg-gray-600;
+  @apply w-28 px-1 py-1 rounded-md focus:outline-none bg-gray-300 dark:bg-gray-600;
 }
 
 .mini-edit-nonrounded {
@@ -44,6 +43,9 @@
   @apply  w-16 px-1 py-1 rounded-md  border-2 border-gray-300 bg-gray-400 dark:border-gray-600 m-0 bg-transparent focus:outline-none;
 }
 
+.mini-checkbox{
+  @apply rounded border-none focus:outline-none bg-gray-300 dark:bg-gray-600 checked:text-gray-400 dark:checked:text-gray-700;
+}
 
 /*Hide number arrow*/
 input[type=number]::-webkit-inner-spin-button, 
@@ -54,5 +56,7 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
   }
+
+
 
 @tailwind utilities; 

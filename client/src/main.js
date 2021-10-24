@@ -18,6 +18,10 @@ Vue.filter('formatDate', function (value) {
 
 
 Vue.config.productionTip = false;
+Vue.config.keyCodes = {
+  f2: 113
+};
+
 Vue.use(resource);
 
 new Vue({

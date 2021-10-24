@@ -17,19 +17,26 @@ app.use(helmet());
 
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
-  //console.clear();
-  console.log("Body");
-  console.log("==request-body-start==");
-  console.log(req.body);
-  console.log("==request-body-end==");
+  console.clear();
+  // console.log("Body");
+  // console.log("==request-body-start==");
+  // console.log(req.body);
+  // console.log("==request-body-end==");
   next();
 });
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
-app.use("/data", dataProvider);
+if (process.env.ENABLE_DATAAPI == 'true') {
+  app.use("/data", dataProvider);
+} else {
+  app.use("/data", (req, res) => {
+    res.status(404).json({ "error": "Data endpoint is disabled" })
+  });
+}
 
 app.use("/", express.static('public'));
+
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,
   { useNewUrlParser: true, useUnifiedTopology: true },

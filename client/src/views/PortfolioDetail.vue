@@ -1,6 +1,6 @@
 <template>
   <div class="mt-20">
-    <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-800">
+    <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-900">
       <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>
     <div v-if="Portfolio" class="">
@@ -11,7 +11,7 @@
           pl-5
           pb-5
           border-gray-300
-          dark:bg-gray-800
+        
           dark:border-gray-700
         "
       >

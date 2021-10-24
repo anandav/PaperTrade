@@ -5,7 +5,11 @@
       <div class="table-row text-xs text-gray-900 dark:text-white text-center">
         <div class="table-cell px-1 py-3">
           <label class="block"
-            ><input type="checkbox" v-model="SelectAll" />
+            ><input
+              type="checkbox"
+              class="mini-checkbox"
+              v-model="SelectAll"
+            />
           </label>
         </div>
         <div class="px-1 py-4 hidden">Symbol</div>
@@ -28,26 +32,18 @@
           border-t border-gray-400
           dark:border-gray-600
         "
+        tabindex="-1"
+        @keyup.113="onInlineEditTrade(item)"
         v-for="item in PropStrategy.trades"
         :key="item._id"
         :class="{ isTradeEdit: item && editTrade && item._id == editTrade._id }"
         v-cloak
       >
-        <!-- <div class="table-cell px-1 py-3">
-         <svg viewBox="0 0 24 24" role="presentation">
-            <path
-              d="M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z"
-              style="fill: currentcolor; --darkreader-inline-fill: currentcolor"
-              data-darkreader-inline-fill=""
-            >
-            </path>
-             </svg>
-        </div> -->
         <div class="table-cell px-1 py-3">
           <label>
-          
             <input
               type="checkbox"
+              class="mini-checkbox"
               :value="item._id"
               v-model="selectedIDs"
               @change="onCheckStateChanged(item)"
@@ -68,7 +64,6 @@
                 type="number"
                 class="mini-edit text-right mini-edit-nonrounded"
               />
-
             </div>
           </div>
         </div>
@@ -120,22 +115,24 @@
         <div class="table-cell px-1 py-3">
           {{
             item.buyorsell == "Buy"
-              ? -(item.price * (PropStrategy.lotsize * item.quantity)).toFixed(
-                  2
-                )
+              ? -(item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2)
               : (item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2)
           }}
         </div>
         <div class="table-cell px-1">
           <div class="space-x-1">
-            <a class="btn inline-block view" @click="onInlineExitTrade(item)">
-              <i class="material-icons">door_back</i>
-            </a>
             <a class="btn inline-block view" @click="onInlineEditTrade(item)">
               <i class="material-icons">edit</i>
             </a>
             <a class="btn inline-block edit" @click="onInlineSaveTrade(item)">
               <i class="material-icons">save</i>
+            </a>
+            <a
+              class="btn inline-block view"
+              v-show="!item.isexit"
+              @click="onInlineExitTrade(item)"
+            >
+              <i class="material-icons">logout</i>
             </a>
             <a
               class="btn inline-block text-red-600 dark:text-red-700"

@@ -7,7 +7,7 @@
       border
       drop-shadow-md
       bg-gray-200
-      dark:bg-gray-700
+      dark:bg-gray-800
       border-gray-300
       dark:border-gray-700
     "
@@ -73,28 +73,42 @@
 
         <div class="flex-1">
           <div class="float-right">
-            <a
-              class="btn inline-block view"
-              @click="onEditStrategy(PropStrategy)"
-            >
+            <button class="btn view" @click="onEditStrategy(PropStrategy)">
               <i class="material-icons">edit</i>
-              <!-- {{ txtEditStrategy }} -->
-            </a>
 
-            <a class="btn inline-block edit" @click="onSaveStrategy()">
+              <!-- {{ txtEditStrategy }} -->
+            </button>
+
+            <button class="btn edit" @click="onSaveStrategy()">
               <i class="material-icons">save</i>
               <!-- {{ txtSaveStrategy }} -->
-            </a>
-            <a class="btn ml-3 inline-block" @click="onDuplicateStrategy()">
+            </button>
+            <button class="btn ml-3" @click="onDuplicateStrategy()">
               <i class="material-icons">content_copy</i>
               <!-- {{ txtDuplicateStrategy }} -->
-            </a>
-            <a
-              class="btn ml-3 inline-block text-red-700 dark:text-red-700"
+            </button>
+            <DropDown
+              class="inline-block"
+              :Icon="`join_full`"
+              :Items="CurrentPortfoliosStrategies"
+              :Type="`Strategy`"
+              @itemclicked="onDropDownItemClicked"
+              :ExcludeItem="PropStrategy._id"
+            />
+            <DropDown
+              class="inline-block"
+              :Icon="`trending_flat`"
+              :Items="Portfolios"
+              :Type="`Portfolios`"
+              @itemclicked="onDropDownItemClicked"
+              :ExcludeItem="PropStrategy.portfolio"
+            />
+            <button
+              class="btn ml-3 text-red-700 dark:text-red-700"
               @dblclick="onDeleteStrategy()"
             >
               <i class="material-icons">delete</i>
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -120,6 +134,7 @@
                 placeholder="min"
                 min="0"
                 class="chart-mini-edit ml-5"
+                @keydown.enter="onShowChart()"
               />
               <input
                 type="number"
@@ -127,6 +142,7 @@
                 placeholder="max"
                 min="0"
                 class="chart-mini-edit float-right"
+                @keydown.enter="onShowChart()"
               />
             </div>
           </div>
@@ -136,44 +152,23 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        <a class="btn inline-block" @click="onBindAddEditTrade()">
+        <button class="btn" @click="onBindAddEditTrade()">
           <i class="material-icons">add</i>
-          {{ txtAddTrade }}
-        </a>
-
-        <select class="btn" @change="onMergeStrategy($event)">
-          <option value="Select">Merge Strategy</option>
-          <option
-            :key="sta._id"
-            v-for="sta in CurrentPortfoliosStrategies"
-            v-bind:value="sta._id"
-            v-show="sta._id != PropStrategy._id"
-          >
-            {{ sta.name }}
-          </option>
-        </select>
-
-        <select class="btn" @change="onMoveStrategy($event)">
-          <option value="Select">Move To Other Portfolio</option>
-          <option
-            :key="item._id"
-            v-for="item in Portfolios"
-            v-bind:value="item._id"
-          >
-            {{ item.name }}
-          </option>
-        </select>
+          <!-- {{ txtAddTrade }} -->
+        </button>
       </div>
       <div class="col-span-1">
         <div class="float-right space-x-2">
-          <a
+          <button
             v-if="!PropStrategy.ismultiplesymbol"
-            class="btn inline-block view"
+            class="btn view"
             @click="onShowChart()"
           >
             <i class="material-icons">show_chart</i>
-            {{ txtShowStratergyDiagram }}
-          </a>
+            <span class="mx-1">
+              {{ txtShowStratergyDiagram }}
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -184,10 +179,11 @@ import { mapActions, mapGetters } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
 import myMixins from "../shared/utilitymixins";
+import DropDown from "../components/ui/DropDown.vue";
 
 export default {
   name: "StrategyDetail",
-  components: { TradeList },
+  components: { TradeList, DropDown },
   computed: {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
@@ -235,28 +231,23 @@ export default {
       this.EditStrategy(_startegyClone);
     },
     onBindAddEditTrade() {
-      // if (this.TradeDetail) {
-      //   this.BindAddEditTrade(null);
-      // } else {
-      //   this.BindAddEditTrade(this.PropStrategy);
-      // }
-
       this.BindAddEditTrade(this.PropStrategy);
     },
     onShowChart() {
       this.GenerateChart(this.PropStrategy);
     },
-    onMoveStrategy(event) {
-      this.MoveStrategy({
-        Strategy: this.PropStrategy,
-        PortfolioID: event.target.value,
-      });
-    },
-    onMergeStrategy(event) {
-      this.MergeStrategy({
-        SourceStrategy: this.PropStrategy,
-        DestinationStrategyID: event.target.value,
-      });
+    onDropDownItemClicked(type, id) {
+      if (type == "Portfolios") {
+        this.MoveStrategy({
+          Strategy: this.PropStrategy,
+          PortfolioID: id,
+        });
+      } else if (type == "Strategy") {
+        this.MergeStrategy({
+          SourceStrategy: this.PropStrategy,
+          DestinationStrategyID: id,
+        });
+      }
     },
   },
   mixins: [myMixins],
