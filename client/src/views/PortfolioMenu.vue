@@ -1,6 +1,6 @@
 <template>
   <div
-    class=" min-h-screen mt-16 border-r-2 border-gray-300 dark:border-gray-700"
+    class=" min-h-screen mt-16 border-r border-gray-300 dark:border-gray-700"
     role="menu"
   >
     <div class="flex items-center mt-5">

@@ -118,7 +118,7 @@ const strategyModule = {
                     });
                 });
             }else{
-                console.error("Source and Destination Strategy are different symbol or size or strike price step.");
+                console.error("Source and Destination strategy are different symbol or size or strike price step.");
             }
 
 

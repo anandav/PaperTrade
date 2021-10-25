@@ -4,11 +4,6 @@ const Strategy = require("../models/strategy");
 const Trade = require("../models/trade");
 const commonUtility = require("../models/commonUtility");
 
-// tradeController.post("/find", async (res, req) => {
-//   var { _id } = req.body;
-//   res.send(await commUtility.GetTradeById(_id));
-// });
-
 tradeController.post("/save", async (req, res) => {
   const {
     sid,

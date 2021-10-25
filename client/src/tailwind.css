@@ -47,6 +47,16 @@
   @apply rounded border-none focus:outline-none bg-gray-300 dark:bg-gray-600 checked:text-gray-400 dark:checked:text-gray-700;
 }
 
+.tooltip{
+@apply relative inline-block border border-dotted border-gray-900
+
+}
+
+.tooltiptext{
+  @apply text-xxs w-28 bg-gray-500 text-white text-center px-5 py-1 rounded-md  absolute z-10 bottom-full left-2/4  -ml-14 
+  after:absolute after:top-full after:left-2/4 after:ml-5 after:border-t-2 after:border-gray-500
+
+}
 /*Hide number arrow*/
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
