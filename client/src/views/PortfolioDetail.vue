@@ -10,20 +10,61 @@
           drop-shadow-md
           pl-5
           pb-5
+          flex
+          space-x-2
           border-gray-300
-        
           dark:border-gray-700
         "
+        :class="{ isPortfolioEdit: Portfolio == editPortfolio }"
       >
-        <span class="text-xl">
-          {{ Portfolio.name }}
-        </span>
-        <div class="float-right pr-5">
-          <a class="btn" @click="onAddNewStrategy()">
-            <i class="material-icons">insights</i> &nbsp;
-            <!-- <i class="material-icons-outlined">insights</i>  -->
-            {{ txtAddStrategy }}</a
+        <div class="flex-1">
+           <label class="text-xs block text-gray-500"> Portfolio </label>
+          <span class="view">
+            {{ Portfolio.name }}
+          </span>
+          <input
+            class="normal-edit edit"
+            placeholder="Edit Portfolio Name"
+            type="text"
+            v-model="Portfolio.name"
+            @keyup.enter="onSavePortfolio(Portfolio)"
+          />
+        </div>
+        <div class="flex-1">
+           <label class="text-xs block text-gray-500"> Exchange </label>
+          <span class="text-xl view">
+            {{ Portfolio.exchange }}
+          </span>
+
+          <input
+            class="normal-edit edit"
+            placeholder="Exchange Name"
+            type="text"
+            v-model="Portfolio.exchange"
+            @keyup.enter="onSavePortfolio(Portfolio)"
+          />
+        </div>
+
+        <div class="float-right pr-5 space-x-2">
+          <button class="btn tooltip" @click="onAddNewStrategy()">
+            <i class="material-icons">playlist_add</i>
+            <tooltip :Value="txtAddStrategy" />
+          </button>
+          <button class="btn tooltip view" @click="onEditPortfolio(Portfolio)">
+            <i class="material-icons">edit</i>
+            <tooltip Value="Edit Portfilio" />
+          </button>
+          <button class="btn edit tooltip" @click="onSavePortfolio(Portfolio)">
+            <i class="material-icons">save</i>
+            <tooltip Value="Save Portfilio" />
+          </button>
+          <button
+            class="btn ml-2 tooltip text-red-700 dark:text-red-700"
+            @dblclick="onDeletePortfolio(Portfolio)"
           >
+            <i class="material-icons">delete</i>
+            <tooltip Value="Delete Portfilio" />
+          </button>
         </div>
       </div>
 
@@ -55,15 +96,51 @@ export default {
     }),
   },
   methods: {
-    ...mapActions({ AddStrategy: "strategyModule/AddStrategy" }),
+    ...mapActions({
+      AddStrategy: "strategyModule/AddStrategy",
+      SavePortfolio: "portfolioModule/SavePortfolio",
+      DeletePortfolio: "portfolioModule/DeletePortfolio",
+    }),
     onAddNewStrategy: function () {
       this.isEdit = !this.isEdit;
       this.AddStrategy(this.Portfolio._id);
     },
+    onEditPortfolio: function (portfolio) {
+      this.editPortfolio = portfolio;
+    },
+    onSavePortfolio: function (portfolio) {
+      this.editPortfolio = null;
+      this.SavePortfolio(portfolio);
+    },
+    onDeletePortfolio: function(portfolio) {
+      this.DeletePortfolio(portfolio);
+    },
   },
   mixins: [myMixins],
   data: function () {
-    return { isEdit: false, txtAddStrategy: this.$getConst("addNewStrategy") };
+    return {
+      isEdit: false,
+      txtAddStrategy: this.$getConst("addNewStrategy"),
+      editPortfolio: null,
+    };
   },
 };
 </script>
+
+<style scoped>
+[v-cloak] {
+  display: none;
+}
+.form-control {
+  width: 200px;
+}
+.edit {
+  display: none;
+}
+.isPortfolioEdit .edit {
+  display: inline-block;
+}
+.isPortfolioEdit .view {
+  display: none;
+}
+</style>

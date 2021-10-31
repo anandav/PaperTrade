@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 
+
 const utilitymixins = {
   data: function () {
     return {
@@ -164,7 +165,7 @@ const utilitymixins = {
           incrementby = 5;
           break;
         case 5:
-          offset = 300;
+          offset = 500;
           incrementby = 10;
           break;
         default:
@@ -345,7 +346,7 @@ const utilitymixins = {
         .attr("d", line);
     },
 
-    ///POC : Line Chart
+    /// Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
     ///ref: https://gist.github.com/llad/3766585 
     ///reg: http://jsfiddle.net/samselikoff/Jqmzd/2/

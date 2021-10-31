@@ -5,7 +5,7 @@
 .btn {
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
     dark:text-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 dark:drop-shadow-sm
-     bg-gray-300 hover:bg-gray-400 hover:text-gray-200 
+     bg-gray-300 hover:bg-gray-400 hover:text-gray-200  
     focus:outline-none focus:ring-2 focus:ring-offset-2 ;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .btn-mini{
-  @apply  cursor-pointer text-xs  justify-center  border border-transparent shadow-sm 
+  @apply  cursor-pointer text-xs   justify-center  border border-transparent shadow-sm 
   dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
   bg-gray-300 hover:bg-gray-400 hover:text-gray-200
   focus:outline-none focus:ring-2 focus:ring-offset-2;
@@ -47,22 +47,23 @@
   @apply rounded border-none focus:outline-none bg-gray-300 dark:bg-gray-600 checked:text-gray-400 dark:checked:text-gray-700;
 }
 
-.tooltip{
-@apply relative inline-block border border-dotted border-gray-900
 
-}
 
 .tooltiptext{
-  @apply text-xxs w-28 bg-gray-500 text-white text-center px-5 py-1 rounded-md  absolute z-10 bottom-full left-2/4  -ml-14 
-  after:absolute after:top-full after:left-2/4 after:ml-5 after:border-t-2 after:border-gray-500
-
+  @apply dark:hidden hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md  z-10 bottom-7 left-2  -ml-10    
+  transition-opacity duration-300 
+  after:absolute after:top-full after:left-2/4  after:border-4 after:border-solid 
+  
+  ;
 }
+
 /*Hide number arrow*/
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
   margin: 0; 
 }
+
 input[type=number] {
     -moz-appearance: textfield;
   }

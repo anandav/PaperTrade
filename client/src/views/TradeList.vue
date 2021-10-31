@@ -2,24 +2,22 @@
   <!-- <div class="rounded-xl overflow-hidden bg-gradient-to-r from-pink-50 to-pink-100 p-10"></div> -->
   <div class="table w-full shadow border-collapse rounded-lg">
     <div class="table-row-group">
-      <div class="table-row text-xs text-gray-900 dark:text-white text-center">
+      <div class="table-row text-xs text-right text-gray-900 dark:text-white">
+        <div class=""></div>
         <div class="table-cell px-1 py-3">
           <label class="block"
-            ><input
-              type="checkbox"
-              class="mini-checkbox"
-              v-model="SelectAll"
-            />
+            ><input type="checkbox" class="mini-checkbox" v-model="SelectAll" />
           </label>
         </div>
-        <div class="px-1 py-4 hidden">Symbol</div>
+        <!-- <div class="hidden px-1 py-4 ">Symbol</div>
         <div class="hidden px-1 py-4">Lot Size</div>
-        <div class="hidden px-1 py-4">Step</div>
+        <div class="hidden px-1 py-4">Step</div> -->
         <div class="table-cell px-1 py-4">Strike Price</div>
         <div class="table-cell px-1 py-4">Type</div>
         <div class="table-cell px-1 py-4">B/S</div>
         <div class="table-cell px-1 py-4">Qty</div>
         <div class="table-cell px-1 py-4">Spot Price</div>
+        <div class="table-cell px-1 py-4 text-yellow-400">LTP</div>
         <div class="table-cell px-1 py-4">Total Price</div>
         <div class="table-cell px-1 w-28">Action</div>
       </div>
@@ -29,9 +27,12 @@
         class="
           table-row
           text-right
+          bg-gray-800
+          dark:bg-gray-800
           border-t border-gray-400
           dark:border-gray-600
         "
+        draggable="true"
         tabindex="-1"
         @keyup.113="onInlineEditTrade(item)"
         v-for="item in PropStrategy.trades"
@@ -39,8 +40,24 @@
         :class="{ isTradeEdit: item && editTrade && item._id == editTrade._id }"
         v-cloak
       >
+        <div class="table-cell" v-show="!item.ismove">
+          <!-- <svg
+            class="cursor-move pt-1"
+            @click="onDrag($event)"
+            width="10"
+            height="15"
+            viewBox="0 0 2 5"
+            version="1.1"
+          >
+            <path
+              id="rect2026"
+              style="fill: #ececec; stroke-width: 0.264583"
+              d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
+            />
+          </svg> -->
+        </div>
         <div class="table-cell px-1 py-3">
-          <label>
+          <label class="">
             <input
               type="checkbox"
               class="mini-checkbox"
@@ -112,34 +129,46 @@
             @keydown.enter="onInlineSaveTrade(item)"
           />
         </div>
+        <div class="table-cell px-1 py-4 text-yellow-400">
+          Place holder
+        </div>
+
         <div class="table-cell px-1 py-3">
           {{
             item.buyorsell == "Buy"
-              ? -(item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2)
+              ? (
+                  item.price *
+                  (PropStrategy.lotsize * item.quantity) *
+                  -1
+                ).toFixed(2)
               : (item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2)
           }}
         </div>
         <div class="table-cell px-1">
           <div class="space-x-1">
-            <a class="btn inline-block view" @click="onInlineEditTrade(item)">
+            <button class="btn tooltip view" @click="onInlineEditTrade(item)">
               <i class="material-icons">edit</i>
-            </a>
-            <a class="btn inline-block edit" @click="onInlineSaveTrade(item)">
+              <tooltip :Value="txtEditTrade" />
+            </button>
+            <button class="btn tooltip edit" @click="onInlineSaveTrade(item)">
               <i class="material-icons">save</i>
-            </a>
-            <a
-              class="btn inline-block view"
+              <tooltip :Value="txtSaveTrade" />
+            </button>
+            <button
+              class="btn tooltip view"
               v-show="!item.isexit"
               @click="onInlineExitTrade(item)"
             >
               <i class="material-icons">logout</i>
-            </a>
-            <a
-              class="btn inline-block text-red-600 dark:text-red-700"
+              <tooltip :Value="txtExitTrade" />
+            </button>
+            <button
+              class="btn tooltip text-red-600 dark:text-red-700"
               @dblclick="onDeleteTrade(PropStrategy._id, item._id)"
             >
               <i class="material-icons">delete</i>
-            </a>
+              <tooltip :Value="txtDeleteTrade" />
+            </button>
           </div>
         </div>
       </div>
@@ -166,11 +195,13 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import myMixins from "../shared/utilitymixins";
+// import tableDrag from "../shared/index";
 import SwitchButton from "../components/ui/SwitchButton";
 // import TradeListRow from "./TradeListRow";
 export default {
   name: "TradeList",
   mixins: [myMixins],
+
   components: {
     SwitchButton,
     // TradeListRow,
@@ -179,6 +210,10 @@ export default {
     return {
       selectedIDs: [],
       editTrade: null,
+      txtEditTrade: this.$getConst("editTrade"),
+      txtSaveTrade: this.$getConst("saveTrade"),
+      txtExitTrade: this.$getConst("exitTrade"),
+      txtDeleteTrade: this.$getConst("deleteTrade"),
     };
   },
   props: {
@@ -200,7 +235,23 @@ export default {
     },
     onInlineSaveTrade: function (trade) {
       this.editTrade = null;
-      this.AddEditTrade(trade);
+      this.AddEditTrade(trade).then(() => {
+        this.$emit("onItemEnterKeyPressed");
+      });
+    },
+    onDrag(trade, e) {
+      e.preventDefault();
+
+      const row = e.srcElement.closest(".table-row");
+      row.addEventListener("dragstart", () => {
+        console.log("DragStart :>> ");
+        row.classList.add("dragging");
+      });
+
+      row.addEventListener("dragend", () => {
+        row.classList.remove("dragging");
+      });
+      //row.classList.toggle("absolute");
     },
     onInlineExitTrade: function (trade) {
       var _exitTrade = { ...trade };
@@ -212,12 +263,7 @@ export default {
       _exitTrade.sid = this.PropStrategy._id;
       this.AddEditTrade(_exitTrade);
     },
-    onInc: function (trade) {
-      trade.selectedstrike += parseFloat(this.PropStrategy.strikepricestep);
-    },
-    onDec: function (trade) {
-      trade.selectedstrike -= parseFloat(this.PropStrategy.strikepricestep);
-    },
+
     onCheckStateChanged: function (trade) {
       trade.checked = !trade.checked;
       this.CheckStateChanged(this.PropStrategy);
@@ -226,6 +272,7 @@ export default {
   },
   mounted() {
     this.SelectAll = true;
+    console.log("Mounted :>> ");
   },
 
   computed: {

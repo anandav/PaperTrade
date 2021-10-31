@@ -72,42 +72,49 @@
         </div>
 
         <div class="flex-1">
-          <div class="float-right">
-            <button class="btn view" @click="onEditStrategy(PropStrategy)">
-              <i class="material-icons">edit</i>
-
-              <!-- {{ txtEditStrategy }} -->
-            </button>
-
-            <button class="btn edit" @click="onSaveStrategy()">
-              <i class="material-icons">save</i>
-              <!-- {{ txtSaveStrategy }} -->
-            </button>
-            <button class="btn ml-3" @click="onDuplicateStrategy()">
+          <div class="float-right space-x-2">
+            <button class="btn tooltip " @click="onDuplicateStrategy()">
               <i class="material-icons">content_copy</i>
-              <!-- {{ txtDuplicateStrategy }} -->
+              <tooltip :Value="txtDuplicateStrategy" />
             </button>
             <DropDown
-              class="inline-block"
+              class="inline-block tooltip"
               :Icon="`join_full`"
               :Items="CurrentPortfoliosStrategies"
               :Type="`Strategy`"
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy._id"
-            />
+            >
+            </DropDown>
             <DropDown
-              class="inline-block"
+              class="inline-block tooltip"
               :Icon="`trending_flat`"
               :Items="Portfolios"
               :Type="`Portfolios`"
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy.portfolio"
-            />
+            >
+            </DropDown>
+
             <button
-              class="btn ml-3 text-red-700 dark:text-red-700"
+              class="btn tooltip view"
+              @click="onEditStrategy(PropStrategy)"
+            >
+              <i class="material-icons">edit</i>
+              <tooltip :Value="txtEditStrategy" />
+            </button>
+
+            <button class="btn tooltip edit" @click="onSaveStrategy()">
+              <i class="material-icons">save</i>
+              <tooltip :Value="txtSaveStrategy" />
+            </button>
+
+            <button
+              class="btn text-red-700 dark:text-red-700 tooltip"
               @dblclick="onDeleteStrategy()"
             >
               <i class="material-icons">delete</i>
+              <tooltip :Value="txtDeleteStrategy" />
             </button>
           </div>
         </div>
@@ -120,6 +127,7 @@
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
+            @onItemEnterKeyPressed="onShowChart"
           />
         </div>
         <div class="col-span-1">
@@ -152,22 +160,20 @@
 
     <div class="p-3 grid grid-cols-2">
       <div class="col-span-1 space-x-2">
-        <button class="btn" @click="onBindAddEditTrade()">
+        <button class="btn tooltip" @click="onBindAddEditTrade()">
           <i class="material-icons">add</i>
-          <!-- {{ txtAddTrade }} -->
+          <tooltip :Value="txtAddTrade" />
         </button>
       </div>
       <div class="col-span-1">
         <div class="float-right space-x-2">
           <button
             v-if="!PropStrategy.ismultiplesymbol"
-            class="btn view"
+            class="btn tooltip view"
             @click="onShowChart()"
           >
             <i class="material-icons">show_chart</i>
-            <span class="mx-1">
-              {{ txtShowStratergyDiagram }}
-            </span>
+            <tooltip :Value="txtShowStratergyDiagram" />
           </button>
         </div>
       </div>
@@ -179,11 +185,10 @@ import { mapActions, mapGetters } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
 import myMixins from "../shared/utilitymixins";
-import DropDown from "../components/ui/DropDown.vue";
 
 export default {
   name: "StrategyDetail",
-  components: { TradeList, DropDown },
+  components: { TradeList },
   computed: {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
@@ -191,9 +196,7 @@ export default {
       CurrentPortfoliosStrategies: "strategyModule/Strategies",
     }),
   },
-  mounted: function () {
-    //this.onShowChart();
-  },
+  mounted: function () {},
   data: function () {
     return {
       txtEditStrategy: this.$getConst("editStrategy"),
@@ -201,6 +204,7 @@ export default {
       txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
       txtAddTrade: this.$getConst("addTrade"),
       txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
+      txtDeleteStrategy: this.$getConst("deleteStrategy"),
       editStrategy: null,
     };
   },
@@ -212,17 +216,18 @@ export default {
       MoveStrategy: "strategyModule/MoveStrategy",
       MergeStrategy: "strategyModule/MergeStrategy",
     }),
-    onEditStrategy(strategy) {
+
+    onEditStrategy: function (strategy) {
       this.editStrategy = strategy;
     },
-    onSaveStrategy() {
+    onSaveStrategy: function () {
       this.editStrategy = null;
       this.EditStrategy(this.PropStrategy);
     },
-    onDeleteStrategy() {
+    onDeleteStrategy: function () {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
-    onDuplicateStrategy() {
+    onDuplicateStrategy: function () {
       var _startegyClone = { ...this.PropStrategy };
       _startegyClone._id = null;
       _startegyClone.trades.forEach((t) => {
@@ -230,13 +235,13 @@ export default {
       });
       this.EditStrategy(_startegyClone);
     },
-    onBindAddEditTrade() {
+    onBindAddEditTrade: function () {
       this.BindAddEditTrade(this.PropStrategy);
     },
-    onShowChart() {
+    onShowChart: function () {
       this.GenerateChart(this.PropStrategy);
     },
-    onDropDownItemClicked(type, id) {
+    onDropDownItemClicked: function (type, id) {
       if (type == "Portfolios") {
         this.MoveStrategy({
           Strategy: this.PropStrategy,

@@ -23,7 +23,7 @@ function getExchangeDetail() {
         { "exchange": "CBOE", "isactive": true, "name": "Chicago Board Options Exchange.", "segmentendpoints": ["options"] },
         { "exchange": "BSE", "isactive": false, "name": "Bombay Stock Exchange.", "segmentendpoints": ["equity", "currencyfutures", "currencyoptions"] },
         { "exchange": "MCX", "isactive": false, "name": "Multi Commodity Exchange.", "segmentendpoints": ["futures"] },
-        { "exchange": "WAXIRX", "isactive": false, "name": "Crypto Exchange.", "segmentendpoints": ["crypto"] }
+        { "exchange": "WAZIRX", "isactive": false, "name": "Crypto Exchange.", "segmentendpoints": ["crypto"] }
     ];
     return result;
 }

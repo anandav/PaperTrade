@@ -1,7 +1,11 @@
 !<template>
   <div class="dropdown">
-    <button class="btn ml-3">
+    <button class="btn tooltip">
       <i class="material-icons">{{ Icon }}</i>
+      <tooltip
+        :Value="(Type == 'Strategy' ? txtMergeStrategy : txtMoveStrategy)"
+      />
+     
     </button>
     <div
       class="
@@ -50,6 +54,7 @@
               text-sm
               leading-5
               text-left
+              cursor-pointer
             "
             role="menuitem"
             >{{ item.name }}</a
@@ -69,6 +74,15 @@ export default {
     Items: { type: Array },
     Icon: { type: String },
   },
+  data: function () {
+    return {
+      txtMergeStrategy: this.$getConst("mergeStrategy"),
+      txtMoveStrategy: this.$getConst("moveStrategy"),
+    };
+  },
+  computed: {
+    
+  },
   methods: {
     onItemClicked: function (type, id) {
       this.$emit("itemclicked", type, id);
@@ -77,4 +91,9 @@ export default {
 };
 </script>
 <style>
+.dropdown:focus-within .dropdown-menu {
+  opacity: 1;
+  transform: translate(0) scale(1);
+  visibility: visible;
+}
 </style>

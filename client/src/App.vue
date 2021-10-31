@@ -10,7 +10,7 @@
         bg-gray-200
         dark:bg-gray-900
       "
-       role="navigation"
+      role="navigation"
     >
       <div class="container mx-auto">
         <router-link to="/papertrade" class="pl-5">Paper Trade</router-link>
@@ -18,7 +18,12 @@
         <router-link to="/about" class="pl-5">About</router-link>
         <div class="float-right">
           <label class="mr-3">
-            <input type="checkbox" v-model="isdark" @change="swiththeme()" />
+            <input
+              type="checkbox"
+              class="mini-checkbox"
+              v-model="isdark"
+              @change="swiththeme()"
+            />
             Dark Mode
           </label>
         </div>
@@ -39,12 +44,31 @@ export default {
   },
   methods: {
     swiththeme: function () {
+     // let _isdark = document.cookie["isdark"];
+      //  console.log('document.cookie :> switch ', document.cookie);
+
       if (this.isdark) {
         document.documentElement.classList.add("dark");
       } else {
         document.documentElement.classList.remove("dark");
       }
     },
+  },
+  computed: {
+    // isdark: {
+    //   get: function () {
+    //     let _isdark = document.cookie["isdark"];
+    //     console.log('document.cookie :>> ', document.cookie);
+    //     console.log('_isdark :>> ', _isdark);
+    //     return _isdark;
+    //   },
+    //   set: function (value) {
+    //     let d = new Date();
+    //     d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+    //     let expires = "expires=" + d.toUTCString();
+    //     document.cookie = "isdark=" + value + ";" + expires + ";path=/";
+    //   },
+    // },
   },
   mounted() {
     // console.log('localStroage.isdark :>> before ');

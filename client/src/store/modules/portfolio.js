@@ -33,6 +33,7 @@ const portfolioModule = {
             if (_index > -1) {
                 state.Portfolios.splice(_index, 1);
             }
+            state.Portfolio = undefined;
         },
     },
     actions: {
@@ -53,12 +54,8 @@ const portfolioModule = {
             });
         },
         async SavePortfolio({ commit }, item) {
-            axios.post(apiUrl + "portfolio/save", {
-                "_id": item._id,
-                "name": item.name,
-                "description": item.description,
-                "updateui": item.updateui,
-            }).then(function (res) {
+            item.updateui = true;
+            axios.post(apiUrl + "portfolio/save", item).then(function (res) {
                 if (item.updateui) {
                     commit(GETALLPORTFOLIOS, res.data);
                 } else {
@@ -67,8 +64,6 @@ const portfolioModule = {
             }).catch(e => { console.log(e); });
         },
         async DeletePortfolio({ commit }, item) {
-            // console.log("Porfolio Delete Action called")
-
             axios.post(apiUrl + "portfolio/delete", item)
                 .then(function () {
                     // console.log("Porfolio Delete callback called")

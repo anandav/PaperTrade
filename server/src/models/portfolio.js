@@ -7,6 +7,9 @@ const portfolioSchema = schema({
   name: {
     type : String
   },
+  exchange :{
+    type : String
+  },
   description:{
     type : String
   },

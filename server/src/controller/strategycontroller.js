@@ -1,15 +1,18 @@
 const express = require("express");
 const strategycontoller = express.Router();
 const commUtility = require("../models/commonUtility");
+const portfolio = require("../models/portfolio");
 const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
 
 strategycontoller.post("/findusingportfolioid", async (req, res) => {
+
+
+
   var { fieldName, fieldValue } = req.body;
   var result = {};
   if (fieldName && fieldValue) {
-    result = await Strategy.find({ [fieldName]: fieldValue });
-    console.log(result);
+    result = await Strategy.find({ [fieldName]: fieldValue }).sort({ createdon: -1 });
     res.json(result);
   } else {
     result = await Strategy.find({});
@@ -17,8 +20,7 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  const { _id, portfolio, name, description, symbol,lotsize,strikepricestep, ismultiplesymbol, trades, createdon } = req.body;
-
+  const { _id, portfolio, name, description, symbol, lotsize, strikepricestep, ismultiplesymbol, trades, createdon } = req.body;
   if (_id) {
     var _data = {
       _id,
@@ -35,16 +37,12 @@ strategycontoller.post("/save", async (req, res) => {
     if (trades) {
       _data.trades = trades;
     }
-
     var _strategyObject = await Strategy.updateOne(
       { _id: _id },
       {
         $set: _data,
       }
     );
-    console.log("_data");
-    console.log(_data);
-
     res.send(_data);
   } else {
     const strategy = new Strategy({
@@ -70,7 +68,6 @@ strategycontoller.post("/save", async (req, res) => {
 
 strategycontoller.post("/delete", async (req, res) => {
   var { _id } = req.body;
-  console.log('delete/_id :>> ', _id);
   var doc = DeleteStrategy(_id);
   res.json(doc);
 });

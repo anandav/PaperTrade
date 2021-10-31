@@ -45,7 +45,7 @@ const strategyModule = {
         },
     },
     actions: {
-        async GetAllStrategies({ commit }, item) {
+        GetAllStrategies: async function({ commit }, item) {
             axios.post(apiUrl + "strategy/findusingportfolioid", {
                 "fieldName": "portfolio",
                 "fieldValue": item,

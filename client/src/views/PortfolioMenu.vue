@@ -1,6 +1,6 @@
 <template>
   <div
-    class=" min-h-screen mt-16 border-r border-gray-300 dark:border-gray-700"
+    class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-700"
     role="menu"
   >
     <div class="flex items-center mt-5">
@@ -25,12 +25,12 @@
 
       <div class="w-1/6">
         <a
-          class="btn mx-2 invisible lg:visible float-right"
+          class="btn mx-2 invisible lg:visible float-right tooltip"
           href="#"
           @click="onAddNewPortfolio()"
         >
           <i class="material-icons">save</i>
-          <!-- {{ txtAddEditPortfolio }} -->
+          <tooltip :Value="txtAddEditPortfolio" />
         </a>
       </div>
     </div>
@@ -49,7 +49,7 @@
         <div
           tabindex="0"
           role="menuitem"
-          class="mt-1 p-2 leading-10 rounded-sm cursor-pointer"
+          class="mt-1 leading-10 rounded-sm cursor-pointer"
           @click="onMenuSelectedPortfolio(item)"
           @keydown.enter="onMenuSelectedPortfolio(item)"
           @keydown.f2="onInlineEditPortfolio(item)"
@@ -58,6 +58,7 @@
               Portfolio && item._id == Portfolio._id,
           }"
         >
+        <div class="p-2" tabindex="0">
           <div class="inline-block">
             <div
               class="view"
@@ -84,22 +85,27 @@
               @keyup.enter="onInlineSavePortfolio(item)"
             />
           </div>
-          <div class="float-right">
+          <!-- <div class="float-right ">
             <div class="space-x-1">
-              <a class="btn view" @click="onInlineEditPortfolio(item)">
+              <a class="btn tooltip view " @click="onInlineEditPortfolio(item)">
                 <i class="material-icons">edit</i>
+                <tooltip Value="Edit" />
               </a>
-              <a class="btn edit" @click="onInlineSavePortfolio(item)">
+              <a class="btn edit tooltip " @click="onInlineSavePortfolio(item)">
                 <i class="material-icons">save</i>
+                <tooltip Value="Save Portfilio" />
               </a>
               <a
-                class="btn ml-2 text-red-700 dark:text-red-700"
+                class="btn ml-2 tooltip text-red-700 dark:text-red-700 "
                 @dblclick="onDeletePortfolio(item)"
               >
                 <i class="material-icons">delete</i>
+                <tooltip Value="Delete Portfilio" />
               </a>
             </div>
-          </div>
+          </div> -->
+
+        </div>
         </div>
       </div>
     </div>
@@ -118,31 +124,32 @@ export default {
       DeletePortfolio: "portfolioModule/DeletePortfolio",
       GetAllStrategies: "strategyModule/GetAllStrategies",
     }),
-    onMenuSelectedPortfolio(item) {
+    onMenuSelectedPortfolio: function (item) {
       this.GetPortfolioById(item);
       this.GetAllStrategies(item);
     },
-    onAddNewPortfolio() {
+    onAddNewPortfolio : function() {
       if (this.portfolioName) {
         this.SavePortfolio({
           _id: 0,
           name: this.portfolioName,
+          exchange : 'NSE',
           description: "",
           updateui: true,
         });
         this.portfolioName = "";
       }
     },
-    onInlineEditPortfolio(portfolio) {
-      this.editPortfolio = portfolio;
-    },
-    onInlineSavePortfolio(portfolio) {
-      this.editPortfolio = null;
-      this.SavePortfolio(portfolio);
-    },
-    onDeletePortfolio(itempfl) {
-      this.DeletePortfolio(itempfl);
-    },
+    // onInlineEditPortfolio : function(portfolio) {
+    //   this.editPortfolio = portfolio;
+    // },
+    // onInlineSavePortfolio : function(portfolio) {
+    //   this.editPortfolio = null;
+    //   this.SavePortfolio(portfolio);
+    // },
+    // onDeletePortfolio(itempfl) {
+    //   this.DeletePortfolio(itempfl);
+    // },
   },
   data: function () {
     return {
