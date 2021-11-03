@@ -20,10 +20,17 @@ const strategySchema = schema({
   lotsize: {
     type: Number
   },
+  expiry: {
+    type: Date
+  },
   strikepricestep: {
     type: Number
   },
   ismultiplesymbol: {
+    type: Boolean,
+    default: false
+  },
+  isarchive: {
     type: Boolean,
     default: false
   },

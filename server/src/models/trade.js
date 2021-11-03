@@ -37,6 +37,9 @@ const tradeSchema = schema({
   price: {
     type: Number,
   },
+  lasttradedprice:{
+    type : Number,
+  },
   isexit: {
     type: Boolean,
     default: false,

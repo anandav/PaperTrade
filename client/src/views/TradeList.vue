@@ -17,7 +17,12 @@
         <div class="table-cell px-1 py-4">B/S</div>
         <div class="table-cell px-1 py-4">Qty</div>
         <div class="table-cell px-1 py-4">Spot Price</div>
-        <div class="table-cell px-1 py-4 text-yellow-400">LTP</div>
+        <div
+          class="table-cell px-1 py-4 text-yellow-400"
+          v-if="Portfolio.exchange"
+        >
+          LTP
+        </div>
         <div class="table-cell px-1 py-4">Total Price</div>
         <div class="table-cell px-1 w-28">Action</div>
       </div>
@@ -41,7 +46,7 @@
         v-cloak
       >
         <div class="table-cell" v-show="!item.ismove">
-          <!-- <svg
+          <svg
             class="cursor-move pt-1"
             @click="onDrag($event)"
             width="10"
@@ -54,7 +59,7 @@
               style="fill: #ececec; stroke-width: 0.264583"
               d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
             />
-          </svg> -->
+          </svg>
         </div>
         <div class="table-cell px-1 py-3">
           <label class="">
@@ -129,7 +134,10 @@
             @keydown.enter="onInlineSaveTrade(item)"
           />
         </div>
-        <div class="table-cell px-1 py-4 text-yellow-400">
+        <div
+          v-if="Portfolio.exchange"
+          class="table-cell px-1 py-3 text-yellow-400"
+        >
           Place holder
         </div>
 
@@ -180,6 +188,8 @@
         <div class="table-cell"></div>
         <div class="table-cell"></div>
         <div class="table-cell"></div>
+        <div class="table-cell"></div>
+        <div class="table-cell"  v-if="Portfolio.exchange"></div>
         <div class="table-cell">
           <span class="text-xs block text-gray-500">P&L</span>
         </div>
@@ -193,7 +203,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import myMixins from "../shared/utilitymixins";
 // import tableDrag from "../shared/index";
 import SwitchButton from "../components/ui/SwitchButton";
@@ -272,10 +282,14 @@ export default {
   },
   mounted() {
     this.SelectAll = true;
-    console.log("Mounted :>> ");
+    //console.log("Mounted");
   },
 
   computed: {
+    ...mapGetters({
+      Portfolio: "portfolioModule/Portfolio",
+    }),
+
     ...mapState(["TradeSelectChange"]),
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
@@ -301,14 +315,16 @@ export default {
     TotalAmount: function () {
       if (this.selectedIDs) {
         var price = 0;
-        this.PropStrategy.trades.forEach((_e) => {
+        this.PropStrategy.trades.forEach((_trade) => {
           this.selectedIDs.forEach((_f) => {
-            if (_e._id == _f) {
+            if (_trade._id == _f) {
               price =
-                _e.buyorsell == "Buy"
-                  ? price - _e.price * (this.PropStrategy.lotsize * _e.quantity)
+                _trade.buyorsell == "Buy"
+                  ? price -
+                    _trade.price * (this.PropStrategy.lotsize * _trade.quantity)
                   : price +
-                    _e.price * (this.PropStrategy.lotsize * _e.quantity);
+                    _trade.price *
+                      (this.PropStrategy.lotsize * _trade.quantity);
             }
           });
         });

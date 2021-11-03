@@ -18,7 +18,7 @@
         :class="{ isPortfolioEdit: Portfolio == editPortfolio }"
       >
         <div class="flex-1">
-           <label class="text-xs block text-gray-500"> Portfolio </label>
+          <label class="text-xs block text-gray-500"> Portfolio </label>
           <span class="view">
             {{ Portfolio.name }}
           </span>
@@ -31,8 +31,15 @@
           />
         </div>
         <div class="flex-1">
-           <label class="text-xs block text-gray-500"> Exchange </label>
-          <span class="text-xl view">
+          <label class="text-xs block text-gray-500"> Total P&L </label>
+          <span>
+            {{ Qty }}
+          </span>
+        </div>
+
+        <div class="flex-1">
+          <label class="text-xs block text-gray-500"> Exchange </label>
+          <span class="view">
             {{ Portfolio.exchange }}
           </span>
 
@@ -94,6 +101,21 @@ export default {
       Portfolio: "portfolioModule/Portfolio",
       Strategies: "strategyModule/Strategies",
     }),
+    Qty: {
+      get: function () {
+        let price = 0;
+        this.Strategies.forEach((_startegy) => {
+          _startegy.trades.forEach((_trade) => {
+            price =
+              _trade.buyorsell == "Buy"
+                ? price - _trade.price * (_startegy.lotsize * _trade.quantity)
+                : price + _trade.price * (_startegy.lotsize * _trade.quantity);
+          });
+        });
+
+        return price.toFixed(2);
+      },
+    },
   },
   methods: {
     ...mapActions({
@@ -112,7 +134,7 @@ export default {
       this.editPortfolio = null;
       this.SavePortfolio(portfolio);
     },
-    onDeletePortfolio: function(portfolio) {
+    onDeletePortfolio: function (portfolio) {
       this.DeletePortfolio(portfolio);
     },
   },

@@ -15,6 +15,7 @@ const Resource = {
 	exitTrade : "Exit Trade",
 	deleteTrade : "Delete Trade",
 	showStrategyDiagram: "Update Graph",
+	getLiveData : "Get Live Data",
 };
 
 Resource.install = function (Vue) {

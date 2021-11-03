@@ -45,7 +45,7 @@ const strategyModule = {
         },
     },
     actions: {
-        GetAllStrategies: async function({ commit }, item) {
+        GetAllStrategies: async function ({ commit }, item) {
             axios.post(apiUrl + "strategy/findusingportfolioid", {
                 "fieldName": "portfolio",
                 "fieldValue": item,
@@ -117,14 +117,21 @@ const strategyModule = {
                         }
                     });
                 });
-            }else{
+            } else {
                 console.error("Source and Destination strategy are different symbol or size or strike price step.");
             }
-
-
-
         },
-    }
+        GetLiveData({ commit }, { Portfolio, Strategy }) {
+            console.log('Portfolio, Strategy :>> ', Portfolio, Strategy);
+
+            axios.get(apiUrl + "data/").then(function (res) {
+                if (res.status == 200) {
+                    console.log('res.data :>> ', res.data);
+                    //commit(ADDEDITSTRATEGY, res.data);
+                }
+            });
+        },
+    },
 };
 
 export default strategyModule;

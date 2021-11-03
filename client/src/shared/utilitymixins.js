@@ -36,7 +36,7 @@ const utilitymixins = {
 
         },
         DIMENSION: {
-          Line: 1
+          Line: 2
         },
       },
       WIDTH: 500,

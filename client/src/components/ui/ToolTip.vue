@@ -1,5 +1,5 @@
 <template>
-  <span class="tooltiptext">{{ Value }}</span>
+  <span class="tooltiptext" :class="Location">{{ Value }}</span>
 </template>
 
 <script>
@@ -7,6 +7,7 @@ export default {
   name: "tooltip",
   props: {
     Value: { type: String },
+    Location : {type : String}
   },
 };
 </script>
@@ -20,12 +21,15 @@ export default {
 }
 
 .tooltip:hover .tooltiptext {
-  /* visibility: visible; */
   display: block;
   opacity: 0.75;
 }
 
+
 .tooltiptext::after {
   border-color: gray transparent transparent transparent;
 }
+/* .tooltiptext.bottom::before {
+  border-color: transparent transparent pink transparent;
+} */
 </style>

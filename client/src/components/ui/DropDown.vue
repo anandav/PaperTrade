@@ -1,11 +1,9 @@
 !<template>
+
   <div class="dropdown">
-    <button class="btn tooltip">
+    <button class="btn tooltip" data-dropdown-toggle="dropdown">
       <i class="material-icons">{{ Icon }}</i>
-      <tooltip
-        :Value="(Type == 'Strategy' ? txtMergeStrategy : txtMoveStrategy)"
-      />
-     
+      <tooltip :Value="Tooltip" />
     </button>
     <div
       class="
@@ -36,9 +34,9 @@
         "
         role="menu"
       >
-        <div class="px-1 py-1">
+        <div class="px-1 py-1 ">
           <a
-            @click="onItemClicked(Type, item._id)"
+            @click="onItemClicked(Type, item._id, item.name)"
             :key="item._id"
             v-for="item in Items"
             v-bind:value="item._id"
@@ -46,23 +44,28 @@
             tabindex="0"
             class="
               text-gray-400
-              flex
               justify-between
+              inline-block
               w-full
               px-1
               py-1
-              text-sm
+              text-xs
               leading-5
               text-left
               cursor-pointer
+              border-b border-gray-600
             "
             role="menuitem"
-            >{{ item.name }}</a
           >
+            <span v-if="item.icon" class="text-left">
+              <i class="material-icons text-sm">{{ item.icon }}</i>
+            </span>
+            {{ item.name }}
+          </a>
         </div>
       </div>
     </div>
-  </div>
+  </div> 
 </template>
 
 <script>
@@ -73,19 +76,15 @@ export default {
     ExcludeItem: { type: String },
     Items: { type: Array },
     Icon: { type: String },
+    Tooltip: { type: String },
   },
   data: function () {
-    return {
-      txtMergeStrategy: this.$getConst("mergeStrategy"),
-      txtMoveStrategy: this.$getConst("moveStrategy"),
-    };
+    return {};
   },
-  computed: {
-    
-  },
+  computed: {},
   methods: {
-    onItemClicked: function (type, id) {
-      this.$emit("itemclicked", type, id);
+    onItemClicked: function (type, id, name) {
+      this.$emit("itemclicked", type, id, name);
     },
   },
 };

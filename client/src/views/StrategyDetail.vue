@@ -54,6 +54,19 @@
           />
         </div>
         <div class="flex-1">
+          <label class="text-xs block text-gray-500"> Expiry </label>
+          <span class="view">
+            {{ PropStrategy.expiry }}
+          </span>
+
+          <input
+            class="normal-edit edit"
+            placeholder="Lot Size"
+            v-model="PropStrategy.expiry"
+            @keydown.enter="onSaveStrategy()"
+          />
+        </div>
+        <div class="flex-1">
           <label class="text-xs block text-gray-500"> Strike Price Step </label>
           <span class="view">
             {{ PropStrategy.strikepricestep }}
@@ -73,10 +86,6 @@
 
         <div class="flex-1">
           <div class="float-right space-x-2">
-            <button class="btn tooltip " @click="onDuplicateStrategy()">
-              <i class="material-icons">content_copy</i>
-              <tooltip :Value="txtDuplicateStrategy" />
-            </button>
             <DropDown
               class="inline-block tooltip"
               :Icon="`join_full`"
@@ -84,6 +93,7 @@
               :Type="`Strategy`"
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy._id"
+              :Tooltip="txtMergeStrategy"
             >
             </DropDown>
             <DropDown
@@ -93,6 +103,17 @@
               :Type="`Portfolios`"
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy.portfolio"
+              :Tooltip="txtMoveStrategy"
+            >
+            </DropDown>
+
+            <DropDown
+              class="inline-block tooltip"
+              :Icon="`menu`"
+              :Items="StrategyAction"
+              :Type="`Menu`"
+              @itemclicked="onActionDropDownItemClicked"
+              Tooltip="Action"
             >
             </DropDown>
 
@@ -164,6 +185,14 @@
           <i class="material-icons">add</i>
           <tooltip :Value="txtAddTrade" />
         </button>
+        <button
+          class="btn tooltip"
+          v-if="this.Portfolio.exchange && this.PropStrategy.symbol"
+          @click="onGetLiveData()"
+        >
+          <i class="material-icons">file_download</i>
+          <tooltip :Value="txtGetLiveData" />
+        </button>
       </div>
       <div class="col-span-1">
         <div class="float-right space-x-2">
@@ -193,6 +222,7 @@ export default {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
       Portfolios: "portfolioModule/Portfolios",
+      Portfolio: "portfolioModule/Portfolio",
       CurrentPortfoliosStrategies: "strategyModule/Strategies",
     }),
   },
@@ -203,9 +233,16 @@ export default {
       txtSaveStrategy: this.$getConst("saveStrategy"),
       txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
       txtAddTrade: this.$getConst("addTrade"),
+      txtGetLiveData: this.$getConst("getLiveData"),
       txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
       txtDeleteStrategy: this.$getConst("deleteStrategy"),
+      txtMergeStrategy: this.$getConst("mergeStrategy"),
+      txtMoveStrategy: this.$getConst("moveStrategy"),
       editStrategy: null,
+      StrategyAction: [
+        { _id: "1", name: "Duplicate", icon: "content_copy", click: "" },
+        { _id: "2", name: "Archive", icon: "archive", click: "" },
+      ],
     };
   },
   methods: {
@@ -215,6 +252,7 @@ export default {
       BindAddEditTrade: "tradeModule/BindAddEditTrade",
       MoveStrategy: "strategyModule/MoveStrategy",
       MergeStrategy: "strategyModule/MergeStrategy",
+      GetLiveData: "strategyModule/GetLiveData",
     }),
 
     onEditStrategy: function (strategy) {
@@ -226,14 +264,6 @@ export default {
     },
     onDeleteStrategy: function () {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
-    },
-    onDuplicateStrategy: function () {
-      var _startegyClone = { ...this.PropStrategy };
-      _startegyClone._id = null;
-      _startegyClone.trades.forEach((t) => {
-        t._id = undefined;
-      });
-      this.EditStrategy(_startegyClone);
     },
     onBindAddEditTrade: function () {
       this.BindAddEditTrade(this.PropStrategy);
@@ -254,6 +284,24 @@ export default {
         });
       }
     },
+    onActionDropDownItemClicked: function (type, id, name) {
+      if (name == "Duplicate") {
+        var _startegyClone = { ...this.PropStrategy };
+        _startegyClone._id = null;
+        _startegyClone.trades.forEach((t) => {
+          t._id = undefined;
+        });
+        this.EditStrategy(_startegyClone);
+      } else if (name == "Archive") {
+        console.log("TODO :>> Archive");
+      }
+    },
+    onGetLiveData: function () {
+      this.GetLiveData({
+        Portfolio: this.Portfolio,
+        Strategy: this.PropStrategy,
+      });
+    },
   },
   mixins: [myMixins],
   props: {
@@ -262,6 +310,7 @@ export default {
     SelectedTraded: { type: Array },
   },
 };
+
 </script>
 
 <style scoped>

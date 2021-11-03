@@ -47,15 +47,13 @@
   @apply rounded border-none focus:outline-none bg-gray-300 dark:bg-gray-600 checked:text-gray-400 dark:checked:text-gray-700;
 }
 
-
-
 .tooltiptext{
-  @apply dark:hidden hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md  z-10 bottom-7 left-2  -ml-10    
-  transition-opacity duration-300 
-  after:absolute after:top-full after:left-2/4  after:border-4 after:border-solid 
-  
-  ;
+  @apply dark:hidden hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md  z-10  left-2  -ml-10    
+  bottom-7 after:top-full 
+  after:absolute  after:left-2/4  after:border-4 after:border-solid 
+  transition-opacity duration-300 ;
 }
+
 
 /*Hide number arrow*/
 input[type=number]::-webkit-inner-spin-button, 
