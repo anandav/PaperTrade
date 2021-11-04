@@ -1,73 +1,35 @@
 !<template>
-  <div class="dropdown">
-    <button class="btn tooltip" data-dropdown-toggle="dropdown">
+  <div class="dropdown inline-block relative">
+    <button class="btn" data-dropdown-toggle="dropdown" tabindex="0">
       <i class="material-icons">{{ Icon }}</i>
-      <tooltip :Value="Tooltip" />
     </button>
     <div
       class="
-        dropdown-menu
-        opacity-0
-        invisible
-        transition-all
-        duration-300
-        transform
-        origin-top-right
-        -translate-y-2
-        scale-95
-       
-        z-50
-      "
+        dropdown-content
+        hidden
+        absolute
+        z-10
+        bg-gray-700
+        rounded-sm
+        p-1
+        w-36
+        shadow-lg"
+      role="menuitem"
     >
-      <div
-        class="
-          absolute
-          right-0
-          w-36
-          mt-2
-          origin-top-right
-          bg-gray-200
-          dark:bg-gray-700
-          border border-gray-800
-          divide-y divide-gray-500
-          rounded-md
-          shadow-md
-          outline-none
-          
-        z-50
-        "
-        role="menu"
+      <a
+        class="block p-1 border-t border-gray-600 hover:bg-gray-600 cursor-pointer"
+        @click="onItemClicked(Type, item._id, item.name)"
+        :key="item._id"
+        v-for="item in Items"
+        v-bind:value="item._id"
+        v-show="item._id != ExcludeItem"
+        tabindex="0"
       >
-        <div class="px-1 py-1">
-          <a
-            @click="onItemClicked(Type, item._id, item.name)"
-            :key="item._id"
-            v-for="item in Items"
-            v-bind:value="item._id"
-            v-show="item._id != ExcludeItem"
-            tabindex="0"
-            class="
-              text-gray-400
-              justify-between
-              inline-block
-              w-full
-              px-1
-              py-1
-              text-xs
-              leading-5
-              text-left
-              cursor-pointer
-              border-b border-gray-600
-            "
-            role="menuitem"
-          >
-            <span v-if="item.icon" class="text-left">
-              <i class="material-icons text-sm">{{ item.icon }}</i>
-            </span>
-            {{ item.name }}
-          </a>
-        </div>
-      </div>
+        <span v-if="item.icon" class="text-left">
+          <i class="material-icons text-sm">{{ item.icon }}</i>
+        </span>
+        {{ item.name }}</a
+      >
     </div>
   </div>
 </template>
@@ -94,9 +56,13 @@ export default {
 };
 </script>
 <style>
-.dropdown:focus-within .dropdown-menu {
+/* .dropdown:focus-within .dropdown-menu {
   opacity: 1;
   transform: translate(0) scale(1);
   visibility: visible;
+} */
+
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 </style>

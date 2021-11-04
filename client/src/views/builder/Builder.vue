@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import tooltip from "../../components/ui/ToolTip";
+
 export default {
   name: "Builder",
   components: {
-    tooltip,
+   
   },
   computed: {
   },

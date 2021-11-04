@@ -94,6 +94,7 @@
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy._id"
               :Tooltip="txtMergeStrategy"
+              v-if="!this.PropStrategy.isarchive"
             >
             </DropDown>
             <DropDown
@@ -104,6 +105,7 @@
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy.portfolio"
               :Tooltip="txtMoveStrategy"
+              v-if="!this.PropStrategy.isarchive"
             >
             </DropDown>
 
@@ -113,6 +115,7 @@
               :Items="StrategyAction"
               :Type="`Menu`"
               @itemclicked="onActionDropDownItemClicked"
+              :ExcludeItem="ExcluteStrategyAction"
               Tooltip="Action"
             >
             </DropDown>
@@ -120,6 +123,7 @@
             <button
               class="btn tooltip view"
               @click="onEditStrategy(PropStrategy)"
+              v-if="!this.PropStrategy.isarchive"
             >
               <i class="material-icons">edit</i>
               <tooltip :Value="txtEditStrategy" />
@@ -183,13 +187,12 @@
             :PropSelectedTraded="SelectedTraded"
             @onItemEnterKeyPressed="onShowChart"
           /> -->
-          
       </div>
     </div>
 
     <div class="p-3 grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
       <div class="col-span-1 space-x-2">
-        <button  class="btn tooltip" @click="onBindAddEditTrade()">
+        <button class="btn tooltip" @click="onBindAddEditTrade()">
           <i class="material-icons">add</i>
           <tooltip :Value="txtAddTrade" />
         </button>
@@ -232,7 +235,14 @@ export default {
       Portfolios: "portfolioModule/Portfolios",
       Portfolio: "portfolioModule/Portfolio",
       CurrentPortfoliosStrategies: "strategyModule/Strategies",
+      
     }),
+    ExcluteStrategyAction: {
+        get: function () {
+          console.log('this.PropStrategy.isarchive :>> ', this.PropStrategy.isarchive);
+          return this.PropStrategy.isarchive ? "2" : "3";
+        },
+      },
   },
   mounted: function () {},
   data: function () {
@@ -250,6 +260,7 @@ export default {
       StrategyAction: [
         { _id: "1", name: "Duplicate", icon: "content_copy", click: "" },
         { _id: "2", name: "Archive", icon: "archive", click: "" },
+        { _id: "3", name: "Unarchive", icon: "archive", click: "" },
       ],
     };
   },
@@ -300,8 +311,8 @@ export default {
           t._id = undefined;
         });
         this.EditStrategy(_startegyClone);
-      } else if (name == "Archive") {
-        this.PropStrategy.isarchive = !this.PropStrategy.isarchive; 
+      } else if (name == "Archive" || name == "Unarchive") {
+        this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
         this.EditStrategy(this.PropStrategy);
       }
     },
@@ -319,7 +330,6 @@ export default {
     SelectedTraded: { type: Array },
   },
 };
-
 </script>
 
 <style scoped>
