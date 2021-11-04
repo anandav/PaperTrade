@@ -143,7 +143,7 @@
     </div>
 
     <div class="p-3">
-      <div class="grid grid-cols-2">
+      <div class="grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
         <div class="col-span-1">
           <TradeList
             :PropStrategy="PropStrategy"
@@ -177,11 +177,19 @@
           </div>
         </div>
       </div>
+      <div class="grid" v-if="this.PropStrategy.isarchive">
+        <!-- <TradeList
+            :PropStrategy="PropStrategy"
+            :PropSelectedTraded="SelectedTraded"
+            @onItemEnterKeyPressed="onShowChart"
+          /> -->
+          
+      </div>
     </div>
 
-    <div class="p-3 grid grid-cols-2">
+    <div class="p-3 grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
       <div class="col-span-1 space-x-2">
-        <button class="btn tooltip" @click="onBindAddEditTrade()">
+        <button  class="btn tooltip" @click="onBindAddEditTrade()">
           <i class="material-icons">add</i>
           <tooltip :Value="txtAddTrade" />
         </button>
@@ -293,7 +301,8 @@ export default {
         });
         this.EditStrategy(_startegyClone);
       } else if (name == "Archive") {
-        console.log("TODO :>> Archive");
+        this.PropStrategy.isarchive = !this.PropStrategy.isarchive; 
+        this.EditStrategy(this.PropStrategy);
       }
     },
     onGetLiveData: function () {

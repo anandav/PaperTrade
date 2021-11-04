@@ -1,5 +1,4 @@
 !<template>
-
   <div class="dropdown">
     <button class="btn tooltip" data-dropdown-toggle="dropdown">
       <i class="material-icons">{{ Icon }}</i>
@@ -7,15 +6,17 @@
     </button>
     <div
       class="
+        dropdown-menu
         opacity-0
         invisible
-        dropdown-menu
         transition-all
         duration-300
         transform
         origin-top-right
         -translate-y-2
         scale-95
+       
+        z-50
       "
     >
       <div
@@ -25,16 +26,19 @@
           w-36
           mt-2
           origin-top-right
-          bg-gray-700
+          bg-gray-200
+          dark:bg-gray-700
           border border-gray-800
           divide-y divide-gray-500
           rounded-md
           shadow-md
           outline-none
+          
+        z-50
         "
         role="menu"
       >
-        <div class="px-1 py-1 ">
+        <div class="px-1 py-1">
           <a
             @click="onItemClicked(Type, item._id, item.name)"
             :key="item._id"
@@ -65,7 +69,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 </template>
 
 <script>

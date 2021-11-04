@@ -32,8 +32,7 @@
         class="
           table-row
           text-right
-          bg-gray-800
-          dark:bg-gray-800
+       
           border-t border-gray-400
           dark:border-gray-600
         "

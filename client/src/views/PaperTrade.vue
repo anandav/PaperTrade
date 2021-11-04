@@ -10,7 +10,7 @@
         <PortfolioDetail class="col-span-8" />
       </div> -->
     </div>
-    <TradeAddEdit />
+    <!-- <TradeAddEdit /> -->
   </div>
 </template>
 <style scoped>
@@ -18,14 +18,12 @@
 <script>
 import PortfolioMenu from "./PortfolioMenu";
 import PortfolioDetail from "./PortfolioDetail";
-import TradeAddEdit from "./TradeAddEdit";
 
 export default {
   name: "PaperTrade",
   components: {
     PortfolioMenu,
     PortfolioDetail,
-    TradeAddEdit,
   },
   mounted() {},
 

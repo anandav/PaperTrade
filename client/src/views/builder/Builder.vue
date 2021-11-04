@@ -1,9 +1,8 @@
 <template>
-  <div class="p-12 pt-28">
-    <div class="tooltip">
-      name
-      <tooltip Value="Test name" />
-    </div>
+  <div class="container pt-20">
+   <code>
+     conn
+   </code>
   </div>
 </template>
 

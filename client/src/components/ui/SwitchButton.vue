@@ -13,10 +13,7 @@
         outline-none
         dark:bg-primary-darker
       "
-      :class="{
-        ' bg-green-600': IsBuy == 'Buy',
-        ' bg-red-600': IsBuy == 'Sell',
-      }"
+      :class="BgColor"
     ></div>
     <div
       class="
@@ -36,11 +33,13 @@
         rounded-full
         shadow-sm
       "
-      :class="{
-        'translate-x-6 bg-green-300 dark:bg-green-300': IsBuy == 'Buy',
-        'translate-x-0  bg-red-300 dark:bg-red-300': IsBuy == 'Sell',
-      }"
-    ></div>
+      :class="FgColor"
+    >
+      <!-- {
+        trueBgColour: IsTrue,
+        falseBgColour: !IsTrue,
+      } -->
+    </div>
   </button>
 </template>
   
@@ -48,21 +47,56 @@
 export default {
   name: "SwitchButton",
   created() {
-    this.IsBuy = this.PropTrade.buyorsell;
+    if (this.PropTrade) {
+      this.IsTrue = this.PropTrade.buyorsell == "Buy" ? true : false;
+    } 
+    // else if (this.Value) {
+    //   this.IsTrue = this.Value;
+    // } 
+    else {
+      this.IsTrue = this.Value;
+    }
+  },
+  computed: {
+    FgColor: function () {
+      return {
+        "translate-x-6 bg-green-300 dark:bg-green-300":
+          this.IsTrue && !this.IsDark,
+        "translate-x-0 bg-red-300 dark:bg-red-300":
+          !this.IsTrue && !this.IsDark,
+        "translate-x-6 bg-gray-500 dark:bg-gray-500":
+          this.IsTrue && this.IsDark,
+        "translate-x-0 bg-gray-500 dark:bg-gray-500":
+          !this.IsTrue && this.IsDark,
+      };
+    },
+    BgColor: function () {
+      return {
+        "bg-green-600": this.IsTrue && !this.IsDark,
+        "bg-red-600": !this.IsTrue && !this.IsDark,
+        "bg-gray-600": this.IsTrue && this.IsDark,
+        "bg-gray-400": !this.IsTrue && this.IsDark,
+      };
+    },
   },
   data() {
     return {
-      IsBuy: "",
+      IsTrue: false,
     };
   },
   methods: {
     onRadioChange: function () {
-      this.IsBuy = this.IsBuy == "Buy" ? "Sell" : "Buy";
-      this.PropTrade.buyorsell = this.IsBuy;
+      this.IsTrue = !this.IsTrue;
+      if (this.PropTrade) {
+        this.PropTrade.buyorsell = this.IsTrue ? "Buy" : "Sell";
+      }
+      this.$emit("itemclicked", this.IsTrue);
     },
   },
   props: {
     PropTrade: { type: Object },
+    IsDark: { type: Boolean },
+    Value: { type: Boolean },
   },
 };
 </script>

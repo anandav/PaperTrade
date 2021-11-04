@@ -18,12 +18,17 @@
         <router-link to="/about" class="pl-5">About</router-link>
         <div class="float-right">
           <label class="mr-3">
-            <input
+            <SwitchButton
+              :IsDark="true"
+              :Value="false"
+              @itemclicked="swiththeme"
+            />
+            <!-- <input
               type="checkbox"
               class="mini-checkbox"
               v-model="isdark"
               @change="swiththeme()"
-            />
+            /> -->
             Dark Mode
           </label>
         </div>
@@ -36,21 +41,26 @@
 </template>
 
 <script>
+import SwitchButton from "./components/ui/SwitchButton";
+
 export default {
   data: function () {
     return {
       isdark: true,
     };
   },
+  components: {
+    SwitchButton,
+  },
   methods: {
-    swiththeme: function () {
-     // let _isdark = document.cookie["isdark"];
+    swiththeme: function (value) {
+      // let _isdark = document.cookie["isdark"];
       //  console.log('document.cookie :> switch ', document.cookie);
 
-      if (this.isdark) {
-        document.documentElement.classList.add("dark");
-      } else {
+      if (value) {
         document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
       }
     },
   },
