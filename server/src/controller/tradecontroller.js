@@ -23,6 +23,9 @@ tradeController.post("/save", async (req, res) => {
     strikepricemin,
     strikepricemax,
     strikepricestep,
+    order,
+    createdon,
+    modifiedon,
 
   } = req.body;
   var _trade = new Trade({
@@ -41,7 +44,11 @@ tradeController.post("/save", async (req, res) => {
     strikepricemin,
     strikepricemax,
     strikepricestep,
+    order,
+    createdon: new Date(),
+    modifiedon: new Date(),
   });
+
 
   if (_id) {
     _trade._id = _id;

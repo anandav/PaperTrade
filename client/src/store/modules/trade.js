@@ -54,7 +54,7 @@ const tradeModule = {
     actions: {
         BindAddEditTrade({ commit, rootGetters }, _strategy) {
             if (_strategy) {
-                var _tradeDetail = {
+                const _tradeDetail = {
                     symbol: _strategy.symbol,
                     sid: _strategy._id,
                     expiry: null,
@@ -64,9 +64,9 @@ const tradeModule = {
                     selectedstrike: 17500,
                     price: 30,
                     note: "",
+                    order: _strategy.trades.length+1,
                 };
-
-               return axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
+                return axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                     if (res.status == 200) {
                         var strategies = rootGetters["strategyModule/Strategies"];
                         var _strategy = res.data;

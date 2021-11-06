@@ -55,8 +55,17 @@ const tradeSchema = schema({
     type: String,
 
   },
-
-
+  order :{
+    type: Number
+  },
+  createdon: {
+    type: Date,
+    default: Date.now(),
+  },
+  modifiedon: {
+    type: Date,
+    default: Date.now(),
+  },
 
 
 

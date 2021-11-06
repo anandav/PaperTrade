@@ -38,7 +38,7 @@ const strategySchema = schema({
     type: Date,
     default: Date.now(),
   },
-  modifiedOn: {
+  modifiedon: {
     type: Date,
     default: Date.now(),
   },

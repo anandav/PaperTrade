@@ -87,7 +87,7 @@
         <div class="flex-1">
           <div class="float-right space-x-2">
             <DropDown
-              class="inline-block tooltip"
+              class="inline-block view tooltip"
               :Icon="`join_full`"
               :Items="CurrentPortfoliosStrategies"
               :Type="`Strategy`"
@@ -98,7 +98,7 @@
             >
             </DropDown>
             <DropDown
-              class="inline-block tooltip"
+              class="inline-block view tooltip"
               :Icon="`trending_flat`"
               :Items="Portfolios"
               :Type="`Portfolios`"
@@ -110,7 +110,7 @@
             </DropDown>
 
             <DropDown
-              class="inline-block tooltip"
+              class="inline-block view tooltip"
               :Icon="`menu`"
               :Items="StrategyAction"
               :Type="`Menu`"
@@ -182,11 +182,11 @@
         </div>
       </div>
       <div class="grid" v-if="this.PropStrategy.isarchive">
-        <!-- <TradeList
-            :PropStrategy="PropStrategy"
-            :PropSelectedTraded="SelectedTraded"
-            @onItemEnterKeyPressed="onShowChart"
-          /> -->
+        <TradeList
+          :PropStrategy="PropStrategy"
+          :PropSelectedTraded="SelectedTraded"
+          @onItemEnterKeyPressed="onShowChart"
+        />
       </div>
     </div>
 
@@ -235,14 +235,12 @@ export default {
       Portfolios: "portfolioModule/Portfolios",
       Portfolio: "portfolioModule/Portfolio",
       CurrentPortfoliosStrategies: "strategyModule/Strategies",
-      
     }),
     ExcluteStrategyAction: {
-        get: function () {
-          console.log('this.PropStrategy.isarchive :>> ', this.PropStrategy.isarchive);
-          return this.PropStrategy.isarchive ? "2" : "3";
-        },
+      get: function () {
+        return this.PropStrategy.isarchive ? "2" : "3";
       },
+    },
   },
   mounted: function () {},
   data: function () {

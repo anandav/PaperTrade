@@ -1,35 +1,49 @@
 !<template>
-  <div class="dropdown inline-block relative">
+  <div class="dropdown inline-block relative tooltip">
     <button class="btn" data-dropdown-toggle="dropdown" tabindex="0">
       <i class="material-icons">{{ Icon }}</i>
+      <tooltip :Value="Tooltip" />
     </button>
     <div
       class="
         dropdown-content
         hidden
         absolute
-        z-10
-        bg-gray-700
-        rounded-sm
-        p-1
+        bg-gray-300
+        dark:bg-gray-700
+        rounded
         w-36
-        shadow-lg"
+        -ml-10
+        shadow-lg
+      "
       role="menuitem"
     >
-      <a
-        class="block p-1 border-t border-gray-600 hover:bg-gray-600 cursor-pointer"
-        @click="onItemClicked(Type, item._id, item.name)"
+      <div
         :key="item._id"
         v-for="item in Items"
         v-bind:value="item._id"
-        v-show="item._id != ExcludeItem"
         tabindex="0"
       >
-        <span v-if="item.icon" class="text-left">
-          <i class="material-icons text-sm">{{ item.icon }}</i>
-        </span>
-        {{ item.name }}</a
-      >
+        <a
+          class="
+            block
+            border-t border-gray-400
+            hover:bg-gray-400
+            dark:border-gray-600 dark:hover:bg-gray-600
+            cursor-pointer
+            hover:rounded-sm
+            py-2
+            px-1
+          "
+          v-if="item._id != ExcludeItem"
+          @click="onItemClicked(Type, item._id, item.name)"
+        >
+          <span v-if="item.icon" class="text-left">
+            <i class="material-icons text-sm">{{ item.icon }}</i>
+          </span>
+          {{ item.name }}</a
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -56,12 +70,6 @@ export default {
 };
 </script>
 <style>
-/* .dropdown:focus-within .dropdown-menu {
-  opacity: 1;
-  transform: translate(0) scale(1);
-  visibility: visible;
-} */
-
 .dropdown:hover .dropdown-content {
   display: block;
 }
