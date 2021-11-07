@@ -15,6 +15,10 @@
         w-36
         -ml-10
         shadow-lg
+        divide-y divide-gray-400 dark:divide-gray-600  divide-solid
+
+        max-h-96
+        overflow-auto
       "
       role="menuitem"
     >
@@ -23,17 +27,20 @@
         v-for="item in Items"
         v-bind:value="item._id"
         tabindex="0"
+        class=""
       >
+            <!-- border-t 
+            border-gray-400 -->
         <a
           class="
             block
-            border-t border-gray-400
             hover:bg-gray-400
-            dark:border-gray-600 dark:hover:bg-gray-600
+           
+            dark:hover:bg-gray-600
             cursor-pointer
             hover:rounded-sm
             py-2
-            px-1
+            px-2
           "
           v-if="item._id != ExcludeItem"
           @click="onItemClicked(Type, item._id, item.name)"

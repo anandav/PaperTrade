@@ -1,27 +1,26 @@
 <template>
   <div class="container pt-20">
-   <code>
-     conn
-   </code>
+    
   </div>
 </template>
 
 <script>
-
 export default {
   name: "Builder",
-  components: {
-   
-  },
-  computed: {
-  },
+  components: {},
+  computed: {},
   created() {},
- 
-  methods: {},
-  mounted() {
+  data: function () {
+    return {
+      
+    };
   },
+  methods: {},
+  mounted() {},
   // mixins: [myMixins],
-  props: {},
+  props: {
+    activeTab: {type : String , default : "code"},
+  },
 };
 </script>
 

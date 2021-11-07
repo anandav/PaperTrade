@@ -3,6 +3,9 @@ const dataprovider = express.Router();
 const nse = require("./nse");
 const cboe = require("./cboe");
 
+
+
+
 dataprovider.get("/", async (req, res) => {
     res.json(getExchangeDetail());
 });
@@ -15,6 +18,8 @@ dataprovider.get("/:exchange/:segment", async (req, res) => {
 dataprovider.get("/:exchange/:segment/:symbol", async (req, res) => {
     return get(req, res);
 });
+
+
 
 
 function getExchangeDetail() {
@@ -35,27 +40,7 @@ async function get(req, res) {
     const segment = req.params?.segment?.toLowerCase();
     const symbol = req.params?.symbol || null;
     if (exchange == "nse") {
-        if (segment == "equity") {
-            res.json(await nse.GetEquitiyDetail(symbol));
-        } else if (segment == "equityfutureslist") {
-            res.json(await nse.GetEquitiesFuturesList());
-        } else if (segment == "equityfutures") {
-            res.json(await nse.GetEquityFuture(symbol));
-        } else if (segment == "equityoptionschain") {
-            res.json(await nse.GetEquityOptionChain(symbol));
-        } else if (segment == "currencyfutures") {
-            res.json(await nse.GetCurrencyFuture());
-        } else if (segment == "currencyoptions") {
-            res.json(await nse.GetCurrencyOptionChain(symbol));
-        } else if (segment == "indiceslist") {
-            res.json(await nse.GetIndicesList());
-        } else if (segment == "indicesfutures") {
-            res.json(await nse.GetIndicesFutures(symbol));
-        } else if (segment == "indicesoptions") {
-            res.json(await nse.GetIndicesOptionChain(symbol));
-        } else {
-            res.json({ "error": "Invalid segment." });
-        }
+       res.json(await nse.Get(segment, symbol));
     } else {
         res.json({ "error": "Not a valid request." });
     }

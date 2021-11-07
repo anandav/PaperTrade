@@ -48,10 +48,27 @@
 }
 
 .tooltiptext{
-  @apply dark:hidden hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md  z-10  left-2  -ml-10    
+  @apply dark:hidden hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md z-10 left-2 -ml-10    
   bottom-7 after:top-full 
-  after:absolute  after:left-2/4  after:border-4 after:border-solid 
+  after:absolute after:left-2/4 after:border-4 after:border-solid 
   transition-opacity duration-300 ;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  /* background-color: rgba(71, 85, 105, var(--tw-bg-opacity)); */
+   background-color: rgba(148, 163, 184, var(--tw-bg-opacity)); 
+  border-radius: 100px;
+
+  /* background-color: rgba(255, 5, 115, var(--tw-border-opacity)); */
+}
+
+::-webkit-scrollbar-thumb {
+  /* background-color: #d4aa70; */
+  background-color: rgba(71, 85, 105, var(--tw-border-opacity));
+  border-radius: 100px;
 }
 
 

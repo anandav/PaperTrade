@@ -13,7 +13,7 @@
     "
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
-    <div class="p-3 border- border-b-2 border-gray-300 dark:border-gray-600">
+    <div class="p-3  border-b border-gray-300 dark:border-gray-600">
       <div class="flex">
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Name </label>
@@ -304,7 +304,7 @@ export default {
     onActionDropDownItemClicked: function (type, id, name) {
       if (name == "Duplicate") {
         var _startegyClone = { ...this.PropStrategy };
-        _startegyClone._id = null;
+        _startegyClone._id = undefined;
         _startegyClone.trades.forEach((t) => {
           t._id = undefined;
         });

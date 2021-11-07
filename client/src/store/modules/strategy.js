@@ -124,7 +124,7 @@ const strategyModule = {
         GetLiveData({ commit }, { Portfolio, Strategy }) {
             console.log('Portfolio, Strategy :>> ', Portfolio, Strategy);
 
-            axios.get(apiUrl + "data/").then(function (res) {
+            axios.get(apiUrl + "data/nse/list/all").then(function (res) {
                 if (res.status == 200) {
                     console.log('res.data :>> ', res.data);
                     //commit(ADDEDITSTRATEGY, res.data);

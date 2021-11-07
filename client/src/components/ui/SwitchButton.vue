@@ -31,7 +31,8 @@
         transform
         scale-110
         rounded-full
-        shadow-sm
+        shadow
+
       "
       :class="FgColor"
     >

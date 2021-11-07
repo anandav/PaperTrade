@@ -151,8 +151,9 @@
             v-if="Portfolio.exchange"
             class="table-cell px-1 py-3 text-yellow-400"
           >
-            {{ item.order }}
-            {{ item._id }}
+          Place Holder
+            <!-- {{ item.order }}
+            {{ item._id }} -->
           </div>
 
           <div class="table-cell px-1 py-3">
