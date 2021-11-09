@@ -13,6 +13,9 @@ const portfolioSchema = schema({
   description:{
     type : String
   },
+  order:{
+    type: String
+  },
   createdon : {
     type: Date,
     default : Date.now()

@@ -4,13 +4,12 @@
     role="menu"
   >
     <div class="flex items-center mt-5">
-      <div class="w-5/6">
+      <div>
         <input
           class="
-            mx-2
-            pl-2
-            p-1
-            w-full
+            px-1
+            ml-2
+            w-48
             bg-gray-200
             dark:bg-gray-600
             focus:outline-none
@@ -23,7 +22,7 @@
         />
       </div>
 
-      <div class="w-1/6">
+      <!-- <div class="w-1/6">
         <a
           class="btn mx-2 invisible lg:visible float-right tooltip"
           href="#"
@@ -32,7 +31,7 @@
           <i class="material-icons">save</i>
           <tooltip :Value="txtAddEditPortfolio" />
         </a>
-      </div>
+      </div> -->
     </div>
     <div class="mt-5">
       <div class="">
@@ -58,48 +57,48 @@
               Portfolio && item._id == Portfolio._id,
           }"
         >
-        <div class="p-2" tabindex="0">
-          <div class="inline-block">
-            <div
-              class="view"
-              :class="{
-                'font-black': Portfolio && item._id == Portfolio._id,
-              }"
-            >
-<!-- <svg
-              class="inline-block cursor-move pb-1"
-              width="10"
-              height="15"
-              viewBox="0 0 2 5"
-              version="1.1"
-            >
-              <path
-                id="rect2026"
-                style="fill: #ececec; stroke-width: 0.264583"
-                d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
-              />
-            </svg> -->
+          <div class="p-2" tabindex="0">
+            <div class="inline-block">
+              <div
+                class="view"
+                :class="{
+                  'font-black': Portfolio && item._id == Portfolio._id,
+                }"
+              >
+                <svg
+                  class="inline-block cursor-move pb-1"
+                  width="10"
+                  height="15"
+                  viewBox="0 0 2 5"
+                  version="1.1"
+                >
+                  <path
+                    id="rect2026"
+                    style="fill: #ececec; stroke-width: 0.264583"
+                    d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
+                  />
+                </svg>
 
-              {{ item.name }}
+                {{ item.name }}
+              </div>
+              <input
+                class="
+                  edit
+                  ml-2
+                  pl-2
+                  py-1
+                  bg-gray-200
+                  dark:bg-gray-700
+                  focus:outline-none
+                  rounded
+                "
+                placeholder="Edit Portfolio Name"
+                type="text"
+                v-model="item.name"
+                @keyup.enter="onInlineSavePortfolio(item)"
+              />
             </div>
-            <input
-              class="
-                edit
-                ml-2
-                pl-2
-                py-1
-                bg-gray-200
-                dark:bg-gray-700
-                focus:outline-none
-                rounded
-              "
-              placeholder="Edit Portfolio Name"
-              type="text"
-              v-model="item.name"
-              @keyup.enter="onInlineSavePortfolio(item)"
-            />
-          </div>
-          <!-- <div class="float-right ">
+            <!-- <div class="float-right ">
             <div class="space-x-1">
               <a class="btn tooltip view " @click="onInlineEditPortfolio(item)">
                 <i class="material-icons">edit</i>
@@ -118,8 +117,7 @@
               </a>
             </div>
           </div> -->
-
-        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -142,12 +140,12 @@ export default {
       this.GetPortfolioById(item);
       this.GetAllStrategies(item);
     },
-    onAddNewPortfolio : function() {
+    onAddNewPortfolio: function () {
       if (this.portfolioName) {
         this.SavePortfolio({
           _id: 0,
           name: this.portfolioName,
-          exchange : 'NSE',
+          exchange: "NSE",
           description: "",
           updateui: true,
         });

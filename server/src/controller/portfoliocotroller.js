@@ -8,7 +8,7 @@ require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
 
-   // //Add Exchange to all portfolio
+  // //Add Exchange to all portfolio
   // await Portfolio.update({},
   //   { $set: { exchange: 'NSE' } },
   //   { upsert: true, multi: true },
@@ -30,8 +30,10 @@ portfolicontroller.post("/find", async (req, res) => {
 });
 
 portfolicontroller.post("/save", async (req, res) => {
+
+  if (process.env.ISDEMO == 'false') {
   const { _id, name, exchange, description, createdon, updateui } = req.body;
- 
+
   var _portfolioObject = {};
   if (_id) {
     _portfolioObject = await commonUtility.GetPortfolioById(_id);
@@ -54,16 +56,27 @@ portfolicontroller.post("/save", async (req, res) => {
     console.log(err);
     res.send(err);
   }
+}else{
+  res.status(401);
+  res.send({"error": "Cant edit portfolio on demo mode."})
+}
+
+
 });
 
 
 portfolicontroller.post("/delete", async (req, res) => {
   var pid = req.body._id;
   if (pid) {
-    commonUtility.DeleteStrategyUsingPortfolioID(pid);
-    Portfolio.deleteOne({ _id: pid }, (err, doc) => {
-      res.send(doc);
-    });
+    if (process.env.ISDEMO == 'false') {
+      commonUtility.DeleteStrategyUsingPortfolioID(pid);
+      Portfolio.deleteOne({ _id: pid }, (err, doc) => {
+        res.send(doc);
+      });
+    }else{
+      res.status(401);
+      res.send({"error": "Cant delete portfolio on demo mode."})
+    }
   }
 });
 

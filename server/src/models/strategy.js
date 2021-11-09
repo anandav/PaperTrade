@@ -17,6 +17,9 @@ const strategySchema = schema({
   symbol: {
     type: String,
   },
+  symboltype: {
+    type: String,
+  },
   lotsize: {
     type: Number
   },

@@ -46,17 +46,18 @@ const tradeSchema = schema({
   },
   partnerid: {
     type: mongoose.Schema.Types.ObjectId,
-
   },
   note: {
     type: String
   },
   group: {
     type: String,
-
   },
   order :{
     type: Number
+  },
+  color:{
+    type : String
   },
   createdon: {
     type: Date,
@@ -66,7 +67,6 @@ const tradeSchema = schema({
     type: Date,
     default: Date.now(),
   },
-
 
 
   strikepricemin: {

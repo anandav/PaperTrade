@@ -30,6 +30,7 @@ app.use("/trade", tradeController);
 if (process.env.ENABLE_DATAAPI == 'true') {
   app.use("/data", dataProvider);
 } else {
+ 
   
   app.use("/data", (req, res) => {
     res.status(404).json({ "error": "Data endpoint is disabled" })
@@ -46,6 +47,8 @@ mongoose.connect(
     //console.log(process.env.DBCONNECTIONSTRING);
   }
 );
+
+
 
 
 

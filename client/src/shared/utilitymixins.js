@@ -31,8 +31,8 @@ const utilitymixins = {
           PositiveRegionOnlyOpacity: "opacity-30",
           Nevgative: "#FF2442",
           NegativeRegionOnlyOpacity: "opacity-30",
-          LGGREEN : "rgb(57, 163, 136)",
-          LGRED : "rgb(224, 36, 1)",
+          LGGREEN: "rgb(57, 163, 136)",
+          LGRED: "rgb(224, 36, 1)",
 
         },
         DIMENSION: {
@@ -49,7 +49,8 @@ const utilitymixins = {
         1: "Call",
         2: "Put",
         3: "Future",
-        // 4:"Stocks",
+        4: "Stocks",
+        // 5: "Crypto"
       },
       EXCHANGE: {
         1: "NSE",
@@ -263,89 +264,6 @@ const utilitymixins = {
       }
     },
 
-    // POC: BarChart
-    _generateBarChart: function (chartData, paretnId) {
-      console.log('chartData :>> ', chartData);
-      console.log('chartData :>> ', chartData);
-      let _numbers = chartData.map(c => c.netPnL);
-      let _max = Math.max(..._numbers) + 2000;
-      let _min = Math.min(..._numbers) - 1000;
-
-      const svg = d3.select(paretnId).append("svg")
-        .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
-        .attr("height", this.HEIGHT + this.MARGIN.TOP + this.MARGIN.BOTTOM);
-      const g = svg.append("g")
-        .attr("transform", `translate(${this.MARGIN.LEFT}, ${this.MARGIN.BOTTOM})`);
-
-      const rect = g.selectAll("rect").data(chartData);
-      const x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH]);//.paddingInner(0).paddingOuter(0.5);
-      const y = d3.scaleLinear().domain([_min, _max]).range([0, this.HEIGHT]);/// Changing min & max to start chart from bottom
-      //const y = d3.scaleLinear().domain([_max, _min]).range([0, this.HEIGHT]);
-
-      const xAxisCall = d3.axisBottom(x);
-      const yAxisCall = d3.axisLeft(y);
-
-      g.append("g")
-        .attr("class", "x axis")
-        .attr("transform", `translate(0,${this.HEIGHT})`)
-        .call(xAxisCall);
-      g.append("g")
-        .attr("class", "y axis")
-        .call(yAxisCall);
-
-      rect.enter().append("rect")
-        .attr("x", (d) => x(d.strikePrice))
-        .attr("y", (d) => y(d.netPnL))
-        .attr("width", 30)
-        .attr("height", (d) => this.HEIGHT - y(d.netPnL))
-        .attr("fill", "#ffc107");
-    },
-
-    // POC: Line Chart
-    ///Ref: https://observablehq.com/@d3/line-chart
-    _generateLineChart1: function (chartData, paretnId) {
-      const line = d3.line()
-        .defined(d => !isNaN(d.netPnL))
-        .x(d => x(d.strikePrice))
-        .y(d => y(d.netPnL))
-      const x = d3.scaleBand().domain(chartData.map(c => c.strikePrice)).range([0, this.WIDTH - this.MARGIN.RIGHT]);
-
-      const y = d3.scaleLinear()
-        .domain([d3.min(chartData, d => d.netPnL) - 1000, d3.max(chartData, d => d.netPnL) + 1000]).nice()
-        .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP])
-
-      const xAxis = g => g
-        .attr("transform", `translate(0,${this.HEIGHT - this.MARGIN.BOTTOM})`)
-        .call(d3.axisBottom(x).ticks(this.WIDTH / 80).tickSizeOuter(0))
-      const yAxis = g => g
-        .attr("transform", `translate(${this.MARGIN.LEFT},0)`)
-        .call(d3.axisLeft(y))
-        .call(g => g.select(".domain").remove())
-        .call(g => g.select(".tick:last-of-type text").clone()
-          .attr("x", 3)
-          .attr("text-anchor", "start")
-          .attr("font-weight", "bold")
-          .text(chartData.y))
-
-      const svg = d3.select(paretnId).append("svg")
-        .attr("viewBox", [0, 0, this.WIDTH, this.HEIGHT]);
-
-      svg.append("g")
-        .call(xAxis);
-
-      svg.append("g")
-        .call(yAxis);
-
-      svg.append("path")
-        .datum(chartData)
-        .attr("fill", "none")
-        .attr("stroke", "#ffc107")
-        .attr("stroke-width", 1.5)
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("d", line);
-    },
-
     /// Line Chart
     ///ref: https://observablehq.com/@simulmedia/line-chart
     ///ref: https://gist.github.com/llad/3766585 
@@ -355,11 +273,15 @@ const utilitymixins = {
     GenerateLineChart: function (chartData, paretnId, strategy) {
       if (!chartData || !paretnId)
         return;
+
+      const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
+
+      this.WIDTH = _WIDTH > 0 ? _WIDTH : this.WIDTH;
       const minPnL = d3.min(chartData, d => d.netPnL);
       const maxPnL = d3.max(chartData, d => d.netPnL);
       const minSP = d3.min(chartData, d => d.strikePrice);
       const maxSP = d3.max(chartData, d => d.strikePrice);
-      const xScale = d3.scaleLinear().domain([minSP, maxSP]).range([this.MARGIN.LEFT, this.WIDTH + this.MARGIN.RIGHT]);
+      const xScale = d3.scaleLinear().domain([minSP, maxSP]).range([this.MARGIN.LEFT, this.WIDTH]);
       const yScale = d3.scaleLinear().domain([minPnL, maxPnL]).nice().range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
       const xAxisCall = d3.axisBottom(xScale);
       const yAxisCall = d3.axisLeft(yScale).ticks(10).tickFormat(d3.formatPrefix("0.1", 1e5));
@@ -477,7 +399,7 @@ const utilitymixins = {
       const onMouseEnter = () => { svg.selectAll(".hovertooltip, .hoverline, .hoverdot").attr("visibility", "visible"); };
       const svg = d3.select(paretnId).append("svg")
         .attr("class", "line")
-        .attr("width", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+        .attr("width", this.WIDTH)
         .attr("height", this.HEIGHT);
       const line = d3.line().defined(d => !isNaN(d.netPnL)).x(d => xScale(d.strikePrice)).y(d => yScale(d.netPnL));
 
@@ -501,7 +423,7 @@ const utilitymixins = {
       svg
         .append("g")
         .attr("class", "x axis")
-        .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM })`)
+        .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM})`)
         .call(xAxisCall)
         .selectAll("text")
         .style("text-anchor", "begin")
@@ -584,13 +506,10 @@ const utilitymixins = {
           .attr("d", areaNeg);
 
       }
-
-
       const tooltipline = svg.append('line').classed('hoverline', true)
       const tooltipdotinner = svg.append('circle').classed('hoverdot', true);
       const tooltipdot = svg.append('circle').classed('hoverdot', true);
       const tooltip = svg.append("g").classed("hovertooltip", true);
-
       if (this.ChartSettings.TOOLTIP) {
         svg.on('mousemove', onMouseMove);
         svg.on('mouseleave', onMouseLeave);

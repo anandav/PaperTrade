@@ -69,7 +69,7 @@
             class="btn ml-2 tooltip text-red-700 dark:text-red-700"
             @dblclick="onDeletePortfolio(Portfolio)"
           >
-            <i class="material-icons">delete</i>
+            <i class="material-icons">delete_forever</i>
             <tooltip Value="Delete Portfilio" />
           </button>
         </div>

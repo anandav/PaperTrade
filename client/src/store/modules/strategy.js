@@ -3,6 +3,7 @@ import {
     GETALLSTRATEGIES,
     ADDEDITSTRATEGY,
     DELETESTRATEGY,
+    SETEXCHANGEDETAIL,
 } from "../mutationtype";
 
 const axios = require("axios");
@@ -11,10 +12,14 @@ const strategyModule = {
     namespaced: true,
     state: {
         Strategies: [],
+        ExchangeDetail: {},
     },
     getters: {
         Strategies: state => {
             return state.Strategies;
+        },
+        ExchangeDetail: state => {
+            return state.ExchangeDetail;
         },
 
     },
@@ -43,6 +48,11 @@ const strategyModule = {
                 }
             }
         },
+        [SETEXCHANGEDETAIL](state, exchangeDetail) {
+            console.log('SETEXCHANGEDETAIL :>> ', exchangeDetail);
+            state.ExchangeDetail = exchangeDetail
+        },
+
     },
     actions: {
         GetAllStrategies: async function ({ commit }, item) {
@@ -121,15 +131,36 @@ const strategyModule = {
                 console.error("Source and Destination strategy are different symbol or size or strike price step.");
             }
         },
-        GetLiveData({ commit }, { Portfolio, Strategy }) {
-            console.log('Portfolio, Strategy :>> ', Portfolio, Strategy);
+        GetLiveData({ commit, rootGetters }, { Portfolio, Strategy, action }) {
+            const allExchange = rootGetters["strategyModule/ExchangeDetail"];
+            if (!allExchange.length || allExchange.length == 0) {
+                axios.get(apiUrl + "data/").then(function (res) {
+                    if (res.status == 200) {
+                        commit(SETEXCHANGEDETAIL, res.data);
+                    }
+                });
+            }
 
-            axios.get(apiUrl + "data/nse/list/all").then(function (res) {
-                if (res.status == 200) {
-                    console.log('res.data :>> ', res.data);
-                    //commit(ADDEDITSTRATEGY, res.data);
-                }
-            });
+            let url = "";
+            if (action == "listall") {
+                url = `${apiUrl}data/${Portfolio.exchange}/list/all`;
+            } else if(action == "livedata"){
+               url = this._buildUrl(Portfolio, Strategy, action);
+            }
+            if (url) {
+                axios.get(url).then(function (res) {
+                    if (res.status == 200) {
+                        console.log('res.data :>> ', res.data);
+                        //commit(ADDEDITSTRATEGY, res.data);
+                    }
+                });
+            }
+        },
+        _buildUrl(Portfolio, Strategy, action){
+            let _url = "";
+            _url = `${apiUrl}data/${Portfolio.exchange}/list/all`;
+
+            return _url;
         },
     },
 };

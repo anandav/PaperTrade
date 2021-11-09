@@ -21,10 +21,14 @@
 }
 
 .btn-mini{
-  @apply  cursor-pointer text-xs   justify-center  border border-transparent shadow-sm 
+  @apply  cursor-pointer text-xxs   justify-center rounded border-none border border-transparent shadow-sm 
   dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
   bg-gray-300 hover:bg-gray-400 hover:text-gray-200
   focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-mini i{
+  font-size: 12px;
 }
 
 .mini-edit{
@@ -60,7 +64,7 @@
 ::-webkit-scrollbar-track {
   /* background-color: rgba(71, 85, 105, var(--tw-bg-opacity)); */
    background-color: rgba(148, 163, 184, var(--tw-bg-opacity)); 
-  border-radius: 100px;
+  border-radius: 10px;
 
   /* background-color: rgba(255, 5, 115, var(--tw-border-opacity)); */
 }
@@ -68,7 +72,7 @@
 ::-webkit-scrollbar-thumb {
   /* background-color: #d4aa70; */
   background-color: rgba(71, 85, 105, var(--tw-border-opacity));
-  border-radius: 100px;
+  border-radius: 10px;
 }
 
 

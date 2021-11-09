@@ -105,8 +105,8 @@
               @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy.portfolio"
               :Tooltip="txtMoveStrategy"
-              v-if="!this.PropStrategy.isarchive"
             >
+              <!-- v-if="!this.PropStrategy.isarchive" -->
             </DropDown>
 
             <DropDown
@@ -138,7 +138,7 @@
               class="btn text-red-700 dark:text-red-700 tooltip"
               @dblclick="onDeleteStrategy()"
             >
-              <i class="material-icons">delete</i>
+              <i class="material-icons">delete_forever</i>
               <tooltip :Value="txtDeleteStrategy" />
             </button>
           </div>
@@ -152,8 +152,8 @@
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
-            @onItemEnterKeyPressed="onShowChart"
           />
+            <!-- @onItemEnterKeyPressed="onShowChart" -->
         </div>
         <div class="col-span-1">
           <div class="chartplaceholder">
@@ -318,6 +318,7 @@ export default {
       this.GetLiveData({
         Portfolio: this.Portfolio,
         Strategy: this.PropStrategy,
+        action :"listall"
       });
     },
   },

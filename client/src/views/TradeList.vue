@@ -54,14 +54,15 @@
           :key="item._id"
           :data-id="item._id"
           :data-order="item.order"
-          :class="{
-            isTradeEdit: item && editTrade && item._id == editTrade._id,
-          }"
+          :class="[
+            item && editTrade && item._id == editTrade._id ? `isTradeEdit` : ``,
+            item.color,
+          ]"
           v-cloak
         >
           <div class="table-cell" v-show="!item.ismove">
             <svg
-              class="cursor-move pt-1"
+              class="cursor-move pt-1 view"
               width="10"
               height="15"
               viewBox="0 0 2 5"
@@ -75,17 +76,23 @@
             </svg>
           </div>
           <div class="table-cell px-1 py-3">
+            <button class="btn-mini text-xxs mr-2 dark:text-yellow-400 tooltip view" @click="onChangeColor(item)">
+                <i class="material-icons">category</i>
+                <!-- <tooltip :Value="txtEditTrade" /> -->
+              </button>
             <label class="">
               <input
                 type="checkbox"
-                class="mini-checkbox"
+                class="mini-checkbox view"
                 :value="item._id"
                 v-model="selectedIDs"
                 @change="onCheckStateChanged(item)"
               />
             </label>
-          </div>
+          
 
+            
+          </div>
           <div class="table-cell px-1 py-3">
             <span v-show="item.tradetype != 'Future'" class="view">
               {{ item.selectedstrike }}
@@ -151,7 +158,7 @@
             v-if="Portfolio.exchange"
             class="table-cell px-1 py-3 text-yellow-400"
           >
-          Place Holder
+            Place Holder
             <!-- {{ item.order }}
             {{ item._id }} -->
           </div>
@@ -191,7 +198,7 @@
                 class="btn tooltip text-red-600 dark:text-red-700"
                 @dblclick="onDeleteTrade(PropStrategy._id, item._id)"
               >
-                <i class="material-icons">delete</i>
+                <i class="material-icons">delete_forever</i>
                 <tooltip :Value="txtDeleteTrade" />
               </button>
             </div>
@@ -291,7 +298,6 @@ export default {
       }
     },
     onDrop: function (e) {
-      console.clear();
       e.preventDefault();
       document.querySelector(".dragging").classList.remove("dragging");
       const row = e.target;
@@ -326,7 +332,10 @@ export default {
       this.CheckStateChanged(this.PropStrategy);
       this.GenerateChart(this.PropStrategy);
     },
-
+    onChangeColor: function (trade) {
+      trade.color = trade.color == "bg-gray-700" ? "" : "bg-gray-700";
+      this.AddEditTrade(trade);
+    },
     getDragAfterElement: function (container, y) {
       const draggableElements = [
         ...container.querySelectorAll(".table-row:not(.dragging)"),
@@ -383,8 +392,11 @@ export default {
           t.checked = value;
         });
         this.selectedIDs = selected;
-        this.CheckStateChanged(this.PropStrategy);
-        this.GenerateChart(this.PropStrategy);
+
+        if (!this.PropStrategy.isarchive) {
+          this.CheckStateChanged(this.PropStrategy);
+          this.GenerateChart(this.PropStrategy);
+        }
       },
     },
 

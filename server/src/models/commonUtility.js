@@ -24,9 +24,18 @@ module.exports = {
 
   DeleteStrategyUsingPortfolioID: function (pid) {
     if (pid) {
-      Strategy.remove({ portfolio: pid }, (err, doc) => {
-        return doc;
-      });
+      console.log('Delete portfolio :>> ');
+      if (process.env.ISDEMO == 'false') {
+        Strategy.remove({ portfolio: pid }, (err, doc) => {
+          return doc;
+        });
+      }
+      else
+      {
+        console.log('Demo mode cant delete Strategies');
+        return null;
+      }
+     
     }
   },
 
