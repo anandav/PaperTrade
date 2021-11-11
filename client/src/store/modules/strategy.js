@@ -49,7 +49,6 @@ const strategyModule = {
             }
         },
         [SETEXCHANGEDETAIL](state, exchangeDetail) {
-            console.log('SETEXCHANGEDETAIL :>> ', exchangeDetail);
             state.ExchangeDetail = exchangeDetail
         },
 
@@ -144,21 +143,25 @@ const strategyModule = {
             let url = "";
             if (action == "listall") {
                 url = `${apiUrl}data/${Portfolio.exchange}/list/all`;
-            } else if(action == "livedata"){
-               url = this._buildUrl(Portfolio, Strategy, action);
+            } else if (action == "livedata") {
+                url = this._buildUrl(Portfolio, Strategy, action);
             }
-            if (url) {
-                axios.get(url).then(function (res) {
-                    if (res.status == 200) {
-                        console.log('res.data :>> ', res.data);
-                        //commit(ADDEDITSTRATEGY, res.data);
-                    }
-                });
-            }
+            // if (url) {
+            //     axios.get(url).then(function (res) {
+            //         if (res.status == 200) {
+            //             console.log('res.data :>> ', res.data);
+            //             //commit(ADDEDITSTRATEGY, res.data);
+            //         }
+            //     });
+            // }
         },
-        _buildUrl(Portfolio, Strategy, action){
+        _buildUrl(Portfolio, Strategy, action) {
             let _url = "";
-            _url = `${apiUrl}data/${Portfolio.exchange}/list/all`;
+            if (Strategy.symboltype == "equity") {
+
+            }
+
+            _url = `${apiUrl}data/${Portfolio.exchange}/{}`;
 
             return _url;
         },

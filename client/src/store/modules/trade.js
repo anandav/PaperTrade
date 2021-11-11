@@ -64,7 +64,7 @@ const tradeModule = {
                     selectedstrike: 17500,
                     price: 30,
                     note: "",
-                    order: _strategy.trades.length+1,
+                    order: _strategy.trades.length,
                 };
                 return axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                     if (res.status == 200) {

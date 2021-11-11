@@ -42,7 +42,7 @@
           class="
             table-row
             text-right
-            border-t border-gray-400
+            border-t border-gray-300
             dark:border-gray-600
           "
           draggable="true"
@@ -62,7 +62,14 @@
         >
           <div class="table-cell" v-show="!item.ismove">
             <svg
-              class="cursor-move pt-1 view"
+              class="
+                cursor-move
+                pt-1
+                view
+                fill-current
+                text-gray-400
+                dark:text-gray-500
+              "
               width="10"
               height="15"
               viewBox="0 0 2 5"
@@ -70,16 +77,31 @@
             >
               <path
                 id="rect2026"
-                style="fill: #ececec; stroke-width: 0.264583"
+                style="stroke-width: 0.264583"
                 d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
               />
+              <!-- fill: #ececec; -->
             </svg>
           </div>
           <div class="table-cell px-1 py-3">
-            <button class="btn-mini text-xxs mr-2 dark:text-yellow-400 tooltip view" @click="onChangeColor(item)">
-                <i class="material-icons">category</i>
-                <!-- <tooltip :Value="txtEditTrade" /> -->
-              </button>
+            <button
+              class="btn-mini text-xxs mr-2 dark:text-yellow-500 tooltip view"
+              @click="onChangeColor(item)"
+            >
+              <i class="material-icons">category</i>
+
+            </button>
+
+            <!-- <DropDown
+              class="inline-block view tooltip"
+              :Icon="`menu`"
+              :Items="TradeAction"
+              :Type="`Menu`"
+              @itemclicked="onTradeDropDownItemClicked"
+              Tooltip="Action"
+            >
+            </DropDown> -->
+
             <label class="">
               <input
                 type="checkbox"
@@ -89,9 +111,6 @@
                 @change="onCheckStateChanged(item)"
               />
             </label>
-          
-
-            
           </div>
           <div class="table-cell px-1 py-3">
             <span v-show="item.tradetype != 'Future'" class="view">
@@ -156,11 +175,11 @@
           </div>
           <div
             v-if="Portfolio.exchange"
-            class="table-cell px-1 py-3 text-yellow-400"
+            class="table-cell px-1 py-3 text-yellow-500"
           >
-            Place Holder
-            <!-- {{ item.order }}
-            {{ item._id }} -->
+            <!-- Place Holder -->
+            {{ item.order }}
+            <!--  {{ item._id }} -->
           </div>
 
           <div class="table-cell px-1 py-3">
@@ -253,6 +272,12 @@ export default {
       txtSaveTrade: this.$getConst("saveTrade"),
       txtExitTrade: this.$getConst("exitTrade"),
       txtDeleteTrade: this.$getConst("deleteTrade"),
+      bgColor: [ "bg-red-100", "bg-green-100","bg-blue-200",],
+      TradeAction: [
+        { _id: "1", name: "Duplicate", icon: "content_copy", click: "" },
+        { _id: "2", name: "Archive", icon: "archive", click: "" },
+        { _id: "3", name: "Unarchive", icon: "archive", click: "" },
+      ],
     };
   },
   props: {
@@ -283,8 +308,9 @@ export default {
       ///Ref:// https://github.com/WebDevSimplified/Drag-And-Drop
       const row = e.target;
       row.classList.add("dragging");
+      row.classList.add("bg-pink-100");
     },
-    onDragOver: function (e, index) {
+    onDragOver: function (e) {
       const row = e.target.parentElement;
       if (row.classList.contains("table-row")) {
         const container = row.parentElement;
@@ -299,8 +325,9 @@ export default {
     },
     onDrop: function (e) {
       e.preventDefault();
-      document.querySelector(".dragging").classList.remove("dragging");
-      const row = e.target;
+      const row = document.querySelector(".dragging");
+      row.classList.remove("dragging");
+      row.classList.remove("bg-pink-100");
       const tableRowsGroup = row.closest(".table-row-group");
       const tableRows = tableRowsGroup.querySelectorAll(".table-row");
       let i = 0;
@@ -313,7 +340,6 @@ export default {
         });
         i += 1;
       });
-      //console.log("this.PropStrategy :>> ", this.PropStrategy);
       this.EditStrategy(this.PropStrategy);
     },
     onInlineExitTrade: function (trade) {
@@ -333,9 +359,36 @@ export default {
       this.GenerateChart(this.PropStrategy);
     },
     onChangeColor: function (trade) {
-      trade.color = trade.color == "bg-gray-700" ? "" : "bg-gray-700";
+      const findNextColor = (val) => {
+        let index = -1;
+        for (let i = 0; i < this.bgColor.length; i++) {
+          if (this.bgColor[i] == val) {
+            index = i;
+          }
+        }
+        if (index == -1) {
+          return this.bgColor[0];
+        } else {
+          return this.bgColor[index + 1];
+        }
+      };
+      trade.color = findNextColor(trade.color);
       this.AddEditTrade(trade);
     },
+    onTradeDropDownItemClicked: function (type, id, name) {
+      // if (name == "Duplicate") {
+      //   var _startegyClone = { ...this.PropStrategy };
+      //   _startegyClone._id = undefined;
+      //   _startegyClone.trades.forEach((t) => {
+      //     t._id = undefined;
+      //   });
+      //   this.EditStrategy(_startegyClone);
+      // } else if (name == "Archive" || name == "Unarchive") {
+      //   this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
+      //   this.EditStrategy(this.PropStrategy);
+      // }
+    },
+
     getDragAfterElement: function (container, y) {
       const draggableElements = [
         ...container.querySelectorAll(".table-row:not(.dragging)"),
@@ -368,13 +421,20 @@ export default {
 
     ...mapState(["TradeSelectChange"]),
     //PropStrategy.trades
-    sortedTrades: {
-      get: function () {
-        const result = this.PropStrategy.trades.sort((x, y) => {
-          return x.order - y.order;
-        });
-        return result;
-      },
+    sortedTrades: function () {
+      const compare = function (a, b) {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0;
+      };
+      return this.PropStrategy.trades.sort(compare);
+
+      // get: function () {
+      //   const result = this.PropStrategy.trades.sort((x, y) => {
+      //     return x.order - y.order;
+      //   });
+      //   return result;
+      // },
     },
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs

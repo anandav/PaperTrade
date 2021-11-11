@@ -17,6 +17,8 @@ const utilitymixins = {
         TOOLTIPLOCATION: "FOLLOW",//"BOTTOM",//"FOLLOW",//"TOP"
         COLOURS: {
           Line: "stroke-current text-yellow-500 ",
+          XScale: " ",
+          YScale: " ",
           PositiveToolTip: "fill-current text-green-700 opacity-80",
           //PositiveToolTipText: "stroke-current text-black",
           NegativeToolTip: "fill-current text-red-700  opacity-80",
@@ -213,9 +215,8 @@ const utilitymixins = {
         netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
       } else {
         PnL = currentTrade.buyorsell == "Buy" ? _intrinsicValue - currentTrade.price : currentTrade.price - _intrinsicValue
-        //PnL = parseFloat(PnL.toFixed());
         netPnL = (currentTrade.quantity * strategy.lotsize * PnL);
-        netPnL = parseFloat(netPnL.toFixed());
+        netPnL = parseFloat(netPnL.toFixed(2));
       }
       return { PnL, netPnL };
     },
@@ -236,21 +237,16 @@ const utilitymixins = {
           if (!strategy.trades[i].checked) { continue }
           let currentTrade = strategy.trades[i];
           let _strikePrice = range.x0;
-
           let j = 0;
           do {
-            let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy);
+            let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy)
             if (chartData[j]) {
               chartData[j].netPnL += PnlObj.netPnL;
               chartData[j].PnL = PnlObj.PnL;
             } else {
               chartData.push({
                 "strikePrice": parseFloat(_strikePrice.toFixed(2)),
-                //"name": strategy.name,
-                //"symbol": strategy.symbol,
-
                 "qty": currentTrade.quantity,
-                "lot": currentTrade.lotsize,
                 "price": currentTrade.price,
                 ...PnlObj
               });
@@ -265,17 +261,16 @@ const utilitymixins = {
     },
 
     /// Line Chart
-    ///ref: https://observablehq.com/@simulmedia/line-chart
-    ///ref: https://gist.github.com/llad/3766585 
-    ///reg: http://jsfiddle.net/samselikoff/Jqmzd/2/
-    ///ref: https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
-    // ref: https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
+    /// Ref:  https://observablehq.com/@simulmedia/line-chart
+    /// Ref:  https://gist.github.com/llad/3766585 
+    /// Reg:  http://jsfiddle.net/samselikoff/Jqmzd/2/
+    /// Ref:  https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
+    /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
     GenerateLineChart: function (chartData, paretnId, strategy) {
       if (!chartData || !paretnId)
         return;
 
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
-
       this.WIDTH = _WIDTH > 0 ? _WIDTH : this.WIDTH;
       const minPnL = d3.min(chartData, d => d.netPnL);
       const maxPnL = d3.max(chartData, d => d.netPnL);
@@ -337,11 +332,8 @@ const utilitymixins = {
         const { y, width: w, height: h } = text.node().getBBox();
         text.attr("transform", `translate(${-w / 2},${15 - y})`);
 
-
         const upArrow = `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`;
         const downArrow = `M ${w / 2 + 10},42 H 5 L 0,47 -5,42 H ${-w / 2 - 10} v ${h - 60} h ${w + 20}z`;
-        //const downArrow ="M 0,0 L -10,-10 H -40 Q -50,-10 -50,-20 V -50 Q -50,-60 -40,-60 H 40 Q 50,-60 50,-50 V -20 Q 50,-10 40,-10 H 10 z";
-        //const downArrow ="M 44.40625,42 H 5 L 0,47 -5,42 H -44.40625 v -38 h 88.8125z";
         if (this.ChartSettings.TOOLTIPLOCATION == "BOTTOM") {
           path.attr("d", upArrow);
         } else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {

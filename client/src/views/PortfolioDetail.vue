@@ -34,7 +34,8 @@
           <label class="text-xs block text-gray-500"> Total P&L </label>
           <span :class="FgColor">
             {{ TotalPortfolioAmount }}
-          </span>
+          </span> 
+          
         </div>
 
         <div class="flex-1">
@@ -116,13 +117,10 @@ export default {
         return price.toFixed(2);
       },
     },
-     FgColor: function () {
+    FgColor: function () {
       return {
-        "text-green-700":
-        this.TotalPortfolioAmount >= 0,
-        "text-red-700":
-          this.TotalPortfolioAmount < 0,
-        
+        "text-green-700": this.TotalPortfolioAmount >= 0,
+        "text-red-700": this.TotalPortfolioAmount < 0,
       };
     },
   },

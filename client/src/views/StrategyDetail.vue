@@ -99,11 +99,11 @@
             </DropDown>
             <DropDown
               class="inline-block view tooltip"
+              :ExcludeItem="PropStrategy.portfolio"
               :Icon="`trending_flat`"
               :Items="Portfolios"
               :Type="`Portfolios`"
               @itemclicked="onDropDownItemClicked"
-              :ExcludeItem="PropStrategy.portfolio"
               :Tooltip="txtMoveStrategy"
             >
               <!-- v-if="!this.PropStrategy.isarchive" -->

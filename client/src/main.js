@@ -14,7 +14,7 @@ Vue.component("DropDown", DropDown);
 Vue.component("tooltip", tooltip);
 Vue.filter('formatDate', function (value) {
     if (value) {
-       return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true).format('DD-MMM-YYYY hh:mm A');
+       return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true).format('DD-MMM-YYYY HH:mm');
     }
 });
 

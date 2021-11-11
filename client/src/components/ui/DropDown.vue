@@ -35,7 +35,6 @@
           class="
             block
             hover:bg-gray-400
-           
             dark:hover:bg-gray-600
             cursor-pointer
             hover:rounded-sm

@@ -14,9 +14,9 @@
     >
       <div class="container mx-auto">
         <router-link to="/papertrade" class="pl-5">Paper Trade</router-link>
-        <router-link to="/builder" class="pl-5"
-          >Component Place holder</router-link
-        >
+        <!-- <router-link to="/builder" class="pl-5"
+          > Place holder</router-link
+        > -->
         <!-- <router-link to="/about" class="pl-5">About</router-link> -->
         <div class="float-right">
           <label class="mr-3">

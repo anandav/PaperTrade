@@ -3,16 +3,18 @@
 
 
 .btn {
-    @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
+  
+
+     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
     dark:text-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 dark:drop-shadow-sm
-     bg-gray-300 hover:bg-gray-400 hover:text-gray-200  
-    focus:outline-none focus:ring-2 focus:ring-offset-2 ;
+     bg-gray-200 hover:bg-gray-400 hover:text-gray-200  
+    focus:outline-none focus:ring-2 focus:ring-offset-2 ; 
 }
 
 .btn-nonrounded {
     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium 
     dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
-    bg-gray-300 hover:bg-gray-400 hover:text-gray-200
+    bg-gray-200 hover:bg-gray-400 hover:text-gray-200
     focus:outline-none focus:ring-2 focus:ring-offset-2 ;
 }
 

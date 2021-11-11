@@ -17,7 +17,7 @@ module.exports = {
       gray: colors.blueGray,
 
       red: colors.red,
-      blue: colors.sky,
+      blue: colors.blue,
       yellow: colors.amber,
       green: colors.green,
       white: colors.white,
@@ -39,6 +39,7 @@ module.exports = {
        '6xl': '4rem',
       '7xl': '5rem',
      },
+     
     // borderWidth: {
     //   DEFAULT: '1px',
     //   '0': '0',
