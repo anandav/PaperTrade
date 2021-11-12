@@ -272,7 +272,7 @@ export default {
       txtSaveTrade: this.$getConst("saveTrade"),
       txtExitTrade: this.$getConst("exitTrade"),
       txtDeleteTrade: this.$getConst("deleteTrade"),
-      bgColor: [ "bg-red-100", "bg-green-100","bg-blue-200",],
+      bgColor: [ "bg-red-100", "bg-green-100","bg-orange-200",],
       TradeAction: [
         { _id: "1", name: "Duplicate", icon: "content_copy", click: "" },
         { _id: "2", name: "Archive", icon: "archive", click: "" },

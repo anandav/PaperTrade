@@ -139,32 +139,29 @@ const strategyModule = {
                     }
                 });
             }
+            let url = `${apiUrl}data/`;
+            let postData = {
+                Portfolio, 
+                Strategy,
+                //exchange: Portfolio.exchange,
+                // expiry : Strategy.expiry,
+                // symbol: Strategy.symbol,
+                // type: Strategy.type,
+                // trades: Strategy.trades,
+                action,
 
-            let url = "";
-            if (action == "listall") {
-                url = `${apiUrl}data/${Portfolio.exchange}/list/all`;
-            } else if (action == "livedata") {
-                url = this._buildUrl(Portfolio, Strategy, action);
+            };
+
+            if (url) {
+                axios.post(url, postData).then(function (res) {
+                    if (res.status == 200) {
+                        console.log('res.data :>> ', res.data);
+                        //commit(ADDEDITSTRATEGY, res.data);
+                    }
+                });
             }
-            // if (url) {
-            //     axios.get(url).then(function (res) {
-            //         if (res.status == 200) {
-            //             console.log('res.data :>> ', res.data);
-            //             //commit(ADDEDITSTRATEGY, res.data);
-            //         }
-            //     });
-            // }
         },
-        _buildUrl(Portfolio, Strategy, action) {
-            let _url = "";
-            if (Strategy.symboltype == "equity") {
 
-            }
-
-            _url = `${apiUrl}data/${Portfolio.exchange}/{}`;
-
-            return _url;
-        },
     },
 };
 

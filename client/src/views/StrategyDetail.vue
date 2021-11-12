@@ -6,14 +6,18 @@
       rounded
       border
       drop-shadow-md
+
       bg-gray-200
       dark:bg-gray-800
+      
       border-gray-300
       dark:border-gray-700
     "
     :class="{ isStrategyEdit: PropStrategy == editStrategy }"
   >
-    <div class="p-3  border-b border-gray-300 dark:border-gray-600">
+    <!-- rounded-t bg-gradient-to-br from-yellow-400 to-yellow-500 -->
+
+    <div class="p-3 border-b border-gray-300 dark:border-gray-600">
       <div class="flex">
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Name </label>
@@ -153,7 +157,7 @@
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
-            <!-- @onItemEnterKeyPressed="onShowChart" -->
+          <!-- @onItemEnterKeyPressed="onShowChart" -->
         </div>
         <div class="col-span-1">
           <div class="chartplaceholder">
@@ -318,7 +322,7 @@ export default {
       this.GetLiveData({
         Portfolio: this.Portfolio,
         Strategy: this.PropStrategy,
-        action :"listall"
+        action: "listall",
       });
     },
   },

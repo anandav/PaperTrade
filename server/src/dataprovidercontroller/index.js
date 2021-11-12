@@ -6,44 +6,20 @@ const cboe = require("./cboe");
 dataprovider.get("/", async (req, res) => {
     res.json(getExchangeDetail());
 });
-dataprovider.get("/:exchange", async (req, res) => {
-    return get(req, res);
+dataprovider.post("/", async (req, res) => {
+    var result = await get(req, res);
+    res.json(result);
 });
-dataprovider.get("/:exchange/:segment", async (req, res) => {
-    return get(req, res);
-});
-dataprovider.get("/:exchange/:segment/:symbol", async (req, res) => {
-    return get(req, res);
-});
+
 
 function getExchangeDetail() {
-
-    /// THIS IS CSV FOR SEGMENTENDPOINT option,
-    /// NSE,,1024,2048,4096,8192,16384,
-    /// ,,Stock,Indices,Currency,Coin,Commodity,
-    /// 1,List,0,0,0,0,0,
-    /// 2,Detail,0,0,0,0,0,
-    /// 4,Future,0,0,0,0,0,
-    /// 8,Option,0,0,0,0,0,
-    /// 16,-,,,,,,
-    /// 32,-,,,,,,
-    /// 64,-,,,,,,
-    /// 128,-,,,,,,
-    /// 256,-,,,,,,
-    /// 512,-,,,,,,segmentendpoints
-    /// ,SUM,0,0,0,0,0,0
-
-
-
-
-
-    const Features = { "List": 1, "Details": 2, "Future": 3, "Option": 4 };
-    const Segments = { "Stock": 1024, "Indices": 2048, "Currency": 4096, "Crypto": 8192, "Commodity": 16384 };
-
+    const Action = { "List": 1, "Details": 2, };
+    // "Future": , "Option":
+    const Types = { "All": 1024, "Equities": 1024, "Indices": 2048,  "Currency": 4096, "Crypto": 8192, "Commodity": 16384 };
 
     const result = {
-        Features,
-        Segments,
+        Action,
+        Types,
         "Exchanges": [
             { "exchange": "NSE", "isactive": true, "name": "National Stock Exchange.", "segmentendpoints": 22569 },
             { "exchange": "CBOE", "isactive": true, "name": "Chicago Board Options Exchange.", "segmentendpoints": 2051 },
@@ -63,13 +39,16 @@ function getExchangeDetail() {
 
 
 async function get(req, res) {
-    const exchange = req.params?.exchange?.toLowerCase();
-    const segment = req.params?.segment?.toLowerCase();
-    const symbol = req.params?.symbol || null;
-    if (exchange == "nse") {
-        res.json(await nse.Get(segment, symbol));
+    var body = req.body;
+    var portfolio = body.Portfolio;
+    var startegy = body.Strategy
+    var action = body.action;
+    console.log('Portfolio :>> ', portfolio.exchange);
+    if (portfolio.exchange == "nse") {
+        return await nse.Get(segment, startegy.symbol);
     } else {
-        res.json({ "error": "Not a valid request." });
+        
+        return { "error": "Not a valid request." };
     }
 }
 

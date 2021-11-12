@@ -14,14 +14,14 @@ module.exports = {
             }
             let result = [];
             equityFutList.forEach(item => {
-                result.push({ "symbol": item, type: "equity", istradeble: true });
+                result.push({ "symbol": item, "type": "equity", istradeble: true });
             });
             const indices = ["NIFTY", "BANKNIFTY", "FINNIFTY"]
             indices.forEach(item => {
-                result.push({ "symbol": item, type: "indices", istradeble: true });
+                result.push({ "symbol": item, "type": "indices", istradeble: true });
             });
             currencyFutList.data.forEach(item => {
-                result.push({ "symbol": `${item.unit}INR`, type: "currency", istradeble: true });
+                result.push({ "symbol": `${item.unit}INR`, "type": "currency", istradeble: true });
             });
             return result;
         } else if (segment == "equity") {
