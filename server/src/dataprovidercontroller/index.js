@@ -7,15 +7,25 @@ dataprovider.get("/", async (req, res) => {
     res.json(getExchangeDetail());
 });
 dataprovider.post("/", async (req, res) => {
-    var result = await get(req, res);
+    var result = await get(req);
     res.json(result);
 });
 
 
 function getExchangeDetail() {
-    const Action = { "List": 1, "Details": 2, };
-    // "Future": , "Option":
-    const Types = { "All": 1024, "Equities": 1024, "Indices": 2048,  "Currency": 4096, "Crypto": 8192, "Commodity": 16384 };
+///
+///
+///This is POC code and its data has to be moved to DB 
+///
+///
+///
+
+
+
+
+    const Action = { "list": 1, "details": 2,};
+    // "Future": 4, "Option": 8 
+    const Types = { "all": 512, "equity": 1024, "indices": 2048, "currency": 4096, "crypto": 8192, "commodity": 16384 };
 
     const result = {
         Action,
@@ -38,16 +48,15 @@ function getExchangeDetail() {
 }
 
 
-async function get(req, res) {
+async function get(req) {
     var body = req.body;
-    var portfolio = body.Portfolio;
-    var startegy = body.Strategy
+    var portfolio = body.portfolio;
+    var startegy = body.strategy
     var action = body.action;
-    console.log('Portfolio :>> ', portfolio.exchange);
-    if (portfolio.exchange == "nse") {
-        return await nse.Get(segment, startegy.symbol);
+    if (portfolio.exchange?.toLowerCase() == "nse") {
+        return await nse.Get(portfolio, startegy, action);
     } else {
-        
+
         return { "error": "Not a valid request." };
     }
 }

@@ -57,7 +57,7 @@ const strategyModule = {
         GetAllStrategies: async function ({ commit }, item) {
             axios.post(apiUrl + "strategy/findusingportfolioid", {
                 "fieldName": "portfolio",
-                "fieldValue": item,
+                "fieldValue": item._id,
             }).then(function (res) {
                 if (res.data) {
                     commit(GETALLSTRATEGIES, res.data);
@@ -141,22 +141,17 @@ const strategyModule = {
             }
             let url = `${apiUrl}data/`;
             let postData = {
-                Portfolio, 
-                Strategy,
-                //exchange: Portfolio.exchange,
-                // expiry : Strategy.expiry,
-                // symbol: Strategy.symbol,
-                // type: Strategy.type,
-                // trades: Strategy.trades,
+                portfolio: Portfolio,
+                strategy: Strategy,
                 action,
 
             };
-
+            //console.log('Strategy :>> ', JSON.stringify(Strategy));
             if (url) {
                 axios.post(url, postData).then(function (res) {
                     if (res.status == 200) {
-                        console.log('res.data :>> ', res.data);
-                        //commit(ADDEDITSTRATEGY, res.data);
+                        //console.log('res.data :>> ', res.data);
+                        commit(ADDEDITSTRATEGY, res.data);
                     }
                 });
             }

@@ -8,6 +8,7 @@
         <input
           class="
             px-1
+            py-2
             ml-2
             w-48
             bg-gray-200
@@ -15,8 +16,8 @@
             focus:outline-none
             rounded
           "
-          placeholder="Portfolio Name"
-          type="text"
+          :placeholder="txtAddNewPortfolio"
+         
           v-model="portfolioName"
           @keyup.enter="onAddNewPortfolio()"
         />
@@ -167,6 +168,7 @@ export default {
     return {
       portfolioName: "",
       txtAddEditPortfolio: this.$getConst("savePortfolio"),
+      txtAddNewPortfolio: this.$getConst("addNewPortfolio"),
       isLoading: true,
       editPortfolio: null,
     };

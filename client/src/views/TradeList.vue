@@ -10,7 +10,7 @@
       <div class="table-row-group">
         <div class="table-row text-xs text-right text-gray-900 dark:text-white">
           <div class=""></div>
-          <div class="table-cell px-1 py-3">
+          <div class="table-cell px-1 py-3 w-12">
             <label class="block"
               ><input
                 type="checkbox"
@@ -23,7 +23,7 @@
         <div class="hidden px-1 py-4">Lot Size</div>
         <div class="hidden px-1 py-4">Step</div> -->
           <div class="table-cell px-1 py-4">Strike Price</div>
-          <div class="table-cell px-1 py-4">Type</div>
+          <div class="table-cell px-1 py-4">Trade Type</div>
           <div class="table-cell px-1 py-4">B/S</div>
           <div class="table-cell px-1 py-4">Qty</div>
           <div class="table-cell px-1 py-4">Spot Price</div>
@@ -50,7 +50,7 @@
           @dragover="onDragOver($event, index)"
           @dragstart="onDragStart($event, item, index)"
           @keyup.113="onInlineEditTrade(item)"
-          v-for="(item, index) in sortedTrades"
+          v-for="(item, index) in PropStrategy.trades"
           :key="item._id"
           :data-id="item._id"
           :data-order="item.order"
@@ -80,7 +80,6 @@
                 style="stroke-width: 0.264583"
                 d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
               />
-              <!-- fill: #ececec; -->
             </svg>
           </div>
           <div class="table-cell px-1 py-3">
@@ -89,7 +88,6 @@
               @click="onChangeColor(item)"
             >
               <i class="material-icons">category</i>
-
             </button>
 
             <!-- <DropDown
@@ -113,17 +111,23 @@
             </label>
           </div>
           <div class="table-cell px-1 py-3">
-            <span v-show="item.tradetype != 'Future'" class="view">
+            <span
+              v-show="item.tradetype == 'Call' || item.tradetype == 'Put'"
+              class="view"
+            >
               {{ item.selectedstrike }}
             </span>
 
             <div class="edit">
-              <div v-show="item.tradetype != 'Future'" class="flex flex-col">
+              <div
+                v-show="item.tradetype == 'Call' || item.tradetype == 'Put'"
+                class="flex flex-col"
+              >
                 <input
                   v-model="item.selectedstrike"
                   :step="PropStrategy.strikepricestep"
                   type="number"
-                  class="mini-edit text-right mini-edit-nonrounded"
+                  class="text-right mini-edit-nonrounded"
                 />
               </div>
             </div>
@@ -272,11 +276,11 @@ export default {
       txtSaveTrade: this.$getConst("saveTrade"),
       txtExitTrade: this.$getConst("exitTrade"),
       txtDeleteTrade: this.$getConst("deleteTrade"),
-      bgColor: [ "bg-red-100", "bg-green-100","bg-orange-200",],
+      bgColor: ["bg-red-100", "bg-green-100", "bg-orange-200"],
       TradeAction: [
-        { _id: "1", name: "Duplicate", icon: "content_copy", click: "" },
-        { _id: "2", name: "Archive", icon: "archive", click: "" },
-        { _id: "3", name: "Unarchive", icon: "archive", click: "" },
+        { _id: "1", name: "Exit", icon: "archive", click: "" },
+        { _id: "2", name: "Duplicate", icon: "content_copy", click: "" },
+        { _id: "3", name: "Delete", icon: "archive", click: "" },
       ],
     };
   },
@@ -300,6 +304,10 @@ export default {
     },
     onInlineSaveTrade: function (trade) {
       this.editTrade = null;
+      trade.selectedstrike =
+        trade.tradetype == "Call" || trade.tradetype == "Put"
+          ? trade.selectedstrike
+          : undefined;
       this.AddEditTrade(trade).then(() => {
         this.$emit("onItemEnterKeyPressed");
       });
@@ -375,19 +383,19 @@ export default {
       trade.color = findNextColor(trade.color);
       this.AddEditTrade(trade);
     },
-    onTradeDropDownItemClicked: function (type, id, name) {
-      // if (name == "Duplicate") {
-      //   var _startegyClone = { ...this.PropStrategy };
-      //   _startegyClone._id = undefined;
-      //   _startegyClone.trades.forEach((t) => {
-      //     t._id = undefined;
-      //   });
-      //   this.EditStrategy(_startegyClone);
-      // } else if (name == "Archive" || name == "Unarchive") {
-      //   this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
-      //   this.EditStrategy(this.PropStrategy);
-      // }
-    },
+    // onTradeDropDownItemClicked: function (type, id, name) {
+    //   if (name == "Duplicate") {
+    //     var _startegyClone = { ...this.PropStrategy };
+    //     _startegyClone._id = undefined;
+    //     _startegyClone.trades.forEach((t) => {
+    //       t._id = undefined;
+    //     });
+    //     this.EditStrategy(_startegyClone);
+    //   } else if (name == "Archive" || name == "Unarchive") {
+    //     this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
+    //     this.EditStrategy(this.PropStrategy);
+    //   }
+    // },
 
     getDragAfterElement: function (container, y) {
       const draggableElements = [
@@ -409,11 +417,24 @@ export default {
         { offset: Number.NEGATIVE_INFINITY }
       ).element;
     },
+    getSortedTrades: function () {
+      const compare = function (a, b) {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0;
+      };
+      if (this.PropStrategy.trades.length > 0) {
+        return this.PropStrategy.trades.sort(compare);
+      } else {
+        console.log('this.Propstrategy.trades :>> ', this.PropStrategy.trades);
+        return this.PropStrategy.trades;
+      }
+    },
   },
   mounted() {
     this.SelectAll = true;
   },
-
+ 
   computed: {
     ...mapGetters({
       Portfolio: "portfolioModule/Portfolio",
@@ -421,21 +442,7 @@ export default {
 
     ...mapState(["TradeSelectChange"]),
     //PropStrategy.trades
-    sortedTrades: function () {
-      const compare = function (a, b) {
-        if (a.order < b.order) return -1;
-        if (a.order > b.order) return 1;
-        return 0;
-      };
-      return this.PropStrategy.trades.sort(compare);
 
-      // get: function () {
-      //   const result = this.PropStrategy.trades.sort((x, y) => {
-      //     return x.order - y.order;
-      //   });
-      //   return result;
-      // },
-    },
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
       get: function () {
@@ -486,6 +493,7 @@ export default {
         "text-red-700": this.TotalAmount < 0,
       };
     },
+   
   },
 };
 </script>

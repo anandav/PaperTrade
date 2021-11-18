@@ -51,7 +51,7 @@ const utilitymixins = {
         1: "Call",
         2: "Put",
         3: "Future",
-        4: "Stocks",
+        4: "Equity",
         // 5: "Crypto"
       },
       EXCHANGE: {

@@ -6,10 +6,8 @@
       rounded
       border
       drop-shadow-md
-
       bg-gray-200
       dark:bg-gray-800
-      
       border-gray-300
       dark:border-gray-700
     "
@@ -37,11 +35,29 @@
             {{ PropStrategy.symbol }}
           </span>
 
-          <input
+          <!-- <input
             class="normal-edit edit"
             placeholder="Symbol"
             v-model="PropStrategy.symbol"
             @keydown.enter="onSaveStrategy()"
+          /> -->
+          <AutoComplete
+            :Value="PropStrategy.symbol"
+            @keyup="onAutoCompleteKeyUp"
+            PlaceHolder="Symbol"
+          />
+        </div>
+
+        <div class="flex-1">
+          <label class="text-xs block text-gray-500"> Symbol Type </label>
+          <span class="view">
+            {{ PropStrategy.symboltype }}
+          </span>
+
+          <input
+            class="normal-edit edit"
+            placeholder="Symbol Type"
+            v-model="PropStrategy.symboltype"
           />
         </div>
         <div class="flex-1">
@@ -57,6 +73,7 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
+
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Expiry </label>
           <span class="view">
@@ -65,7 +82,7 @@
 
           <input
             class="normal-edit edit"
-            placeholder="Lot Size"
+            placeholder="Expiry"
             v-model="PropStrategy.expiry"
             @keydown.enter="onSaveStrategy()"
           />
@@ -228,11 +245,12 @@
 import { mapActions, mapGetters } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
+import AutoComplete from "../components/ui/AutoComplete";
 import myMixins from "../shared/utilitymixins";
 
 export default {
   name: "StrategyDetail",
-  components: { TradeList },
+  components: { TradeList, AutoComplete },
   computed: {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
@@ -317,6 +335,9 @@ export default {
         this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
         this.EditStrategy(this.PropStrategy);
       }
+    },
+    onAutoCompleteKeyUp: function (Value) {
+      this.PropStrategy.symbol = Value;
     },
     onGetLiveData: function () {
       this.GetLiveData({

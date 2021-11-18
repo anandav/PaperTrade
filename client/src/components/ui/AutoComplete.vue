@@ -1,9 +1,14 @@
-!<template>
-  <div class="dropdown inline-block relative tooltip">
-    <button class="btn" data-dropdown-toggle="dropdown" tabindex="0">
-      <i class="material-icons">{{ Icon }}</i>
-      <tooltip :Value="Tooltip" />
-    </button>
+<template>
+  <div class="dropdown inline-block relative tooltip edit">
+    <div>
+      <input
+        data-dropdown-toggle="dropdown"
+        class="normal-edit"
+        v-model="autocompleteValue"
+        @keyup="onChange"
+        :placeholder="PlaceHolder"
+      />
+    </div>
     <div
       class="
         dropdown-content
@@ -13,21 +18,28 @@
         dark:bg-gray-700
         rounded
         w-36
-        -ml-10
         shadow-lg
-        divide-y divide-gray-400 dark:divide-gray-600  divide-solid
+        divide-y divide-gray-400
+        dark:divide-gray-600
+        divide-solid
         max-h-96
         overflow-auto
       "
-      role="menuitem"
     >
-      <div
-        :key="item._id"
+      <!-- <ul>
+        <li>a</li>
+        <li>b</li>
+        <li>c</li>
+      </ul> -->
+
+      <!--<div
+        :key="item.id"
         v-for="item in Items"
-        v-bind:value="item._id"
+        v-bind:value="item.id"
         tabindex="0"
         class=""
       >
+
         <a
           class="
             block
@@ -45,35 +57,34 @@
             <i class="material-icons text-sm">{{ item.icon }}</i>
           </span>
           {{ item.name }}</a
-        >
-      </div>
+        > 
+      </div>-->
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "dropdown",
-  props: {
-    Type: { type: String },
-    ExcludeItem: { type: String },
-    Items: { type: Array },
-    Icon: { type: String },
-    Tooltip: { type: String },
+  name: "AutoComplete",
+  created: function () {
+    this.autocompleteValue = this.Value;
   },
   data: function () {
-    return {};
+    return {
+      autocompleteValue: "",
+    };
   },
-  computed: {},
   methods: {
-    onItemClicked: function (type, id, name) {
-      this.$emit("itemclicked", type, id, name);
+    onChange: function () {
+      this.$emit("keyup", this.autocompleteValue);
     },
+  },
+  props: {
+    Value: { type: String },
+    PlaceHolder: { type: String },
   },
 };
 </script>
+
 <style>
-.dropdown:hover .dropdown-content {
-  display: block;
-}
 </style>

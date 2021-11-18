@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require('mongoose');
 const strategycontoller = express.Router();
 const commUtility = require("../models/commonUtility");
 const portfolio = require("../models/portfolio");
@@ -6,13 +7,28 @@ const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
 
 strategycontoller.post("/findusingportfolioid", async (req, res) => {
-
-
-
   var { fieldName, fieldValue } = req.body;
   var result = {};
   if (fieldName && fieldValue) {
-    result = await Strategy.find({ [fieldName]: fieldValue }).sort({ createdon: -1 });
+    // console.clear();
+    // console.log('fieldName :>> ', fieldName);
+    // console.log('fieldValue :>> ', fieldValue);
+    // result = await Strategy.aggregate(
+    //   [
+    //     { $match: { [fieldName] : mongoose.Types.ObjectId(fieldValue) } },
+    //     { "$unwind": "$trades" },
+    //     { $sort: { "createdon": -1, 'trades.order': 1 } },
+    //     {$project: {_id: 1, "symbol": 1, 'trades': 1}},
+    //   ]
+    // );
+    result = await Strategy.aggregate(
+      [
+        //{ $unwind: "$trades" },
+        { $match: { [fieldName]: mongoose.Types.ObjectId(fieldValue) } },
+        { $sort: { "createdon": -1, 'trades.order': -1 } }
+      ]
+    );
+    //result = await Strategy.find({ [fieldName]: fieldValue }).sort({ "createdon": -1, "trades.order": 1 });
     res.json(result);
   } else {
     result = await Strategy.find({});
@@ -22,8 +38,6 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 strategycontoller.post("/save", async (req, res) => {
   if (process.env.ISDEMO == 'false') {
     const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, ismultiplesymbol, trades, createdon } = req.body;
-
-
     if (_id) {
       var _data = {
         _id,

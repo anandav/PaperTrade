@@ -1,50 +1,132 @@
 const axios = require('axios').default;
+const jmespath = require('jmespath');
 require("dotenv/config");
 let currencyFutList = undefined;
 let equityFutList = undefined;
 let indicesFutList = undefined;
 module.exports = {
-    Get: async function (segment, symbol) {
-        if (segment == "list" && symbol == "all") {
-            if (!equityFutList || !indicesFutList || !currencyFutList) 
-            {
+    Maps: {
+        getAllTradeType: "trades[?!isexit].tradetype"
+
+
+    },
+    Get: async function (portfolio, startegy, action) {
+        ///
+        ///
+        ///This is POC code and its data has to be moved to DB 
+        ///
+        ///
+        ///
+
+
+        if (action == "List") {
+            if (!equityFutList || !indicesFutList || !currencyFutList) {
                 indicesFutList = await this.GetIndicesList();
                 currencyFutList = await this.GetCurrencyFuture();
                 equityFutList = await this.GetEquitiesFuturesList();
             }
             let result = [];
             equityFutList.forEach(item => {
-                result.push({ "symbol": item, "type": "equity", istradeble: true });
+                result.push({ "symbol": item, "lotsize": 0, "symboltype": "equity", istradeble: true });
             });
-            const indices = ["NIFTY", "BANKNIFTY", "FINNIFTY"]
+            const indices = [{ "symbol": "NIFTY", "lotsize": 50 }, { "symbol": "BANKNIFTY", "lotsize": 25 }, { "symbol": "FINNIFTY", "lotsize": 40 }]
             indices.forEach(item => {
-                result.push({ "symbol": item, "type": "indices", istradeble: true });
+                result.push({ ...item, "symboltype": "indices", istradeble: true });
             });
             currencyFutList.data.forEach(item => {
-                result.push({ "symbol": `${item.unit}INR`, "type": "currency", istradeble: true });
+                result.push({ "symbol": `${item.unit}INR`, "lotsize": 1000, "symboltype": "currency", istradeble: true });
             });
             return result;
-        } else if (segment == "equity") {
-            return await this.GetEquitiyDetail(symbol);
-        } else if (segment == "equityfutureslist") {
-            return await this.GetEquitiesFuturesList();
-        } else if (segment == "equityfutures") {
-            return await this.GetEquityFuture(symbol);
-        } else if (segment == "equityoptionschain") {
-            return await this.GetEquityOptionChain(symbol);
-        } else if (segment == "currencyfutures") {
-            return await this.GetCurrencyFuture();
-        } else if (segment == "currencyoptions") {
-            return await this.GetCurrencyOptionChain(symbol);
-        } else if (segment == "indiceslist") {
-            return await this.GetIndicesList();
-        } else if (segment == "indicesfutures") {
-            return await this.GetIndicesFutures(symbol);
-        } else if (segment == "indicesoptions") {
-            return await this.GetIndicesOptionChain(symbol);
         } else {
-            return { "error": "Invalid segment." };
+            let symbol = startegy.symbol;
+            let allTradeType = this.getTradeTypes(startegy);
+            let hasEquity = allTradeType.includes("Equity");
+            let hasFutures = allTradeType.includes("Future");
+            let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
+
+            if (startegy.symboltype == "equity") {
+                console.log('startegy.symboltype :>> ', startegy.symboltype);
+                if (hasEquity) {
+                    await this.GetEquitiyDetail(symbol);
+                }
+                if (hasFutures) {
+                    await this.GetEquityFuture(symbol);
+                }
+                if (hasOptions) {
+                    await this.GetEquityOptionChain(symbol);
+                }
+            }
+            if (startegy.symboltype == "indices") {
+
+                if (hasFutures) {
+                    console.log('hasfut');
+                    let indfut = await this.GetIndicesFutures(symbol);
+                    console.log('indfut :>> ', indfut);
+                }
+                if (hasOptions) {
+                    console.log('hasoption');
+                    let indoption = await this.GetIndicesOptionChain(symbol);
+                    //console.log('indoption :>> ', indoption);
+                }
+            }
+            if (startegy.symboltype == "currency") {
+                if (hasFutures) {
+                    await this.GetCurrencyFuture(symbol);
+                }
+                if (hasOptions) {
+                    await this.GetCurrencyOptionChain(symbol);
+                }
+            }
+
+            // console.log('hasEquity :>> ', hasEquity);
+            // console.log('hasOptions :>> ', hasOptions);
+            // console.log('hasFutures :>> ', hasFutures);
         }
+
+
+        // if (action == "List") {
+        //     if (!equityFutList || !indicesFutList || !currencyFutList) {
+        //         indicesFutList = await this.GetIndicesList();
+        //         currencyFutList = await this.GetCurrencyFuture();
+        //         equityFutList = await this.GetEquitiesFuturesList();
+        //     }
+        //     let result = [];
+        //     equityFutList.forEach(item => {
+        //         result.push({ "symbol": item, "symboltype": "equity", istradeble: true });
+        //     });
+        //     const indices = ["NIFTY", "BANKNIFTY", "FINNIFTY"]
+        //     indices.forEach(item => {
+        //         result.push({ "symbol": item, "symboltype": "indices", istradeble: true });
+        //     });
+        //     currencyFutList.data.forEach(item => {
+        //         result.push({ "symbol": `${item.unit}INR`, "symboltype": "currency", istradeble: true });
+        //     });
+        //     return result;
+        // } else if (action == "equity") {
+        //     return await this.GetEquitiyDetail(symbol);
+        // } 
+        // // else if (action == "equityfutureslist") {
+        // //    // return await this.GetEquitiesFuturesList();
+        // // }
+        //  else if (action == "equityfutures") {
+        //     return await this.GetEquityFuture(symbol);
+        // } else if (action == "equityoptionschain") {
+        //     return await this.GetEquityOptionChain(symbol);
+        // } else if (action == "currencyfutures") {
+        //     return await this.GetCurrencyFuture();
+        // } else if (action == "currencyoptions") {
+        //     return await this.GetCurrencyOptionChain(symbol);
+        // } 
+        // // else if (action == "indiceslist") {
+        // //     //return await this.GetIndicesList();
+        // // }
+        //  else if (action == "indicesfutures") {
+        //     return await this.GetIndicesFutures(symbol);
+        // } else if (action == "indicesoptions") {
+        //     return await this.GetIndicesOptionChain(symbol);
+        // } else {
+        //     return { "error": "Invalid segment." };
+        // }
     },
 
     GetEquitiyDetail: async function (equity) {
@@ -100,6 +182,12 @@ module.exports = {
             return null;
             //return e.reponce.data
         }
-    }
+    },
+    getTradeTypes: function (strategy) {
+        return this.getObject(strategy, this.Maps.getAllTradeType);
+    },
+    getObject: function (input, selector) {
+        return jmespath.search(input, selector);
+    },
 }
 
