@@ -11,15 +11,7 @@ module.exports = {
 
     },
     Get: async function (portfolio, startegy, action) {
-        ///
-        ///
-        ///This is POC code and its data has to be moved to DB 
-        ///
-        ///
-        ///
-
-
-        if (action == "List") {
+        if (action == "init") {
             if (!equityFutList || !indicesFutList || !currencyFutList) {
                 indicesFutList = await this.GetIndicesList();
                 currencyFutList = await this.GetCurrencyFuture();

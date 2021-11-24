@@ -44,8 +44,23 @@
           <AutoComplete
             :Value="PropStrategy.symbol"
             @keyup="onAutoCompleteKeyUp"
+            @save="onSaveStrategy"
+            @change="onSymbolChange"
+            :Items="Symbols"
             PlaceHolder="Symbol"
           />
+
+           <!-- <DropDown
+              class="inline-block view tooltip"
+              :Icon="`join_full`"
+              :Items="Symbols"
+              :Type="`text`"
+              @itemclicked="onDropDownItemClicked"
+              :ExcludeItem="PropStrategy._id"
+              :Tooltip="txtMergeStrategy"
+              v-if="!this.PropStrategy.isarchive"
+            ></DropDown> -->
+
         </div>
 
         <div class="flex-1">
@@ -77,7 +92,7 @@
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Expiry </label>
           <span class="view">
-            {{ PropStrategy.expiry }}
+            {{ PropStrategy.expiry | formatDate }}
           </span>
 
           <input
@@ -102,7 +117,7 @@
         </div>
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Created On </label>
-          {{ PropStrategy.createdon | formatDate }}
+          {{ PropStrategy.createdon | formatDateTime }}
         </div>
 
         <div class="flex-1">
@@ -257,6 +272,7 @@ export default {
       Portfolios: "portfolioModule/Portfolios",
       Portfolio: "portfolioModule/Portfolio",
       CurrentPortfoliosStrategies: "strategyModule/Strategies",
+      Symbols: "dataModule/Symbols",
     }),
     ExcluteStrategyAction: {
       get: function () {
@@ -264,7 +280,12 @@ export default {
       },
     },
   },
-  mounted: function () {},
+  mounted: function () {
+    this.PortfolioLoad({
+      portfolio: this.Portfolio,
+      action: "init",
+    });
+  },
   data: function () {
     return {
       txtEditStrategy: this.$getConst("editStrategy"),
@@ -291,7 +312,8 @@ export default {
       BindAddEditTrade: "tradeModule/BindAddEditTrade",
       MoveStrategy: "strategyModule/MoveStrategy",
       MergeStrategy: "strategyModule/MergeStrategy",
-      GetLiveData: "strategyModule/GetLiveData",
+      GetLiveData: "dataModule/GetLiveData",
+      PortfolioLoad: "dataModule/PortfolioLoad",
     }),
 
     onEditStrategy: function (strategy) {
@@ -340,11 +362,16 @@ export default {
       this.PropStrategy.symbol = Value;
     },
     onGetLiveData: function () {
-      this.GetLiveData({
-        Portfolio: this.Portfolio,
-        Strategy: this.PropStrategy,
-        action: "listall",
-      });
+      // this.GetLiveData({
+      //   "portfolio": this.Portfolio,
+      //   "strategy": this.PropStrategy,
+      //   "action": "listall",
+      // });
+    },
+    onSymbolChange: function (Value) {
+      // this.PropStrategy.symbol = Value;
+      // console.log('exchange :>> ', this.Portfolio.exchange);
+      // this.GetLiveData({"portfolio": this.Portfolio,"strategy": this.PropStrategy,"action" : "detail"})
     },
   },
   mixins: [myMixins],

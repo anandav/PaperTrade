@@ -426,7 +426,7 @@ export default {
       if (this.PropStrategy.trades.length > 0) {
         return this.PropStrategy.trades.sort(compare);
       } else {
-        console.log('this.Propstrategy.trades :>> ', this.PropStrategy.trades);
+        console.log("this.Propstrategy.trades :>> ", this.PropStrategy.trades);
         return this.PropStrategy.trades;
       }
     },
@@ -434,7 +434,7 @@ export default {
   mounted() {
     this.SelectAll = true;
   },
- 
+
   computed: {
     ...mapGetters({
       Portfolio: "portfolioModule/Portfolio",
@@ -442,6 +442,14 @@ export default {
 
     ...mapState(["TradeSelectChange"]),
     //PropStrategy.trades
+
+    FilteredTrades() {
+      return this.PropStrategy.trades.filter((item) => {
+        
+
+        return this.PropStrategy.trades.sort(compare);
+      });
+    },
 
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
@@ -493,7 +501,6 @@ export default {
         "text-red-700": this.TotalAmount < 0,
       };
     },
-   
   },
 };
 </script>

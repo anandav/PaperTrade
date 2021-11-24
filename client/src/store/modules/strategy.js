@@ -12,15 +12,13 @@ const strategyModule = {
     namespaced: true,
     state: {
         Strategies: [],
-        ExchangeDetail: {},
+       
     },
     getters: {
         Strategies: state => {
             return state.Strategies;
         },
-        ExchangeDetail: state => {
-            return state.ExchangeDetail;
-        },
+       
 
     },
     mutations: {
@@ -130,32 +128,7 @@ const strategyModule = {
                 console.error("Source and Destination strategy are different symbol or size or strike price step.");
             }
         },
-        GetLiveData({ commit, rootGetters }, { Portfolio, Strategy, action }) {
-            const allExchange = rootGetters["strategyModule/ExchangeDetail"];
-            if (!allExchange.length || allExchange.length == 0) {
-                axios.get(apiUrl + "data/").then(function (res) {
-                    if (res.status == 200) {
-                        commit(SETEXCHANGEDETAIL, res.data);
-                    }
-                });
-            }
-            let url = `${apiUrl}data/`;
-            let postData = {
-                portfolio: Portfolio,
-                strategy: Strategy,
-                action,
-
-            };
-            //console.log('Strategy :>> ', JSON.stringify(Strategy));
-            if (url) {
-                axios.post(url, postData).then(function (res) {
-                    if (res.status == 200) {
-                        //console.log('res.data :>> ', res.data);
-                        commit(ADDEDITSTRATEGY, res.data);
-                    }
-                });
-            }
-        },
+        
 
     },
 };

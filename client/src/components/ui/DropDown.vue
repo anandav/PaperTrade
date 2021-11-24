@@ -1,6 +1,14 @@
 !<template>
   <div class="dropdown inline-block relative tooltip">
-    <button class="btn" data-dropdown-toggle="dropdown" tabindex="0">
+    <div v-if="Type == 'text'">
+      <input type="text" class="normal-edit" data-dropdown-toggle="dropdown" />
+    </div>
+    <button
+      class="btn"
+      v-if="Type != 'text'"
+      data-dropdown-toggle="dropdown"
+      tabindex="0"
+    >
       <i class="material-icons">{{ Icon }}</i>
       <tooltip :Value="Tooltip" />
     </button>
@@ -15,38 +23,71 @@
         w-36
         -ml-10
         shadow-lg
-        divide-y divide-gray-400 dark:divide-gray-600  divide-solid
+        divide-y divide-gray-400
+        dark:divide-gray-600
+        divide-solid
         max-h-96
         overflow-auto
       "
       role="menuitem"
     >
-      <div
-        :key="item._id"
-        v-for="item in Items"
-        v-bind:value="item._id"
-        tabindex="0"
-        class=""
-      >
-        <a
-          class="
-            block
-            hover:bg-gray-400
-            dark:hover:bg-gray-600
-            cursor-pointer
-            hover:rounded-sm
-            py-2
-            px-2
-          "
-          v-if="item._id != ExcludeItem"
-          @click="onItemClicked(Type, item._id, item.name)"
+      <div v-if="Type != 'text'">
+        <div
+          :key="item._id"
+          v-for="item in Items"
+          v-bind:value="item._id"
+          tabindex="0"
+          class=""
         >
-          <span v-if="item.icon" class="text-left">
-            <i class="material-icons text-sm">{{ item.icon }}</i>
-          </span>
-          {{ item.name }}</a
-        >
+          <a
+            class="
+              block
+              hover:bg-gray-400
+              dark:hover:bg-gray-600
+              cursor-pointer
+              hover:rounded-sm
+              py-2
+              px-2
+            "
+            v-if="item._id != ExcludeItem"
+            @click="onItemClicked(Type, item._id, item.name)"
+          >
+            <span v-if="item.icon" class="text-left">
+              <i class="material-icons text-sm">{{ item.icon }}</i>
+            </span>
+            {{ item.name }}</a
+          >
+        </div>
       </div>
+       <div v-if="Type == 'text'">
+         <div
+          :key="item.symbol"
+          v-for="item in Items"
+          v-bind:value="item.symbol"
+          tabindex="0"
+          class=""
+        >
+          <a
+            class="
+              block
+              hover:bg-gray-400
+              dark:hover:bg-gray-600
+              cursor-pointer
+              hover:rounded-sm
+              py-2
+              px-2
+            "
+            
+            @click="onItemClicked(Type, item._id, item.name)"
+          >
+            <!-- <span v-if="item.icon" class="text-left">
+              <i class="material-icons text-sm">{{ item.icon }}</i>
+            </span> -->
+            {{ item.symbol }}</a
+          >
+        </div>
+       </div>
+
     </div>
   </div>
 </template>

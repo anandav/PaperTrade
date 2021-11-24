@@ -52,7 +52,19 @@ const tradeModule = {
 
     },
     actions: {
-        BindAddEditTrade({ commit, rootGetters }, _strategy) {
+        SortTrades(context, strategy) {
+            const compare = function (a, b) {
+                if (a.order < b.order) {
+                    return -1;
+                }
+                if (a.order > b.order) {
+                    return 1;
+                }
+                return 0;
+            };
+            return strategy.trades.sort(compare);
+        },
+        BindAddEditTrade({ commit, rootGetters, dispatch }, _strategy) {
             if (_strategy) {
                 const _tradeDetail = {
                     symbol: _strategy.symbol,
@@ -73,6 +85,7 @@ const tradeModule = {
                         _strategy.trades.forEach(t => {
                             t.checked = true;
                         });
+                        dispatch('SortTrades', _strategy);
                         commit(ADDEDITTRADE, { strategies, _strategy });
                         return _strategy;
                     }
@@ -81,7 +94,7 @@ const tradeModule = {
                 //commit(BINDADDEDITTRADE, null)
             }
         },
-        AddEditTrade({ commit, rootGetters }, _tradeDetail) {
+        AddEditTrade({ commit, rootGetters, dispatch }, _tradeDetail) {
             if (_tradeDetail) {
                 axios.post(apiUrl + "trade/save", _tradeDetail).then(function (res) {
                     if (res.status == 200) {
@@ -90,24 +103,27 @@ const tradeModule = {
                         _strategy.trades.forEach(t => {
                             t.checked = true;
                         });
+                        dispatch('SortTrades', strategy);
                         commit(ADDEDITTRADE, { strategies, _strategy });
                     }
                 });
             }
         },
-        DeleteTrade({ commit, rootGetters }, { sid, tid }) {
+        DeleteTrade({ commit, rootGetters}, { sid, tid }) {
             if (sid && tid) {
                 axios.post(apiUrl + "trade/delete", { tid }).then(function (res) {
                     if (res.status == 200) {
                         var strategies = rootGetters["strategyModule/Strategies"];
+                       // dispatch('SortTrades', strategy);
                         commit(DELETETRADE, { strategies, sid, tid });
                     }
                 });
             }
         },
-        CheckStateChanged({ commit, rootGetters }, _strategy) {
+        CheckStateChanged({ commit, rootGetters, dispatch }, strategy) {
             var strategies = rootGetters["strategyModule/Strategies"];
-            commit(CHANGECHECKSTATE, { strategies, strategy: _strategy });
+            dispatch('SortTrades', strategy);
+            commit(CHANGECHECKSTATE, { strategies, strategy });
         }
     }
 };

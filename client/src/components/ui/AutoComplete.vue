@@ -4,10 +4,22 @@
       <input
         data-dropdown-toggle="dropdown"
         class="normal-edit"
-        v-model="autocompleteValue"
-        @keyup="onChange"
+        list="symboldl"
+        @keyup="onKeyUp"
+        @change="onChange"
+        @keyup.enter="onEnterKeyup"
         :placeholder="PlaceHolder"
+        v-model="autocompleteValue"
       />
+      <datalist id="symboldl">
+        <option
+          :key="item.symbol"
+          v-bind:id="'symbol_' + item.symbol"
+          v-for="item in Items"
+        >
+          {{ item.symbol }}
+        </option>
+      </datalist>
     </div>
     <div
       class="
@@ -71,15 +83,25 @@ export default {
   },
   data: function () {
     return {
-      autocompleteValue: "",
+      autocompleteValue: this.Value,
     };
   },
   methods: {
-    onChange: function () {
+    onKeyUp: function () {
+      //console.log(' Keyup :>> ');
       this.$emit("keyup", this.autocompleteValue);
+    },
+    onChange: function () {
+      //console.log(' Change :>> ');
+      this.$emit("change", this.autocompleteValue);
+    },
+    onEnterKeyup: function () {
+      //console.log(" Enter :>> ");
+      this.$emit("save", this.autocompleteValue);
     },
   },
   props: {
+    Items: { type: Array },
     Value: { type: String },
     PlaceHolder: { type: String },
   },

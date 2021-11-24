@@ -12,9 +12,15 @@ import tooltip from "./components/ui/ToolTip"
 
 Vue.component("DropDown", DropDown);
 Vue.component("tooltip", tooltip);
-Vue.filter('formatDate', function (value) {
+
+Vue.filter('formatDateTime', function (value) {
     if (value) {
        return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true).format('DD-MMM-YYYY HH:mm');
+    }
+});
+Vue.filter('formatDate', function (value) {
+    if (value) {
+       return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true).format('DD-MMM-YYYY');
     }
 });
 
