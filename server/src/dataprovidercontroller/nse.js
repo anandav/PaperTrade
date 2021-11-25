@@ -1,9 +1,15 @@
 const axios = require('axios').default;
 const jmespath = require('jmespath');
+
 require("dotenv/config");
 let currencyFutList = undefined;
 let equityFutList = undefined;
 let indicesFutList = undefined;
+const optionCEPath = 'records.data[?expiryDate==`${date}` && strikePrice == ${price}].CE';
+
+
+
+
 module.exports = {
     Maps: {
         getAllTradeType: "trades[?!isexit].tradetype"
@@ -18,25 +24,26 @@ module.exports = {
                 equityFutList = await this.GetEquitiesFuturesList();
             }
             let result = [];
-            equityFutList.forEach(item => {
-                result.push({ "symbol": item, "lotsize": 0, "symboltype": "equity", istradeble: true });
-            });
-            const indices = [{ "symbol": "NIFTY", "lotsize": 50 }, { "symbol": "BANKNIFTY", "lotsize": 25 }, { "symbol": "FINNIFTY", "lotsize": 40 }]
+            const indices = [{ "name": "NIFTY", "lotsize": 50 }, { "symbol": "BANKNIFTY", "lotsize": 25 }, { "symbol": "FINNIFTY", "lotsize": 40 }]
             indices.forEach(item => {
-                result.push({ ...item, "symboltype": "indices", istradeble: true });
+                result.push({ ...item, "symboltype": "Indices", istradeble: true });
+            });
+            equityFutList.forEach(item => {
+                result.push({ "name": item, "lotsize": 0, "symboltype": "Equity", istradeble: true });
             });
             currencyFutList.data.forEach(item => {
-                result.push({ "symbol": `${item.unit}INR`, "lotsize": 1000, "symboltype": "currency", istradeble: true });
+                result.push({ "name": `${item.unit}INR`, "lotsize": 1000, "symboltype": "Currency", istradeble: true });
             });
             return result;
         } else {
             let symbol = startegy.symbol;
+            let symboltype = startegy.symboltype?.toLowerCase();
             let allTradeType = this.getTradeTypes(startegy);
             let hasEquity = allTradeType.includes("Equity");
             let hasFutures = allTradeType.includes("Future");
             let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
 
-            if (startegy.symboltype == "equity") {
+            if (symboltype == "equity") {
                 console.log('startegy.symboltype :>> ', startegy.symboltype);
                 if (hasEquity) {
                     await this.GetEquitiyDetail(symbol);
@@ -48,20 +55,24 @@ module.exports = {
                     await this.GetEquityOptionChain(symbol);
                 }
             }
-            if (startegy.symboltype == "indices") {
+            if (symboltype == "indices") {
 
                 if (hasFutures) {
-                    console.log('hasfut');
                     let indfut = await this.GetIndicesFutures(symbol);
-                    console.log('indfut :>> ', indfut);
                 }
                 if (hasOptions) {
-                    console.log('hasoption');
                     let indoption = await this.GetIndicesOptionChain(symbol);
-                    //console.log('indoption :>> ', indoption);
+                    let result = jmespath.search(indoption, "records.data[? contains([`02-Dec-2021`,`09-Dec-2021`],expiryDate) && strikePrice == `17500`].CE");
+                    // let result = jmespath.search(indoption, "records.data[? expiryDate==`02-Dec-2021` && strikePrice == `17500`].CE");
+                    console.log('result :>> ', result);
+                    //const optionCEPath = 'records.data[?expiryDate==`${date}` && strikePrice == ${price}].CE';
+
                 }
+
+                return startegy;
             }
-            if (startegy.symboltype == "currency") {
+
+            if (symboltype == "currency") {
                 if (hasFutures) {
                     await this.GetCurrencyFuture(symbol);
                 }
@@ -163,6 +174,7 @@ module.exports = {
         try {
             const responce = await axios.get('https://www.nseindia.com/')
                 .then(res => {
+                    console.log('url :>> ', url);
                     return axios.get(url, {
                         headers: {
                             cookie: res.headers['set-cookie']

@@ -35,32 +35,20 @@
             {{ PropStrategy.symbol }}
           </span>
 
+          <AutoComplete
+            :Value="PropStrategy.symbol"
+            @keyup="onSymbolKeyUp"
+            @save="onSaveStrategy"
+            :Items="Symbols"
+            PlaceHolder="Symbol"
+          />
+
           <!-- <input
             class="normal-edit edit"
             placeholder="Symbol"
             v-model="PropStrategy.symbol"
             @keydown.enter="onSaveStrategy()"
           /> -->
-          <AutoComplete
-            :Value="PropStrategy.symbol"
-            @keyup="onAutoCompleteKeyUp"
-            @save="onSaveStrategy"
-            @change="onSymbolChange"
-            :Items="Symbols"
-            PlaceHolder="Symbol"
-          />
-
-           <!-- <DropDown
-              class="inline-block view tooltip"
-              :Icon="`join_full`"
-              :Items="Symbols"
-              :Type="`text`"
-              @itemclicked="onDropDownItemClicked"
-              :ExcludeItem="PropStrategy._id"
-              :Tooltip="txtMergeStrategy"
-              v-if="!this.PropStrategy.isarchive"
-            ></DropDown> -->
-
         </div>
 
         <div class="flex-1">
@@ -68,12 +56,19 @@
           <span class="view">
             {{ PropStrategy.symboltype }}
           </span>
+          <AutoComplete
+            :Value="PropStrategy.symboltype"
+            @keyup="onSymbolTypeKeyUp"
+            @save="onSaveStrategy"
+            :Items="SymbolTypes"
+            PlaceHolder="Symbol Types"
+          />
 
-          <input
+          <!-- <input
             class="normal-edit edit"
             placeholder="Symbol Type"
             v-model="PropStrategy.symboltype"
-          />
+          /> -->
         </div>
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Lot Size </label>
@@ -273,6 +268,7 @@ export default {
       Portfolio: "portfolioModule/Portfolio",
       CurrentPortfoliosStrategies: "strategyModule/Strategies",
       Symbols: "dataModule/Symbols",
+      SymbolTypes: "dataModule/SymbolTypes",
     }),
     ExcluteStrategyAction: {
       get: function () {
@@ -281,10 +277,12 @@ export default {
     },
   },
   mounted: function () {
-    this.PortfolioLoad({
-      portfolio: this.Portfolio,
-      action: "init",
-    });
+    if (!this.PropStrategy.isarchive) {
+      this.PortfolioLoad({
+        portfolio: this.Portfolio,
+        action: "init",
+      });
+    }
   },
   data: function () {
     return {
@@ -358,15 +356,17 @@ export default {
         this.EditStrategy(this.PropStrategy);
       }
     },
-    onAutoCompleteKeyUp: function (Value) {
+    onSymbolKeyUp: function (Value) {
       this.PropStrategy.symbol = Value;
     },
+    onSymbolTypeKeyUp: function (Value) {
+      this.PropStrategy.symboltype = Value;
+    },
     onGetLiveData: function () {
-      // this.GetLiveData({
-      //   "portfolio": this.Portfolio,
-      //   "strategy": this.PropStrategy,
-      //   "action": "listall",
-      // });
+      this.GetLiveData({
+        "portfolio": this.Portfolio,
+        "strategy": this.PropStrategy,
+      });
     },
     onSymbolChange: function (Value) {
       // this.PropStrategy.symbol = Value;

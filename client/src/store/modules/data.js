@@ -1,6 +1,6 @@
 import "dotenv/config";
 import {
-    
+
     SETEXCHANGEDETAIL,
     SETCURRENTEXCHANGE,
 } from "../mutationtype";
@@ -24,7 +24,7 @@ export default {
         Exchanges: state => {
             return state.Exchanges;
         },
-        Types: state => {
+        SymbolTypes: state => {
             return state.SymbolTypes;
         },
         Symbols: state => {
@@ -34,10 +34,9 @@ export default {
     },
     mutations: {
         [SETEXCHANGEDETAIL](state, data) {
-            console.log('data :>> ', data);
             state.Exchanges = data.ExchangeDetail.Exchanges;
-            state.SymbolTypes = data.ExchangeDetail.Types;
-            state.Symbols = data.ExchangeDetail.Symbols;
+            state.SymbolTypes = data.ExchangeDetail.SymbolTypes;
+            state.Symbols = data.Symbols;
         },
         [SETCURRENTEXCHANGE](state, currentExchange) {
             state.CurrentExchange = currentExchange;
@@ -45,6 +44,7 @@ export default {
     },
     actions: {
         PortfolioLoad({ commit, getters }, { portfolio, action }) {
+            console.log("Portfolio Load");
             let postData = {
                 portfolio,
                 action,
@@ -53,7 +53,6 @@ export default {
             if (portfolio.exchange != getters.CurrentExchange || action == "init") {
                 axios.post(url, postData).then(function (res) {
                     if (res.status == 200) {
-                        console.log('res.data :>> ', res.data);
                         commit(SETEXCHANGEDETAIL, res.data);
                     }
                 });
@@ -63,14 +62,22 @@ export default {
             }
 
         },
-        // onStrategyLoad({ commit, getters }, { portfolio, strategy, action }) {
-        //     axios.post(url, postData).then(function (res) {
-        //         if (res.status == 200) {
-        //             //console.log('res.data :>> ', res.data);
-        //             commit(ADDEDITSTRATEGY, res.data, { root: true });
-        //         }
-        //     });
-        // },
+        GetLiveData({ commit, getters, dispatch }, { portfolio, strategy }) {
+            let postData = {
+                portfolio,
+                strategy,
+
+            };
+            let url = `${apiUrl}data/`;
+            axios.post(url, postData).then(function (res) {
+                if (res.status == 200) {
+                    
+                    //console.log('res.data :>> ', res.data);
+                    //commit("strategyModule/ADDEDITSTRATEGY", res.data, { root: true });
+                    dispatch("strategyModule/AddStrategyFromDataModule", res.data, { root: true });
+                }
+            });
+        },
         // onStrategySymbolChange({ commit, getters }, { strategy, action }) {
         // },
         // onStrategyDateExpiry({ commit, getters }, { strategy, action }) {

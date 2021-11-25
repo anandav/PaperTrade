@@ -103,7 +103,7 @@ const tradeModule = {
                         _strategy.trades.forEach(t => {
                             t.checked = true;
                         });
-                        dispatch('SortTrades', strategy);
+                        dispatch('SortTrades', _strategy);
                         commit(ADDEDITTRADE, { strategies, _strategy });
                     }
                 });
@@ -114,7 +114,7 @@ const tradeModule = {
                 axios.post(apiUrl + "trade/delete", { tid }).then(function (res) {
                     if (res.status == 200) {
                         var strategies = rootGetters["strategyModule/Strategies"];
-                       // dispatch('SortTrades', strategy);
+                        // dispatch('SortTrades', strategy);
                         commit(DELETETRADE, { strategies, sid, tid });
                     }
                 });

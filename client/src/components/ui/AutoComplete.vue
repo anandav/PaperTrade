@@ -1,23 +1,19 @@
 <template>
-  <div class="dropdown inline-block relative tooltip edit">
+  <div class="dropdown inline-block relative edit">
     <div>
       <input
         data-dropdown-toggle="dropdown"
         class="normal-edit"
-        list="symboldl"
+        :list="componentid"
         @keyup="onKeyUp"
-        @change="onChange"
         @keyup.enter="onEnterKeyup"
         :placeholder="PlaceHolder"
         v-model="autocompleteValue"
       />
-      <datalist id="symboldl">
-        <option
-          :key="item.symbol"
-          v-bind:id="'symbol_' + item.symbol"
-          v-for="item in Items"
-        >
-          {{ item.symbol }}
+        <!-- @change="onChange" -->
+      <datalist :id="componentid">
+        <option :key="item.name" v-bind:id="item.name" v-for="item in Items">
+          {{ item.name }}
         </option>
       </datalist>
     </div>
@@ -80,10 +76,31 @@ export default {
   name: "AutoComplete",
   created: function () {
     this.autocompleteValue = this.Value;
+    const guidGenerator = function () {
+      var S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      };
+      return (
+        S4() +
+        S4() +
+        "-" +
+        S4() +
+        "-" +
+        S4() +
+        "-" +
+        S4() +
+        "-" +
+        S4() +
+        S4() +
+        S4()
+      );
+    };
+    this.componentid = guidGenerator();
   },
   data: function () {
     return {
       autocompleteValue: this.Value,
+      componentid: "",
     };
   },
   methods: {
@@ -91,10 +108,10 @@ export default {
       //console.log(' Keyup :>> ');
       this.$emit("keyup", this.autocompleteValue);
     },
-    onChange: function () {
-      //console.log(' Change :>> ');
-      this.$emit("change", this.autocompleteValue);
-    },
+    // onChange: function () {
+    //   //console.log(' Change :>> ');
+    //   this.$emit("change", this.autocompleteValue);
+    // },
     onEnterKeyup: function () {
       //console.log(" Enter :>> ");
       this.$emit("save", this.autocompleteValue);

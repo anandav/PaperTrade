@@ -12,13 +12,13 @@ const strategyModule = {
     namespaced: true,
     state: {
         Strategies: [],
-       
+
     },
     getters: {
         Strategies: state => {
             return state.Strategies;
         },
-       
+
 
     },
     mutations: {
@@ -33,7 +33,7 @@ const strategyModule = {
         [ADDEDITSTRATEGY](state, _strategy) {
             var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
             if (foundIndex > -1) {
-                state.Strategies[foundIndex] = _strategy;
+                Object.assign(state.Strategies[foundIndex], _strategy);
             } else {
                 state.Strategies.unshift(_strategy);
             }
@@ -128,7 +128,12 @@ const strategyModule = {
                 console.error("Source and Destination strategy are different symbol or size or strike price step.");
             }
         },
-        
+        AddStrategyFromDataModule({ commit }, Strategy) {
+            commit(ADDEDITSTRATEGY, Strategy);
+        }
+
+
+
 
     },
 };
