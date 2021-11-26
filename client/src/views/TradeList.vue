@@ -46,7 +46,6 @@
             dark:border-gray-600
           "
           draggable="true"
-          tabindex="-1"
           @dragover="onDragOver($event, index)"
           @dragstart="onDragStart($event, item, index)"
           @keyup.113="onInlineEditTrade(item)"
@@ -95,8 +94,8 @@
               :Icon="`menu`"
               :Items="TradeAction"
               :Type="`Menu`"
-              @itemclicked="onTradeDropDownItemClicked"
-              Tooltip="Action"
+              @itemclicked="onTradeDropDownItemClicked"order
+              Tooltip="Action"order
             >
             </DropDown> -->
 
@@ -181,9 +180,9 @@
             v-if="Portfolio.exchange"
             class="table-cell px-1 py-3 text-yellow-500"
           >
-            <!-- Place Holder -->
-            {{ item.order }}
-            <!--  {{ item._id }} -->
+            <span @dblclick="onLTPClick(item)">
+              {{ item.lasttradedprice }}
+            </span>
           </div>
 
           <div class="table-cell px-1 py-3">
@@ -297,7 +296,9 @@ export default {
       CheckStateChanged: "tradeModule/CheckStateChanged",
     }),
     onDeleteTrade: function (sid, tid) {
-      this.DeleteTrade({ sid, tid });
+      this.DeleteTrade({ sid, tid }).then(() => {
+        this.GenerateChart(this.PropStrategy);
+      });
     },
     onInlineEditTrade: function (trade) {
       this.editTrade = trade;
@@ -310,7 +311,11 @@ export default {
           : undefined;
       this.AddEditTrade(trade).then(() => {
         this.$emit("onItemEnterKeyPressed");
+        this.GenerateChart(this.PropStrategy);
       });
+
+
+
     },
     onDragStart: function (e) {
       ///Ref:// https://github.com/WebDevSimplified/Drag-And-Drop
@@ -358,13 +363,16 @@ export default {
       _exitTrade._id = null;
 
       _exitTrade.sid = this.PropStrategy._id;
-      this.AddEditTrade(_exitTrade);
+      this.AddEditTrade(_exitTrade).then(() => {
+        this.GenerateChart(this.PropStrategy);
+      });
     },
 
     onCheckStateChanged: function (trade) {
       trade.checked = !trade.checked;
-      this.CheckStateChanged(this.PropStrategy);
-      this.GenerateChart(this.PropStrategy);
+      this.CheckStateChanged(this.PropStrategy).then(()=>{
+        this.GenerateChart(this.PropStrategy);
+      });
     },
     onChangeColor: function (trade) {
       const findNextColor = (val) => {
@@ -382,6 +390,13 @@ export default {
       };
       trade.color = findNextColor(trade.color);
       this.AddEditTrade(trade);
+    },
+    onLTPClick: function (trade) {
+      console.log("object :>> ");
+      trade.price = trade.lasttradedprice;
+      this.AddEditTrade(trade).then(() => {
+        this.GenerateChart(this.PropStrategy);
+      });
     },
     // onTradeDropDownItemClicked: function (type, id, name) {
     //   if (name == "Duplicate") {
@@ -413,7 +428,7 @@ export default {
           } else {
             return closest;
           }
-        },
+        }, 
         { offset: Number.NEGATIVE_INFINITY }
       ).element;
     },
@@ -443,19 +458,12 @@ export default {
     ...mapState(["TradeSelectChange"]),
     //PropStrategy.trades
 
-    FilteredTrades() {
-      return this.PropStrategy.trades.filter((item) => {
-        
-
-        return this.PropStrategy.trades.sort(compare);
-      });
-    },
-
+ 
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
       get: function () {
         return this.PropStrategy.trades
-          ? this.PropStrategy.trades.length == this.selectedIDs.length
+          ? this.PropStrategy.trades.length == this.selectedIDs.length 
           : false;
       },
       set: function (value) {

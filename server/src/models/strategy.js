@@ -24,7 +24,7 @@ const strategySchema = schema({
     type: Number
   },
   expiry: {
-    type: Date
+    type: String
   },
   strikepricestep: {
     type: Number

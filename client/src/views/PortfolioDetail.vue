@@ -34,8 +34,7 @@
           <label class="text-xs block text-gray-500"> Total P&L </label>
           <span :class="FgColor">
             {{ TotalPortfolioAmount }}
-          </span> 
-          
+          </span>
         </div>
 
         <div class="flex-1">

@@ -5,7 +5,7 @@ require("dotenv/config");
 let currencyFutList = undefined;
 let equityFutList = undefined;
 let indicesFutList = undefined;
-const optionCEPath = 'records.data[?expiryDate==`${date}` && strikePrice == ${price}].CE';
+const optionCEPath = 'records.data[?expiryDate==`{expiry}` && strikePrice == `{strikeprice}`].CE';
 
 
 
@@ -61,12 +61,8 @@ module.exports = {
                     let indfut = await this.GetIndicesFutures(symbol);
                 }
                 if (hasOptions) {
-                    let indoption = await this.GetIndicesOptionChain(symbol);
-                    let result = jmespath.search(indoption, "records.data[? contains([`02-Dec-2021`,`09-Dec-2021`],expiryDate) && strikePrice == `17500`].CE");
-                    // let result = jmespath.search(indoption, "records.data[? expiryDate==`02-Dec-2021` && strikePrice == `17500`].CE");
-                    console.log('result :>> ', result);
-                    //const optionCEPath = 'records.data[?expiryDate==`${date}` && strikePrice == ${price}].CE';
-
+                    let nseData = await this.GetIndicesOptionChain(symbol);
+                    startegy = this.bindOptionData(startegy, nseData);
                 }
 
                 return startegy;
@@ -77,13 +73,12 @@ module.exports = {
                     await this.GetCurrencyFuture(symbol);
                 }
                 if (hasOptions) {
-                    await this.GetCurrencyOptionChain(symbol);
+                    let nseData = await this.GetCurrencyOptionChain(symbol);
+                   startegy = this.bindOptionData(startegy, nseData);
                 }
-            }
 
-            // console.log('hasEquity :>> ', hasEquity);
-            // console.log('hasOptions :>> ', hasOptions);
-            // console.log('hasFutures :>> ', hasFutures);
+                return startegy;
+            }
         }
 
 
@@ -169,6 +164,16 @@ module.exports = {
         const url = process.env.NSE_CURRENCY_OPTIONS_API.replace('PARAMETER', symbol);
         return this.getData(url);
     },
+    bindOptionData(startegy, inputData) {
+        startegy.trades.forEach(trade => {
+            let selector = "records.data[? expiryDate==`" + startegy.expiry + "` && strikePrice == `" + trade.selectedstrike + "`]." + (trade.tradetype == "Call" ? "CE" : "PE");
+            let nseDataSelected = this.getObject(inputData, selector);
+            if (nseDataSelected[0].lastPrice) {
+                trade.lasttradedprice = nseDataSelected[0].lastPrice;
+            }
+        });
+        return startegy;
+    },
     getData: async function (url) {
         ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
         try {
@@ -187,11 +192,11 @@ module.exports = {
             //return e.reponce.data
         }
     },
-    getTradeTypes: function (strategy) {
-        return this.getObject(strategy, this.Maps.getAllTradeType);
+    getTradeTypes: function (startegy) {
+        return this.getObject(startegy, this.Maps.getAllTradeType);
     },
-    getObject: function (input, selector) {
-        return jmespath.search(input, selector);
+    getObject: function (inputData, selector) {
+        return jmespath.search(inputData, selector);
     },
 }
 

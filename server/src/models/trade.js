@@ -19,9 +19,9 @@ const tradeSchema = schema({
   lotsize: {
     type: Number
   },
-  expiry: {
-    type: Date
-  },
+  // expiry: {
+  //   type: Date
+  // },
   buyorsell: {
     type: BUYORSELL,
   },
