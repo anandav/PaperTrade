@@ -44,7 +44,6 @@ export default {
     },
     actions: {
         PortfolioLoad({ commit, getters }, { portfolio, action }) {
-            console.log("Portfolio Load");
             let postData = {
                 portfolio,
                 action,

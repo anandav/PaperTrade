@@ -17,7 +17,7 @@ app.use(helmet());
 
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
-  console.clear();
+  //console.clear();
   // console.log("Body");
   // console.log("==request-body-start==");
   // console.log(req.body);

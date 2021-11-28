@@ -90,7 +90,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import StrategyDetail from "./StrategyDetail.vue";
-import myMixins from "../shared/utilitymixins";
+import myMixins from "../shared/chart";
 export default {
   name: "PortfolioDetail",
   components: {
@@ -105,7 +105,7 @@ export default {
       get: function () {
         let price = 0;
         this.Strategies.forEach((_startegy) => {
-          _startegy.trades.forEach((_trade) => {
+          _startegy?.trades?.forEach((_trade) => {
             price =
               _trade.buyorsell == "Buy"
                 ? price - _trade.price * (_startegy.lotsize * _trade.quantity)

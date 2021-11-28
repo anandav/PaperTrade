@@ -180,7 +180,7 @@
             v-if="Portfolio.exchange"
             class="table-cell px-1 py-3 text-yellow-500"
           >
-            <span @dblclick="onLTPClick(item)">
+            <span class="" @dblclick="onLTPClick(item)">
               {{ item.lasttradedprice }}
             </span>
           </div>
@@ -239,7 +239,7 @@
           <div class="table-cell">
             <span class="text-xs block text-gray-500">P&L</span>
           </div>
-          <div class="table-cell px-1 py-4">
+          <div class="table-cell px-1 py-2">
             {{ TotalAmount }}
           </div>
           <div class="table-cell"></div>
@@ -257,7 +257,7 @@
 </template>
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
-import myMixins from "../shared/utilitymixins";
+import myMixins from "../shared/chart";
 import SwitchButton from "../components/ui/SwitchButton";
 export default {
   name: "TradeList",
@@ -367,7 +367,6 @@ export default {
         this.GenerateChart(this.PropStrategy);
       });
     },
-
     onCheckStateChanged: function (trade) {
       trade.checked = !trade.checked;
       this.CheckStateChanged(this.PropStrategy).then(()=>{
@@ -392,26 +391,11 @@ export default {
       this.AddEditTrade(trade);
     },
     onLTPClick: function (trade) {
-      console.log("object :>> ");
       trade.price = trade.lasttradedprice;
       this.AddEditTrade(trade).then(() => {
         this.GenerateChart(this.PropStrategy);
       });
     },
-    // onTradeDropDownItemClicked: function (type, id, name) {
-    //   if (name == "Duplicate") {
-    //     var _startegyClone = { ...this.PropStrategy };
-    //     _startegyClone._id = undefined;
-    //     _startegyClone.trades.forEach((t) => {
-    //       t._id = undefined;
-    //     });
-    //     this.EditStrategy(_startegyClone);
-    //   } else if (name == "Archive" || name == "Unarchive") {
-    //     this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
-    //     this.EditStrategy(this.PropStrategy);
-    //   }
-    // },
-
     getDragAfterElement: function (container, y) {
       const draggableElements = [
         ...container.querySelectorAll(".table-row:not(.dragging)"),
@@ -456,9 +440,6 @@ export default {
     }),
 
     ...mapState(["TradeSelectChange"]),
-    //PropStrategy.trades
-
- 
     SelectAll: {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
       get: function () {

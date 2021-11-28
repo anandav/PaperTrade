@@ -256,7 +256,7 @@ import { mapActions, mapGetters } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
 import AutoComplete from "../components/ui/AutoComplete";
-import myMixins from "../shared/utilitymixins";
+import myMixins from "../shared/chart";
 
 export default {
   name: "StrategyDetail",

@@ -2,10 +2,12 @@ const axios = require('axios').default;
 const jmespath = require('jmespath');
 
 require("dotenv/config");
-let currencyFutList = undefined;
-let equityFutList = undefined;
-let indicesFutList = undefined;
-const optionCEPath = 'records.data[?expiryDate==`{expiry}` && strikePrice == `{strikeprice}`].CE';
+let currencyFutList = null;
+let equityFutList = null;
+let indicesFutList = null;
+let mktLotsList = null;
+let lastupdated = null;
+const optionCEPath = 'records.data[?expiryDate==`{expiry}` && strikePrice == `{strikeprice}`]';
 
 
 
@@ -17,14 +19,32 @@ module.exports = {
 
     },
     Get: async function (portfolio, startegy, action) {
+        console.log('getCalled :>> ');
         if (action == "init") {
-            if (!equityFutList || !indicesFutList || !currencyFutList) {
+
+            if (!lastupdated) {
+                lastupdated = new Date();
+            } else {
+                lastupdated = new Date(lastupdated);
+            }
+            let now = Date.now();
+            let totalHourDiff = Math.abs(now - lastupdated) / 36e5;
+            if (!equityFutList || !indicesFutList || !currencyFutList || !mktLotsList || totalHourDiff > 24) {
+
+                console.log('New Dataset :>> last updated ', lastupdated, " Total Hours: ", totalHourDiff);
+
                 indicesFutList = await this.GetIndicesList();
                 currencyFutList = await this.GetCurrencyFuture();
                 equityFutList = await this.GetEquitiesFuturesList();
+                let csv = await this.GetMRKTLot();
+                mktLotsList = this.csvJSON(csv);
+                lastupdated = now;
+            } else {
+                console.log('Loading from memory Dataset :>> last updated ', lastupdated, " Total Hours: ", totalHourDiff);
+
             }
             let result = [];
-            const indices = [{ "name": "NIFTY", "lotsize": 50 }, { "symbol": "BANKNIFTY", "lotsize": 25 }, { "symbol": "FINNIFTY", "lotsize": 40 }]
+            const indices = [{ "name": "NIFTY", "lotsize": 50 }, { "name": "BANKNIFTY", "lotsize": 25 }, { "name": "FINNIFTY", "lotsize": 40 }]
             indices.forEach(item => {
                 result.push({ ...item, "symboltype": "Indices", istradeble: true });
             });
@@ -34,6 +54,12 @@ module.exports = {
             currencyFutList.data.forEach(item => {
                 result.push({ "name": `${item.unit}INR`, "lotsize": 1000, "symboltype": "Currency", istradeble: true });
             });
+
+            // if (mktLotsList) {
+            //     console.log('mktLotsList :>> ', mktLotsList);
+            // }
+
+
             return result;
         } else {
             let symbol = startegy.symbol;
@@ -45,8 +71,10 @@ module.exports = {
 
             if (symboltype == "equity") {
                 console.log('startegy.symboltype :>> ', startegy.symboltype);
+                console.log('hasEquity :>> ', hasEquity);
                 if (hasEquity) {
-                    await this.GetEquitiyDetail(symbol);
+                    let equityData = await this.GetEquitiyDetail(symbol);
+                    startegy = this.bindEquityData(startegy , equityData);
                 }
                 if (hasFutures) {
                     await this.GetEquityFuture(symbol);
@@ -54,9 +82,10 @@ module.exports = {
                 if (hasOptions) {
                     await this.GetEquityOptionChain(symbol);
                 }
+                return startegy;
             }
-            if (symboltype == "indices") {
 
+            if (symboltype == "indices") {
                 if (hasFutures) {
                     let indfut = await this.GetIndicesFutures(symbol);
                 }
@@ -64,7 +93,6 @@ module.exports = {
                     let nseData = await this.GetIndicesOptionChain(symbol);
                     startegy = this.bindOptionData(startegy, nseData);
                 }
-
                 return startegy;
             }
 
@@ -74,9 +102,8 @@ module.exports = {
                 }
                 if (hasOptions) {
                     let nseData = await this.GetCurrencyOptionChain(symbol);
-                   startegy = this.bindOptionData(startegy, nseData);
+                    startegy = this.bindOptionData(startegy, nseData);
                 }
-
                 return startegy;
             }
         }
@@ -160,15 +187,31 @@ module.exports = {
         return this.getData(url);
     },
 
+    GetMRKTLot: async function () {
+        const url = process.env.NSE_MKT_LOTS;
+        return this.getData(url);
+    },
     GetCurrencyOptionChain: async function (symbol) {
         const url = process.env.NSE_CURRENCY_OPTIONS_API.replace('PARAMETER', symbol);
         return this.getData(url);
+    },
+    bindEquityData(startegy, inputData) {
+        startegy.trades.forEach(trade => {
+            let selector = "priceInfo.lastPrice";
+            let nseDataSelected = this.getObject(inputData, selector);
+            console.log('nseDataSelected :>> ', nseDataSelected);
+            if (nseDataSelected) {
+                trade.lasttradedprice = nseDataSelected;
+            }
+        });
+        console.log('object :>> ', startegy);
+        return startegy;
     },
     bindOptionData(startegy, inputData) {
         startegy.trades.forEach(trade => {
             let selector = "records.data[? expiryDate==`" + startegy.expiry + "` && strikePrice == `" + trade.selectedstrike + "`]." + (trade.tradetype == "Call" ? "CE" : "PE");
             let nseDataSelected = this.getObject(inputData, selector);
-            if (nseDataSelected[0].lastPrice) {
+            if (nseDataSelected[0]?.lastPrice) {
                 trade.lasttradedprice = nseDataSelected[0].lastPrice;
             }
         });
@@ -197,6 +240,31 @@ module.exports = {
     },
     getObject: function (inputData, selector) {
         return jmespath.search(inputData, selector);
+    },
+    csvJSON: function (csv) {
+        ///ref: https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
+        let lines = csv.split("\n");
+        let result = [];
+        let headers = lines[0].split(",").map(x => x.trim());
+        //console.log('headers :>> ', headers);
+        for (let i = 1; i < lines.length; i++) {
+
+            let obj = {};
+            let currentline = lines[i].split(",");
+
+            for (let j = 0; j < headers.length; j++) {
+                if (currentline[j]?.trim().length > 0) {
+                    obj[headers[j]] = currentline[j].trim();
+                }
+            }
+            if (obj.SYMBOL && obj.SYMBOL != "Symbol") {
+                result.push(obj);
+            }
+
+        }
+
+        //return result; //JavaScript object
+        return JSON.stringify(result); //JSON
     },
 }
 
