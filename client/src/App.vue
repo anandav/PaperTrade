@@ -56,9 +56,6 @@ export default {
   },
   methods: {
     swiththeme: function (value) {
-      // let _isdark = document.cookie["isdark"];
-      //  console.log('document.cookie :> switch ', document.cookie);
-
       if (value) {
         document.documentElement.classList.remove("dark");
       } else {
@@ -70,8 +67,6 @@ export default {
     // isdark: {
     //   get: function () {
     //     let _isdark = document.cookie["isdark"];
-    //     console.log('document.cookie :>> ', document.cookie);
-    //     console.log('_isdark :>> ', _isdark);
     //     return _isdark;
     //   },
     //   set: function (value) {
@@ -83,15 +78,12 @@ export default {
     // },
   },
   mounted() {
-    // console.log('localStroage.isdark :>> before ');
     // if (localStorage != undefined && localStorage.isdark) {
-    //   console.log('localStroage.isdark :>> ', localStroage.isdark);
     //   this.isdark = localStorage.isdark;
     // }
   },
   watch: {
     // isdark(newisdark) {
-    //   console.log("newisdark :>> ", newisdark);
     //   localStorage.isdark = newisdark;
     // },
   },

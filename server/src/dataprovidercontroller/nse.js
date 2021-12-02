@@ -19,7 +19,6 @@ module.exports = {
 
     },
     Get: async function (portfolio, startegy, action) {
-        console.log('getCalled :>> ');
         if (action == "init") {
 
             if (!lastupdated) {
@@ -31,7 +30,6 @@ module.exports = {
             let totalHourDiff = Math.abs(now - lastupdated) / 36e5;
             if (!equityFutList || !indicesFutList || !currencyFutList || !mktLotsList || totalHourDiff > 24) {
 
-                console.log('New Dataset :>> last updated ', lastupdated, " Total Hours: ", totalHourDiff);
 
                 indicesFutList = await this.GetIndicesList();
                 currencyFutList = await this.GetCurrencyFuture();
@@ -65,16 +63,15 @@ module.exports = {
             let symbol = startegy.symbol;
             let symboltype = startegy.symboltype?.toLowerCase();
             let allTradeType = this.getTradeTypes(startegy);
-            let hasEquity = allTradeType.includes("Equity");
+            let hasEquity = allTradeType.includes("Equity") || allTradeType.includes("Stock");
             let hasFutures = allTradeType.includes("Future");
             let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
 
             if (symboltype == "equity") {
-                console.log('startegy.symboltype :>> ', startegy.symboltype);
-                console.log('hasEquity :>> ', hasEquity);
+
                 if (hasEquity) {
                     let equityData = await this.GetEquitiyDetail(symbol);
-                    startegy = this.bindEquityData(startegy , equityData);
+                    startegy = this.bindEquityData(startegy, equityData);
                 }
                 if (hasFutures) {
                     await this.GetEquityFuture(symbol);
@@ -86,12 +83,17 @@ module.exports = {
             }
 
             if (symboltype == "indices") {
+                let nseData = null
                 if (hasFutures) {
-                    let indfut = await this.GetIndicesFutures(symbol);
+                    let futData = await this.GetIndicesFutures(symbol);
+
                 }
                 if (hasOptions) {
-                    let nseData = await this.GetIndicesOptionChain(symbol);
+                    nseData = await this.GetIndicesOptionChain(symbol);
                     startegy = this.bindOptionData(startegy, nseData);
+                    if (action == "getexpiries") {
+                        startegy = this.bindExpiriesData(startegy, nseData);
+                    }
                 }
                 return startegy;
             }
@@ -199,12 +201,10 @@ module.exports = {
         startegy.trades.forEach(trade => {
             let selector = "priceInfo.lastPrice";
             let nseDataSelected = this.getObject(inputData, selector);
-            console.log('nseDataSelected :>> ', nseDataSelected);
             if (nseDataSelected) {
                 trade.lasttradedprice = nseDataSelected;
             }
         });
-        console.log('object :>> ', startegy);
         return startegy;
     },
     bindOptionData(startegy, inputData) {
@@ -215,6 +215,12 @@ module.exports = {
                 trade.lasttradedprice = nseDataSelected[0].lastPrice;
             }
         });
+        return startegy;
+    },
+    bindExpiriesData(startegy, inputData){
+        let selector = 'records.expiryDates[*].{"name": @ }'; //
+        let nseDataSelected = this.getObject(inputData, selector);
+        startegy.expiries = nseDataSelected;
         return startegy;
     },
     getData: async function (url) {
@@ -246,7 +252,6 @@ module.exports = {
         let lines = csv.split("\n");
         let result = [];
         let headers = lines[0].split(",").map(x => x.trim());
-        //console.log('headers :>> ', headers);
         for (let i = 1; i < lines.length; i++) {
 
             let obj = {};
@@ -262,8 +267,6 @@ module.exports = {
             }
 
         }
-
-        //return result; //JavaScript object
         return JSON.stringify(result); //JSON
     },
 }

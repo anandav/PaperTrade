@@ -11,7 +11,7 @@
       border-gray-300
       dark:border-gray-700
     "
-    :class="{ isStrategyEdit: PropStrategy == editStrategy }"
+    :class="{ isStrategyEdit: editStrategy == PropStrategy._id  }"
   >
     <!-- rounded-t bg-gradient-to-br from-yellow-400 to-yellow-500 -->
 
@@ -90,12 +90,21 @@
             {{ PropStrategy.expiry | formatDate }}
           </span>
 
-          <input
+          <!-- <input
             class="normal-edit edit"
             placeholder="Expiry"
             v-model="PropStrategy.expiry"
             @keydown.enter="onSaveStrategy()"
+          /> -->
+
+          <AutoComplete
+            :Value="PropStrategy.expiry"
+            @keyup="onSymbolTypeKeyUp"
+            @save="onSaveStrategy"
+            :Items="PropStrategy.expiries"
+            PlaceHolder="Expiry"
           />
+
         </div>
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Strike Price Step </label>
@@ -312,13 +321,28 @@ export default {
       MergeStrategy: "strategyModule/MergeStrategy",
       GetLiveData: "dataModule/GetLiveData",
       PortfolioLoad: "dataModule/PortfolioLoad",
+      StrategySymbolChange: "dataModule/StrategySymbolChange",
     }),
 
     onEditStrategy: function (strategy) {
-      this.editStrategy = strategy;
+      this.StrategySymbolChange({
+        portfolio: this.Portfolio,
+        strategy,
+        action: "getexpiries",
+      }).then((x) => {
+        
+        this.editStrategy = strategy._id;
+      });
     },
     onSaveStrategy: function () {
       this.editStrategy = null;
+
+      var result = this.Symbols.forEach((x) => {
+        if (x.name == this.PropStrategy.symbol) {
+          this.PropStrategy.symboltype = x.symboltype;
+          this.PropStrategy.lotsize = x.lotsize;
+        }
+      });
       this.EditStrategy(this.PropStrategy);
     },
     onDeleteStrategy: function () {
@@ -347,6 +371,7 @@ export default {
       if (name == "Duplicate") {
         var _startegyClone = { ...this.PropStrategy };
         _startegyClone._id = undefined;
+        _startegyClone.createdon = new Date();
         _startegyClone.trades.forEach((t) => {
           t._id = undefined;
         });
@@ -364,13 +389,14 @@ export default {
     },
     onGetLiveData: function () {
       this.GetLiveData({
-        "portfolio": this.Portfolio,
-        "strategy": this.PropStrategy,
+        portfolio: this.Portfolio,
+        strategy: this.PropStrategy,
+      }).then(() => {
+        //this.EditStrategy(this.PropStrategy);
       });
     },
     onSymbolChange: function (Value) {
       // this.PropStrategy.symbol = Value;
-      // console.log('exchange :>> ', this.Portfolio.exchange);
       // this.GetLiveData({"portfolio": this.Portfolio,"strategy": this.PropStrategy,"action" : "detail"})
     },
   },

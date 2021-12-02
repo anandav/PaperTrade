@@ -12,7 +12,6 @@ module.exports = {
     var strategyObject = await Strategy.findOne({
       _id: id,
     });
-    //console.log('strategyObject :>> ', strategyObject);
     return strategyObject;
   },
   GetTradeById: async function (id) {
@@ -24,7 +23,6 @@ module.exports = {
 
   DeleteStrategyUsingPortfolioID: function (pid) {
     if (pid) {
-      console.log('Delete portfolio :>> ');
       if (process.env.ISDEMO == 'false') {
         Strategy.remove({ portfolio: pid }, (err, doc) => {
           return doc;
@@ -32,7 +30,6 @@ module.exports = {
       }
       else
       {
-        console.log('Demo mode cant delete Strategies');
         return null;
       }
      

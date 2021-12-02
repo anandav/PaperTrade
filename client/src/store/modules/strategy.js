@@ -128,13 +128,12 @@ const strategyModule = {
                 console.error("Source and Destination strategy are different symbol or size or strike price step.");
             }
         },
-        AddStrategyFromDataModule({ commit }, Strategy) {
+        AddStrategyFromDataModule({ dispatch }, Strategy) {
+            dispatch("EditStrategy", Strategy);
+        },
+        CommitStrategy({ commit }, Strategy) {
             commit(ADDEDITSTRATEGY, Strategy);
         }
-
-
-
-
     },
 };
 

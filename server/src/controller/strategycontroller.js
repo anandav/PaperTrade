@@ -11,8 +11,6 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
   var result = {};
   if (fieldName && fieldValue) {
     // console.clear();
-    // console.log('fieldName :>> ', fieldName);
-    // console.log('fieldValue :>> ', fieldValue);
     // result = await Strategy.aggregate(
     //   [
     //     { $match: { [fieldName] : mongoose.Types.ObjectId(fieldValue) } },
@@ -38,25 +36,26 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 strategycontoller.post("/save", async (req, res) => {
   if (process.env.ISDEMO == 'false') {
     const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, ismultiplesymbol, trades, createdon } = req.body;
+    var _data = {
+      _id,
+      name,
+      description,
+      symbol,
+      symboltype,
+      lotsize,
+      expiry,
+      strikepricestep,
+      isarchive,
+      ismultiplesymbol,
+      portfolio,
+      createdon,
+      modifiedon: new Date(),
+    };
+    if (trades) {
+      _data.trades = trades;
+    }
+
     if (_id) {
-      var _data = {
-        _id,
-        name,
-        description,
-        symbol,
-        symboltype,
-        lotsize,
-        expiry,
-        strikepricestep,
-        isarchive,
-        ismultiplesymbol,
-        portfolio,
-        createdon,
-        modifiedon: new Date(),
-      };
-      if (trades) {
-        _data.trades = trades;
-      }
       var _strategyObject = await Strategy.updateOne(
         { _id: _id },
         {
@@ -65,25 +64,12 @@ strategycontoller.post("/save", async (req, res) => {
       );
       res.send(_data);
     } else {
-      const strategy = new Strategy({
-        name,
-        description,
-        symbol,
-        ismultiplesymbol,
-        lotsize,
-        expiry,
-        strikepricestep,
-        isarchive,
-        trades,
-        portfolio,
-        createdon: new Date(),
-        modifiedon: new Date(),
-      });
+      const strategy = new Strategy(_data);
       try {
         const result = await strategy.save();
         res.send(result);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
   } else {

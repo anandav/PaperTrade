@@ -401,7 +401,6 @@ export default {
         ...container.querySelectorAll(".table-row:not(.dragging)"),
       ];
 
-      // console.log('draggableElements :>> ', draggableElements);
       return draggableElements.reduce(
         (closest, child) => {
           const box = child.getBoundingClientRect();
@@ -425,7 +424,6 @@ export default {
       if (this.PropStrategy.trades.length > 0) {
         return this.PropStrategy.trades.sort(compare);
       } else {
-        console.log("this.Propstrategy.trades :>> ", this.PropStrategy.trades);
         return this.PropStrategy.trades;
       }
     },
@@ -449,7 +447,7 @@ export default {
       },
       set: function (value) {
         var selected = [];
-        this.PropStrategy.trades.forEach(function (t) {
+        this.PropStrategy?.trades?.forEach(function (t) {
           if (value) {
             selected.push(t._id);
           }
@@ -467,7 +465,7 @@ export default {
     TotalAmount: function () {
       if (this.selectedIDs) {
         var price = 0;
-        this.PropStrategy.trades.forEach((_trade) => {
+        this.PropStrategy?.trades?.forEach((_trade) => {
           this.selectedIDs.forEach((_f) => {
             if (_trade._id == _f) {
               price =

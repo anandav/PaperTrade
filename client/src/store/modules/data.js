@@ -15,7 +15,6 @@ export default {
         Exchanges: [],
         SymbolTypes: [],
         Symbols: [],
-
     },
     getters: {
         CurrentExchange: state => {
@@ -59,28 +58,31 @@ export default {
                     commit(SETCURRENTEXCHANGE, portfolio.exchange);
                 }
             }
-
         },
         GetLiveData({ commit, getters, dispatch }, { portfolio, strategy }) {
             let postData = {
                 portfolio,
                 strategy,
-
             };
             let url = `${apiUrl}data/`;
             axios.post(url, postData).then(function (res) {
                 if (res.status == 200) {
-                    
-                    //console.log('res.data :>> ', res.data);
-                    //commit("strategyModule/ADDEDITSTRATEGY", res.data, { root: true });
                     dispatch("strategyModule/AddStrategyFromDataModule", res.data, { root: true });
                 }
             });
         },
-        // onStrategySymbolChange({ commit, getters }, { strategy, action }) {
-        // },
-        // onStrategyDateExpiry({ commit, getters }, { strategy, action }) {
-        // },
-
+        StrategySymbolChange({ commit, getters, dispatch }, { portfolio, strategy, action }) {
+            let postData = {
+                portfolio,
+                strategy,
+                action
+            };
+            let url = `${apiUrl}data/`;
+            axios.post(url, postData).then(function (res) {
+                if (res.status == 200) {
+                    dispatch("strategyModule/CommitStrategy", res.data, { root: true });
+                }
+            });
+        },
     }
 };

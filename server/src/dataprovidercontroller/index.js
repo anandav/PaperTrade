@@ -28,11 +28,12 @@ async function getExchangeDetail() {
         SymbolTypes,
         "Symbols": {},
         "Exchanges": [
-            { "name": "NSE",    "isactive": true,   "description": "National Stock Exchange.", "segmentendpoints": 22569 },
-            { "name": "CBOE",   "isactive": true,   "description": "Chicago Board Options Exchange.", "segmentendpoints": 2051 },
-            { "name": "BSE",    "isactive": false,  "description": "Bombay Stock Exchange.", "segmentendpoints": 0 },
-            { "name": "MCX",    "isactive": false,  "description": "Multi Commodity Exchange.", "segmentendpoints": 0 },
-            { "name": "WAZIRX", "isactive": false,  "description": "Crypto Exchange.", "segmentendpoints": 16387 }]
+            { "name" : "NSE"     ,  "isactive" : true  , "type" : "exchange" , "description" : "National Stock Exchange."        ,  "segmentendpoints": 22569 },
+            { "name" : "CBOE"    ,  "isactive" : true  , "type" : "exchange" , "description" : "Chicago Board Options Exchange." ,  "segmentendpoints": 2051  },
+            { "name" : "BSE"     ,  "isactive" : false , "type" : "exchange" , "description" : "Bombay Stock Exchange."          ,  "segmentendpoints": 0     },
+            { "name" : "MCX"     ,  "isactive" : false , "type" : "exchange" , "description" : "Multi Commodity Exchange."       ,  "segmentendpoints": 0     },
+            { "name" : "WAZIRX"  ,  "isactive" : false , "type" : "exchange" , "description" : "Crypto Exchange."                ,  "segmentendpoints": 16387 },
+            { "name" : "KOTAK"   ,  "isactive" : true  , "type" : "broker"   , "description" : "Kotak Securities."               ,  "segmentendpoints": 22569 }]
     };
 
     return result;

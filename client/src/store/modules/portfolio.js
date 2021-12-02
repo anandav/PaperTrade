@@ -61,12 +61,11 @@ const portfolioModule = {
                 } else {
                     commit(SETPORTFOLIO, res.data[0])
                 }
-            }).catch(e => { console.log(e); });
+            }).catch(e => { console.error(e); });
         },
         async DeletePortfolio({ commit }, item) {
             axios.post(apiUrl + "portfolio/delete", item)
                 .then(function () {
-                    // console.log("Porfolio Delete callback called")
                     commit(DELETEPORTFOLIE, item);
                 });
 

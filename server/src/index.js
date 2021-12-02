@@ -17,11 +17,7 @@ app.use(helmet());
 
 app.use("/", (req, res, next) => {
   process.stdout.write("\033c");
-  //console.clear();
-  // console.log("Body");
-  // console.log("==request-body-start==");
-  // console.log(req.body);
-  // console.log("==request-body-end==");
+
   next();
 });
 app.use("/strategy", strategyController);
@@ -43,8 +39,6 @@ mongoose.connect(
   process.env.DBCONNECTIONSTRING,
   { useNewUrlParser: true, useUnifiedTopology: true },
   () => {
-    //console.log("DB connected...");
-    //console.log(process.env.DBCONNECTIONSTRING);
   }
 );
 
@@ -64,7 +58,6 @@ mongoose.connect(
 
 //app.use(require("./route"));
 app.listen(port, function () {
-  console.log(`application listening on ${port}`);
 });
 
 

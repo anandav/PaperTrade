@@ -105,15 +105,12 @@ export default {
   },
   methods: {
     onKeyUp: function () {
-      //console.log(' Keyup :>> ');
       this.$emit("keyup", this.autocompleteValue);
     },
     // onChange: function () {
-    //   //console.log(' Change :>> ');
     //   this.$emit("change", this.autocompleteValue);
     // },
     onEnterKeyup: function () {
-      //console.log(" Enter :>> ");
       this.$emit("save", this.autocompleteValue);
     },
   },

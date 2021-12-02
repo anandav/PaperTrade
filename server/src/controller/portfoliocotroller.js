@@ -12,7 +12,7 @@ portfolicontroller.get("/", async (req, res) => {
   // await Portfolio.update({},
   //   { $set: { exchange: 'NSE' } },
   //   { upsert: true, multi: true },
-  //   function (err) { console.log('err :>> ', err); });
+  //   function (err) {  });
 
   const data = await Portfolio.find();
   res.json(data);
@@ -53,7 +53,7 @@ portfolicontroller.post("/save", async (req, res) => {
       res.send(result);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.send(err);
   }
 }else{

@@ -23,12 +23,10 @@ import Vue from 'vue'
 
 const Drag = {
     Clone : function(){
-        console.log("Clone Called");
 
     },
 	Move : function(item){
 
-        console.log('Movedsfasdf  called :>> ');
     }
 };
 

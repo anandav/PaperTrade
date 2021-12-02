@@ -87,7 +87,7 @@ tradeController.post("/delete", async (req, res) => {
       const result = await Strategy.updateOne({ "trades._id": tid },
         { $pull: { "trades": { _id: tid } } },
         { new: true }, function (err) {
-          if (err) { console.log(err); }
+          if (err) { console.error(err); }
         }
       );
       res.json(result);
