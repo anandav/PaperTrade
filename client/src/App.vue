@@ -8,7 +8,9 @@
         drop-shadow-md
         py-5
         bg-gray-200
-        dark:bg-gray-900
+        dark:bg-gray-900 
+        dark:border-b 
+        dark:border-gray-800
       "
       role="navigation"
     >

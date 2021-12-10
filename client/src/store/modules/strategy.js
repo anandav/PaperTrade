@@ -18,8 +18,6 @@ const strategyModule = {
         Strategies: state => {
             return state.Strategies;
         },
-
-
     },
     mutations: {
         [GETALLSTRATEGIES](state, _strategies) {
@@ -70,10 +68,10 @@ const strategyModule = {
                 portfolio: _pid,
                 lotsize: 50,
                 strikepricestep: 50,
-                isEdit: true,
             };
             axios.post(apiUrl + "strategy/save", item).then(function (res) {
                 if (res.status == 200) {
+                    res.data.isedit = true;
                     commit(ADDEDITSTRATEGY, res.data);
                 }
             });

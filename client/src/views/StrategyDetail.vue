@@ -37,9 +37,9 @@
 
           <AutoComplete
             :Value="PropStrategy.symbol"
+            :Items="Symbols"
             @keyup="onSymbolKeyUp"
             @save="onSaveStrategy"
-            :Items="Symbols"
             PlaceHolder="Symbol"
           />
 
@@ -58,9 +58,9 @@
           </span>
           <AutoComplete
             :Value="PropStrategy.symboltype"
+            :Items="SymbolTypes"
             @keyup="onSymbolTypeKeyUp"
             @save="onSaveStrategy"
-            :Items="SymbolTypes"
             PlaceHolder="Symbol Types"
           />
 
@@ -90,20 +90,20 @@
             {{ PropStrategy.expiry | formatDate }}
           </span>
 
-          <!-- <input
+          <input
             class="normal-edit edit"
             placeholder="Expiry"
             v-model="PropStrategy.expiry"
             @keydown.enter="onSaveStrategy()"
-          /> -->
-
+          />
+<!-- 
           <AutoComplete
             :Value="PropStrategy.expiry"
             @keyup="onSymbolTypeKeyUp"
             @save="onSaveStrategy"
             :Items="PropStrategy.expiries"
             PlaceHolder="Expiry"
-          />
+          /> -->
 
         </div>
         <div class="flex-1">
@@ -292,6 +292,11 @@ export default {
         action: "init",
       });
     }
+    if(this.PropStrategy.isedit){
+       this.editStrategy = this.PropStrategy._id;
+    }
+
+
   },
   data: function () {
     return {
@@ -325,14 +330,14 @@ export default {
     }),
 
     onEditStrategy: function (strategy) {
-      this.StrategySymbolChange({
-        portfolio: this.Portfolio,
-        strategy,
-        action: "getexpiries",
-      }).then((x) => {
-        
-        this.editStrategy = strategy._id;
-      });
+      this.editStrategy = strategy._id;
+      // this.StrategySymbolChange({
+      //   portfolio: this.Portfolio,
+      //   strategy,
+      //   action: "getexpiries",
+      // }).then((x) => {
+      //   this.editStrategy = strategy._id;
+      // });
     },
     onSaveStrategy: function () {
       this.editStrategy = null;

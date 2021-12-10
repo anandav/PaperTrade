@@ -13,7 +13,7 @@
           flex
           space-x-2
           border-gray-300
-          dark:border-gray-700
+          dark:border-gray-800
         "
         :class="{ isPortfolioEdit: Portfolio == editPortfolio }"
       >

@@ -125,6 +125,7 @@
                 <input
                   v-model="item.selectedstrike"
                   :step="PropStrategy.strikepricestep"
+                  @keydown.enter="onInlineSaveTrade(item)"
                   type="number"
                   class="text-right mini-edit-nonrounded"
                 />

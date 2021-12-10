@@ -390,10 +390,16 @@ const utilitymixins = {
         .attr("class", "line")
         .attr("width", this.WIDTH)
         .attr("height", this.HEIGHT);
+
       const line = d3.line().defined(d => !isNaN(d.netPnL)).x(d => xScale(d.strikePrice)).y(d => yScale(d.netPnL));
 
       const lgdefID = `lg_${strategy._id}`;
       const lgurlid = `url(#${lgdefID})`;
+      
+      svg
+      .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
+      
+
       svg.append("linearGradient")
         .attr("id", lgdefID)
         .attr("gradientUnits", "userSpaceOnUse")
@@ -409,16 +415,16 @@ const utilitymixins = {
           return d.netPnL >= 0 ? this.ChartSettings.COLOURS.LGGREEN : this.ChartSettings.COLOURS.LGRED;
         });
 
-      svg
-        .append("g")
-        .attr("class", "x axis")
-        .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM})`)
-        .call(xAxisCall)
-        .selectAll("text")
-        .style("text-anchor", "begin")
-        .attr("dx", "2em")
-        .attr("dy", "0em")
-        .attr("transform", "rotate(40)");
+      // svg
+      //   .append("g")
+      //   .attr("class", "x axis")
+      //   .attr("transform", `translate(0, ${this.HEIGHT - this.MARGIN.BOTTOM})`)
+      //   .call(xAxisCall)
+      //   .selectAll("text")
+      //   .style("text-anchor", "begin")
+      //   .attr("dx", "2em")
+      //   .attr("dy", "0em")
+      //   .attr("transform", "rotate(40)");
 
       svg
         .append("g")
@@ -428,11 +434,22 @@ const utilitymixins = {
         .selectAll("text")
         .attr("dx", "-5");
 
-      svg.append("g")
-        .attr("class", "x axis zero")
-        .attr("stroke", "#fff")
-        .attr("transform", `translate(0, ${yScale(0)})`)
-        .call(xAxisCall.tickSize(0).tickFormat(""));
+      // svg.append("g")
+      //   .attr("class", "x axis zero")
+      //   .attr("stroke", "#fff")
+      //   .attr("transform", `translate(0, ${yScale(0)})`)
+      //   .call(xAxisCall.tickSize(0).tickFormat(""));
+      svg
+      .append("g")
+      .attr("class", "x axis zero")
+      .attr("transform", `translate(0, ${yScale(0)})`)
+      .call(xAxisCall)
+      .selectAll("text")
+      .style("text-anchor", "begin")
+      .attr("dx", "2em")
+      .attr("dy", "0em")
+      .attr("transform", "rotate(40)");
+
 
       svg
         .append("path")

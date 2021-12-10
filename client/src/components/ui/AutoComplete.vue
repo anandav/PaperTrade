@@ -5,12 +5,12 @@
         data-dropdown-toggle="dropdown"
         class="normal-edit"
         :list="componentid"
+        @change="onChange"
         @keyup="onKeyUp"
         @keyup.enter="onEnterKeyup"
         :placeholder="PlaceHolder"
         v-model="autocompleteValue"
       />
-        <!-- @change="onChange" -->
       <datalist :id="componentid">
         <option :key="item.name" v-bind:id="item.name" v-for="item in Items">
           {{ item.name }}
@@ -107,10 +107,13 @@ export default {
     onKeyUp: function () {
       this.$emit("keyup", this.autocompleteValue);
     },
-    // onChange: function () {
-    //   this.$emit("change", this.autocompleteValue);
-    // },
+    
+    onChange: function () {
+      console.log('on change :>> ');
+      this.$emit("change", this.autocompleteValue);
+    },
     onEnterKeyup: function () {
+      console.log('on enter press :>> ');
       this.$emit("save", this.autocompleteValue);
     },
   },
