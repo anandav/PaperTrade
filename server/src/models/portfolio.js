@@ -14,7 +14,7 @@ const portfolioSchema = schema({
     type : String
   },
   order:{
-    type: String
+    type: Number
   },
   createdon : {
     type: Date,

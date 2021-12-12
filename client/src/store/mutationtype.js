@@ -1,6 +1,7 @@
 ///Portfolio
-export const GETALLPORTFOLIOS = 'GetAllPortfilios';
+export const SETALLPORTFOLIOS = 'GetAllPortfilios';
 export const SETPORTFOLIO = 'SetSelectedPortfolio';
+export const SAVEALLPORTFOLIO = 'SaveAllPortfolio';
 export const DELETEPORTFOLIE = 'DeletePortfolio';
 //Strategy
 export const GETALLSTRATEGIES = 'GetAllStrategy';

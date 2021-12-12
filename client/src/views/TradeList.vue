@@ -319,12 +319,14 @@ export default {
 
     },
     onDragStart: function (e) {
+     
       ///Ref:// https://github.com/WebDevSimplified/Drag-And-Drop
       const row = e.target;
       row.classList.add("dragging");
       row.classList.add("bg-pink-100");
     },
     onDragOver: function (e) {
+     
       const row = e.target.parentElement;
       if (row.classList.contains("table-row")) {
         const container = row.parentElement;
@@ -338,6 +340,7 @@ export default {
       }
     },
     onDrop: function (e) {
+      console.log('e :>> ');
       e.preventDefault();
       const row = document.querySelector(".dragging");
       row.classList.remove("dragging");

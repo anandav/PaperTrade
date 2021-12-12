@@ -7,8 +7,8 @@ const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
 
 strategycontoller.post("/findusingportfolioid", async (req, res) => {
-  var { fieldName, fieldValue } = req.body;
-  var result = {};
+  let { fieldName, fieldValue } = req.body;
+  let result = {};
   if (fieldName && fieldValue) {
     // console.clear();
     // result = await Strategy.aggregate(
@@ -36,7 +36,7 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 strategycontoller.post("/save", async (req, res) => {
   if (process.env.ISDEMO == 'false') {
     const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, ismultiplesymbol, trades, createdon } = req.body;
-    var _data = {
+    let _data = {
       _id,
       name,
       description,
@@ -56,7 +56,7 @@ strategycontoller.post("/save", async (req, res) => {
     }
 
     if (_id) {
-      var _strategyObject = await Strategy.updateOne(
+      let _strategyObject = await Strategy.updateOne(
         { _id: _id },
         {
           $set: _data,
@@ -81,7 +81,7 @@ strategycontoller.post("/save", async (req, res) => {
 });
 
 strategycontoller.post("/delete", async (req, res) => {
-  var { _id } = req.body;
+  let { _id } = req.body;
   DeleteStrategy(_id, res);
 });
 

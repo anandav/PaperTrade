@@ -30,7 +30,7 @@ tradeController.post("/save", async (req, res) => {
       modifiedon,
 
     } = req.body;
-    var _trade = new Trade({
+    let _trade = new Trade({
       symbol,
       lotsize,
       buyorsell,
@@ -64,7 +64,7 @@ tradeController.post("/save", async (req, res) => {
         res.json(_result);
       });
     } else if (sid && !_id) {
-      var _strategyObject = await commonUtility.GetStrategyById(sid);
+      let _strategyObject = await commonUtility.GetStrategyById(sid);
       if (_strategyObject) {
         _strategyObject.trades.push(_trade);
         _strategyObject.save(function (_error, doc) {
@@ -81,7 +81,7 @@ tradeController.post("/save", async (req, res) => {
 });
 
 tradeController.post("/delete", async (req, res) => {
-  var { tid } = req.body;
+  let { tid } = req.body;
   if (tid) {
     if (process.env.ISDEMO == 'false') {
       const result = await Strategy.updateOne({ "trades._id": tid },

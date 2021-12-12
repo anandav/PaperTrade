@@ -2,6 +2,8 @@
   <div
     class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-800"
     role="menu"
+    @dragover.prevent
+    @dragenter.prevent
   >
     <div class="flex items-center mt-5">
       <div>
@@ -17,7 +19,6 @@
             rounded
           "
           :placeholder="txtAddNewPortfolio"
-         
           v-model="portfolioName"
           @keyup.enter="onAddNewPortfolio()"
         />
@@ -34,25 +35,32 @@
         </a>
       </div> -->
     </div>
-    <div class="mt-5">
+    <div class="mt-5 table-row-group" @drop="onDrop($event)">
       <div class="">
         <div v-show="isLoading" class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
       <div
-        class="flex-initial"
+        class="flex-initial table-row"
+        draggable="true"
+        v-for="(item, index) in Portfolios"
         :key="item._id"
-        v-for="item in Portfolios"
+        :data-order="item.order"
+        :data-name="item.name"
+        :data-id="item._id"
         :class="{ isPortfolioEdit: item == editPortfolio }"
+        @dragover="onDragOver($event, index)"
+        @dragstart="onDragStart($event, item, index)"
       >
         <div
-          tabindex="0"
-          role="menuitem"
           class="mt-1 leading-10 rounded-sm cursor-pointer"
+          role="menuitem"
+          tabindex="0"
           @click="onMenuSelectedPortfolio(item)"
           @keydown.enter="onMenuSelectedPortfolio(item)"
           @keydown.f2="onInlineEditPortfolio(item)"
+         
           :class="{
             'border-l-2  border-yellow-500':
               Portfolio && item._id == Portfolio._id,
@@ -66,8 +74,16 @@
                   'font-black': Portfolio && item._id == Portfolio._id,
                 }"
               >
-                <!-- <svg
-                  class="inline-block cursor-move pb-1"
+                <svg
+                  class="
+                    inline-block
+                    cursor-move
+                    pb-1
+                    view
+                    fill-current
+                    text-gray-400
+                    dark:text-gray-500
+                  "
                   width="10"
                   height="15"
                   viewBox="0 0 2 5"
@@ -75,10 +91,10 @@
                 >
                   <path
                     id="rect2026"
-                    style="fill: #ececec; stroke-width: 0.264583"
+                    style=""
                     d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
                   />
-                </svg> -->
+                </svg>
 
                 {{ item.name }}
               </div>
@@ -134,6 +150,7 @@ export default {
       GetAllPortfolios: "portfolioModule/GetAllPortfolios",
       GetPortfolioById: "portfolioModule/GetPortfolioById",
       SavePortfolio: "portfolioModule/SavePortfolio",
+      SaveAllPortfolio: "portfolioModule/SaveAllPortfolio",
       DeletePortfolio: "portfolioModule/DeletePortfolio",
       GetAllStrategies: "strategyModule/GetAllStrategies",
     }),
@@ -153,16 +170,63 @@ export default {
         this.portfolioName = "";
       }
     },
-    // onInlineEditPortfolio : function(portfolio) {
-    //   this.editPortfolio = portfolio;
-    // },
-    // onInlineSavePortfolio : function(portfolio) {
-    //   this.editPortfolio = null;
-    //   this.SavePortfolio(portfolio);
-    // },
-    // onDeletePortfolio(itempfl) {
-    //   this.DeletePortfolio(itempfl);
-    // },
+
+    onDragStart: function (e) {
+      console.clear();
+      ///Ref:// https://github.com/WebDevSimplified/Drag-And-Drop
+      const row = e.target;
+      row.classList.add("dragging");
+    },
+    onDragOver: function (e) {
+      const row = e.target.parentElement.parentElement;
+      if (row.classList.contains("table-row")) {
+        const container = row.parentElement;
+        const afterElement = this.getDragAfterElement(container, e.clientY);
+        const draggable = document.querySelector(".dragging");
+        if (afterElement == null) {
+          container.appendChild(draggable);
+        } else {
+          container.insertBefore(draggable, afterElement);
+        }
+      }
+    },
+    onDrop: function (e) {
+      e.preventDefault();
+      const row = document.querySelector(".dragging");
+      row.classList.remove("dragging");
+      const tableRowsGroup = row.closest(".table-row-group");
+      const tableRows = tableRowsGroup.querySelectorAll(".table-row");
+      let i = 0;
+      tableRows.forEach((row) => {
+       console.log("row :>> ", row);
+        this.Portfolios.forEach((y) => {
+          const x = row.getAttribute("data-id");
+          if (x == y._id) {
+            y.order = i;
+          }
+        });
+        i += 1;
+      });
+      this.SaveAllPortfolio(this.Portfolios);
+    },
+    getDragAfterElement: function (container, y) {
+      const draggableElements = [
+        ...container.querySelectorAll(".table-row:not(.dragging)"),
+      ];
+
+      return draggableElements.reduce(
+        (closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+          if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+          } else {
+            return closest;
+          }
+        },
+        { offset: Number.NEGATIVE_INFINITY }
+      ).element;
+    },
   },
   data: function () {
     return {
