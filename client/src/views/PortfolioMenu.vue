@@ -47,7 +47,7 @@
         v-for="(item, index) in Portfolios"
         :key="item._id"
         :data-order="item.order"
-        :data-name="item.name"
+       
         :data-id="item._id"
         :class="{ isPortfolioEdit: item == editPortfolio }"
         @dragover="onDragOver($event, index)"
