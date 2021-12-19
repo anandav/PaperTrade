@@ -36,11 +36,11 @@
       </div> -->
     </div>
     <div class="mt-5 table-row-group" @drop="onDrop($event)">
-      <div class="">
+      <!-- <div class="">
         <div v-show="isLoading" class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
-      </div>
+      </div> -->
       <div
         class="flex-initial table-row"
         draggable="true"

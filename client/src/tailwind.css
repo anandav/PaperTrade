@@ -33,7 +33,7 @@
 }
 
 .mini-edit{
-    @apply w-12 px-1 py-1 rounded-sm focus:outline-none;
+    @apply w-12 px-1 py-1 rounded-md focus:outline-none;
 }
 
 .normal-edit {

@@ -22,10 +22,12 @@ portfolicontroller.post("/find", async (req, res) => {
   let result = {};
   if (fieldName && fieldValue) {
     result = await Portfolio.find({ [fieldName]: fieldValue }).sort({
-      createdon: -1,
+      order :-1
     });
+    //createdon: -1,
   } else {
-    result = await Portfolio.find().sort({ createdon: -1 });
+    // result = await findPortfolio();
+    result = await Portfolio.find().sort({ order : -1 });
   }
   res.send(result);
 });
@@ -81,7 +83,7 @@ portfolicontroller.post("/saveall", async (req, res) => {
     console.log('Saving item._id :>> ', item.order, item.name);
     const result = await _portfolioObject.save();
   });
-  res.send(_portfolios);
+  res.send(await findPortfolio());
 });
 
 portfolicontroller.post("/delete", async (req, res) => {
@@ -98,5 +100,9 @@ portfolicontroller.post("/delete", async (req, res) => {
     }
   }
 });
+
+async function findPortfolio() {
+  return await Portfolio.find().sort({ order : 1 });
+}
 
 module.exports = portfolicontroller;

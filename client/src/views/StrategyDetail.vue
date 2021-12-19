@@ -35,7 +35,7 @@
             {{ PropStrategy.symbol }}
           </span>
 
-          <AutoComplete
+          <autocomplete
             :Value="PropStrategy.symbol"
             :Items="Symbols"
             @keyup="onSymbolKeyUp"
@@ -56,7 +56,7 @@
           <span class="view">
             {{ PropStrategy.symboltype }}
           </span>
-          <AutoComplete
+          <autocomplete
             :Value="PropStrategy.symboltype"
             :Items="SymbolTypes"
             @keyup="onSymbolTypeKeyUp"
@@ -97,7 +97,7 @@
             @keydown.enter="onSaveStrategy()"
           />
 <!-- 
-          <AutoComplete
+          <autocomplete
             :Value="PropStrategy.expiry"
             @keyup="onSymbolTypeKeyUp"
             @save="onSaveStrategy"
@@ -126,7 +126,7 @@
 
         <div class="flex-1">
           <div class="float-right space-x-2">
-            <DropDown
+            <dropdown
               class="inline-block view tooltip"
               :Icon="`join_full`"
               :Items="CurrentPortfoliosStrategies"
@@ -136,8 +136,8 @@
               :Tooltip="txtMergeStrategy"
               v-if="!this.PropStrategy.isarchive"
             >
-            </DropDown>
-            <DropDown
+            </dropdown>
+            <dropdown
               class="inline-block view tooltip"
               :ExcludeItem="PropStrategy.portfolio"
               :Icon="`trending_flat`"
@@ -147,9 +147,9 @@
               :Tooltip="txtMoveStrategy"
             >
               <!-- v-if="!this.PropStrategy.isarchive" -->
-            </DropDown>
+            </dropdown>
 
-            <DropDown
+            <dropdown
               class="inline-block view tooltip"
               :Icon="`menu`"
               :Items="StrategyAction"
@@ -158,7 +158,7 @@
               :ExcludeItem="ExcluteStrategyAction"
               Tooltip="Action"
             >
-            </DropDown>
+            </dropdown>
 
             <button
               class="btn tooltip view"
@@ -264,12 +264,12 @@
 import { mapActions, mapGetters } from "vuex";
 //import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
-import AutoComplete from "../components/ui/AutoComplete";
+
 import myMixins from "../shared/chart";
 
 export default {
   name: "StrategyDetail",
-  components: { TradeList, AutoComplete },
+  components: { TradeList },
   computed: {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
@@ -311,9 +311,9 @@ export default {
       txtMoveStrategy: this.$getConst("moveStrategy"),
       editStrategy: null,
       StrategyAction: [
-        { _id: "1", name: "Duplicate", icon: "content_copy", click: "" },
-        { _id: "2", name: "Archive", icon: "archive", click: "" },
-        { _id: "3", name: "Unarchive", icon: "archive", click: "" },
+        { _id: "1", name: "Duplicate", icon: "content_copy",  },
+        { _id: "2", name: "Archive", icon: "archive",  },
+        { _id: "3", name: "Unarchive", icon: "archive", },
       ],
     };
   },

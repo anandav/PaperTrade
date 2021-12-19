@@ -1,10 +1,10 @@
 import Vue from 'vue'
 // import dayjs from 'dayjs';
-// import DropDown from "../components/ui/DropDown";
+// import dropdown from "../components/ui/dropdown";
 // import tooltip from "../components/ui/ToolTip"
 
 
-// Vue.component("DropDown", DropDown);
+// Vue.component("dropdown", dropdown);
 // Vue.component("tooltip", tooltip);
 // Vue.filter('formatDate', function (value) {
 //     if (value) {

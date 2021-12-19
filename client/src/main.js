@@ -6,11 +6,13 @@ import store from './store';
 import resource from './shared/resource';
 import './tailwind.css';
 import dayjs from 'dayjs';
-import DropDown from "./components/ui/DropDown";
+import dropdown from "./components/ui/DropDown";
+import autocomplete from "./components/ui/AutoComplete";
 import tooltip from "./components/ui/ToolTip"
 
 
-Vue.component("DropDown", DropDown);
+Vue.component("autocomplete", autocomplete);
+Vue.component("dropdown", dropdown);
 Vue.component("tooltip", tooltip);
 
 Vue.filter('formatDateTime', function (value) {
@@ -23,8 +25,6 @@ Vue.filter('formatDate', function (value) {
        return dayjs(value, ["YYYY", "YYYY-MM-DD"], 'in', true).format('DD-MMM-YYYY');
     }
 });
-
-
 
 Vue.config.productionTip = false;
 Vue.config.keyCodes = {

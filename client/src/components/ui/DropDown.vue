@@ -94,7 +94,7 @@
 
 <script>
 export default {
-  name: "dropdown",
+  name: "DropDown",
   props: {
     Type: { type: String },
     ExcludeItem: { type: String },

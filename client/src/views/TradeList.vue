@@ -89,7 +89,7 @@
               <i class="material-icons">category</i>
             </button>
 
-            <!-- <DropDown
+            <!-- <dropdown
               class="inline-block view tooltip"
               :Icon="`menu`"
               :Items="TradeAction"
@@ -97,7 +97,7 @@
               @itemclicked="onTradeDropDownItemClicked"order
               Tooltip="Action"order
             >
-            </DropDown> -->
+            </dropdown> -->
 
             <label class="">
               <input
@@ -127,7 +127,7 @@
                   :step="PropStrategy.strikepricestep"
                   @keydown.enter="onInlineSaveTrade(item)"
                   type="number"
-                  class="text-right mini-edit-nonrounded"
+                  class="text-right mini-edit"
                 />
               </div>
             </div>
@@ -224,6 +224,18 @@
                 <i class="material-icons">delete_forever</i>
                 <tooltip :Value="txtDeleteTrade" />
               </button>
+
+              <dropdown
+              class="inline-block view tooltip"
+              :Icon="`menu`"
+              :Items="TradeAction"
+              :Type="`Menu`"
+              @itemclicked="onActionDropDownItemClicked"
+             
+              Tooltip="Action"
+            >
+            </dropdown>
+
             </div>
           </div>
         </div>
@@ -278,10 +290,11 @@ export default {
       txtDeleteTrade: this.$getConst("deleteTrade"),
       bgColor: ["bg-red-100", "bg-green-100", "bg-orange-200"],
       TradeAction: [
-        { _id: "1", name: "Exit", icon: "archive", click: "" },
+        { _id: "1", name: "Exit", icon: "logout", click: "" },
         { _id: "2", name: "Duplicate", icon: "content_copy", click: "" },
-        { _id: "3", name: "Delete", icon: "archive", click: "" },
+        { _id: "3", name: "Delete", icon: "delete_forever", click: "" },
       ],
+      
     };
   },
   props: {
@@ -399,6 +412,8 @@ export default {
       this.AddEditTrade(trade).then(() => {
         this.GenerateChart(this.PropStrategy);
       });
+    },
+    onActionDropDownItemClicked : function () {
     },
     getDragAfterElement: function (container, y) {
       const draggableElements = [
