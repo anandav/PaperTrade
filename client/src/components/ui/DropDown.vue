@@ -1,5 +1,5 @@
 !<template>
-  <div class="dropdown inline-block relative tooltip">
+  <div class="dropdown inline-block relative tooltip text-left">
     <div v-if="Type == 'text'">
       <input type="text" class="normal-edit" data-dropdown-toggle="dropdown" />
     </div>
@@ -14,9 +14,10 @@
     </button>
     <div
       class="
+        fixed
+        z-10
         dropdown-content
         hidden
-        absolute
         bg-gray-300
         dark:bg-gray-700
         rounded
@@ -49,10 +50,11 @@
               py-2
               px-2
             "
+            :class="item.color"
             v-if="item._id != ExcludeItem"
             @click="onItemClicked(Type, item._id, item.name)"
           >
-            <span v-if="item.icon" class="text-left">
+            <span v-if="item.icon" class="text-left" >
               <i class="material-icons text-sm">{{ item.icon }}</i>
             </span>
             {{ item.name }}</a
@@ -80,9 +82,7 @@
             
             @click="onItemClicked(Type, item._id, item.name)"
           >
-            <!-- <span v-if="item.icon" class="text-left">
-              <i class="material-icons text-sm">{{ item.icon }}</i>
-            </span> -->
+        
             {{ item.symbol }}</a
           >
         </div>
@@ -101,6 +101,7 @@ export default {
     Items: { type: Array },
     Icon: { type: String },
     Tooltip: { type: String },
+    CurrentObject  : {type :Object}
   },
   data: function () {
     return {};
@@ -108,7 +109,8 @@ export default {
   computed: {},
   methods: {
     onItemClicked: function (type, id, name) {
-      this.$emit("itemclicked", type, id, name);
+
+      this.$emit("itemclicked", type, id, name, this.CurrentObject);
     },
   },
 };

@@ -11,7 +11,7 @@
       border-gray-300
       dark:border-gray-700
     "
-    :class="{ isStrategyEdit: editStrategy == PropStrategy._id  }"
+    :class="{ isStrategyEdit: editStrategy == PropStrategy._id }"
   >
     <!-- rounded-t bg-gradient-to-br from-yellow-400 to-yellow-500 -->
 
@@ -96,7 +96,7 @@
             v-model="PropStrategy.expiry"
             @keydown.enter="onSaveStrategy()"
           />
-<!-- 
+          <!-- 
           <autocomplete
             :Value="PropStrategy.expiry"
             @keyup="onSymbolTypeKeyUp"
@@ -104,7 +104,6 @@
             :Items="PropStrategy.expiries"
             PlaceHolder="Expiry"
           /> -->
-
         </div>
         <div class="flex-1">
           <label class="text-xs block text-gray-500"> Strike Price Step </label>
@@ -126,6 +125,28 @@
 
         <div class="flex-1">
           <div class="float-right space-x-2">
+            <button
+              class="btn dark:text-orange-400 tooltip"
+              @click="onBindAddEditTrade()"
+            >
+              <i class="material-icons">playlist_add</i>
+              <tooltip :Value="txtAddTrade" />
+            </button>
+
+            <button
+              class="btn tooltip view"
+              @click="onEditStrategy(PropStrategy)"
+              v-if="!this.PropStrategy.isarchive"
+            >
+              <i class="material-icons">edit</i>
+              <tooltip :Value="txtEditStrategy" />
+            </button>
+
+            <button class="btn tooltip edit" @click="onSaveStrategy()">
+              <i class="material-icons">save</i>
+              <tooltip :Value="txtSaveStrategy" />
+            </button>
+
             <dropdown
               class="inline-block view tooltip"
               :Icon="`join_full`"
@@ -161,20 +182,6 @@
             </dropdown>
 
             <button
-              class="btn tooltip view"
-              @click="onEditStrategy(PropStrategy)"
-              v-if="!this.PropStrategy.isarchive"
-            >
-              <i class="material-icons">edit</i>
-              <tooltip :Value="txtEditStrategy" />
-            </button>
-
-            <button class="btn tooltip edit" @click="onSaveStrategy()">
-              <i class="material-icons">save</i>
-              <tooltip :Value="txtSaveStrategy" />
-            </button>
-
-            <button
               class="btn text-red-700 dark:text-red-700 tooltip"
               @dblclick="onDeleteStrategy()"
             >
@@ -189,7 +196,22 @@
     <div class="p-3">
       <div class="grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
         <div class="col-span-1">
+          <!--<div class="col-span-1 space-x-2 float-right">
+              <button class="btn dark:text-orange-400 tooltip" @click="onBindAddEditTrade()">
+              <i class="material-icons">playlist_add</i>
+              <tooltip :Value="txtAddTrade" />
+            </button>
+          <button
+              class="btn tooltip"
+              v-if="this.Portfolio.exchange && this.PropStrategy.symbol"
+              @click="onGetLiveData()"
+            >
+              <i class="material-icons">file_download</i>
+              <tooltip :Value="txtGetLiveData" />
+            </button> 
+          </div>-->
           <TradeList
+            :PropPortfolio="PropPortfolio"
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
@@ -200,13 +222,13 @@
             <div class="chart">
               <!-- CHART COMES HERE -->
             </div>
-            <div class="col-span-1 mt-3">
+            <div class="col-span-1 mt-1">
               <input
                 type="number"
                 v-model="PropStrategy.x0"
                 placeholder="min"
                 min="0"
-                class="chart-mini-edit ml-5"
+                class="chart-mini-edit ml-12"
                 @keydown.enter="onShowChart()"
               />
               <input
@@ -230,7 +252,7 @@
       </div>
     </div>
 
-    <div class="p-3 grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
+    <!-- <div class="p-3 grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
       <div class="col-span-1 space-x-2">
         <button class="btn tooltip" @click="onBindAddEditTrade()">
           <i class="material-icons">add</i>
@@ -257,7 +279,7 @@
           </button>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -292,11 +314,9 @@ export default {
         action: "init",
       });
     }
-    if(this.PropStrategy.isedit){
-       this.editStrategy = this.PropStrategy._id;
+    if (this.PropStrategy.isedit) {
+      this.editStrategy = this.PropStrategy._id;
     }
-
-
   },
   data: function () {
     return {
@@ -311,9 +331,9 @@ export default {
       txtMoveStrategy: this.$getConst("moveStrategy"),
       editStrategy: null,
       StrategyAction: [
-        { _id: "1", name: "Duplicate", icon: "content_copy",  },
-        { _id: "2", name: "Archive", icon: "archive",  },
-        { _id: "3", name: "Unarchive", icon: "archive", },
+        { _id: "1", name: "Duplicate", icon: "content_copy" },
+        { _id: "2", name: "Archive", icon: "archive" },
+        { _id: "3", name: "Unarchive", icon: "archive" },
       ],
     };
   },
@@ -342,7 +362,7 @@ export default {
     onSaveStrategy: function () {
       this.editStrategy = null;
 
-      var result = this.Symbols.forEach((x) => {
+      this.Symbols.forEach((x) => {
         if (x.name == this.PropStrategy.symbol) {
           this.PropStrategy.symboltype = x.symboltype;
           this.PropStrategy.lotsize = x.lotsize;
@@ -392,18 +412,18 @@ export default {
     onSymbolTypeKeyUp: function (Value) {
       this.PropStrategy.symboltype = Value;
     },
-    onGetLiveData: function () {
-      this.GetLiveData({
-        portfolio: this.Portfolio,
-        strategy: this.PropStrategy,
-      }).then(() => {
-        //this.EditStrategy(this.PropStrategy);
-      });
-    },
-    onSymbolChange: function (Value) {
-      // this.PropStrategy.symbol = Value;
-      // this.GetLiveData({"portfolio": this.Portfolio,"strategy": this.PropStrategy,"action" : "detail"})
-    },
+    // onGetLiveData: function () {
+    //   this.GetLiveData({
+    //     portfolio: this.Portfolio,
+    //     strategy: this.PropStrategy,
+    //   }).then(() => {
+    //     //this.EditStrategy(this.PropStrategy);
+    //   });
+    // },
+    // onSymbolChange: function (Value) {
+    //   // this.PropStrategy.symbol = Value;
+    //   // this.GetLiveData({"portfolio": this.Portfolio,"strategy": this.PropStrategy,"action" : "detail"})
+    // },
   },
   mixins: [myMixins],
   props: {

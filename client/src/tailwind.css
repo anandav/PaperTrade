@@ -22,9 +22,17 @@
 }
 
 .btn-mini{
-  @apply  cursor-pointer text-xxs   justify-center rounded border-none border border-transparent shadow-sm 
+  @apply  cursor-pointer text-xxs  justify-center rounded border-none border border-transparent shadow-sm 
   dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
   bg-gray-300 hover:bg-gray-400 hover:text-gray-200
+  focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+
+.btn-ltp{
+  @apply  cursor-pointer text-xs p-1 text-center w-full rounded border-none border border-transparent shadow-sm 
+   dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 
+    dark:drop-shadow-md    bg-gray-200 hover:bg-gray-400 
   focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
 
@@ -45,7 +53,7 @@
 }
 
 .chart-mini-edit{
-  @apply  w-16 px-1 py-1 rounded-md  border-2 border-gray-300 bg-gray-400 dark:border-gray-600 m-0 bg-transparent focus:outline-none;
+  @apply  text-xs w-12 h-8 px-1 rounded-md text-right  border border-gray-300 bg-gray-400 dark:border-gray-600 bg-transparent focus:outline-none;
 }
 
 .mini-checkbox{
@@ -53,7 +61,7 @@
 }
 
 .tooltiptext{
-  @apply dark:hidden hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md z-10 left-2 -ml-10    
+  @apply  hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md z-10 left-2 -ml-10    
   bottom-7 after:top-full 
   after:absolute after:left-2/4 after:border-4 after:border-solid 
   transition-opacity duration-300 ;

@@ -30,8 +30,12 @@
           <div
             class="table-cell px-1 py-4 text-yellow-400"
             v-if="Portfolio.exchange"
+            @click="onGetLiveData()"
           >
-            LTP
+            <div class="btn-ltp">
+              <i class="text-xs material-icons">refresh</i>
+              LTP
+            </div>
           </div>
           <div class="table-cell px-1 py-4">Total Price</div>
           <div class="table-cell px-1 w-28">Action</div>
@@ -181,7 +185,7 @@
             v-if="Portfolio.exchange"
             class="table-cell px-1 py-3 text-yellow-500"
           >
-            <span class="" @dblclick="onLTPClick(item)">
+            <span class="btn-ltp" @dblclick="onLTPClick(item)">
               {{ item.lasttradedprice }}
             </span>
           </div>
@@ -225,17 +229,16 @@
                 <tooltip :Value="txtDeleteTrade" />
               </button>
 
-              <dropdown
-              class="inline-block view tooltip"
-              :Icon="`menu`"
-              :Items="TradeAction"
-              :Type="`Menu`"
-              @itemclicked="onActionDropDownItemClicked"
-             
-              Tooltip="Action"
-            >
-            </dropdown>
-
+              <!-- <dropdown
+                class="inline-block view tooltip"
+                :Icon="`menu`"
+                :Items="TradeAction"
+                :Type="`Menu`"
+                :CurrentObject="item"
+                @itemclicked="onActionDropDownItemClicked"
+                Tooltip="Action"
+              >
+              </dropdown> -->
             </div>
           </div>
         </div>
@@ -292,9 +295,14 @@ export default {
       TradeAction: [
         { _id: "1", name: "Exit", icon: "logout", click: "" },
         { _id: "2", name: "Duplicate", icon: "content_copy", click: "" },
-        { _id: "3", name: "Delete", icon: "delete_forever", click: "" },
+        {
+          _id: "3",
+          name: "Delete",
+          icon: "delete_forever",
+          click: "",
+          color: "text-red-600 dark:text-red-700",
+        },
       ],
-      
     };
   },
   props: {
@@ -314,6 +322,14 @@ export default {
         this.GenerateChart(this.PropStrategy);
       });
     },
+    onGetLiveData: function () {
+      this.GetLiveData({
+        portfolio: this.Portfolio,
+        strategy: this.PropStrategy,
+      }).then(() => {
+        //this.EditStrategy(this.PropStrategy);
+      });
+    },
     onInlineEditTrade: function (trade) {
       this.editTrade = trade;
     },
@@ -327,19 +343,14 @@ export default {
         this.$emit("onItemEnterKeyPressed");
         this.GenerateChart(this.PropStrategy);
       });
-
-
-
     },
     onDragStart: function (e) {
-     
       ///Ref:// https://github.com/WebDevSimplified/Drag-And-Drop
       const row = e.target;
       row.classList.add("dragging");
       row.classList.add("bg-pink-100");
     },
     onDragOver: function (e) {
-     
       const row = e.target.parentElement;
       if (row.classList.contains("table-row")) {
         const container = row.parentElement;
@@ -353,7 +364,7 @@ export default {
       }
     },
     onDrop: function (e) {
-      console.log('e :>> ');
+      console.log("e :>> ");
       e.preventDefault();
       const row = document.querySelector(".dragging");
       row.classList.remove("dragging");
@@ -386,7 +397,7 @@ export default {
     },
     onCheckStateChanged: function (trade) {
       trade.checked = !trade.checked;
-      this.CheckStateChanged(this.PropStrategy).then(()=>{
+      this.CheckStateChanged(this.PropStrategy).then(() => {
         this.GenerateChart(this.PropStrategy);
       });
     },
@@ -413,7 +424,16 @@ export default {
         this.GenerateChart(this.PropStrategy);
       });
     },
-    onActionDropDownItemClicked : function () {
+    onActionDropDownItemClicked: function (
+      control,
+      actionid,
+      actionname,
+      item
+    ) {
+      if (actionid == 1) {
+      } else if (actionid == 3) {
+        this.onInlineExitTrade(item);
+      }
     },
     getDragAfterElement: function (container, y) {
       const draggableElements = [
@@ -430,7 +450,7 @@ export default {
           } else {
             return closest;
           }
-        }, 
+        },
         { offset: Number.NEGATIVE_INFINITY }
       ).element;
     },
@@ -461,7 +481,7 @@ export default {
       ///ref: https://stackoverflow.com/questions/33571382/check-all-checkboxes-vuejs
       get: function () {
         return this.PropStrategy.trades
-          ? this.PropStrategy.trades.length == this.selectedIDs.length 
+          ? this.PropStrategy.trades.length == this.selectedIDs.length
           : false;
       },
       set: function (value) {

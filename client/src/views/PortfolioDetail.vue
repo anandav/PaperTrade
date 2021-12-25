@@ -53,7 +53,7 @@
         </div>
 
         <div class="float-right pr-5 space-x-2">
-          <button class="btn tooltip" @click="onAddNewStrategy()">
+          <button class="btn dark:text-orange-400 tooltip" @click="onAddNewStrategy()">
             <i class="material-icons">playlist_add</i>
             <tooltip :Value="txtAddStrategy" />
           </button>
