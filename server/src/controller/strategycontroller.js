@@ -34,7 +34,7 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  if (process.env.ISDEMO == 'false') {
+  if (process.env.ENABLE_DEMO == 'false') {
     const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, ismultiplesymbol, trades, createdon } = req.body;
     let _data = {
       _id,
@@ -88,7 +88,7 @@ strategycontoller.post("/delete", async (req, res) => {
 
 function DeleteStrategy(_id, res) {
   if (_id) {
-    if (process.env.ISDEMO == 'false') {
+    if (process.env.ENABLE_DEMO == 'false') {
       Strategy.deleteOne({ _id: _id }, (err, doc) => {
         res.json(doc);
       });

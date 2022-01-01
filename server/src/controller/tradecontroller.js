@@ -5,7 +5,7 @@ const Trade = require("../models/trade");
 const commonUtility = require("../models/commonUtility");
 
 tradeController.post("/save", async (req, res) => {
-  if (process.env.ISDEMO == 'false') {
+  if (process.env.ENABLE_DEMO == 'false') {
     const {
       sid,
       _id,
@@ -83,7 +83,7 @@ tradeController.post("/save", async (req, res) => {
 tradeController.post("/delete", async (req, res) => {
   let { tid } = req.body;
   if (tid) {
-    if (process.env.ISDEMO == 'false') {
+    if (process.env.ENABLE_DEMO == 'false') {
       const result = await Strategy.updateOne({ "trades._id": tid },
         { $pull: { "trades": { _id: tid } } },
         { new: true }, function (err) {

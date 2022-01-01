@@ -30,10 +30,18 @@
 
 
 .btn-ltp{
-  @apply  cursor-pointer text-xs p-1 text-center w-full rounded border-none border border-transparent shadow-sm 
-   dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 
-    dark:drop-shadow-md    bg-gray-200 hover:bg-gray-400 
-  focus:outline-none focus:ring-2 focus:ring-offset-2;
+
+  /* @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
+    dark:text-yellow-500 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 
+    dark:drop-shadow-md
+    bg-gray-200 hover:bg-gray-400 hover:text-yellow-600
+    focus:outline-none focus:ring-2 focus:ring-offset-2 
+    text-xs    ;  */
+
+  @apply  cursor-pointer text-xs p-1 text-center w-full rounded border-none border border-transparent shadow
+   dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500  text-yellow-700  dark:drop-shadow-md
+   bg-gray-200 hover:bg-gray-400 dark:text-yellow-500
+    focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
 
 .btn-mini i{

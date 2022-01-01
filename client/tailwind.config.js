@@ -26,8 +26,9 @@ module.exports = {
       green: colors.green,
       white: colors.white,
       orange: colors.orange,
+      cyan : colors.cyan,
+      blue: colors.blue,
       //pink: colors.pink,
-      //blue: colors.blue,
 
     },
     fontSize: {

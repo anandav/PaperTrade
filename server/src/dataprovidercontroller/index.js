@@ -49,7 +49,11 @@ async function get(req) {
     var initResult = {};
     if (action == "init") {
         result.ExchangeDetail = await getExchangeDetail();
-        result.Symbols = await nse.Get(portfolio, startegy, action);
+        if(portfolio?.exchange?.toLowerCase() == "nse"){
+            result.Symbols = await nse.Get(portfolio, startegy, action);
+        }else if(portfolio?.exchange?.toLowerCase() == "cboe"){
+            result.Symbols = await cboe.Get(portfolio, startegy, action)
+        }
         return result;
     }
 

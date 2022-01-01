@@ -53,7 +53,7 @@
         </div>
 
         <div class="float-right pr-5 space-x-2">
-          <button class="btn dark:text-orange-400 tooltip" @click="onAddNewStrategy()">
+          <button class="btn dark:text-orange-400 tooltip view" @click="onAddNewStrategy()">
             <i class="material-icons">playlist_add</i>
             <tooltip :Value="txtAddStrategy" />
           </button>
@@ -66,7 +66,7 @@
             <tooltip Value="Save Portfilio" />
           </button>
           <button
-            class="btn ml-2 tooltip text-red-700 dark:text-red-700"
+            class="btn ml-2 tooltip text-red-700 dark:text-red-700 view"
             @dblclick="onDeletePortfolio(Portfolio)"
           >
             <i class="material-icons">delete_forever</i>

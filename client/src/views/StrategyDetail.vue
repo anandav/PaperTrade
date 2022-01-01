@@ -6,14 +6,14 @@
       rounded
       border
       drop-shadow-md
-      bg-gray-200
-      dark:bg-gray-800
       border-gray-300
       dark:border-gray-700
+      bg-gray-200
+      dark:bg-gray-800
     "
     :class="{ isStrategyEdit: editStrategy == PropStrategy._id }"
   >
-    <!-- rounded-t bg-gradient-to-br from-yellow-400 to-yellow-500 -->
+
 
     <div class="p-3 border-b border-gray-300 dark:border-gray-600">
       <div class="flex">
@@ -96,7 +96,7 @@
             v-model="PropStrategy.expiry"
             @keydown.enter="onSaveStrategy()"
           />
-          <!-- 
+          <!--
           <autocomplete
             :Value="PropStrategy.expiry"
             @keyup="onSymbolTypeKeyUp"
@@ -123,11 +123,12 @@
           {{ PropStrategy.createdon | formatDateTime }}
         </div>
 
-        <div class="flex-1">
+        <div class="flex-2">
           <div class="float-right space-x-2">
             <button
-              class="btn dark:text-orange-400 tooltip"
+              class="btn dark:text-orange-400 tooltip view"
               @click="onBindAddEditTrade()"
+              v-if="!this.PropStrategy.isarchive"
             >
               <i class="material-icons">playlist_add</i>
               <tooltip :Value="txtAddTrade" />
@@ -148,7 +149,7 @@
             </button>
 
             <dropdown
-              class="inline-block view tooltip"
+              class="inline-block tooltip view"
               :Icon="`join_full`"
               :Items="CurrentPortfoliosStrategies"
               :Type="`Strategy`"
@@ -159,7 +160,7 @@
             >
             </dropdown>
             <dropdown
-              class="inline-block view tooltip"
+              class="inline-block tooltip view"
               :ExcludeItem="PropStrategy.portfolio"
               :Icon="`trending_flat`"
               :Items="Portfolios"
@@ -171,7 +172,7 @@
             </dropdown>
 
             <dropdown
-              class="inline-block view tooltip"
+              class="inline-block tooltip view"
               :Icon="`menu`"
               :Items="StrategyAction"
               :Type="`Menu`"
@@ -182,7 +183,7 @@
             </dropdown>
 
             <button
-              class="btn text-red-700 dark:text-red-700 tooltip"
+              class="btn text-red-700 dark:text-red-700 tooltip view"
               @dblclick="onDeleteStrategy()"
             >
               <i class="material-icons">delete_forever</i>
@@ -208,10 +209,9 @@
             >
               <i class="material-icons">file_download</i>
               <tooltip :Value="txtGetLiveData" />
-            </button> 
+            </button>
           </div>-->
           <TradeList
-            :PropPortfolio="PropPortfolio"
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
@@ -219,10 +219,7 @@
         </div>
         <div class="col-span-1">
           <div class="chartplaceholder">
-            <div class="chart">
-              <!-- CHART COMES HERE -->
-            </div>
-            <div class="col-span-1 mt-1">
+            <div class="col-span-1">
               <input
                 type="number"
                 v-model="PropStrategy.x0"
@@ -240,7 +237,11 @@
                 @keydown.enter="onShowChart()"
               />
             </div>
+            <div class="chart">
+              <!-- CHART COMES HERE -->
+            </div>
           </div>
+          <div></div>
         </div>
       </div>
       <div class="grid" v-if="this.PropStrategy.isarchive">
@@ -365,7 +366,7 @@ export default {
       this.Symbols.forEach((x) => {
         if (x.name == this.PropStrategy.symbol) {
           this.PropStrategy.symboltype = x.symboltype;
-          this.PropStrategy.lotsize = x.lotsize;
+          //this.PropStrategy.lotsize = x.lotsize;
         }
       });
       this.EditStrategy(this.PropStrategy);

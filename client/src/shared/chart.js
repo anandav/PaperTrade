@@ -284,11 +284,18 @@ const utilitymixins = {
       if (!chartData || !paretnId) return;
 
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
+
+      //   const parentObj = document.querySelector(paretnId);
+      //  const __node1 =  document.createElement("input")
+      //  __node1.setAttribute("class","chart-mini-edit ml-12")
+      //parentObj.append(__node1)
+
       this.WIDTH = _WIDTH > 0 ? _WIDTH : this.WIDTH;
       const minPnL = d3.min(chartData, (d) => d.netPnL);
       const maxPnL = d3.max(chartData, (d) => d.netPnL);
       const minSP = d3.min(chartData, (d) => d.strikePrice);
       const maxSP = d3.max(chartData, (d) => d.strikePrice);
+
       const xScale = d3
         .scaleLinear()
         .domain([minSP, maxSP])
@@ -515,7 +522,7 @@ const utilitymixins = {
       //   .call(xAxisCall.tickSize(0).tickFormat(""));
 
       const yDomain = yScale.domain();
-      if ((yDomain[0] <= 0 && 0 <= yDomain[1]) || (yDomain[0] == yDomain[1])) {
+      if ((yDomain[0] <= 0 && 0 <= yDomain[1]) || yDomain[0] == yDomain[1]) {
         svg
           .append("g")
           .attr("class", "x axis zero")

@@ -23,7 +23,7 @@ module.exports = {
 
   DeleteStrategyUsingPortfolioID: function (pid) {
     if (pid) {
-      if (process.env.ISDEMO == 'false') {
+      if (process.env.ENABLE_DEMO == 'false') {
         Strategy.remove({ portfolio: pid }, (err, doc) => {
           return doc;
         });

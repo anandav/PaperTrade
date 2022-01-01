@@ -77,6 +77,7 @@ const strategyModule = {
             });
         },
         EditStrategy({ commit }, item) {
+            console.log('item :>> ', item);
             axios.post(apiUrl + "strategy/save", item).then(function (res) {
                 if (res.status == 200) {
                     commit(ADDEDITSTRATEGY, res.data);

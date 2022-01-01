@@ -28,14 +28,15 @@
           <div class="table-cell px-1 py-4">Qty</div>
           <div class="table-cell px-1 py-4">Spot Price</div>
           <div
-            class="table-cell px-1 py-4 text-yellow-400"
+            class="table-cell px-1 py-4"
             v-if="Portfolio.exchange"
             @click="onGetLiveData()"
           >
-            <div class="btn-ltp">
-              <i class="text-xs material-icons">refresh</i>
+            <span class="btn-ltp tooltip">
+              <i class="text-xs material-icons">get_app</i>
+              <tooltip :Value="txtGetLiveData" />
               LTP
-            </div>
+            </span>
           </div>
           <div class="table-cell px-1 py-4">Total Price</div>
           <div class="table-cell px-1 w-28">Action</div>
@@ -181,11 +182,13 @@
               @keydown.enter="onInlineSaveTrade(item)"
             />
           </div>
-          <div
-            v-if="Portfolio.exchange"
-            class="table-cell px-1 py-3 text-yellow-500"
-          >
-            <span class="btn-ltp" @dblclick="onLTPClick(item)">
+          <div v-if="Portfolio.exchange" class="table-cell px-1 py-3">
+            <span
+              class="btn-ltp"
+              v-if="item.lasttradedprice >= 0"
+              @dblclick="onLTPClick(item)"
+            >
+              <i class="text-xs material-icons">west</i>
               {{ item.lasttradedprice }}
             </span>
           </div>
@@ -291,6 +294,8 @@ export default {
       txtSaveTrade: this.$getConst("saveTrade"),
       txtExitTrade: this.$getConst("exitTrade"),
       txtDeleteTrade: this.$getConst("deleteTrade"),
+      txtGetLiveData: this.$getConst("getLiveData"),
+
       bgColor: ["bg-red-100", "bg-green-100", "bg-orange-200"],
       TradeAction: [
         { _id: "1", name: "Exit", icon: "logout", click: "" },
@@ -316,6 +321,7 @@ export default {
       AddEditTrade: "tradeModule/AddEditTrade",
       DeleteTrade: "tradeModule/DeleteTrade",
       CheckStateChanged: "tradeModule/CheckStateChanged",
+      GetLiveData: "dataModule/GetLiveData",
     }),
     onDeleteTrade: function (sid, tid) {
       this.DeleteTrade({ sid, tid }).then(() => {

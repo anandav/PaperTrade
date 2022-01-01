@@ -33,7 +33,7 @@ portfolicontroller.post("/find", async (req, res) => {
 });
 
 portfolicontroller.post("/save", async (req, res) => {
-  if (process.env.ISDEMO == "false") {
+  if (process.env.ENABLE_DEMO == "false") {
     const { _id, name, exchange, description, createdon, updateui } = req.body;
 
     let _portfolioObject = {};
@@ -89,7 +89,7 @@ portfolicontroller.post("/saveall", async (req, res) => {
 portfolicontroller.post("/delete", async (req, res) => {
   let pid = req.body._id;
   if (pid) {
-    if (process.env.ISDEMO == "false") {
+    if (process.env.ENABLE_DEMO == "false") {
       commonUtility.DeleteStrategyUsingPortfolioID(pid);
       Portfolio.deleteOne({ _id: pid }, (err, doc) => {
         res.send(doc);
