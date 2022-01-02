@@ -189,7 +189,7 @@
               @dblclick="onLTPClick(item)"
             >
               <i class="text-xs material-icons">west</i>
-              {{ item.lasttradedprice }}
+              {{ item.lasttradedprice | decimal2 }}
             </span>
           </div>
 

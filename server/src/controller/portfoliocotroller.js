@@ -34,13 +34,14 @@ portfolicontroller.post("/find", async (req, res) => {
 
 portfolicontroller.post("/save", async (req, res) => {
   if (process.env.ENABLE_DEMO == "false") {
-    const { _id, name, exchange, description, createdon, updateui } = req.body;
+    const { _id, name, exchange, openingbalance, description, createdon, updateui } = req.body;
 
     let _portfolioObject = {};
     if (_id) {
       _portfolioObject = await commonUtility.GetPortfolioById(_id);
       _portfolioObject.name = name;
       _portfolioObject.exchange = exchange;
+      _portfolioObject.openingbalance = openingbalance;
       _portfolioObject.description = description;
       _portfolioObject.modifiedon = new Date();
 
@@ -73,14 +74,13 @@ portfolicontroller.post("/saveall", async (req, res) => {
   let _portfolios = req.body;
   let _portfolioObject = {};
    _portfolios.forEach(async (item) => {
-
     _portfolioObject = await commonUtility.GetPortfolioById(item._id);
     _portfolioObject.name = item.name;
     _portfolioObject.exchange = item.exchange;
+    _portfolioObject.openingbalance = item.openingbalance;
     _portfolioObject.description = item.description;
     _portfolioObject.order = item.order;
     _portfolioObject.modifiedon = new Date();
-    console.log('Saving item._id :>> ', item.order, item.name);
     const result = await _portfolioObject.save();
   });
   res.send(await findPortfolio());

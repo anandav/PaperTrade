@@ -18,7 +18,7 @@
         :class="{ isPortfolioEdit: Portfolio == editPortfolio }"
       >
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Portfolio </label>
+          <label class="text-xxs block text-gray-500"> Portfolio </label>
           <span class="view">
             {{ Portfolio.name }}
           </span>
@@ -31,14 +31,7 @@
           />
         </div>
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Total P&L </label>
-          <span :class="FgColor">
-            {{ TotalPortfolioAmount }}
-          </span>
-        </div>
-
-        <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Exchange </label>
+          <label class="text-xxs block text-gray-500"> Exchange </label>
           <span class="view">
             {{ Portfolio.exchange }}
           </span>
@@ -52,8 +45,43 @@
           />
         </div>
 
+        <div class="flex-1">
+          <label class="text-xxs block text-gray-500"> Opening Balance </label>
+          <span class="view">
+            {{ Portfolio.openingbalance }}
+          </span>
+
+          <input
+            class="normal-edit edit"
+            placeholder="Opening Balance"
+            type="number"
+            v-model="Portfolio.openingbalance"
+            @keyup.enter="onSavePortfolio(Portfolio)"
+          />
+        </div>
+
+        <div class="flex-1">
+          <label class="text-xxs block text-gray-500"> Current Balance </label>
+          <span :class="FgColor">
+            {{ CurrentBalance }}
+          </span>
+        </div>
+        <div class="flex-1">
+          <label class="text-xxs block text-gray-500"> Current P&L </label>
+          <span :class="FgColor">
+            {{ TotalPortfolioAmount }}
+          </span>
+        </div>
+        <div class="flex-1">
+          <label class="text-xxs block text-gray-500"> NAV </label>
+          <span :class="FgColor"> {{ NAV  | decimal2 }}% </span>
+        </div>
+
         <div class="float-right pr-5 space-x-2">
-          <button class="btn dark:text-orange-400 tooltip view" @click="onAddNewStrategy()">
+          <button
+            class="btn dark:text-orange-400 tooltip view"
+            @click="onAddNewStrategy()"
+          >
             <i class="material-icons">playlist_add</i>
             <tooltip :Value="txtAddStrategy" />
           </button>
@@ -113,7 +141,18 @@ export default {
           });
         });
 
-        return price.toFixed(2);
+        return price;
+      },
+    },
+    CurrentBalance: {
+      get: function () {
+        // ~~ 'double tilda' is bitwise operator here it is use to convert string to int
+        return ~~this.Portfolio.openingbalance + this.TotalPortfolioAmount;
+      },
+    },
+    NAV: {
+      get: function () {
+        return (this.CurrentBalance / ~~this.Portfolio.openingbalance) * 100;
       },
     },
     FgColor: function () {

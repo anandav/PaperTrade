@@ -18,7 +18,7 @@
     <div class="p-3 border-b border-gray-300 dark:border-gray-600">
       <div class="flex">
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Name </label>
+          <label class="text-xxs block text-gray-500"> Name </label>
           <span class="view">
             {{ PropStrategy.name }}
           </span>
@@ -30,7 +30,7 @@
           />
         </div>
         <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
-          <label class="text-xs block text-gray-500"> Symbol </label>
+          <label class="text-xxs block text-gray-500"> Symbol </label>
           <span class="view">
             {{ PropStrategy.symbol }}
           </span>
@@ -52,7 +52,7 @@
         </div>
 
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Symbol Type </label>
+          <label class="text-xxs block text-gray-500"> Symbol Type </label>
           <span class="view">
             {{ PropStrategy.symboltype }}
           </span>
@@ -71,7 +71,7 @@
           /> -->
         </div>
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Lot Size </label>
+          <label class="text-xxs block text-gray-500"> Lot Size </label>
           <span class="view">
             {{ PropStrategy.lotsize }}
           </span>
@@ -85,7 +85,7 @@
         </div>
 
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Expiry </label>
+          <label class="text-xxs block text-gray-500"> Expiry </label>
           <span class="view">
             {{ PropStrategy.expiry | formatDate }}
           </span>
@@ -106,7 +106,7 @@
           /> -->
         </div>
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Strike Price Step </label>
+          <label class="text-xxs block text-gray-500"> Strike Price Step </label>
           <span class="view">
             {{ PropStrategy.strikepricestep }}
           </span>
@@ -119,7 +119,7 @@
           />
         </div>
         <div class="flex-1">
-          <label class="text-xs block text-gray-500"> Created On </label>
+          <label class="text-xxs block text-gray-500"> Created On </label>
           {{ PropStrategy.createdon | formatDateTime }}
         </div>
 

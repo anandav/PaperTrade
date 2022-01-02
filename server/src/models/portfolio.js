@@ -10,6 +10,9 @@ const portfolioSchema = schema({
   exchange :{
     type : String
   },
+  openingbalance :{
+    type : Number
+  },
   description:{
     type : String
   },
