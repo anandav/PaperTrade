@@ -48,7 +48,7 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Opening Balance </label>
           <span class="view">
-            {{ Portfolio.openingbalance }}
+            {{ Portfolio.openingbalance | decimal2}}
           </span>
 
           <input
@@ -63,13 +63,13 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Current Balance </label>
           <span :class="FgColor">
-            {{ CurrentBalance }}
+            {{ CurrentBalance | decimal2 }}
           </span>
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Current P&L </label>
           <span :class="FgColor">
-            {{ TotalPortfolioAmount }}
+            {{ TotalPortfolioAmount | decimal2}}
           </span>
         </div>
         <div class="flex-1">
