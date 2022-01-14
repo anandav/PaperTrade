@@ -16,13 +16,13 @@ module.exports = {
       current: 'currentColor',
       gray: colors.blueGray,
 
-      bluegray: colors.blueGray,
-      coolgray: colors.coolGray,
-      truegray: colors.trueGray,
-      warmgray: colors.warmGray,
+      // bluegray: colors.blueGray,
+      coolgray: colors.gray,
+      truegray: colors.neutral,
+      warmgray: colors.stone,
 
       red: colors.red,
-      yellow: colors.amber,
+      yellow: colors.yellow,
       green: colors.green,
       white: colors.white,
       orange: colors.orange,

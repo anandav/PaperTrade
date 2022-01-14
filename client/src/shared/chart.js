@@ -64,31 +64,34 @@ const utilitymixins = {
   },
   methods: {
     GenerateChart: function(strategy) {
-      let chartData = this.GenerateChartPoint(strategy);
-      let paretnId = "#strategy_" + strategy._id + " .chartplaceholder .chart";
-      d3.selectAll(paretnId + " > *").remove();
-      if (chartData?.length > 0) {
-        //this._generateBarChart(chartData, paretnId);
-        //this._generateLineChart(chartData, paretnId);
-        // console.clear();
-        this.GenerateLineChart(chartData, paretnId, strategy);
-        //this.GetMaxMinPnL(strategy, chartData);
-        //this.GetBreakEven(strategy);
-      } else {
-        let placeholder = [
-          {
-            strikePrice: 1,
-            symbol: "Nifty",
-            name: "Strategy - 1",
-            //"intrinsicValue": 0,
-            PnL: 0,
-            netPnL: 0,
-            qty: 0,
-            lot: 0,
-            price: 0,
-          },
-        ];
-        this.GenerateLineChart(placeholder, paretnId, strategy);
+      let paretnId =
+        "#strategy_" + strategy._id + " .chartplaceholder .chart";
+      if (this.hasDerivative(strategy)) {
+        let chartData = this.GenerateChartPoint(strategy);
+        d3.selectAll(paretnId + " > *").remove();
+        if (chartData?.length > 0) {
+          //this._generateBarChart(chartData, paretnId);
+          //this._generateLineChart(chartData, paretnId);
+          // console.clear();
+          this.GenerateLineChart(chartData, paretnId, strategy);
+        } else {
+          let placeholder = [
+            {
+              strikePrice: 1,
+              symbol: "Nifty",
+              name: "Strategy - 1",
+              //"intrinsicValue": 0,
+              PnL: 0,
+              netPnL: 0,
+              qty: 0,
+              lot: 0,
+              price: 0,
+            },
+          ];
+          this.GenerateLineChart(placeholder, paretnId, strategy);
+        }
+      }else{
+
       }
     },
 
@@ -240,6 +243,8 @@ const utilitymixins = {
         let tradeCount = strategy.trades.length;
         let chartData = [];
         let strikePrices = this.getAllStrikePrices(strategy);
+        /// Removes undefined from strikePrices
+        strikePrices = strikePrices.filter( Boolean );
         let _range = this.getoffsetprices(strikePrices);
         let xStep = _range.xstep;
         range = {
@@ -251,27 +256,43 @@ const utilitymixins = {
             continue;
           }
           let currentTrade = strategy.trades[i];
-          let _strikePrice = range.x0;
-          let j = 0;
-          do {
-            let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy);
-            if (chartData[j]) {
-              chartData[j].netPnL += PnlObj.netPnL;
-              chartData[j].PnL = PnlObj.PnL;
-            } else {
-              chartData.push({
-                strikePrice: parseFloat(_strikePrice.toFixed(2)),
-                qty: currentTrade.quantity,
-                price: currentTrade.price,
-                ...PnlObj,
-              });
-            }
-            j += 1;
-            _strikePrice += xStep;
-          } while (range.x1 >= _strikePrice);
+          if (
+            currentTrade.tradetype == "Call" ||
+            currentTrade.tradetype == "Put" ||
+            currentTrade.tradetype == "Future"
+          ) {
+            let _strikePrice = range.x0;
+            console.log('_strikePrice :>> ', _strikePrice);
+            let j = 0;
+            do {
+              let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy);
+              if (chartData[j]) {
+                chartData[j].netPnL += PnlObj.netPnL;
+                chartData[j].PnL = PnlObj.PnL;
+              } else {
+                chartData.push({
+                  strikePrice: parseFloat(_strikePrice.toFixed(2)),
+                  qty: currentTrade.quantity,
+                  price: currentTrade.price,
+                  ...PnlObj,
+                });
+              }
+              j += 1;
+              _strikePrice += xStep;
+            } while (range.x1 >= _strikePrice);
+          }
         }
+        console.log('chartData :>> ', chartData);
         return chartData;
       }
+    },
+
+    hasDerivative: function(strategy) {
+      const s = (e) =>
+        e.tradetype == "Call" ||
+        e.tradetype == "Put" ||
+        e.tradetype == "Future";
+      return strategy.trades.some(s);
     },
 
     /// Line Chart

@@ -27,7 +27,7 @@
         divide-y divide-gray-400
         dark:divide-gray-600
         divide-solid
-        max-h-96
+        max-h-24
         overflow-auto
       "
       role="menuitem"

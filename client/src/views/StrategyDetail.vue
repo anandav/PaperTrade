@@ -195,22 +195,27 @@
     </div>
 
     <div class="p-3">
+
+
+
+    <!-- <div class="bg-orange-100 border-t-2 border-orange-500 rounded text-orange-900 px-4 py-3 shadow-md fixed z-10 right-1" role="alert">
+    <div class="flex">
+      <div class="py-1">
+        <svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg>
+        </div>
+      <div>
+        <p class="font-bold">Our privacy policy has changed</p>
+        <p class="text-sm">Make sure you know how these changes affect you.</p>
+      </div>
+    </div>
+  </div> -->
+
+
       <div class="grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
+
+
         <div class="col-span-1">
-          <!--<div class="col-span-1 space-x-2 float-right">
-              <button class="btn dark:text-orange-400 tooltip" @click="onBindAddEditTrade()">
-              <i class="material-icons">playlist_add</i>
-              <tooltip :Value="txtAddTrade" />
-            </button>
-          <button
-              class="btn tooltip"
-              v-if="this.Portfolio.exchange && this.PropStrategy.symbol"
-              @click="onGetLiveData()"
-            >
-              <i class="material-icons">file_download</i>
-              <tooltip :Value="txtGetLiveData" />
-            </button>
-          </div>-->
+     
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"

@@ -173,7 +173,7 @@
           </div>
           <div class="table-cell px-1 py-3">
             <span class="view">
-              {{ item.price }}
+              {{ item.price | decimal2 }}
             </span>
             <input
               v-model="item.price"
@@ -252,14 +252,20 @@
           <div class="table-cell"></div>
           <div class="table-cell"></div>
           <div class="table-cell"></div>
-          <div class="table-cell"></div>
-          <div class="table-cell"></div>
+          <div class="table-cell">
+            NAV
+          </div>
+          <div class="table-cell">
+
+            {{ PnLPercnet | decimal2 }}
+          </div>
           <div class="table-cell" v-if="Portfolio.exchange"></div>
           <div class="table-cell">
             <span class="text-xs block text-gray-500">P&L</span>
           </div>
           <div class="table-cell px-1 py-2">
-            {{ TotalAmount }}
+            {{ TotalAmount | decimal2 }}
+
           </div>
           <div class="table-cell"></div>
           <div class="table-cell"></div>
@@ -269,7 +275,7 @@
     <div v-if="this.PropStrategy.isarchive" class="text-xs">
       This strategy is archived with P&L
       <span :class="FgColor">
-        {{ TotalAmount }}
+        {{ TotalAmount | decimal2 }}
       </span>
     </div>
   </div>
@@ -308,6 +314,7 @@ export default {
           color: "text-red-600 dark:text-red-700",
         },
       ],
+      pnlpercentage: 0,
     };
   },
   props: {
@@ -509,23 +516,52 @@ export default {
 
     TotalAmount: function () {
       if (this.selectedIDs) {
-        var price = 0;
+        let price = 0,
+          buyprice = 0,
+          sellprice = 0;
+
         this.PropStrategy?.trades?.forEach((_trade) => {
           this.selectedIDs.forEach((_f) => {
             if (_trade._id == _f) {
-              price =
-                _trade.buyorsell == "Buy"
-                  ? price -
-                    _trade.price * (this.PropStrategy.lotsize * _trade.quantity)
-                  : price +
-                    _trade.price *
-                      (this.PropStrategy.lotsize * _trade.quantity);
+              // price =
+              //   _trade.buyorsell == "Buy"
+              //     ? price -
+              //       _trade.price * (this.PropStrategy.lotsize * _trade.quantity)
+              //     : price +
+              //       _trade.price *
+              //         (this.PropStrategy.lotsize * _trade.quantity);
+
+              if (_trade.buyorsell == "Buy") {
+                price =
+                  price -
+                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+
+                buyprice +=
+                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+              } else {
+                price =
+                  price +
+                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+
+                sellprice +=
+                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+              }
             }
           });
         });
-        return price.toFixed(2);
+        this.pnlpercentage = ((sellprice - buyprice) / buyprice) * 100;
+        //this.PnLPercnet(_PnLPercnet);
+        return price;
       }
       return 0;
+    },
+    PnLPercnet: {
+      get: function () {
+        return this.pnlpercentage;
+      },
+      // set: function (value) {
+      //   this.pnlpercentage = value;
+      // },
     },
     FgColor: function () {
       return {

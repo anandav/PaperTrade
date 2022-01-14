@@ -37,12 +37,12 @@ module.exports = {
         mktLotsList = this.csvJSON(csv);
         lastupdated = now;
       } else {
-        console.log(
-          "Loading from memory Dataset :>> last updated ",
-          lastupdated,
-          " Total Hours: ",
-          totalHourDiff
-        );
+        // console.log(
+        //   "Loading from memory Dataset :>> last updated ",
+        //   lastupdated,
+        //   " Total Hours: ",
+        //   totalHourDiff
+        // );
       }
       let result = [];
       const indices = [

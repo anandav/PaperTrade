@@ -2,7 +2,7 @@
   <div>
     <div class="container min-h-screen mx-auto bg-gray-100 dark:bg-gray-900">
       <div class="flex">
-        <PortfolioMenu class="flex-none w-52 fixed  " />
+        <PortfolioMenu class="flex-none w-52 fixed" />
         <PortfolioDetail class="flex-auto w-full ml-52" />
       </div>
       <!-- <div class="grid grid-cols-10">

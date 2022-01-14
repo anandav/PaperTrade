@@ -77,7 +77,6 @@ const strategyModule = {
             });
         },
         EditStrategy({ commit }, item) {
-            console.log('item :>> ', item);
             axios.post(apiUrl + "strategy/save", item).then(function (res) {
                 if (res.status == 200) {
                     commit(ADDEDITSTRATEGY, res.data);
@@ -124,7 +123,7 @@ const strategyModule = {
                     });
                 });
             } else {
-                console.error("Source and Destination strategy are different symbol or size or strike price step.");
+                console.error("Source and destination strategy not matching (Symbol/Lot size/Strike Price Step).");
             }
         },
         AddStrategyFromDataModule({ dispatch }, Strategy) {

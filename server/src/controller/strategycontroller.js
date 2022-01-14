@@ -21,7 +21,6 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
     // );
     result = await Strategy.aggregate(
       [
-        //{ $unwind: "$trades" },
         { $match: { [fieldName]: mongoose.Types.ObjectId(fieldValue) } },
         { $sort: { "createdon": -1, 'trades.order': -1 } }
       ]
@@ -64,8 +63,9 @@ strategycontoller.post("/save", async (req, res) => {
       );
       res.send(_data);
     } else {
-      const strategy = new Strategy(_data);
+   const strategy = new Strategy(_data);
       try {
+        _data.createdon = new Date();
         const result = await strategy.save();
         res.send(result);
       } catch (err) {

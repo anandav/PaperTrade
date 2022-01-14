@@ -1,11 +1,11 @@
 <template>
   <div
-    class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-800"
+    class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-800 "
     role="menu"
     @dragover.prevent
     @dragenter.prevent
   >
-    <div class="flex items-center mt-5">
+    <div class="flex items-center mt-5 invisible sm:visible">
       <div>
         <input
           class="
@@ -23,26 +23,15 @@
           @keyup.enter="onAddNewPortfolio()"
         />
       </div>
-
-      <!-- <div class="w-1/6">
-        <a
-          class="btn mx-2 invisible lg:visible float-right tooltip"
-          href="#"
-          @click="onAddNewPortfolio()"
-        >
-          <i class="material-icons">save</i>
-          <tooltip :Value="txtAddEditPortfolio" />
-        </a>
-      </div> -->
     </div>
-    <div class="mt-5 table-row-group" @drop="onDrop($event)">
+    <div class="mt-5 " @drop="onDrop($event)">
       <!-- <div class="">
         <div v-show="isLoading" class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div> -->
       <div
-        class="flex-initial table-row"
+        class="   border-b border-gray-200 dark:border-gray-800 "
         draggable="true"
         v-for="(item, index) in Portfolios"
         :key="item._id"
@@ -54,7 +43,7 @@
         @dragstart="onDragStart($event, item, index)"
       >
         <div
-          class="mt-1 leading-10 rounded-sm cursor-pointer"
+          class=" leading-10 rounded-sm cursor-pointer "
           role="menuitem"
           tabindex="0"
           @click="onMenuSelectedPortfolio(item)"

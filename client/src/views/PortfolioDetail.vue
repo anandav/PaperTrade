@@ -103,6 +103,7 @@
         </div>
       </div>
 
+
       <div class="mt-3">
         <div
           v-bind:id="'strategy_' + item._id"
