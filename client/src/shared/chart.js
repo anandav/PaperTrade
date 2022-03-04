@@ -90,7 +90,8 @@ const utilitymixins = {
           ];
           this.GenerateLineChart(placeholder, paretnId, strategy);
         }
-      }else{
+      }
+      else{
 
       }
     },
