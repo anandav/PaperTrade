@@ -42,13 +42,6 @@
             @save="onSaveStrategy"
             PlaceHolder="Symbol"
           />
-
-          <!-- <input
-            class="normal-edit edit"
-            placeholder="Symbol"
-            v-model="PropStrategy.symbol"
-            @keydown.enter="onSaveStrategy()"
-          /> -->
         </div>
 
         <div class="flex-1">
@@ -63,12 +56,6 @@
             @save="onSaveStrategy"
             PlaceHolder="Symbol Types"
           />
-
-          <!-- <input
-            class="normal-edit edit"
-            placeholder="Symbol Type"
-            v-model="PropStrategy.symboltype"
-          /> -->
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Lot Size </label>
@@ -96,14 +83,6 @@
             v-model="PropStrategy.expiry"
             @keydown.enter="onSaveStrategy()"
           />
-          <!--
-          <autocomplete
-            :Value="PropStrategy.expiry"
-            @keyup="onSymbolTypeKeyUp"
-            @save="onSaveStrategy"
-            :Items="PropStrategy.expiries"
-            PlaceHolder="Expiry"
-          /> -->
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Strike Price Step </label>
@@ -193,36 +172,15 @@
         </div>
       </div>
     </div>
-
-    <div class="p-3">
-
-
-
-    <!-- <div class="bg-orange-100 border-t-2 border-orange-500 rounded text-orange-900 px-4 py-3 shadow-md fixed z-10 right-1" role="alert">
-    <div class="flex">
-      <div class="py-1">
-        <svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg>
-        </div>
-      <div>
-        <p class="font-bold">Our privacy policy has changed</p>
-        <p class="text-sm">Make sure you know how these changes affect you.</p>
-      </div>
-    </div>
-  </div> -->
-
-
+    <div class="p-3" >
       <div class="grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
-
-
         <div class="col-span-1">
-     
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
-          <!-- @onItemEnterKeyPressed="onShowChart" -->
         </div>
-        <div class="col-span-1">
+        <div class="col-span-1" >
           <div class="chartplaceholder">
             <div class="col-span-1">
               <input
@@ -243,10 +201,8 @@
               />
             </div>
             <div class="chart">
-              <!-- CHART COMES HERE -->
             </div>
           </div>
-          <div></div>
         </div>
       </div>
       <div class="grid" v-if="this.PropStrategy.isarchive">
@@ -257,42 +213,11 @@
         />
       </div>
     </div>
-
-    <!-- <div class="p-3 grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
-      <div class="col-span-1 space-x-2">
-        <button class="btn tooltip" @click="onBindAddEditTrade()">
-          <i class="material-icons">add</i>
-          <tooltip :Value="txtAddTrade" />
-        </button>
-        <button
-          class="btn tooltip"
-          v-if="this.Portfolio.exchange && this.PropStrategy.symbol"
-          @click="onGetLiveData()"
-        >
-          <i class="material-icons">file_download</i>
-          <tooltip :Value="txtGetLiveData" />
-        </button>
-      </div>
-      <div class="col-span-1">
-        <div class="float-right space-x-2">
-          <button
-            v-if="!PropStrategy.ismultiplesymbol"
-            class="btn tooltip view"
-            @click="onShowChart()"
-          >
-            <i class="material-icons">show_chart</i>
-            <tooltip :Value="txtShowStratergyDiagram" />
-          </button>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
-//import TradeInlineEdit from "./TradeInlineEdit";
 import TradeList from "./TradeList";
-
 import myMixins from "../shared/chart";
 
 export default {
@@ -383,7 +308,7 @@ export default {
       this.BindAddEditTrade(this.PropStrategy);
     },
     onShowChart: function () {
-      this.GenerateChart(this.PropStrategy);
+     this.GenerateChart(this.PropStrategy);
     },
     onDropDownItemClicked: function (type, id) {
       if (type == "Portfolios") {

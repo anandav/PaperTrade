@@ -20,9 +20,11 @@ Web API uses MongoDB Atlas, change the connection string in the ".env" file to p
  Client build (npm run build) will build the app and move the dist to the '/server/public' folder.
 
 ---
-> :warning: Authentication and Authorization in not implemeted, will implement SSO(SAML/OAuth) support in future.
-
+> :warning: Required nodejs 16 LTS.
+> :warning: Make sure to rename ".env.sample" to ".env" files
 > :warning: Delete functionality won't ask for conformation, use 'double click' to delete.
 
  
+
+
 

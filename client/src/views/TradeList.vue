@@ -354,7 +354,7 @@ export default {
           : undefined;
       this.AddEditTrade(trade).then(() => {
         this.$emit("onItemEnterKeyPressed");
-        this.GenerateChart(this.PropStrategy);
+        //this.GenerateChart(this.PropStrategy);
       });
     },
     onDragStart: function (e) {

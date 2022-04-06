@@ -13,7 +13,9 @@ portfolicontroller.get("/", async (req, res) => {
   //   { upsert: true, multi: true },
   //   function (err) {  });
 
+  console.log('object :>> ');
   const data = await Portfolio.find();
+  console.log('data :>> ', data);
   res.json(data);
 });
 

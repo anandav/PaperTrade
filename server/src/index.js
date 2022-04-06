@@ -38,7 +38,8 @@ app.use("/", express.static('public'));
 mongoose.connect(
   process.env.DBCONNECTIONSTRING,
   { useNewUrlParser: true, useUnifiedTopology: true },
-  () => {
+  (x) => {
+    console.log('x :>> ', x);
   }
 );
 

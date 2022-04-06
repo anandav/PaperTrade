@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 
 const utilitymixins = {
-  data: function() {
+  data: function () {
     return {
       MARGIN: {
         LEFT: 50,
@@ -63,7 +63,7 @@ const utilitymixins = {
     };
   },
   methods: {
-    GenerateChart: function(strategy) {
+    GenerateChart: function (strategy) {
       let paretnId =
         "#strategy_" + strategy._id + " .chartplaceholder .chart";
       if (this.hasDerivative(strategy)) {
@@ -91,12 +91,15 @@ const utilitymixins = {
           this.GenerateLineChart(placeholder, paretnId, strategy);
         }
       }
-      else{
-
+      else {
+        //console.clear();
+        //console.log('No Data :>> ');
+        strategy.HideChart = false;
+        return false;
       }
     },
 
-    GetBreakEven: function(strategy) {
+    GetBreakEven: function (strategy) {
       //let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
       let netPnlArr = [];
       for (let i = 0, len = strategy.trades.length; i < len; i++) {
@@ -111,7 +114,7 @@ const utilitymixins = {
       }
     },
 
-    GetMaxMinPnL: function(strategy) {
+    GetMaxMinPnL: function (strategy) {
       let tminSP = d3.min(strategy.trades, (d) => d.selectedstrike);
       //let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
       let minPrice = [tminSP - 1, tminSP];
@@ -139,7 +142,7 @@ const utilitymixins = {
       });
     },
 
-    getoffsetprices: function(leastPrice) {
+    getoffsetprices: function (leastPrice) {
       let _min = Math.min(...leastPrice),
         _max = Math.max(...leastPrice);
       let strikepricemin = this.getdigits(_min, "min"),
@@ -148,7 +151,7 @@ const utilitymixins = {
       return { x0: strikepricemin, x1: strikepricemax, xstep: incrementby };
     },
 
-    getdigits: function(value, ismin) {
+    getdigits: function (value, ismin) {
       let _valdiglen = this.ChartSettings.OFFSET
         ? Math.ceil(Math.log10(value + 1))
         : 0;
@@ -190,7 +193,7 @@ const utilitymixins = {
       return value;
     },
 
-    getAllStrikePrices: function(strategy) {
+    getAllStrikePrices: function (strategy) {
       let strikePrices = strategy.trades.map((t) => {
         if (t.tradetype == "Future") {
           return t.price;
@@ -201,7 +204,7 @@ const utilitymixins = {
       return strikePrices;
     },
 
-    getNetPnL: function(_strikePrice, currentTrade, strategy) {
+    getNetPnL: function (_strikePrice, currentTrade, strategy) {
       let _intrinsicValue = 0,
         PnL = 0,
         netPnL = 0;
@@ -235,7 +238,7 @@ const utilitymixins = {
       return { PnL, netPnL };
     },
 
-    GenerateChartPoint: function(strategy) {
+    GenerateChartPoint: function (strategy) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         let range = {
           x0: parseFloat(strategy.x0),
@@ -245,7 +248,7 @@ const utilitymixins = {
         let chartData = [];
         let strikePrices = this.getAllStrikePrices(strategy);
         /// Removes undefined from strikePrices
-        strikePrices = strikePrices.filter( Boolean );
+        strikePrices = strikePrices.filter(Boolean);
         let _range = this.getoffsetprices(strikePrices);
         let xStep = _range.xstep;
         range = {
@@ -288,7 +291,7 @@ const utilitymixins = {
       }
     },
 
-    hasDerivative: function(strategy) {
+    hasDerivative: function (strategy) {
       const s = (e) =>
         e.tradetype == "Call" ||
         e.tradetype == "Put" ||
@@ -302,7 +305,7 @@ const utilitymixins = {
     /// Reg:  http://jsfiddle.net/samselikoff/Jqmzd/2/
     /// Ref:  https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
-    GenerateLineChart: function(chartData, paretnId, strategy) {
+    GenerateLineChart: function (chartData, paretnId, strategy) {
       if (!chartData || !paretnId) return;
 
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
