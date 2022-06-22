@@ -10,22 +10,12 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
   let { fieldName, fieldValue } = req.body;
   let result = {};
   if (fieldName && fieldValue) {
-    // console.clear();
-    // result = await Strategy.aggregate(
-    //   [
-    //     { $match: { [fieldName] : mongoose.Types.ObjectId(fieldValue) } },
-    //     { "$unwind": "$trades" },
-    //     { $sort: { "createdon": -1, 'trades.order': 1 } },
-    //     {$project: {_id: 1, "symbol": 1, 'trades': 1}},
-    //   ]
-    // );
     result = await Strategy.aggregate(
       [
         { $match: { [fieldName]: mongoose.Types.ObjectId(fieldValue) } },
         { $sort: { "createdon": -1, 'trades.order': -1 } }
       ]
     );
-    //result = await Strategy.find({ [fieldName]: fieldValue }).sort({ "createdon": -1, "trades.order": 1 });
     res.json(result);
   } else {
     result = await Strategy.find({});
@@ -55,6 +45,7 @@ strategycontoller.post("/save", async (req, res) => {
     }
 
     if (_id) {
+      console.warn(_data);
       let _strategyObject = await Strategy.updateOne(
         { _id: _id },
         {

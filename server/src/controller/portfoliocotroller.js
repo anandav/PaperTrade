@@ -7,15 +7,7 @@ const portfolio = require("../models/portfolio");
 require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
-  // //Add Exchange to all portfolio
-  // await Portfolio.update({},
-  //   { $set: { exchange: 'NSE' } },
-  //   { upsert: true, multi: true },
-  //   function (err) {  });
-
-  console.log('object :>> ');
   const data = await Portfolio.find();
-  console.log('data :>> ', data);
   res.json(data);
 });
 
@@ -26,9 +18,7 @@ portfolicontroller.post("/find", async (req, res) => {
     result = await Portfolio.find({ [fieldName]: fieldValue }).sort({
       order :-1
     });
-    //createdon: -1,
   } else {
-    // result = await findPortfolio();
     result = await Portfolio.find().sort({ order : -1 });
   }
   res.send(result);

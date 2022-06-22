@@ -39,7 +39,7 @@ mongoose.connect(
   process.env.DBCONNECTIONSTRING,
   { useNewUrlParser: true, useUnifiedTopology: true },
   (x) => {
-    console.log('x :>> ', x);
+    console.log(x);
   }
 );
 
