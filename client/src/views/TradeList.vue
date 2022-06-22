@@ -443,8 +443,9 @@ export default {
       actionname,
       item
     ) {
-      if (actionid == 1) {
-      } else if (actionid == 3) {
+      // if (actionid == 1) {
+      // } else 
+      if (actionid == 3) {
         this.onInlineExitTrade(item);
       }
     },

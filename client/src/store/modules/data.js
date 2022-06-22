@@ -59,7 +59,7 @@ export default {
                 }
             }
         },
-        GetLiveData({ commit, getters, dispatch }, { portfolio, strategy }) {
+        GetLiveData({ dispatch }, { portfolio, strategy }) {
             let postData = {
                 portfolio,
                 strategy,
@@ -71,7 +71,7 @@ export default {
                 }
             });
         },
-        StrategySymbolChange({ commit, getters, dispatch }, { portfolio, strategy, action }) {
+        StrategySymbolChange({ dispatch }, { portfolio, strategy, action }) {
             let postData = {
                 portfolio,
                 strategy,
