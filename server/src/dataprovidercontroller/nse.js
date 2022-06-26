@@ -227,6 +227,10 @@ module.exports = {
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
     try {
+      if (!url) {
+        console.error("Url is empty or null.")
+        return;
+      }
       const responce = await axios
         .get("https://www.nseindia.com/")
         .then((res) => {
@@ -251,6 +255,8 @@ module.exports = {
   },
   csvJSON: function (csv) {
     ///copied from: https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
+    if (!cvs)
+      return;
     let lines = csv.split("\n");
     let result = [];
     let headers = lines[0].split(",").map((x) => x.trim());

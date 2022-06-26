@@ -8,7 +8,8 @@ const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
 const dataProvider = require("./dataprovidercontroller/index");
 const port = process.env.PORT || 9090;
-
+const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
+const conn_string = process.env.DBCONNECTIONSTRING;
 
 app.use(express.json());
 //app.use(express.urlencoded({extended : true}));
@@ -23,11 +24,11 @@ app.use("/", (req, res, next) => {
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
-if (process.env.ENABLE_DATAAPI == 'true') {
+if (enable_dataapi == 'true') {
   app.use("/data", dataProvider);
 } else {
- 
-  
+
+
   app.use("/data", (req, res) => {
     res.status(404).json({ "error": "Data endpoint is disabled" })
   });
@@ -35,13 +36,18 @@ if (process.env.ENABLE_DATAAPI == 'true') {
 
 app.use("/", express.static('public'));
 
-mongoose.connect(
-  process.env.DBCONNECTIONSTRING,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (x) => {
-    console.log(x);
-  }
-);
+if (conn_string) {
+  mongoose.connect(
+    conn_string,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    (x) => {
+      console.log(x);
+    }
+  );
+}else { 
+  console.error("Empty connnection string!")
+}
+
 
 
 
