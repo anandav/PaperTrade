@@ -255,7 +255,7 @@ module.exports = {
   },
   csvJSON: function (csv) {
     ///copied from: https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
-    if (!cvs)
+    if (!csv)
       return;
     let lines = csv.split("\n");
     let result = [];
