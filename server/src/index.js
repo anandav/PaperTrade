@@ -15,6 +15,9 @@ app.use(express.json());
 //app.use(express.urlencoded({extended : true}));
 app.use(cors());
 
+console.log("process.env.PORT:",process.env.PORT);
+console.log("port:",port);
+
 // app.use(cors({
 //   origin : ["http://192.168.1.5:8080", "http://localhost:8080"]
 // }));
@@ -51,19 +54,6 @@ if (conn_string) {
 }else { 
   console.error("Empty connnection string!")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

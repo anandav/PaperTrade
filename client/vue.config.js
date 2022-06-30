@@ -2,17 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
-  outputDir: path.resolve(__dirname, "../server/public"),
-
+  outputDir: path.resolve(__dirname, "./dist"),
   devServer: {
     https: false,
     useLocalIp: false,
-
-    //  port: 8081,
-    //host: "localhost"
-    //   allowedHosts: [
-    //     'localhost',
-    //   ]
   },
   chainWebpack: config => {
     config.plugin('html')
@@ -21,8 +14,4 @@ module.exports = {
         return args;
       });
   },
-
-
-
-
 };
