@@ -14,10 +14,14 @@ const conn_string = process.env.DBCONNECTIONSTRING;
 app.use(express.json());
 //app.use(express.urlencoded({extended : true}));
 app.use(cors());
+
+// app.use(cors({
+//   origin : ["http://192.168.1.5:8080", "http://localhost:8080"]
+// }));
 app.use(helmet());
 
 app.use("/", (req, res, next) => {
-  process.stdout.write("\033c");
+  //process.stdout.write("\033c");
 
   next();
 });
@@ -41,7 +45,7 @@ if (conn_string) {
     conn_string,
     { useNewUrlParser: true, useUnifiedTopology: true },
     (x) => {
-      console.log(x);
+      console.log("Service Started...");
     }
   );
 }else { 
