@@ -413,7 +413,7 @@ const utilitymixins = {
               .attr("x", 0)
               .attr("y", (d, i) => `${i * 1.1}em`)
               .style("font-weight", (_, i) => (i ? null : "bold"))
-              // .attr("stroke", "black")
+              .style("fill", "white")
               .text((d) => d)
           );
         const { y, width: w, height: h } = text.node().getBBox();
