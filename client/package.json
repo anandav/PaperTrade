@@ -2,7 +2,7 @@
   "name": "papertrade-client",
   "version": "0.1.1",
   "private": true,
-  "description": "Papper Trade Client using VUE.",
+  "description": "Papper Trade Client.",
   "scripts": {
     "dev": "vue-cli-service serve",
     "devcss": "postcss src/tailwind.css -o public/tailwind.css",
@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.4",
-    "axios": "^0.21.1",
+    "axios": "^0.27.2",
     "core-js": "^3.6.4",
-    "d3": "^7.0.1",
+    "d3": "^7.6.1",
     "dayjs": "^1.10.7",
     "dotenv": "^8.2.0",
     "node-static": "^0.7.11",

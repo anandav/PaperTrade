@@ -9,14 +9,9 @@ const approutes = [
   {
     path: '/',
     component: PaperTrade,
-    redirect: '/papertrade'
+    
   },
   {
-    path: '/papertrade',
-    name: 'PaperTrade',
-    component: PaperTrade
-  },
-   {
     path: '/builder',
     name: 'Builder',
     component: Builder
@@ -37,3 +32,8 @@ const router = new VueRouter({
 })
 
 export default router
+// {
+//   path: '/papertrade',
+//   name: 'PaperTrade',
+//   component: PaperTrade
+// },

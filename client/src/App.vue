@@ -15,7 +15,7 @@
       role="navigation"
     >
       <div class="container mx-auto">
-        <router-link to="/papertrade" class="pl-5">Paper Trade</router-link>
+        <router-link to="/" class="pl-5">Paper Trade</router-link>
         <!-- <router-link to="/builder" class="pl-5"
           > Place holder</router-link
         > -->
