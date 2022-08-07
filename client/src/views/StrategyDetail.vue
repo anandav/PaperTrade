@@ -13,10 +13,9 @@
     "
     :class="{ isStrategyEdit: editStrategy == PropStrategy._id }"
   >
-
-
-    <div class="p-3 border-b border-gray-300 dark:border-gray-600">
+    <div class="p-3 border-b border-gray-300 dark:border-gray-700">
       <div class="flex">
+
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Name </label>
           <span class="view">
@@ -174,13 +173,14 @@
     </div>
     <div class="p-3" >
       <div class="grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
-        <div class="col-span-1">
+        <div class="col-span-1 ">
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
         </div>
-        <div class="col-span-1" >
+        <div class="col-span-1  " >
+
           <div class="chartplaceholder">
             <div class="col-span-1">
               <input
@@ -262,9 +262,9 @@ export default {
       txtMoveStrategy: this.$getConst("moveStrategy"),
       editStrategy: null,
       StrategyAction: [
-        { _id: "1", name: "Duplicate", icon: "content_copy" },
-        { _id: "2", name: "Archive", icon: "archive" },
-        { _id: "3", name: "Unarchive", icon: "archive" },
+        { _id: "1", name: "Duplicate", displaytext: "Duplicate" , icon: "content_copy" },
+        { _id: "2", name: "Archive", displaytext: "Archive", icon: "archive" },
+        { _id: "3", name: "Unarchive", displaytext: "Restore", icon: "archive" },
       ],
     };
   },
@@ -324,7 +324,8 @@ export default {
       }
     },
     onActionDropDownItemClicked: function (type, id, name) {
-      if (name == "Duplicate") {
+      console.log('id, name, type :>> ', id, name, type);
+      if (id == 1) {
         var _startegyClone = { ...this.PropStrategy };
         _startegyClone._id = undefined;
         _startegyClone.createdon = new Date();
@@ -332,7 +333,7 @@ export default {
           t._id = undefined;
         });
         this.EditStrategy(_startegyClone);
-      } else if (name == "Archive" || name == "Unarchive") {
+      } else if (id == 2 || id == 3) {
         this.PropStrategy.isarchive = !this.PropStrategy.isarchive;
         this.EditStrategy(this.PropStrategy);
       }

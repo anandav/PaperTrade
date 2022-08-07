@@ -79,14 +79,11 @@ module.exports = {
       let symbol = startegy.symbol;
       let symboltype = startegy.symboltype?.toLowerCase();
       let allTradeType = this.getTradeTypes(startegy);
-      let hasEquity =
-        allTradeType.includes("Equity") || allTradeType.includes("Stock");
+      let hasEquity = allTradeType.includes("Equity") || allTradeType.includes("Stock");
       let hasFutures = allTradeType.includes("Future");
-      let hasOptions =
-        allTradeType.includes("Call") || allTradeType.includes("Put");
+      let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
 
       if (symboltype == "equity") {
-        console.clear();
         let equityData = null;
         if (hasEquity) {
           equityData = await this.GetEquitiyDetail(symbol);
@@ -109,7 +106,6 @@ module.exports = {
         let nseData = null;
         if (hasFutures) {
           let futData = await this.GetIndicesFutures(symbol);
-          console.log("futData :>> ", futData);
         }
         if (hasOptions) {
           nseData = await this.GetIndicesOptionChain(symbol);
@@ -125,7 +121,6 @@ module.exports = {
         let currencyData = null;
         if (hasFutures) {
           currencyData = await this.GetCurrencyFuture(symbol);
-          //console.log('currencyData123 :>> ', currencyData);
         }
         if (hasOptions) {
           let nseData = await this.GetCurrencyOptionChain(symbol);
@@ -212,14 +207,14 @@ module.exports = {
         "`]." +
         (trade.tradetype == "Call" ? "CE" : "PE");
       let nseDataSelected = this.getObject(inputData, selector);
-      if (nseDataSelected[0]?.lastPrice) {
+      if (nseDataSelected && nseDataSelected[0]?.lastPrice) {
         trade.lasttradedprice = nseDataSelected[0].lastPrice;
       }
     });
     return startegy;
   },
   bindExpiriesData(startegy, inputData) {
-    let selector = 'records.expiryDates[*].{"name": @ }'; //
+    let selector = 'records.expiryDates[*].{"name": @ }';
     let nseDataSelected = this.getObject(inputData, selector);
     startegy.expiries = nseDataSelected;
     return startegy;

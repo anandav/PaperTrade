@@ -7,7 +7,7 @@ const portfolio = require("../models/portfolio");
 require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
-  const data = await Portfolio.find();
+  const data = await Portfolio.find().sort({ modifiedon: -1 });
   res.json(data);
 });
 
@@ -16,10 +16,10 @@ portfolicontroller.post("/find", async (req, res) => {
   let result = {};
   if (fieldName && fieldValue) {
     result = await Portfolio.find({ [fieldName]: fieldValue }).sort({
-      order :-1
+      order: -1
     });
   } else {
-    result = await Portfolio.find().sort({ order : -1 });
+    result = await Portfolio.find().sort({ order: -1 });
   }
   res.send(result);
 });
@@ -65,7 +65,7 @@ portfolicontroller.post("/save", async (req, res) => {
 portfolicontroller.post("/saveall", async (req, res) => {
   let _portfolios = req.body;
   let _portfolioObject = {};
-   _portfolios.forEach(async (item) => {
+  _portfolios.forEach(async (item) => {
     _portfolioObject = await commonUtility.GetPortfolioById(item._id);
     _portfolioObject.name = item.name;
     _portfolioObject.exchange = item.exchange;
@@ -94,7 +94,7 @@ portfolicontroller.post("/delete", async (req, res) => {
 });
 
 async function findPortfolio() {
-  return await Portfolio.find().sort({ order : 1 });
+  return await Portfolio.find().sort({ order: 1 });
 }
 
 module.exports = portfolicontroller;

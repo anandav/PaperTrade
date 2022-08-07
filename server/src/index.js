@@ -18,24 +18,17 @@ app.use(cors());
 console.log("process.env.PORT:",process.env.PORT);
 console.log("port:",port);
 
-// app.use(cors({
-//   origin : ["http://192.168.1.5:8080", "http://localhost:8080"]
-// }));
 app.use(helmet());
 
-app.use("/", (req, res, next) => {
-  //process.stdout.write("\033c");
-
-  next();
-});
+// app.use("/", (req, res, next) => {
+//   next();
+// });
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
 if (enable_dataapi == 'true') {
   app.use("/data", dataProvider);
 } else {
-
-
   app.use("/data", (req, res) => {
     res.status(404).json({ "error": "Data endpoint is disabled" })
   });

@@ -19,6 +19,10 @@ Web API uses MongoDB Atlas, change the connection string in the ".env" file to p
  ## Build 
  Client build (npm run build) will build the app and move the dist to the '/server/public' folder.
 
+ ## Screenshot
+
+ ![Screenshot](/Screenshot.png.jpg?raw=true "Screenshot")
+
 ---
 > :warning: Required nodejs 16 LTS.
 > :warning: Make sure to rename ".env.sample" to ".env" files

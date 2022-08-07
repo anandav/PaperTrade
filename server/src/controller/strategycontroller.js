@@ -45,7 +45,6 @@ strategycontoller.post("/save", async (req, res) => {
     }
 
     if (_id) {
-      console.warn(_data);
       let _strategyObject = await Strategy.updateOne(
         { _id: _id },
         {
