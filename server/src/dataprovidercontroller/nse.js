@@ -221,6 +221,8 @@ module.exports = {
   },
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
+
+    console.log(this.formatDate(), "Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
@@ -229,7 +231,6 @@ module.exports = {
       const responce = await axios
         .get("https://www.nseindia.com/")
         .then((res) => {
-          console.log("url :>> ", url);
           return axios.get(url, {
             headers: {
               cookie: res.headers["set-cookie"],
@@ -269,5 +270,31 @@ module.exports = {
       }
     }
     return JSON.stringify(result); //JSON
+  },
+  formatDate: function () {
+    var d = new Date();
+    month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear(),
+      hour = d.getHours(),
+      min = d.getMinutes(),
+      sec = d.getSeconds(),
+      ms = d.getMilliseconds();
+
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+    if (hour.length < 2)
+      hour = '0' + hour;
+    if (min.length < 2)
+      min = '0' + min;
+    if (sec.length < 2)
+      sec = '0' + sec;
+
+    var date = [day, month, year].join('-');
+    var time = [hour, min, sec].join(':') + "." ;//+ ms;
+    return date + " " + time;
   },
 };
