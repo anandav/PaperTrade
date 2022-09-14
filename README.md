@@ -21,7 +21,7 @@ Web API uses MongoDB Atlas, change the connection string in the ".env" file to p
 
  ## Screenshot
 
- ![Screenshot](/Screenshot.png.jpg?raw=true "Screenshot")
+ ![Screenshot](https://raw.githubusercontent.com/anandav/PaperTrade/master/Screenshot.png "Screenshot")
 
 ---
 > :warning: Required nodejs 16 LTS.
