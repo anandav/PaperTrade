@@ -1,5 +1,5 @@
 # PaperTrade
-Do papertrade without losing your capital. Designed for the derivative market. Inspired by Sensibull papertade, Tradingview papertrade, and tastyworks.
+This is a simple trading simulator that allows you to test your trading strategies without putting any real money at risk. It is inspired by Sensibull papertrade, Tradingview papertrade, and tastyworks.
 
 ![PaperTrade CI](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
 <!-- 
