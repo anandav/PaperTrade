@@ -32,17 +32,12 @@ module.exports = {
       ) {
         indicesFutList = await this.GetIndicesList();
         currencyFutList = await this.GetCurrencyFuture();
-        equityFutList = await this.GetEquitiesFuturesList();
+        //equityFutList = await this.GetEquitiesFuturesList();
         let csv = await this.GetMRKTLot();
         mktLotsList = this.csvJSON(csv);
         lastupdated = now;
       } else {
-        // console.log(
-        //   "Loading from memory Dataset :>> last updated ",
-        //   lastupdated,
-        //   " Total Hours: ",
-        //   totalHourDiff
-        // );
+
       }
       let result = [];
       const indices = [
@@ -53,27 +48,28 @@ module.exports = {
       indices.forEach((item) => {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
-      equityFutList.forEach((item) => {
-        result.push({
-          name: item,
-          lotsize: 0,
-          symboltype: "Equity",
-          istradeble: true,
+      if (equityFutList) {
+        console.clear();
+        console.log('equityFutList :>> ', equityFutList);
+        equityFutList.forEach((item) => {
+          result.push({
+            name: item,
+            lotsize: 0,
+            symboltype: "Equity",
+            istradeble: true,
+          });
         });
-      });
-      currencyFutList.data.forEach((item) => {
-        result.push({
-          name: `${item.unit}INR`,
-          lotsize: 1000,
-          symboltype: "Currency",
-          istradeble: true,
+      }
+      if (currencyFutList) {
+        currencyFutList.data.forEach((item) => {
+          result.push({
+            name: `${item.unit}INR`,
+            lotsize: 1000,
+            symboltype: "Currency",
+            istradeble: true,
+          });
         });
-      });
-
-      // if (mktLotsList) {
-      //     console.log('mktLotsList :>> ', mktLotsList);
-      // }
-
+      }
       return result;
     } else {
       let symbol = startegy.symbol;
@@ -154,7 +150,9 @@ module.exports = {
     return this.getData(url);
   },
   GetEquitiesFuturesList: async function () {
-    return this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
+    console.clear();
+    var data =  this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
+    console.log('data :>> ', data);
   },
   GetEquityFuture: async function (equity) {
     const url = process.env.NSE_EQUITIES_FUTURES_API.replace(
@@ -294,7 +292,7 @@ module.exports = {
       sec = '0' + sec;
 
     var date = [day, month, year].join('-');
-    var time = [hour, min, sec].join(':') + "." ;//+ ms;
+    var time = [hour, min, sec].join(':');//+ "." + ms;
     return date + " " + time;
   },
 };

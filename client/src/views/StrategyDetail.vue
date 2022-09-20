@@ -266,6 +266,7 @@ export default {
         { _id: "2", name: "Archive", displaytext: "Archive", icon: "archive" },
         { _id: "3", name: "Unarchive", displaytext: "Restore", icon: "archive" },
       ],
+      
     };
   },
   methods: {

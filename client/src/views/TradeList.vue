@@ -1,139 +1,81 @@
 <template>
   <!-- <div class="rounded-xl overflow-hidden bg-gradient-to-r from-pink-50 to-pink-100 p-10"></div> -->
   <div>
-    <div
-      class="table w-full shadow border-collapse rounded-lg"
-      v-if="!this.PropStrategy.isarchive"
-      @dragover.prevent
-      @dragenter.prevent
-    >
+    <div class="table w-full shadow border-collapse rounded-lg" v-if="!this.PropStrategy.isarchive" @dragover.prevent
+      @dragenter.prevent>
       <div class="table-row-group">
         <div class="table-row text-xs text-right text-gray-900 dark:text-white">
           <div class=""></div>
           <div class="table-cell px-1 py-3 w-12">
-            <label class="block"
-              ><input
-                type="checkbox"
-                class="mini-checkbox"
-                v-model="SelectAll"
-              />
+            <label class="block"><input type="checkbox" class="mini-checkbox" v-model="SelectAll" />
             </label>
           </div>
-          <!-- <div class="hidden px-1 py-4 ">Symbol</div>
-        <div class="hidden px-1 py-4">Lot Size</div>
-        <div class="hidden px-1 py-4">Step</div> -->
+
           <div class="table-cell px-1 py-4">Strike Price</div>
           <div class="table-cell px-1 py-4">Trade Type</div>
           <div class="table-cell px-1 py-4">B/S</div>
           <div class="table-cell px-1 py-4">Qty</div>
           <div class="table-cell px-1 py-4">Spot Price</div>
-          <div
-            class="table-cell px-1 py-4"
-            v-if="Portfolio.exchange"
-            @click="onGetLiveData()"
-          >
-            <span class="btn-ltp tooltip">
+          <div class="table-cell px-1 py-4" v-if="Portfolio.exchange">
+            <!-- @click="onGetLiveData()" -->
+            <!-- <span class="btn-ltp tooltip">
               <i class="text-xs material-icons">get_app</i>
               <tooltip :Value="txtGetLiveData" />
               LTP
-            </span>
+            </span> -->
+            <dropdown class="inline-block view tooltip" :Icon="`menu`" :Items="LTPAction" :Type="`Menu`"
+              @itemclicked="onLTPDropDownItemClicked" Tooltip="Get LTP">
+            </dropdown>
+            <!-- :CurrentObject="item" -->
           </div>
           <div class="table-cell px-1 py-4">Total Price</div>
           <div class="table-cell px-1 w-28">Action</div>
         </div>
       </div>
       <div class="table-row-group" @drop="onDrop($event)">
-        <div
-          class="
+        <div class="
             table-row
             text-right
             border-t border-gray-300
             dark:border-gray-600
-          "
-          draggable="true"
-          @dragover="onDragOver($event, index)"
-          @dragstart="onDragStart($event, item, index)"
-          @keyup.113="onInlineEditTrade(item)"
-          v-for="(item, index) in PropStrategy.trades"
-          :key="item._id"
-          :data-id="item._id"
-          :data-order="item.order"
-          :class="[
+          " draggable="true" @dragover="onDragOver($event, index)" @dragstart="onDragStart($event, item, index)"
+          @keyup.113="onInlineEditTrade(item)" v-for="(item, index) in PropStrategy.trades" :key="item._id"
+          :data-id="item._id" :data-order="item.order" :class="[
             item && editTrade && item._id == editTrade._id ? `isTradeEdit` : ``,
             item.color,
-          ]"
-          v-cloak
-        >
+          ]" v-cloak>
           <div class="table-cell" v-show="!item.ismove">
-            <svg
-              class="
+            <svg class="
                 cursor-move
                 pt-1
                 view
                 fill-current
                 text-gray-400
                 dark:text-gray-500
-              "
-              width="10"
-              height="15"
-              viewBox="0 0 2 5"
-              version="1.1"
-            >
-              <path
-                id="rect2026"
-                style="stroke-width: 0.264583"
-                d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z"
-              />
+              " width="10" height="15" viewBox="0 0 2 5" version="1.1">
+              <path id="rect2026" style="stroke-width: 0.264583"
+                d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z" />
             </svg>
           </div>
           <div class="table-cell px-1 py-3">
-            <button
-              class="btn-mini text-xxs mr-2 dark:text-yellow-500 tooltip view"
-              @click="onChangeColor(item)"
-            >
+            <button class="btn-mini text-xxs mr-2 dark:text-yellow-500 tooltip view" @click="onChangeColor(item)">
               <i class="material-icons">category</i>
             </button>
 
-            <!-- <dropdown
-              class="inline-block view tooltip"
-              :Icon="`menu`"
-              :Items="TradeAction"
-              :Type="`Menu`"
-              @itemclicked="onTradeDropDownItemClicked"order
-              Tooltip="Action"order
-            >
-            </dropdown> -->
-
             <label class="">
-              <input
-                type="checkbox"
-                class="mini-checkbox view"
-                :value="item._id"
-                v-model="selectedIDs"
-                @change="onCheckStateChanged(item)"
-              />
+              <input type="checkbox" class="mini-checkbox view" :value="item._id" v-model="selectedIDs"
+                @change="onCheckStateChanged(item)" />
             </label>
           </div>
           <div class="table-cell px-1 py-3">
-            <span
-              v-show="item.tradetype == 'Call' || item.tradetype == 'Put'"
-              class="view"
-            >
+            <span v-show="item.tradetype == 'Call' || item.tradetype == 'Put'" class="view">
               {{ item.selectedstrike }}
             </span>
 
             <div class="edit">
-              <div
-                v-show="item.tradetype == 'Call' || item.tradetype == 'Put'"
-                class="flex flex-col"
-              >
-                <input
-                  v-model="item.selectedstrike"
-                  :step="PropStrategy.strikepricestep"
-                  @keydown.enter="onInlineSaveTrade(item)"
-                  type="number"
-                  class="text-right mini-edit"
-                />
+              <div v-show="item.tradetype == 'Call' || item.tradetype == 'Put'" class="flex flex-col">
+                <input v-model="item.selectedstrike" :step="PropStrategy.strikepricestep"
+                  @keydown.enter="onInlineSaveTrade(item)" type="number" class="text-right mini-edit" />
               </div>
             </div>
           </div>
@@ -143,11 +85,7 @@
             </span>
             <div class="">
               <select class="btn edit" v-model="item.tradetype">
-                <option
-                  :key="key"
-                  v-for="(value, key) in TRADETYPE"
-                  v-bind:value="value"
-                >
+                <option :key="key" v-for="(value, key) in TRADETYPE" v-bind:value="value">
                   {{ value }}
                 </option>
               </select>
@@ -163,31 +101,18 @@
             <span class="view">
               {{ item.quantity }}
             </span>
-            <input
-              v-model="item.quantity"
-              min="1"
-              type="number"
-              class="mini-edit edit text-right"
-              @keydown.enter="onInlineSaveTrade(item)"
-            />
+            <input v-model="item.quantity" min="1" type="number" class="mini-edit edit text-right"
+              @keydown.enter="onInlineSaveTrade(item)" />
           </div>
           <div class="table-cell px-1 py-3">
             <span class="view">
               {{ item.price | decimal2 }}
             </span>
-            <input
-              v-model="item.price"
-              type="text"
-              class="mini-edit edit text-right"
-              @keydown.enter="onInlineSaveTrade(item)"
-            />
+            <input v-model="item.price" type="text" class="mini-edit edit text-right"
+              @keydown.enter="onInlineSaveTrade(item)" />
           </div>
           <div v-if="Portfolio.exchange" class="table-cell px-1 py-3">
-            <span
-              class="btn-ltp"
-              v-if="item.lasttradedprice >= 0"
-              @dblclick="onLTPClick(item)"
-            >
+            <span class="btn-ltp" v-if="item.lasttradedprice >= 0" @dblclick="onLTPClick(item)">
               <i class="text-xs material-icons">west</i>
               {{ item.lasttradedprice | decimal2 }}
             </span>
@@ -195,15 +120,15 @@
 
           <div class="table-cell px-1 py-3">
             {{
-              item.buyorsell == "Buy"
-                ? (
-                    item.price *
-                    (PropStrategy.lotsize * item.quantity) *
-                    -1
-                  ).toFixed(2)
-                : (item.price * (PropStrategy.lotsize * item.quantity)).toFixed(
-                    2
-                  )
+            item.buyorsell == "Buy"
+            ? (
+            item.price *
+            (PropStrategy.lotsize * item.quantity) *
+            -1
+            ).toFixed(2)
+            : (item.price * (PropStrategy.lotsize * item.quantity)).toFixed(
+            2
+            )
             }}
           </div>
           <div class="table-cell px-1">
@@ -216,18 +141,12 @@
                 <i class="material-icons">save</i>
                 <tooltip :Value="txtSaveTrade" />
               </button>
-              <button
-                class="btn tooltip view"
-                v-show="!item.isexit"
-                @click="onInlineExitTrade(item)"
-              >
+              <button class="btn tooltip view" v-show="!item.isexit" @click="onInlineExitTrade(item)">
                 <i class="material-icons">logout</i>
                 <tooltip :Value="txtExitTrade" />
               </button>
-              <button
-                class="btn tooltip text-red-600 dark:text-red-700"
-                @dblclick="onDeleteTrade(PropStrategy._id, item._id)"
-              >
+              <button class="btn tooltip text-red-600 dark:text-red-700"
+                @dblclick="onDeleteTrade(PropStrategy._id, item._id)">
                 <i class="material-icons">delete_forever</i>
                 <tooltip :Value="txtDeleteTrade" />
               </button>
@@ -284,10 +203,10 @@
 import { mapActions, mapState, mapGetters } from "vuex";
 import myMixins from "../shared/chart";
 import SwitchButton from "../components/ui/SwitchButton";
+import int from "d3-random/src/int";
 export default {
   name: "TradeList",
   mixins: [myMixins],
-
   components: {
     SwitchButton,
     // TradeListRow,
@@ -314,6 +233,11 @@ export default {
           color: "text-red-600 dark:text-red-700",
         },
       ],
+      LTPAction: [
+        { _id: "1", name: "Get LTP", icon: "logout", click: "" },
+        { _id: "2", name: "Update Exit", icon: "content_copy", click: "" },
+        { _id: "3", name: "Update All", icon: "content_copy", click: "" }
+      ],
       pnlpercentage: 0,
     };
   },
@@ -321,6 +245,8 @@ export default {
     PropStrategy: {},
     PropSelectedTraded: { type: Array },
     EditTradeForExternal: {},
+    TTL: { type: int, value: 0 },
+    //pnlpercentage : {type : int, value :0},
   },
   methods: {
     ...mapActions({
@@ -449,6 +375,20 @@ export default {
         this.onInlineExitTrade(item);
       }
     },
+    onLTPDropDownItemClicked: function (control,
+      actionid,
+      ) {
+      if (actionid == 1) {
+        console.log("Calling");
+        this.onGetLiveData();
+        console.log("Calling end");
+      }
+      //  else if (actionid == 2) {
+      // } else if (actionid == 3) {
+      // }
+
+    }
+    ,
     getDragAfterElement: function (container, y) {
       const draggableElements = [
         ...container.querySelectorAll(".table-row:not(.dragging)"),
@@ -484,7 +424,6 @@ export default {
   mounted() {
     this.SelectAll = true;
   },
-
   computed: {
     ...mapGetters({
       Portfolio: "portfolioModule/Portfolio",
@@ -524,14 +463,6 @@ export default {
         this.PropStrategy?.trades?.forEach((_trade) => {
           this.selectedIDs.forEach((_f) => {
             if (_trade._id == _f) {
-              // price =
-              //   _trade.buyorsell == "Buy"
-              //     ? price -
-              //       _trade.price * (this.PropStrategy.lotsize * _trade.quantity)
-              //     : price +
-              //       _trade.price *
-              //         (this.PropStrategy.lotsize * _trade.quantity);
-
               if (_trade.buyorsell == "Buy") {
                 price =
                   price -
@@ -551,7 +482,6 @@ export default {
           });
         });
         this.pnlpercentage = ((sellprice - buyprice) / buyprice) * 100;
-        //this.PnLPercnet(_PnLPercnet);
         return price;
       }
       return 0;
@@ -560,9 +490,9 @@ export default {
       get: function () {
         return this.pnlpercentage;
       },
-      // set: function (value) {
-      //   this.pnlpercentage = value;
-      // },
+      set: function (value) {
+        this.pnlpercentage = value;
+      },
     },
     FgColor: function () {
       return {
@@ -571,18 +501,28 @@ export default {
       };
     },
   },
+  watch: {
+    TTL(val) {
+      this.pnlpercentage = val;
+    }
+
+
+  }
 };
 </script>
 <style scoped>
 [v-cloak] {
   display: none;
 }
+
 .edit {
   display: none;
 }
+
 .isTradeEdit .edit {
   display: inline-block;
 }
+
 .isTradeEdit .view {
   display: none;
 }
