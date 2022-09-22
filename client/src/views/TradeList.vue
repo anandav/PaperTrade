@@ -17,16 +17,9 @@
           <div class="table-cell px-1 py-4">Qty</div>
           <div class="table-cell px-1 py-4">Spot Price</div>
           <div class="table-cell px-1 py-4" v-if="Portfolio.exchange">
-            <!-- @click="onGetLiveData()" -->
-            <!-- <span class="btn-ltp tooltip">
-              <i class="text-xs material-icons">get_app</i>
-              <tooltip :Value="txtGetLiveData" />
-              LTP
-            </span> -->
-            <dropdown class="inline-block view tooltip" :Icon="`menu`" :Items="LTPAction" :Type="`Menu`"
-              @itemclicked="onLTPDropDownItemClicked" Tooltip="Get LTP">
+            <dropdown class="inline-block view tooltip" :Icon="`currency_rupee`" :Items="LTPAction" :Type="`Menu`" :LabelText="`LTP`" :MinItem="1"
+               @itemclicked="onLTPDropDownItemClicked" >
             </dropdown>
-            <!-- :CurrentObject="item" -->
           </div>
           <div class="table-cell px-1 py-4">Total Price</div>
           <div class="table-cell px-1 w-28">Action</div>
@@ -150,17 +143,6 @@
                 <i class="material-icons">delete_forever</i>
                 <tooltip :Value="txtDeleteTrade" />
               </button>
-
-              <!-- <dropdown
-                class="inline-block view tooltip"
-                :Icon="`menu`"
-                :Items="TradeAction"
-                :Type="`Menu`"
-                :CurrentObject="item"
-                @itemclicked="onActionDropDownItemClicked"
-                Tooltip="Action"
-              >
-              </dropdown> -->
             </div>
           </div>
         </div>
@@ -172,11 +154,11 @@
           <div class="table-cell"></div>
           <div class="table-cell"></div>
           <div class="table-cell">
-            NAV
+            <!-- NAV -->
           </div>
           <div class="table-cell">
 
-            {{ PnLPercnet | decimal2 }}
+            <!-- {{ PnLPercnet | decimal2 }} -->
           </div>
           <div class="table-cell" v-if="Portfolio.exchange"></div>
           <div class="table-cell">
@@ -234,9 +216,9 @@ export default {
         },
       ],
       LTPAction: [
-        { _id: "1", name: "Get LTP", icon: "logout", click: "" },
-        { _id: "2", name: "Update Exit", icon: "content_copy", click: "" },
-        { _id: "3", name: "Update All", icon: "content_copy", click: "" }
+        { _id: "updateltp",  name: "Update LTP", icon: "get_app", click: "" },
+        { _id: "updateexit", name: "Update Exit", icon: "vertical_align_bottom", click: "" },
+        { _id: "updateall",  name: "Update All", icon: "save_alt", click: "" }
       ],
       pnlpercentage: 0,
     };
@@ -261,10 +243,13 @@ export default {
         this.GenerateChart(this.PropStrategy);
       });
     },
-    onGetLiveData: function () {
+    onGetLiveData: function (action) {
+      console.log('action :>> ', action);
+
       this.GetLiveData({
         portfolio: this.Portfolio,
         strategy: this.PropStrategy,
+        action: action
       }).then(() => {
         //this.EditStrategy(this.PropStrategy);
       });
@@ -303,7 +288,6 @@ export default {
       }
     },
     onDrop: function (e) {
-      console.log("e :>> ");
       e.preventDefault();
       const row = document.querySelector(".dragging");
       row.classList.remove("dragging");
@@ -376,17 +360,10 @@ export default {
       }
     },
     onLTPDropDownItemClicked: function (control,
-      actionid,
-      ) {
-      if (actionid == 1) {
-        console.log("Calling");
-        this.onGetLiveData();
-        console.log("Calling end");
-      }
-      //  else if (actionid == 2) {
-      // } else if (actionid == 3) {
-      // }
+      action,
+    ) {
 
+      this.onGetLiveData(action);
     }
     ,
     getDragAfterElement: function (container, y) {
@@ -440,6 +417,7 @@ export default {
       set: function (value) {
         var selected = [];
         this.PropStrategy?.trades?.forEach(function (t) {
+          debugger;
           if (value) {
             selected.push(t._id);
           }
@@ -456,9 +434,9 @@ export default {
 
     TotalAmount: function () {
       if (this.selectedIDs) {
-        let price = 0,
-          buyprice = 0,
-          sellprice = 0;
+        let price = 0;
+          // buyprice = 0,
+          // sellprice = 0;
 
         this.PropStrategy?.trades?.forEach((_trade) => {
           this.selectedIDs.forEach((_f) => {
@@ -468,20 +446,20 @@ export default {
                   price -
                   _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
 
-                buyprice +=
-                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+                // buyprice +=
+                //   _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
               } else {
                 price =
                   price +
                   _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
 
-                sellprice +=
-                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+                // sellprice +=
+                //   _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
               }
             }
           });
         });
-        this.pnlpercentage = ((sellprice - buyprice) / buyprice) * 100;
+        //this.pnlpercentage = ((sellprice - buyprice) / buyprice) * 100;
         return price;
       }
       return 0;

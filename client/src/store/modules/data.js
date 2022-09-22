@@ -59,10 +59,11 @@ export default {
                 }
             }
         },
-        GetLiveData({ dispatch }, { portfolio, strategy }) {
+        GetLiveData({ dispatch }, { portfolio, strategy, action }) {
             let postData = {
                 portfolio,
                 strategy,
+                action
             };
             let url = `${apiUrl}data/`;
             axios.post(url, postData).then(function (res) {

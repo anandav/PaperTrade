@@ -49,7 +49,6 @@ module.exports = {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
       if (equityFutList) {
-        console.clear();
         console.log('equityFutList :>> ', equityFutList);
         equityFutList.forEach((item) => {
           result.push({
@@ -93,7 +92,7 @@ module.exports = {
         if (hasOptions) {
           equityData = await this.GetEquityOptionChain(symbol);
           console.log("equityData Option:>> ", equityData);
-          startegy = this.bindOptionData(startegy, equityData);
+          startegy = this.bindOptionData(startegy, equityData, action);
         }
         return startegy;
       }
@@ -105,7 +104,7 @@ module.exports = {
         }
         if (hasOptions) {
           nseData = await this.GetIndicesOptionChain(symbol);
-          startegy = this.bindOptionData(startegy, nseData);
+          startegy = this.bindOptionData(startegy, nseData, action);
           if (action == "getexpiries") {
             startegy = this.bindExpiriesData(startegy, nseData);
           }
@@ -120,7 +119,7 @@ module.exports = {
         }
         if (hasOptions) {
           let nseData = await this.GetCurrencyOptionChain(symbol);
-          startegy = this.bindOptionData(startegy, nseData);
+          startegy = this.bindOptionData(startegy, nseData, action);
         }
         return startegy;
       }
@@ -150,8 +149,7 @@ module.exports = {
     return this.getData(url);
   },
   GetEquitiesFuturesList: async function () {
-    console.clear();
-    var data =  this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
+    var data = this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
     console.log('data :>> ', data);
   },
   GetEquityFuture: async function (equity) {
@@ -195,7 +193,7 @@ module.exports = {
     });
     return startegy;
   },
-  bindOptionData(startegy, inputData) {
+  bindOptionData(startegy, inputData, action) {
     startegy.trades.forEach((trade) => {
       let selector =
         "records.data[? expiryDate==`" +
@@ -206,7 +204,16 @@ module.exports = {
         (trade.tradetype == "Call" ? "CE" : "PE");
       let nseDataSelected = this.getObject(inputData, selector);
       if (nseDataSelected && nseDataSelected[0]?.lastPrice) {
-        trade.lasttradedprice = nseDataSelected[0].lastPrice;
+        if (action == "updateltp") {
+          trade.lasttradedprice = nseDataSelected[0].lastPrice;
+        } else if (action == "updateexit") {
+          trade.lastPrice = nseDataSelected[0].lastPrice;
+          if (trade.isexit) {
+            trade.price = nseDataSelected[0].lastPrice;
+          }
+        } else if (action == "updateall") {
+          trade.price = trade.lastPrice = nseDataSelected[0].lastPrice;
+        }
       }
     });
     return startegy;

@@ -3,9 +3,6 @@ const dataprovider = express.Router();
 const nse = require("./nse");
 const cboe = require("./cboe");
 
-// dataprovider.get("/", async (req, res) => {
-//     res.json(getExchangeDetail());
-// });
 dataprovider.post("/", async (req, res) => {
     var result = await get(req);
     res.json(result);
@@ -13,7 +10,6 @@ dataprovider.post("/", async (req, res) => {
 
 
 async function getExchangeDetail() {
-
     const Action = { "list": 1, "details": 2, };
     // "Future": 4, "Option": 8 
     const SymbolTypes = [
@@ -35,7 +31,6 @@ async function getExchangeDetail() {
             { "name" : "WAZIRX"  ,  "isactive" : false , "type" : "exchange" , "description" : "Crypto Exchange."                ,  "segmentendpoints": 16387 },
             { "name" : "KOTAK"   ,  "isactive" : true  , "type" : "broker"   , "description" : "Kotak Securities."               ,  "segmentendpoints": 22569 }]
     };
-
     return result;
 }
 
@@ -56,17 +51,12 @@ async function get(req) {
         }
         return result;
     }
-
     if (portfolio?.exchange?.toLowerCase() == "nse") {
         result = await nse.Get(portfolio, startegy, action);
     } else {
         result = { "error": "Not a valid request." };
     }
-
     return result;
-
-
-
 }
 
 module.exports = dataprovider;

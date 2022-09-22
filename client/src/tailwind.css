@@ -18,7 +18,11 @@
 }
 
 .btn i{
-    font-size: 15px;
+    font-size: 12px;
+}
+
+.btn .lbltext{
+    font-size: 8px;
 }
 
 .btn-mini{
