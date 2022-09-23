@@ -17,7 +17,7 @@
           <div class="table-cell px-1 py-4">Qty</div>
           <div class="table-cell px-1 py-4">Spot Price</div>
           <div class="table-cell px-1 py-4" v-if="Portfolio.exchange">
-            <dropdown class="inline-block view tooltip" :Icon="`currency_rupee`" :Items="LTPAction" :Type="`Menu`" :LabelText="`LTP`" :MinItem="1"
+            <dropdown class="inline-block view tooltip" :Icon="`currency_rupee`" :Items="LTPAction" :Type="`Menu`" :LabelText="`LTP`" :MinItem="2"
                @itemclicked="onLTPDropDownItemClicked" >
             </dropdown>
           </div>
@@ -417,7 +417,6 @@ export default {
       set: function (value) {
         var selected = [];
         this.PropStrategy?.trades?.forEach(function (t) {
-          debugger;
           if (value) {
             selected.push(t._id);
           }

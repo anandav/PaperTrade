@@ -131,9 +131,10 @@
               :Icon="`join_full`"
               :Items="CurrentPortfoliosStrategies"
               :Type="`Strategy`"
-              @itemclicked="onDropDownItemClicked"
               :ExcludeItem="PropStrategy._id"
               :Tooltip="txtMergeStrategy"
+              :MinItem="3"
+              @itemclicked="onDropDownItemClicked"
               v-if="!this.PropStrategy.isarchive"
             >
             </dropdown>
@@ -143,10 +144,12 @@
               :Icon="`trending_flat`"
               :Items="Portfolios"
               :Type="`Portfolios`"
-              @itemclicked="onDropDownItemClicked"
               :Tooltip="txtMoveStrategy"
+              :MinItem="PropStrategy.isarchive? 0 : 3"
+              @itemclicked="onDropDownItemClicked"
+
             >
-              <!-- v-if="!this.PropStrategy.isarchive" -->
+         
             </dropdown>
 
             <dropdown
@@ -324,8 +327,7 @@ export default {
         });
       }
     },
-    onActionDropDownItemClicked: function (type, id, name) {
-      console.log('id, name, type :>> ', id, name, type);
+    onActionDropDownItemClicked: function (type, id) {
       if (id == 1) {
         var _startegyClone = { ...this.PropStrategy };
         _startegyClone._id = undefined;

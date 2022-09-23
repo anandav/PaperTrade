@@ -10,7 +10,7 @@
       </span>
       <tooltip v-if="Tooltip && Tooltip.length > 0" :Value="Tooltip" />
     </button>
-    <div class="
+    <div class="testing 
         fixed
         z-10
         dropdown-content
@@ -19,15 +19,15 @@
         text-gray-500
         dark:bg-gray-700
         dark:text-gray-400
+        divide-gray-400
+        dark:divide-gray-600
         rounded
         w-32
         -ml-10
         shadow-lg
-        divide-y divide-gray-400
-        dark:divide-gray-600
+        divide-y
         divide-solid
-        overflow-auto
-      " :class="MinHeight" role="menuitem">
+        overflow-auto" :class="MinHeight" role="menuitem">
       <div v-if="Type != 'text'">
         <div :key="item._id" v-for="item in Items" v-bind:value="item._id" tabindex="0" class="">
           <a class="
@@ -60,7 +60,7 @@
             {{ item.symbol }}</a>
         </div>
       </div>
-
+      <div class="max-h-1" />
     </div>
   </div>
 </template>
@@ -82,24 +82,31 @@ export default {
   },
   data: function () {
     return {
-      MinHeight: function () {
-        switch (this.MinHeight) {
-          case 1:
-            return "max-h-20";
-          case 2:
-            return "max-h-24";
-            case 3:
-            return "max-h-28";
-          case 4:
-            return "max-h-32";
-          default:
-            return "max-h-20";
-        }
-      },
+
       LblText: this.LabelText,
     };
   },
-  computed: {},
+  computed: {
+    MinHeight: function () {
+      switch (this.MinItem) {
+        case -1:
+          return "";
+        case 0:
+          return "max-h-16";
+        case 1:
+          return "max-h-20";
+        case 2:
+          return "max-h-28";
+        case 3:
+          return "max-h-36";
+        case 4:
+          return "max-h-40";
+        default:
+          return "max-h-20";
+      }
+    }
+
+  },
   methods: {
     onItemClicked: function (type, id, name) {
 

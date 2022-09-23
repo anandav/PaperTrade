@@ -207,12 +207,13 @@ module.exports = {
         if (action == "updateltp") {
           trade.lasttradedprice = nseDataSelected[0].lastPrice;
         } else if (action == "updateexit") {
-          trade.lastPrice = nseDataSelected[0].lastPrice;
+
+          trade.lasttradedprice = nseDataSelected[0].lastPrice;
           if (trade.isexit) {
             trade.price = nseDataSelected[0].lastPrice;
           }
         } else if (action == "updateall") {
-          trade.price = trade.lastPrice = nseDataSelected[0].lastPrice;
+          trade.price = trade.lasttradedprice = nseDataSelected[0].lastPrice;
         }
       }
     });
