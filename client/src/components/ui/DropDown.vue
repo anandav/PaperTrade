@@ -10,15 +10,15 @@
       </span>
       <tooltip v-if="Tooltip && Tooltip.length > 0" :Value="Tooltip" />
     </button>
-    <div class="testing 
+    <div class=" 
         fixed
         z-10
         dropdown-content
         hidden
-        bg-gray-100
         text-gray-500
+        dark:text-gray-400 
+        bg-gray-100
         dark:bg-gray-700
-        dark:text-gray-400
         divide-gray-400
         dark:divide-gray-600
         rounded
@@ -28,6 +28,7 @@
         divide-y
         divide-solid
         overflow-auto" :class="MinHeight" role="menuitem">
+
       <div v-if="Type != 'text'">
         <div :key="item._id" v-for="item in Items" v-bind:value="item._id" tabindex="0" class="">
           <a class="

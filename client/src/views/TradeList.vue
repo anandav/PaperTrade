@@ -17,12 +17,18 @@
           <div class="table-cell px-1 py-4">Qty</div>
           <div class="table-cell px-1 py-4">Spot Price</div>
           <div class="table-cell px-1 py-4" v-if="Portfolio.exchange">
-            <dropdown class="inline-block view tooltip" :Icon="`currency_rupee`" :Items="LTPAction" :Type="`Menu`" :LabelText="`LTP`" :MinItem="2"
-               @itemclicked="onLTPDropDownItemClicked" >
-            </dropdown>
+            LTP
           </div>
           <div class="table-cell px-1 py-4">Total Price</div>
-          <div class="table-cell px-1 w-28">Action</div>
+          <div class="table-cell px-1 w-28">
+            <!-- Action -->
+            <dropdown class="text-red-600 inline-block  view tooltip" :Icon="`currency_rupee`" :Items="LTPAction" :Type="`Menu`" :MinItem="2"
+               @itemclicked="onLTPDropDownItemClicked" >
+               <!-- :LabelText="`LTP`"  -->
+            </dropdown>
+
+
+          </div>
         </div>
       </div>
       <div class="table-row-group" @drop="onDrop($event)">
@@ -216,9 +222,9 @@ export default {
         },
       ],
       LTPAction: [
-        { _id: "updateltp",  name: "Update LTP", icon: "get_app", click: "" },
-        { _id: "updateexit", name: "Update Exit", icon: "vertical_align_bottom", click: "" },
-        { _id: "updateall",  name: "Update All", icon: "save_alt", click: "" }
+        { _id: "updateltp",  name: "Update LTP Only", icon: "get_app", click: "" },
+        { _id: "updateexit", name: "Update Exit Only", icon: "vertical_align_bottom", click: "" },
+        { _id: "updateall",  name: "Update All Price", icon: "save_alt", click: "" }
       ],
       pnlpercentage: 0,
     };

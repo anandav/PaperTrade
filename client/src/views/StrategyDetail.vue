@@ -159,14 +159,12 @@
               :Type="`Menu`"
               @itemclicked="onActionDropDownItemClicked"
               :ExcludeItem="ExcluteStrategyAction"
-              Tooltip="Action"
-            >
+              Tooltip="Action">
             </dropdown>
 
             <button
               class="btn text-red-700 dark:text-red-700 tooltip view"
-              @dblclick="onDeleteStrategy()"
-            >
+              @dblclick="onDeleteStrategy()">
               <i class="material-icons">delete_forever</i>
               <tooltip :Value="txtDeleteStrategy" />
             </button>
