@@ -25,6 +25,10 @@
     font-size: 8px;
 }
 
+.font13px{
+    font-size: 13px;
+}
+
 .btn-mini{
   @apply  cursor-pointer text-xxs  justify-center rounded border-none border border-transparent shadow-sm 
   dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500

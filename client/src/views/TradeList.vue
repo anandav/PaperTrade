@@ -11,7 +11,18 @@
             </label>
           </div>
 
-          <div class="table-cell px-1 py-4">Strike Price</div>
+          <div class="table-cell px-1 py-4">
+            Stike Price
+            <!-- <button class="btn " @click="">
+              <i class="material-icons">arrow_upward</i>
+              <tooltip Value="txtEditTrade" />
+            </button>
+              <button class="btn " @click="">
+                <i class="material-icons">arrow_downward</i>
+                <tooltip Value="txtEditTrade" />
+              </button> -->
+
+          </div>
           <div class="table-cell px-1 py-4">Trade Type</div>
           <div class="table-cell px-1 py-4">B/S</div>
           <div class="table-cell px-1 py-4">Qty</div>
@@ -21,11 +32,15 @@
           </div>
           <div class="table-cell px-1 py-4">Total Price</div>
           <div class="table-cell px-1 w-28">
-            <!-- Action -->
-            <dropdown class="text-red-600 inline-block  view tooltip" :Icon="`currency_rupee`" :Items="LTPAction" :Type="`Menu`" :MinItem="2"
-               @itemclicked="onLTPDropDownItemClicked" >
-               <!-- :LabelText="`LTP`"  -->
-            </dropdown>
+            <div class="space-x-1">
+
+              <dropdown class="text-red-600 inline-block view tooltip" :Tooltip="`LTP`" :Icon="`currency_rupee`"
+                :Items="LTPAction" :Type="`Menu`" :MinItem="2" @itemclicked="onLTPDropDownItemClicked">
+                <!-- :LabelText="`LTP`"  -->
+              </dropdown>
+
+
+            </div>
 
 
           </div>
@@ -67,9 +82,40 @@
             </label>
           </div>
           <div class="table-cell px-1 py-3">
+
+            <button class="tooltip view" @click="onIncrementDecrement(-1,item)">
+              <i class="font13px material-icons">arrow_downward</i>
+              <tooltip Value="Decrement" />
+            </button>
             <span v-show="item.tradetype == 'Call' || item.tradetype == 'Put'" class="view">
               {{ item.selectedstrike }}
             </span>
+            <button class="tooltip view" @click="onIncrementDecrement(1,item)">
+              <i class="font13px material-icons">arrow_upward</i>
+              <tooltip Value="Increment" />
+            </button>
+
+
+
+            <!-- 
+            <div class="custom-number-input h-10 w-32">
+              <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+                <button data-action="decrement"
+                  class=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
+                  <span class="m-auto text-2xl font-thin">−</span>
+                </button>
+                <input type="number" v-model="item.selectedstrike" :step="PropStrategy.strikepricestep"
+                  class=" text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none"
+                  name="custom-input-number"/>
+                <button data-action="increment"
+                  class="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
+                  <span class="m-auto text-2xl font-thin">+</span>
+                </button>
+              </div>
+            </div>
+           -->
+
+
 
             <div class="edit">
               <div v-show="item.tradetype == 'Call' || item.tradetype == 'Put'" class="flex flex-col">
@@ -222,9 +268,9 @@ export default {
         },
       ],
       LTPAction: [
-        { _id: "updateltp",  name: "Update LTP Only", icon: "get_app", click: "" },
-        { _id: "updateexit", name: "Update Exit Only", icon: "vertical_align_bottom", click: "" },
-        { _id: "updateall",  name: "Update All Price", icon: "save_alt", click: "" }
+        { _id: "updateltp", name: "Update LTP", icon: "get_app", click: "" },
+        { _id: "updateexit", name: "Update Exit", icon: "vertical_align_bottom", click: "" },
+        { _id: "updateall", name: "Update All", icon: "save_alt", click: "" }
       ],
       pnlpercentage: 0,
     };
@@ -368,10 +414,12 @@ export default {
     onLTPDropDownItemClicked: function (control,
       action,
     ) {
-
       this.onGetLiveData(action);
-    }
-    ,
+    },
+    onIncrementDecrement(incdec, trade) {
+      trade.selectedstrike = (trade.selectedstrike + (incdec * this.PropStrategy.strikepricestep));
+      this.onInlineSaveTrade(trade)
+    },
     getDragAfterElement: function (container, y) {
       const draggableElements = [
         ...container.querySelectorAll(".table-row:not(.dragging)"),
@@ -440,8 +488,8 @@ export default {
     TotalAmount: function () {
       if (this.selectedIDs) {
         let price = 0;
-          // buyprice = 0,
-          // sellprice = 0;
+        // buyprice = 0,
+        // sellprice = 0;
 
         this.PropStrategy?.trades?.forEach((_trade) => {
           this.selectedIDs.forEach((_f) => {
@@ -488,8 +536,6 @@ export default {
     TTL(val) {
       this.pnlpercentage = val;
     }
-
-
   }
 };
 </script>
