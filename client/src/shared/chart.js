@@ -266,7 +266,6 @@ const utilitymixins = {
             currentTrade.tradetype == "Future"
           ) {
             let _strikePrice = range.x0;
-            console.log('_strikePrice :>> ', _strikePrice);
             let j = 0;
             do {
               let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy);
@@ -286,7 +285,6 @@ const utilitymixins = {
             } while (range.x1 >= _strikePrice);
           }
         }
-        console.log('chartData :>> ', chartData);
         return chartData;
       }
     },

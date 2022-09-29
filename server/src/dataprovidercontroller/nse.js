@@ -30,11 +30,19 @@ module.exports = {
         !mktLotsList ||
         totalHourDiff > 24
       ) {
-        indicesFutList = await this.GetIndicesList();
-        currencyFutList = await this.GetCurrencyFuture();
-        //equityFutList = await this.GetEquitiesFuturesList();
-        let csv = await this.GetMRKTLot();
-        mktLotsList = this.csvJSON(csv);
+        if (!indicesFutList) {
+          indicesFutList = await this.GetIndicesList();
+        }
+        if (!currencyFutList) {
+          currencyFutList = await this.GetCurrencyFuture();
+        }
+        if (!equityFutList) {
+          equityFutList = await this.GetEquitiesFuturesList();
+        }
+        if(!mktLotsList){
+          let csv = await this.GetMRKTLot();
+          mktLotsList = this.csvJSON(csv);
+        }
         lastupdated = now;
       } else {
 
@@ -49,7 +57,7 @@ module.exports = {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
       if (equityFutList) {
-        console.log('equityFutList :>> ', equityFutList);
+        //console.log('equityFutList :>> ', equityFutList);
         equityFutList.forEach((item) => {
           result.push({
             name: item,
@@ -151,6 +159,7 @@ module.exports = {
   GetEquitiesFuturesList: async function () {
     var data = this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
     console.log('data :>> ', data);
+    return data;
   },
   GetEquityFuture: async function (equity) {
     const url = process.env.NSE_EQUITIES_FUTURES_API.replace(
