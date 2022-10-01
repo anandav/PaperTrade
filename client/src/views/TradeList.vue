@@ -9,17 +9,7 @@
             <label class="block"><input type="checkbox" class="mini-checkbox" v-model="SelectAll" />
             </label>
           </div>
-          <div class="table-cell px-1 py-4">
-            <!-- <button class="tooltip " @click="onAllIncrementDecrement(-1)">
-                <i class="font13px material-icons">arrow_downward</i>
-                <tooltip Value="Decrement" />
-              </button> -->
-            Stike Price
-            <!-- <button class="tooltip  " @click="onAllIncrementDecrement(1)">
-                <i class="font13px material-icons">arrow_upward</i>
-                <tooltip Value="Increment" />
-              </button> -->
-          </div>
+          <div class="table-cell px-1 py-4">Stike Price</div>
           <div class="table-cell px-1 py-4">Trade Type</div>
           <div class="table-cell px-1 py-4">B/S</div>
           <div class="table-cell px-1 py-4">Qty</div>

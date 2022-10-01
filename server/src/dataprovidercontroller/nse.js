@@ -57,6 +57,7 @@ module.exports = {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
       if (equityFutList) {
+        
         //console.log('equityFutList :>> ', equityFutList);
         equityFutList.forEach((item) => {
           result.push({
