@@ -101,7 +101,7 @@
     </div>
     <div class="p-3">
 
-      <div class="w-1 cursor-pointer float-right" @click="onHideChart();">
+      <div class="w-1 cursor-pointer float-right"  v-if="!this.PropStrategy.isarchive" @click="onHideChart();">
         <i class="material-icons text-xxs" :class="hideChart?'hidden':''">
           keyboard_double_arrow_right
         </i>
