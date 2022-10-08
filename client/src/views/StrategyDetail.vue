@@ -101,7 +101,7 @@
     </div>
     <div class="p-3">
 
-      <div class="w-1 cursor-pointer float-right"  v-if="!this.PropStrategy.isarchive" @click="onHideChart();">
+      <div class="w-1 cursor-pointer float-right" v-if="!this.PropStrategy.isarchive" @click="onHideChart();">
         <i class="material-icons text-xxs" :class="hideChart?'hidden':''">
           keyboard_double_arrow_right
         </i>
@@ -110,11 +110,11 @@
         </i>
       </div>
       <div class="grid grid-cols-12" v-if="!this.PropStrategy.isarchive">
-        <div :class="hideChart?'col-span-12': 'col-span-6'">
+        <div :class="{'col-span-12': hideChart, 'col-span-6' : !hideChart}">
           <TradeList :PropStrategy="PropStrategy" :PropSelectedTraded="SelectedTraded" />
         </div>
 
-        <div :class="{'hidden':hideChart, 'col-span-6' : !hideChart}">
+        <div :class="{'hidden': hideChart, 'col-span-6' : !hideChart}">
           <div class="chartplaceholder ">
             <div class="">
               <input type="number" v-model="PropStrategy.x0" placeholder="min" min="0" class="chart-mini-edit ml-12"
@@ -186,7 +186,7 @@ export default {
         { _id: "2", name: "Archive", displaytext: "Archive", icon: "archive" },
         { _id: "3", name: "Unarchive", displaytext: "Restore", icon: "archive" },
       ],
-      hideChart: false,
+      hideChart: this.PropStrategy.hidechart,
     };
   },
   methods: {
@@ -217,9 +217,10 @@ export default {
       this.Symbols.forEach((x) => {
         if (x.name == this.PropStrategy.symbol) {
           this.PropStrategy.symboltype = x.symboltype;
-          //this.PropStrategy.lotsize = x.lotsize;
+          this.PropStrategy.hidechart = x.hideChart;
         }
       });
+debugger;
       this.EditStrategy(this.PropStrategy);
     },
     onDeleteStrategy: function () {
@@ -266,6 +267,11 @@ export default {
     },
     onHideChart: function () {
       this.hideChart = !this.hideChart;
+      this.onSaveStrategy().then(() => {
+        if (!this.hideChart) {
+          this.GenerateChart();
+        }
+      });
     },
     // onGetLiveData: function () {
     //   this.GetLiveData({
