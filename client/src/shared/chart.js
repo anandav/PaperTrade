@@ -305,18 +305,11 @@ const utilitymixins = {
     /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
     GenerateLineChart: function (chartData, paretnId, strategy) {
       if (!chartData || !paretnId) return;
-      // console.log('document.querySelectorAll(paretnId) :>> ', document.querySelectorAll(paretnId));
-
-      console.log('paretnId :>> ', paretnId);
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
-
-      console.log('_WIDTH :>> ', _WIDTH);
-
       //   const parentObj = document.querySelector(paretnId);
       //  const __node1 =  document.createElement("input")
       //  __node1.setAttribute("class","chart-mini-edit ml-12")
       //parentObj.append(__node1)
-
       this.WIDTH = _WIDTH > 0 ? _WIDTH : this.WIDTH;
       const minPnL = d3.min(chartData, (d) => d.netPnL);
       const maxPnL = d3.max(chartData, (d) => d.netPnL);

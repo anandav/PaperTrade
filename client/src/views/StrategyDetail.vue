@@ -203,24 +203,14 @@ export default {
 
     onEditStrategy: function (strategy) {
       this.editStrategy = strategy._id;
-      // this.StrategySymbolChange({
-      //   portfolio: this.Portfolio,
-      //   strategy,
-      //   action: "getexpiries",
-      // }).then((x) => {
-      //   this.editStrategy = strategy._id;
-      // });
     },
     onSaveStrategy: function () {
       this.editStrategy = null;
-
       this.Symbols.forEach((x) => {
         if (x.name == this.PropStrategy.symbol) {
           this.PropStrategy.symboltype = x.symboltype;
-          this.PropStrategy.hidechart = x.hideChart;
         }
       });
-debugger;
       this.EditStrategy(this.PropStrategy);
     },
     onDeleteStrategy: function () {
@@ -266,25 +256,9 @@ debugger;
       this.PropStrategy.symboltype = Value;
     },
     onHideChart: function () {
-      this.hideChart = !this.hideChart;
-      this.onSaveStrategy().then(() => {
-        if (!this.hideChart) {
-          this.GenerateChart();
-        }
-      });
+      this.PropStrategy.hidechart = this.hideChart = !this.hideChart;
+      this.onSaveStrategy();
     },
-    // onGetLiveData: function () {
-    //   this.GetLiveData({
-    //     portfolio: this.Portfolio,
-    //     strategy: this.PropStrategy,
-    //   }).then(() => {
-    //     //this.EditStrategy(this.PropStrategy);
-    //   });
-    // },
-    // onSymbolChange: function (Value) {
-    //   // this.PropStrategy.symbol = Value;
-    //   // this.GetLiveData({"portfolio": this.Portfolio,"strategy": this.PropStrategy,"action" : "detail"})
-    // },
   },
   mixins: [myMixins],
   props: {
@@ -298,10 +272,6 @@ debugger;
 <style scoped>
 [v-cloak] {
   display: none;
-}
-
-.form-control {
-  width: 200px;
 }
 
 .edit {
