@@ -20,6 +20,12 @@
           <div class="table-cell px-1 py-4">Total Price</div>
           <div class="table-cell px-1 w-28">
             <div class="space-x-1">
+              <button class="btn dark:text-orange-400 tooltip view" @click="onBindAddEditTrade()"
+              v-if="!this.PropStrategy.isarchive">
+              <i class="material-icons">playlist_add</i>
+              <tooltip :Value="txtAddTrade" />
+            </button>
+
               <button class="btn tooltip" @click="onExitAllTrade();">
                 <i class="material-icons">exit_to_app</i>
                 <tooltip Value="Exit All Trades" />
@@ -210,6 +216,7 @@ export default {
     return {
       selectedIDs: [],
       editTrade: null,
+      txtAddTrade: this.$getConst("addTrade"),
       txtEditTrade: this.$getConst("editTrade"),
       txtSaveTrade: this.$getConst("saveTrade"),
       txtExitTrade: this.$getConst("exitTrade"),
@@ -247,6 +254,7 @@ export default {
     ...mapActions({
       EditStrategy: "strategyModule/EditStrategy",
       AddEditTrade: "tradeModule/AddEditTrade",
+      BindAddEditTrade: "tradeModule/BindAddEditTrade",
       DeleteTrade: "tradeModule/DeleteTrade",
       CheckStateChanged: "tradeModule/CheckStateChanged",
       GetLiveData: "dataModule/GetLiveData",
@@ -342,6 +350,9 @@ export default {
       this.CheckStateChanged(this.PropStrategy).then(() => {
         this.GenerateChart(this.PropStrategy);
       });
+    },
+    onBindAddEditTrade: function () {
+      this.BindAddEditTrade(this.PropStrategy);
     },
     onChangeColor: function (trade) {
       const findNextColor = (val) => {

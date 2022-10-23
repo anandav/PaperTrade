@@ -40,7 +40,7 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Expiry </label>
           <span class="view">
-            {{ PropStrategy.expiry | formatDate }}
+            {{ PropStrategy.expiry  }}
           </span>
 
           <input class="normal-edit edit" placeholder="Expiry" v-model="PropStrategy.expiry"
@@ -61,11 +61,11 @@
         </div>
         <div class="flex-2">
           <div class="float-right space-x-2">
-            <button class="btn dark:text-orange-400 tooltip view" @click="onBindAddEditTrade()"
+            <!-- <button class="btn dark:text-orange-400 tooltip view" @click="onBindAddEditTrade()"
               v-if="!this.PropStrategy.isarchive">
               <i class="material-icons">playlist_add</i>
               <tooltip :Value="txtAddTrade" />
-            </button>
+            </button> -->
 
             <button class="btn tooltip view" @click="onEditStrategy(PropStrategy)" v-if="!this.PropStrategy.isarchive">
               <i class="material-icons">edit</i>
@@ -212,6 +212,7 @@ export default {
         }
       });
       this.EditStrategy(this.PropStrategy);
+      this.GenerateChart(this.PropStrategy);
     },
     onDeleteStrategy: function () {
       this.DeleteStrategy({ _id: this.PropStrategy._id });

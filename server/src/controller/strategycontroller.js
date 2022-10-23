@@ -41,7 +41,7 @@ strategycontoller.post("/save", async (req, res) => {
       createdon,
       modifiedon: new Date(),
     };
-    console.log('hidechart :>> ', hidechart);
+
     if (trades) {
       _data.trades = trades;
     }
