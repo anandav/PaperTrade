@@ -32,6 +32,7 @@ module.exports = {
       ) {
         if (!indicesFutList) {
           indicesFutList = await this.GetIndicesList();
+          console.log('indicesFutList :>> ', indicesFutList);
         }
         if (!currencyFutList) {
           currencyFutList = await this.GetCurrencyFuture();
@@ -91,8 +92,7 @@ module.exports = {
         let equityData = null;
         if (hasEquity) {
           equityData = await this.GetEquitiyDetail(symbol);
-          console.log("equityData :>> ", equityData);
-          startegy = this.bindEquityData(startegy, equityData);
+          startegy = this.bindEquityData(startegy, equityData, action);
         }
         if (hasFutures) {
           equityData = await this.GetEquityFuture(symbol);
@@ -193,12 +193,24 @@ module.exports = {
     );
     return this.getData(url);
   },
-  bindEquityData(startegy, inputData) {
+  bindEquityData(startegy, inputData, action) {
     startegy.trades.forEach((trade) => {
-      let selector = "priceInfo.lastPrice";
+      let selector = "priceInfo";
       let nseDataSelected = this.getObject(inputData, selector);
       if (nseDataSelected) {
-        trade.lasttradedprice = nseDataSelected;
+        //trade.lasttradedprice = nseDataSelected.lastPrice;
+
+        if (action == "updateltp") {
+          trade.lasttradedprice = nseDataSelected.lastPrice;
+        } else if (action == "updateexit") {
+
+          trade.lasttradedprice = nseDataSelected.lastPrice;
+          if (trade.isexit) {
+            trade.price = nseDataSelected.lastPrice;
+          }
+        } else if (action == "updateall") {
+          trade.price = trade.lasttradedprice = nseDataSelected.lastPrice;
+        }
       }
     });
     return startegy;
@@ -238,7 +250,7 @@ module.exports = {
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
 
-    console.log(this.formatDate(), "Calling URL:", url);
+    //console.log(this.formatDate(), "Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
@@ -255,6 +267,7 @@ module.exports = {
         });
       return responce.data;
     } catch (e) {
+      console.log(e);
       return null;
       //return e.reponce.data
     }

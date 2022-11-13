@@ -2,23 +2,24 @@
   <div>
     <div class="table w-full shadow border-collapse rounded-lg" v-if="!this.PropStrategy.isarchive" @dragover.prevent
       @dragenter.prevent>
+      <!-- Table Head -->
       <div class="table-row-group">
         <div class="table-row text-xs text-right text-gray-900 dark:text-white">
-          <div class=""></div>
-          <div class="table-cell px-1 py-3 w-12">
+          <div class="1 "></div>
+          <div class="2 table-cell px-1 py-3 w-12">
             <label class="block"><input type="checkbox" class="mini-checkbox" v-model="SelectAll" />
             </label>
           </div>
-          <div class="table-cell px-1 py-4">Stike Price</div>
-          <div class="table-cell px-1 py-4">Trade Type</div>
-          <div class="table-cell px-1 py-4">B/S</div>
-          <div class="table-cell px-1 py-4">Qty</div>
-          <div class="table-cell px-1 py-4">Spot Price</div>
-          <div class="table-cell px-1 py-4" v-if="Portfolio.exchange">
+          <div class="3 table-cell px-1 py-4" v-if="PropStrategy.symboltype != 'Equity'">Stike Price</div>
+          <div class="4 table-cell px-1 py-4">Trade Type</div>
+          <div class="5 table-cell px-1 py-4">B/S</div>
+          <div class="6 table-cell px-1 py-4">Qty</div>
+          <div class="7 table-cell px-1 py-4">Spot Price</div>
+          <div class="8 table-cell px-1 py-4" v-if="Portfolio.exchange">
             LTP
           </div>
-          <div class="table-cell px-1 py-4">Total Price</div>
-          <div class="table-cell px-1 w-28">
+          <div class="9 table-cell px-1 py-4">Total Price</div>
+          <div class="10 table-cell px-1 w-28">
             <div class="space-x-1">
               <button class="btn dark:text-orange-400 tooltip view" @click="onBindAddEditTrade()"
               v-if="!this.PropStrategy.isarchive">
@@ -38,6 +39,7 @@
           </div>
         </div>
       </div>
+      <!-- Table Body -->
       <div class="table-row-group" @drop="onDrop($event)">
         <div class="
             table-row
@@ -50,7 +52,7 @@
             item && editTrade && item._id == editTrade._id ? `isTradeEdit` : ``,
             item.color,
           ]" v-cloak>
-          <div class="table-cell" v-show="!item.ismove">
+          <div class="1 table-cell" v-show="!item.ismove">
             <svg class="
                 cursor-move
                 pt-1
@@ -63,7 +65,7 @@
                 d="M 1.7134726,6.3056817 H 2.4866974 V 7.0479501 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 7.0479501 H 0.22842698 Z M 1.7134726,5.1017156 H 2.4866974 V 5.8439839 H 1.7134726 Z m -1.48504562,0 H 1.0016518 V 5.8439839 H 0.22842698 Z M 1.7067486,3.9151924 H 2.4799734 V 4.6574607 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 4.6574607 H 0.22170299 Z M 1.7067486,2.7112265 H 2.4799734 V 3.4534948 H 1.7067486 Z m -1.48504561,0 H 0.99492782 V 3.4534948 H 0.22170299 Z M 1.704524,1.4995462 H 2.4777489 V 2.2418146 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 2.2418146 H 0.21947849 Z M 1.704524,0.29558012 H 2.4777489 V 1.0378485 H 1.704524 Z m -1.48504551,0 H 0.99270332 V 1.0378485 H 0.21947849 Z" />
             </svg>
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="2 table-cell px-1 py-3">
             <button class="btn-mini text-xxs mr-2 dark:text-yellow-500 tooltip view" @click="onChangeColor(item)">
               <i class="material-icons">category</i>
             </button>
@@ -73,7 +75,7 @@
                 @change="onCheckStateChanged(item)" />
             </label>
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="3 table-cell px-1 py-3" v-if="PropStrategy.symboltype != 'Equity'"> 
 
             <div v-show="item.tradetype == 'Call' || item.tradetype == 'Put'" class="view">
               <button class="tooltip " @click="onIncrementDecrement(-1,item)">
@@ -95,7 +97,7 @@
               </div>
             </div>
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="4 table-cell px-1 py-3">
             <span class="view">
               {{ item.tradetype }}
             </span>
@@ -107,27 +109,27 @@
               </select>
             </div>
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="5 table-cell px-1 py-3">
             <span class="view">
               {{ item.buyorsell }}
             </span>
             <SwitchButton :PropTrade="item" />
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="6 table-cell px-1 py-3">
             <span class="view">
               {{ item.quantity }}
             </span>
             <input v-model="item.quantity" min="1" type="number" class="mini-edit edit text-right"
               @keydown.enter="onInlineSaveTrade(item)" />
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="7 table-cell px-1 py-3">
             <span class="view">
               {{ item.price | decimal2 }}
             </span>
             <input v-model="item.price" type="text" class="mini-edit edit text-right"
               @keydown.enter="onInlineSaveTrade(item)" />
           </div>
-          <div v-if="Portfolio.exchange" class="table-cell px-1 py-3">
+          <div v-if="Portfolio.exchange" class="8 table-cell px-1 py-3">
             <div v-if="item.lasttradedprice >= 0">
               <button class="tooltip " @click="onLTPClick(item)">
                 <i class="font13px material-icons">west</i>
@@ -139,11 +141,11 @@
               </span>
             </div>
           </div>
-          <div class="table-cell px-1 py-3">
+          <div class="9 table-cell px-1 py-3">
             {{ item.buyorsell == "Buy" ? ( item.price * (PropStrategy.lotsize * item.quantity) * -1 ).toFixed(2) :
             (item.price * (PropStrategy.lotsize * item.quantity)).toFixed( 2 ) }}
           </div>
-          <div class="table-cell px-1">
+          <div class="10 table-cell px-1">
             <div class="space-x-1">
               <button class="btn tooltip view" @click="onInlineEditTrade(item)">
                 <i class="material-icons">edit</i>
@@ -166,6 +168,7 @@
           </div>
         </div>
       </div>
+      <!-- Table Footer -->
       <div class="table-row-group">
         <div class="table-row text-right border-t border-yellow-500">
           <div class="table-cell"></div>
