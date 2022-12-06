@@ -32,7 +32,6 @@ module.exports = {
       ) {
         if (!indicesFutList) {
           indicesFutList = await this.GetIndicesList();
-          console.log('indicesFutList :>> ', indicesFutList);
         }
         if (!currencyFutList) {
           currencyFutList = await this.GetCurrencyFuture();

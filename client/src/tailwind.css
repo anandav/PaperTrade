@@ -57,11 +57,11 @@
 }
 
 .mini-edit{
-    @apply w-12 px-1 py-1 rounded-md focus:outline-none;
+    @apply w-12 px-1 py-1 rounded-md focus:outline-none text-xs bg-transparent;
 }
 
 .normal-edit {
-  @apply w-28 px-1 py-1 rounded-md focus:outline-none bg-gray-300 dark:bg-gray-600;
+  @apply w-28 px-1 py-1 rounded-md focus:outline-none border border-gray-300 bg-gray-400 dark:border-gray-600 bg-transparent;
 }
 
 .mini-edit-nonrounded {
