@@ -39,7 +39,7 @@ module.exports = {
         if (!equityFutList) {
           equityFutList = await this.GetEquitiesFuturesList();
         }
-        if(!mktLotsList){
+        if (!mktLotsList) {
           let csv = await this.GetMRKTLot();
           mktLotsList = this.csvJSON(csv);
         }
@@ -57,7 +57,7 @@ module.exports = {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
       if (equityFutList) {
-        
+
         //console.log('equityFutList :>> ', equityFutList);
         equityFutList.forEach((item) => {
           result.push({
@@ -249,7 +249,7 @@ module.exports = {
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
 
-    //console.log(this.formatDate(), "Calling URL:", url);
+    console.log(this.formatDate(), "Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
@@ -299,30 +299,52 @@ module.exports = {
     }
     return JSON.stringify(result); //JSON
   },
+
+  //// OpenAI Generated
   formatDate: function () {
-    var d = new Date();
-    month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear(),
-      hour = d.getHours(),
-      min = d.getMinutes(),
-      sec = d.getSeconds(),
-      ms = d.getMilliseconds();
+    var date = new Date();
+    const year = date.getFullYear();
+    const month = this.getMonthName(date.getMonth());
+    //const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const ms = String(date.getMilliseconds()).padStart(3, '0');
 
-
-    if (month.length < 2)
-      month = '0' + month;
-    if (day.length < 2)
-      day = '0' + day;
-    if (hour.length < 2)
-      hour = '0' + hour;
-    if (min.length < 2)
-      min = '0' + min;
-    if (sec.length < 2)
-      sec = '0' + sec;
-
-    var date = [day, month, year].join('-');
-    var time = [hour, min, sec].join(':');//+ "." + ms;
-    return date + " " + time;
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}.${ms}`;
   },
+
+  getMonthName: function (monthIndex) {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return monthNames[monthIndex];
+  }
+
+
+  //   formatDate: function () {
+  //     var d = new Date();
+  //     month = '' + (d.getMonth() + 1),
+  //       day = '' + d.getDate(),
+  //       year = d.getFullYear(),
+  //       hour = d.getHours(),
+  //       min = d.getMinutes(),
+  //       sec = d.getSeconds(),
+  //       ms = d.getMilliseconds();
+
+
+  //     if (month.length < 2)
+  //       month = '0' + month;
+  //     if (day.length < 2)
+  //       day = '0' + day;
+  //     if (hour.length < 2)
+  //       hour = '0' + hour;
+  //     if (min.length < 2)
+  //       min = '0' + min;
+  //     if (sec.length < 2)
+  //       sec = '0' + sec;
+
+  //     var date = [day, month, year].join('-');
+  //     var time = [hour, min, sec].join(':');//+ "." + ms;
+  //     return date + " " + time;
+  //   },
 };
