@@ -1,5 +1,7 @@
 const axios = require("axios").default;
 const jmespath = require("jmespath");
+const Logger = require("./logs");
+const logger = require("./logs");
 
 require("dotenv/config");
 let currencyFutList = null;
@@ -7,14 +9,13 @@ let equityFutList = null;
 let indicesFutList = null;
 let mktLotsList = null;
 let lastupdated = null;
-const optionCEPath =
-  "records.data[?expiryDate==`{expiry}` && strikePrice == `{strikeprice}`]";
 
 module.exports = {
   Maps: {
     getAllTradeType: "trades[?!isexit].tradetype",
   },
   Get: async function (portfolio, startegy, action) {
+    this.setObject('action', action);
     if (action == "init") {
       if (!lastupdated) {
         lastupdated = new Date();
@@ -23,12 +24,12 @@ module.exports = {
       }
       let now = Date.now();
       let totalHourDiff = Math.abs(now - lastupdated) / 36e5;
+      //||      totalHourDiff > 24
       if (
         !equityFutList ||
         !indicesFutList ||
         !currencyFutList ||
-        !mktLotsList ||
-        totalHourDiff > 24
+        !mktLotsList
       ) {
         if (!indicesFutList) {
           indicesFutList = await this.GetIndicesList();
@@ -133,7 +134,6 @@ module.exports = {
       }
     }
   },
-
   GetEquitiyDetail: async function (equity) {
     const url = process.env.NSE_EQUITIES_API.replace("PARAMETER", equity);
     return this.getData(url);
@@ -158,7 +158,7 @@ module.exports = {
   },
   GetEquitiesFuturesList: async function () {
     var data = this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
-    console.log('data :>> ', data);
+    logger.info(data);
     return data;
   },
   GetEquityFuture: async function (equity) {
@@ -175,12 +175,10 @@ module.exports = {
     );
     return this.getData(url);
   },
-
   GetCurrencyFuture: async function () {
     const url = process.env.NSE_CURRENCY_FUTURES_LIST_API2;
     return this.getData(url);
   },
-
   GetMRKTLot: async function () {
     const url = process.env.NSE_MKT_LOTS;
     return this.getData(url);
@@ -248,8 +246,7 @@ module.exports = {
   },
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
-
-    console.log(this.formatDate(), "Calling URL:", url);
+    logger.info("Calling URL:" + url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
@@ -299,52 +296,11 @@ module.exports = {
     }
     return JSON.stringify(result); //JSON
   },
+  setObject: (key, value) => {
+    //console.log('process.env.CACHE_DURATION :>>', process.env.CACHE_DURATION);
 
-  //// OpenAI Generated
-  formatDate: function () {
-    var date = new Date();
-    const year = date.getFullYear();
-    const month = this.getMonthName(date.getMonth());
-    //const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    const ms = String(date.getMilliseconds()).padStart(3, '0');
-
-    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}.${ms}`;
   },
+  getObject: (key) => {
 
-  getMonthName: function (monthIndex) {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return monthNames[monthIndex];
-  }
-
-
-  //   formatDate: function () {
-  //     var d = new Date();
-  //     month = '' + (d.getMonth() + 1),
-  //       day = '' + d.getDate(),
-  //       year = d.getFullYear(),
-  //       hour = d.getHours(),
-  //       min = d.getMinutes(),
-  //       sec = d.getSeconds(),
-  //       ms = d.getMilliseconds();
-
-
-  //     if (month.length < 2)
-  //       month = '0' + month;
-  //     if (day.length < 2)
-  //       day = '0' + day;
-  //     if (hour.length < 2)
-  //       hour = '0' + hour;
-  //     if (min.length < 2)
-  //       min = '0' + min;
-  //     if (sec.length < 2)
-  //       sec = '0' + sec;
-
-  //     var date = [day, month, year].join('-');
-  //     var time = [hour, min, sec].join(':');//+ "." + ms;
-  //     return date + " " + time;
-  //   },
+  },
 };
