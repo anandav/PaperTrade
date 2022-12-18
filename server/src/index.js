@@ -15,8 +15,8 @@ const conn_string = process.env.DBCONNECTIONSTRING;
 app.use(express.json());
 //app.use(express.urlencoded({extended : true}));
 app.use(cors());
-
-logger.info("process.env.PORT:", process.env.PORT);
+const prt = process.env.PORT;
+logger.info("process.env.PORT:", prt);
 logger.info("port:", port);
 app.use(helmet());
 app.use("/strategy", strategyController);
@@ -36,7 +36,7 @@ if (conn_string) {
     conn_string,
     { useNewUrlParser: true, useUnifiedTopology: true },
     (x) => {
-      logger.info("Service Started","...");
+      logger.info("Service Started...");
     }
   );
 } else {

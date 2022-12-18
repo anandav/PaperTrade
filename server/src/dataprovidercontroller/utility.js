@@ -1,9 +1,8 @@
-const Utility = {
+module.exports = {
     formatDate: () => {
         var date = new Date();
         const year = date.getFullYear();
-        const month = Utility.getMonthName(date.getMonth());
-        //const month = String(date.getMonth() + 1).padStart(2, '0');
+        const month = module.exports.getMonthName(date.getMonth());
         const day = String(date.getDate()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -19,5 +18,3 @@ const Utility = {
         return monthNames[monthIndex];
     }
 };
-
-module.exports = Utility;

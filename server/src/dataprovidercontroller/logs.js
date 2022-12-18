@@ -1,6 +1,6 @@
 const utility = require("./utility");
 
-const Logger = {
+module.exports = {
     info: (...message) => {
         console.log(utility.formatDate(), 'INFO:', message.join(' '));
     },
@@ -11,9 +11,3 @@ const Logger = {
         console.error(utility.formatDate(), 'ERROR:', message.join(' '));
     }
 };
-module.exports = Logger;
-
-
-
-
-
