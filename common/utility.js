@@ -1,5 +1,6 @@
 module.exports = {
     formatDate: () => {
+        //// AI Generated
         var date = new Date();
         const year = date.getFullYear();
         const month = module.exports.getMonthName(date.getMonth());
@@ -12,8 +13,8 @@ module.exports = {
         return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}.${ms}`;
     },
 
-    //// OpenAI Generated
     getMonthName: (monthIndex) => {
+        //// AI Generated
         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return monthNames[monthIndex];
     }

@@ -139,6 +139,7 @@
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
+import logger from "../../../common/logs";
 
 export default {
   name: "StrategyDetail",
@@ -159,6 +160,7 @@ export default {
     },
   },
   mounted: function () {
+    logger.info("Mounted Called","...")
     if (!this.PropStrategy.isarchive) {
       this.PortfolioLoad({
         portfolio: this.Portfolio,

@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 const jmespath = require("jmespath");
-const Logger = require("./logs");
-const logger = require("./logs");
+
+const logger = require("../../../common/logs");
 
 require("dotenv/config");
 let currencyFutList = null;
@@ -17,6 +17,7 @@ module.exports = {
   Get: async function (portfolio, startegy, action) {
     this.setObject('action', action);
     if (action == "init") {
+      debugger;
       if (!lastupdated) {
         lastupdated = new Date();
       } else {
@@ -246,7 +247,7 @@ module.exports = {
   },
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
-    logger.info("Calling URL:" + url);
+    logger.info("Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")

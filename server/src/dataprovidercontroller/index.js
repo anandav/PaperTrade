@@ -53,7 +53,10 @@ async function get(req) {
     }
     if (portfolio?.exchange?.toLowerCase() == "nse") {
         result = await nse.Get(portfolio, startegy, action);
-    } else {
+    }else if(portfolio?.exchange?.toLowerCase() == "cboe") {
+        // Write the code for CBOE here.
+    }
+    else {
         result = { "error": "Not a valid request." };
     }
     return result;
