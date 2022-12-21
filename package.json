@@ -16,5 +16,26 @@
   "bugs": {
     "url": "https://github.com/anandav/NSE-PaperTrade/issues"
   },
-  "homepage": "https://github.com/anandav/NSE-PaperTrade#readme"
+  "homepage": "https://github.com/anandav/NSE-PaperTrade#readme",
+  "devDependencies": {
+    "eslint": "^8.30.0",
+    "eslint-plugin-vue": "^9.8.0"
+  },
+  "dependencies": {
+    "babel-eslint": "^10.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  }
 }

@@ -36,7 +36,7 @@ if (conn_string) {
     conn_string,
     { useNewUrlParser: true, useUnifiedTopology: true },
     (x) => {
-      logger.info("Service Started...");
+      logger.info("DB connected...");
     }
   );
 } else {
@@ -44,7 +44,7 @@ if (conn_string) {
 }
 
 app.listen(port, (x) => {
-  logger.info("Applicataion Started...");
+  logger.info("Service Started...");
 });
 
 

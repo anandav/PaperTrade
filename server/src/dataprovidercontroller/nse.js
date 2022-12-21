@@ -15,7 +15,7 @@ module.exports = {
     getAllTradeType: "trades[?!isexit].tradetype",
   },
   Get: async function (portfolio, startegy, action) {
-    this.setObject('action', action);
+    this.setCacheObject('action', action);
     if (action == "init") {
       debugger;
       if (!lastupdated) {
@@ -85,6 +85,12 @@ module.exports = {
       let symbol = startegy.symbol;
       let symboltype = startegy.symboltype?.toLowerCase();
       let allTradeType = this.getTradeTypes(startegy);
+      logger.info("Action:>>", action);
+      if(allTradeType){
+        logger.info("All Trade Type is Present")
+      }else{
+        logger.error("All Trade Type is null")
+      }
       let hasEquity = allTradeType.includes("Equity") || allTradeType.includes("Stock");
       let hasFutures = allTradeType.includes("Future");
       let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
@@ -270,7 +276,9 @@ module.exports = {
     }
   },
   getTradeTypes: function (startegy) {
-    return this.getObject(startegy, this.Maps.getAllTradeType);
+    var _result =  this.getObject(startegy, this.Maps.getAllTradeType);
+    logger.info("GetTradeTypes:>>", JSON.stringify(_result));
+    return _result;
   },
   getObject: function (inputData, selector) {
     return jmespath.search(inputData, selector);
@@ -297,11 +305,10 @@ module.exports = {
     }
     return JSON.stringify(result); //JSON
   },
-  setObject: (key, value) => {
-    //console.log('process.env.CACHE_DURATION :>>', process.env.CACHE_DURATION);
-
+  setCacheObject: (key, value) => {
+   logger.info("Setting cache value for:", key, "and value is:", value);
   },
-  getObject: (key) => {
+  getCacheObject: (key) => {
 
   },
 };
