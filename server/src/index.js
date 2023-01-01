@@ -12,17 +12,15 @@ const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
 
-app.use(express.json());
-//app.use(express.urlencoded({extended : true}));
-app.use(cors());
-const prt = process.env.PORT;
-logger.info("process.env.PORT:", prt);
 logger.info("port:", port);
+app.use(express.json());
+app.use(cors());
 app.use(helmet());
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
 app.use("/", express.static('public'));
+//app.use(express.urlencoded({extended : true}));
 
 if (enable_dataapi == 'true') {
   app.use("/data", dataProvider);

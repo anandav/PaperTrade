@@ -13,7 +13,7 @@
             py-2
             ml-2
             w-48
-            bg-gray-200
+            bg-gray-100
             dark:bg-gray-600
             focus:outline-none
             rounded

@@ -7,7 +7,7 @@
         z-50
         drop-shadow-md
         py-5
-        bg-gray-200
+        bg-gray-100
         dark:bg-gray-900 
         dark:border-b 
         dark:border-gray-800

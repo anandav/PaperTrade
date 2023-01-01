@@ -7,7 +7,6 @@
       <div
         class="
           border-b-2
-          drop-shadow-md
           pl-5
           pb-5
           flex

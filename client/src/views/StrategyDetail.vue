@@ -1,5 +1,5 @@
 <template>
-  <div class=" mx-3 my-3 rounded border drop-shadow-md border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-800
+  <div class=" mx-3 my-3 rounded border drop-shadow-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800
     " :class="{ isStrategyEdit: editStrategy == PropStrategy._id }">
     <div class="p-3 border-b border-gray-300 dark:border-gray-700">
       <div class="flex">
