@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - nse-papertrade-app
+name: nse-papertrade-app
 
 on:
   push:
@@ -21,17 +21,16 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: npm install, build, and test
+      - name: npm install client
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm install --prefix ./client
+          npm run build --prefix ./client
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: ./client/dist/
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,4 +52,4 @@ jobs:
           app-name: 'nse-papertrade-app'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D6FB5329CA334297BECA34EFBC65D326 }}
-          package: .
+          package: ./client/dist

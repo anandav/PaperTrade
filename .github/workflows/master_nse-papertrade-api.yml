@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: nse-papertrade-app
+name: nse-papertrade-api
 
 on:
   push:
@@ -21,12 +21,6 @@ jobs:
       with:
         node-version: '14.x'
 
-    - name: npm install client
-      run: |
-        npm install --prefix ./client
-        npm run build --prefix ./client
-
-
     - name: npm install server
       run: |
         npm install --prefix ./server
@@ -36,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: node-app
-        path: ./server
+        path: ./server/dist/
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,12 +54,12 @@ jobs:
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_83f24ac787e64ddc82b30dbb09fb6650 }}
         package: ./server/dist/
 
-    - name: 'Deploy to Azure Web App'
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'nse-papertrade-app'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_83f24ac787e64ddc82b30dbb09fb6650 }}
-        package: ./client/dist/
+    # - name: 'Deploy to Azure Web App'
+    #   id: deploy-to-webapp
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: 'nse-papertrade-app'
+    #     slot-name: 'production'
+    #     publish-profile: ${{ secrets.AzureAppService_PublishProfile_83f24ac787e64ddc82b30dbb09fb6650 }}
+    #     package: ./client/dist/
 
