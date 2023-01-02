@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: nse-papertrade-api
+name: Papertrade-API
 
 on:
   push:
@@ -52,7 +52,7 @@ jobs:
         app-name: 'nse-papertrade-api'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_83f24ac787e64ddc82b30dbb09fb6650 }}
-        package: ./server/dist/
+        package: .
 
     # - name: 'Deploy to Azure Web App'
     #   id: deploy-to-webapp
