@@ -1,6 +1,5 @@
 const axios = require("axios").default;
 const jmespath = require("jmespath");
-
 const logger = require("../../../common/logs");
 
 require("dotenv/config");
@@ -15,7 +14,7 @@ module.exports = {
     getAllTradeType: "trades[?!isexit].tradetype",
   },
   Get: async function (portfolio, startegy, action) {
-    this.setCacheObject('action', action);
+    this.setCacheObject(`"action"`, action);
     if (action == "init") {
       debugger;
       if (!lastupdated) {
@@ -25,6 +24,7 @@ module.exports = {
       }
       let now = Date.now();
       let totalHourDiff = Math.abs(now - lastupdated) / 36e5;
+
       //||      totalHourDiff > 24
       if (
         !equityFutList ||
@@ -33,22 +33,26 @@ module.exports = {
         !mktLotsList
       ) {
         if (!indicesFutList) {
+          logger.info(`Getting Indices List`);
           indicesFutList = await this.GetIndicesList();
         }
         if (!currencyFutList) {
+          logger.info(`Getting Currency Futures`);
           currencyFutList = await this.GetCurrencyFuture();
         }
         if (!equityFutList) {
+          logger.info(`Getting Equity Futures`);
           equityFutList = await this.GetEquitiesFuturesList();
+          logger.info(`Got Equity Futures`);
         }
         if (!mktLotsList) {
+          logger.info(`Getting Lot size`);
           let csv = await this.GetMRKTLot();
           mktLotsList = this.csvJSON(csv);
+          logger.info(`Got Lot size `)
         }
         lastupdated = now;
-      } else {
-
-      }
+      } 
       let result = [];
       const indices = [
         { name: "NIFTY", lotsize: 50 },
@@ -59,8 +63,6 @@ module.exports = {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
       if (equityFutList) {
-
-        //console.log('equityFutList :>> ', equityFutList);
         equityFutList.forEach((item) => {
           result.push({
             name: item,
@@ -103,11 +105,11 @@ module.exports = {
         }
         if (hasFutures) {
           equityData = await this.GetEquityFuture(symbol);
-          console.log("equityData Futures:>> ", equityData);
+          logger.info("equityData Futures:>> ", equityData);
         }
         if (hasOptions) {
           equityData = await this.GetEquityOptionChain(symbol);
-          console.log("equityData Option:>> ", equityData);
+          logger.info("equityData Option:>> ", equityData);
           startegy = this.bindOptionData(startegy, equityData, action);
         }
         return startegy;
@@ -165,7 +167,6 @@ module.exports = {
   },
   GetEquitiesFuturesList: async function () {
     var data = this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
-    logger.info(data);
     return data;
   },
   GetEquityFuture: async function (equity) {
@@ -270,7 +271,7 @@ module.exports = {
         });
       return responce.data;
     } catch (e) {
-      console.log(e);
+      logger.error(e);
       return null;
       //return e.reponce.data
     }
