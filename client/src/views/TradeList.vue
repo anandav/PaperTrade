@@ -403,11 +403,6 @@ export default {
         this.$emit("onItemEnterKeyPressed");
         this.GenerateChart(this.PropStrategy);
       });
-
-      
-      // this.onInlineSaveTrade(trade).then(() => {
-      //   this.GenerateChart(this.PropStrategy);
-      // });
     },
     getDragAfterElement: function (container, y) {
       const draggableElements = [
