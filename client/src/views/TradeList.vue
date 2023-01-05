@@ -399,7 +399,15 @@ export default {
     },
     onIncrementDecrement(incdec, trade) {
       trade.selectedstrike = (trade.selectedstrike + (incdec * this.PropStrategy.strikepricestep));
-      this.onInlineSaveTrade(trade)
+      this.AddEditTrade(trade).then(() => {
+        this.$emit("onItemEnterKeyPressed");
+        this.GenerateChart(this.PropStrategy);
+      });
+
+      
+      // this.onInlineSaveTrade(trade).then(() => {
+      //   this.GenerateChart(this.PropStrategy);
+      // });
     },
     getDragAfterElement: function (container, y) {
       const draggableElements = [
