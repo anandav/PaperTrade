@@ -1,6 +1,8 @@
 <template>
-  <div class=" mx-3 my-3 rounded border drop-shadow-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800
-    " :class="{ isStrategyEdit: editStrategy == PropStrategy._id }">
+  <div
+    class="mx-3 my-3 rounded border drop-shadow-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
+    :class="{ isStrategyEdit: editStrategy == PropStrategy._id }"
+  >
     <div class="p-3 border-b border-gray-300 dark:border-gray-700">
       <div class="flex">
         <div class="flex-1">
@@ -8,8 +10,12 @@
           <span class="view">
             {{ PropStrategy.name }}
           </span>
-          <input class="normal-edit edit" placeholder="Strategy Name" v-model="PropStrategy.name"
-            @keydown.enter="onSaveStrategy()" />
+          <input
+            class="normal-edit edit"
+            placeholder="Strategy Name"
+            v-model="PropStrategy.name"
+            @keydown.enter="onSaveStrategy()"
+          />
         </div>
         <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
           <label class="text-xxs block text-gray-500"> Symbol </label>
@@ -17,16 +23,26 @@
             {{ PropStrategy.symbol }}
           </span>
 
-          <autocomplete :Value="PropStrategy.symbol" :Items="Symbols" @keyup="onSymbolKeyUp" @save="onSaveStrategy"
-            PlaceHolder="Symbol" />
+          <autocomplete
+            :Value="PropStrategy.symbol"
+            :Items="Symbols"
+            @keyup="onSymbolKeyUp"
+            @save="onSaveStrategy"
+            PlaceHolder="Symbol"
+          />
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Symbol Type </label>
           <span class="view">
             {{ PropStrategy.symboltype }}
           </span>
-          <autocomplete :Value="PropStrategy.symboltype" :Items="SymbolTypes" @keyup="onSymbolTypeKeyUp"
-            @save="onSaveStrategy" PlaceHolder="Symbol Types" />
+          <autocomplete
+            :Value="PropStrategy.symboltype"
+            :Items="SymbolTypes"
+            @keyup="onSymbolTypeKeyUp"
+            @save="onSaveStrategy"
+            PlaceHolder="Symbol Types"
+          />
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Lot Size </label>
@@ -34,26 +50,41 @@
             {{ PropStrategy.lotsize }}
           </span>
 
-          <input class="normal-edit edit" placeholder="Lot Size" v-model="PropStrategy.lotsize"
-            @keydown.enter="onSaveStrategy()" />
+          <input
+            class="normal-edit edit"
+            placeholder="Lot Size"
+            v-model="PropStrategy.lotsize"
+            @keydown.enter="onSaveStrategy()"
+          />
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Expiry </label>
           <span class="view">
-            {{ PropStrategy.expiry  }}
+            {{ PropStrategy.expiry }}
           </span>
 
-          <input class="normal-edit edit" placeholder="Expiry" v-model="PropStrategy.expiry"
-            @keydown.enter="onSaveStrategy()" />
+          <input
+            type="date"
+            class="normal-edit edit"
+            placeholder="Expiry"
+            v-model="PropStrategy.expiry"
+            @keydown.enter="onSaveStrategy()"
+          />
         </div>
         <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Strike Price Step </label>
+          <label class="text-xxs block text-gray-500">
+            Strike Price Step
+          </label>
           <span class="view">
             {{ PropStrategy.strikepricestep }}
           </span>
 
-          <input class="normal-edit edit" placeholder="Strike Price Step" v-model="PropStrategy.strikepricestep"
-            @keydown.enter="onSaveStrategy()" />
+          <input
+            class="normal-edit edit"
+            placeholder="Strike Price Step"
+            v-model="PropStrategy.strikepricestep"
+            @keydown.enter="onSaveStrategy()"
+          />
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Created On </label>
@@ -67,7 +98,11 @@
               <tooltip :Value="txtAddTrade" />
             </button> -->
 
-            <button class="btn tooltip view" @click="onEditStrategy(PropStrategy)" v-if="!this.PropStrategy.isarchive">
+            <button
+              class="btn tooltip view"
+              @click="onEditStrategy(PropStrategy)"
+              v-if="!this.PropStrategy.isarchive"
+            >
               <i class="material-icons">edit</i>
               <tooltip :Value="txtEditStrategy" />
             </button>
@@ -77,21 +112,45 @@
               <tooltip :Value="txtSaveStrategy" />
             </button>
 
-            <dropdown class="inline-block tooltip view" :Icon="`join_full`" :Items="CurrentPortfoliosStrategies"
-              :Type="`Strategy`" :ExcludeItem="PropStrategy._id" :Tooltip="txtMergeStrategy" :MinItem="3"
-              @itemclicked="onDropDownItemClicked" v-if="!this.PropStrategy.isarchive">
+            <dropdown
+              class="inline-block tooltip view"
+              :Icon="`join_full`"
+              :Items="CurrentPortfoliosStrategies"
+              :Type="`Strategy`"
+              :ExcludeItem="PropStrategy._id"
+              :Tooltip="txtMergeStrategy"
+              :MinItem="3"
+              @itemclicked="onDropDownItemClicked"
+              v-if="!this.PropStrategy.isarchive"
+            >
             </dropdown>
-            <dropdown class="inline-block tooltip view" :ExcludeItem="PropStrategy.portfolio" :Icon="`trending_flat`"
-              :Items="Portfolios" :Type="`Portfolios`" :Tooltip="txtMoveStrategy"
-              :MinItem="PropStrategy.isarchive? 0 : 3" @itemclicked="onDropDownItemClicked">
-
+            <dropdown
+              class="inline-block tooltip view"
+              :ExcludeItem="PropStrategy.portfolio"
+              :Icon="`trending_flat`"
+              :Items="Portfolios"
+              :Type="`Portfolios`"
+              :Tooltip="txtMoveStrategy"
+              :MinItem="PropStrategy.isarchive ? 0 : 3"
+              @itemclicked="onDropDownItemClicked"
+            >
             </dropdown>
 
-            <dropdown class="inline-block tooltip view" :Icon="`menu`" :Items="StrategyAction" :Type="`Menu`"
-              @itemclicked="onActionDropDownItemClicked" :ExcludeItem="ExcluteStrategyAction" Tooltip="Action">
+            <dropdown
+              class="inline-block tooltip view"
+              :Icon="`menu`"
+              :Items="StrategyAction"
+              :Type="`Menu`"
+              @itemclicked="onActionDropDownItemClicked"
+              :ExcludeItem="ExcluteStrategyAction"
+              Tooltip="Action"
+            >
             </dropdown>
 
-            <button class="btn text-red-700 dark:text-red-700 tooltip view" @dblclick="onDeleteStrategy()">
+            <button
+              class="btn text-red-700 dark:text-red-700 tooltip view"
+              @dblclick="onDeleteStrategy()"
+            >
               <i class="material-icons">delete_forever</i>
               <tooltip :Value="txtDeleteStrategy" />
             </button>
@@ -100,50 +159,87 @@
       </div>
     </div>
     <div class="p-3">
-
-      <div class="w-1 cursor-pointer float-right" v-if="!this.PropStrategy.isarchive" @click="onHideChart();">
-        <i class="material-icons text-xxs" :class="hideChart?'hidden':''">
+      <!-- <div
+        class="w-1 cursor-pointer float-left"
+        v-if="!this.PropStrategy.isarchive"
+        @click="onHideChart()"
+      >
+        <i class="material-icons text-xxs" :class="hideChart ? 'hidden' : ''">
+          keyboard_double_arrow_left
+        </i>
+        <i class="material-icons text-xxs" :class="hideChart ? '' : 'hidden'">
           keyboard_double_arrow_right
         </i>
-        <i class="material-icons text-xxs" :class="hideChart?'':'hidden'">
+      </div> -->
+
+      <div
+        class="w-1 cursor-pointer float-right"
+        v-if="!this.PropStrategy.isarchive"
+        @click="onHideChart()"
+      >
+        <i class="material-icons text-xxs" :class="hideChart ? 'hidden' : ''">
+          keyboard_double_arrow_right
+        </i>
+        <i class="material-icons text-xxs" :class="hideChart ? '' : 'hidden'">
           keyboard_double_arrow_left
         </i>
       </div>
       <div class="grid grid-cols-12" v-if="!this.PropStrategy.isarchive">
-        <div :class="{'col-span-12': hideChart, 'col-span-6' : !hideChart}">
-          <TradeList :PropStrategy="PropStrategy" :PropSelectedTraded="SelectedTraded" />
+        <div :class="{ 'col-span-12': hideChart, 'col-span-6': !hideChart }">
+          <TradeList
+            :PropStrategy="PropStrategy"
+            :PropSelectedTraded="SelectedTraded"
+          />
         </div>
 
-        <div :class="{'hidden': hideChart, 'col-span-6' : !hideChart}">
-          <div class="chartplaceholder ">
+        <div :class="{ hidden: hideChart, 'col-span-6': !hideChart }">
+          <div class="chartplaceholder">
             <div class="">
-              <input type="number" v-model="PropStrategy.x0" placeholder="min" min="0" class="chart-mini-edit ml-12"
-                @keydown.enter="onShowChart()" />
-              <input type="number" v-model="PropStrategy.x1" placeholder="max" min="0"
-                class="chart-mini-edit float-right" @keydown.enter="onShowChart()" />
+              <input
+                type="number"
+                v-model="PropStrategy.x0"
+                placeholder="min"
+                min="0"
+                class="chart-mini-edit ml-12"
+                @keydown.enter="onShowChart()"
+              />
+              <input
+                type="number"
+                v-model="PropStrategy.x1"
+                placeholder="max"
+                min="0"
+                class="chart-mini-edit float-right"
+                @keydown.enter="onShowChart()"
+              />
             </div>
-            <div class="chart">
-            </div>
+            <div class="chart"></div>
           </div>
         </div>
-
       </div>
       <div class="grid" v-if="this.PropStrategy.isarchive">
-        <TradeList :PropStrategy="PropStrategy" :PropSelectedTraded="SelectedTraded"
-          @onItemEnterKeyPressed="onShowChart" />
+        <TradeList
+          :PropStrategy="PropStrategy"
+          :PropSelectedTraded="SelectedTraded"
+          @onItemEnterKeyPressed="onShowChart"
+        />
       </div>
     </div>
   </div>
+
+
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
 import logger from "../../../common/logs";
+// import DateRangePicker from 'vue2-daterange-picker'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   name: "StrategyDetail",
   components: { TradeList },
+  // components: { TradeList , DateRangePicker },
   computed: {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
@@ -160,7 +256,7 @@ export default {
     },
   },
   mounted: function () {
-    logger.info("Mounted Called","...")
+    logger.info("Mounted Called", "...");
     if (!this.PropStrategy.isarchive) {
       this.PortfolioLoad({
         portfolio: this.Portfolio,
@@ -173,6 +269,7 @@ export default {
   },
   data: function () {
     return {
+      
       txtEditStrategy: this.$getConst("editStrategy"),
       txtSaveStrategy: this.$getConst("saveStrategy"),
       txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
@@ -184,9 +281,19 @@ export default {
       txtMoveStrategy: this.$getConst("moveStrategy"),
       editStrategy: null,
       StrategyAction: [
-        { _id: "1", name: "Duplicate", displaytext: "Duplicate", icon: "content_copy" },
+        {
+          _id: "1",
+          name: "Duplicate",
+          displaytext: "Duplicate",
+          icon: "content_copy",
+        },
         { _id: "2", name: "Archive", displaytext: "Archive", icon: "archive" },
-        { _id: "3", name: "Unarchive", displaytext: "Restore", icon: "archive" },
+        {
+          _id: "3",
+          name: "Unarchive",
+          displaytext: "Restore",
+          icon: "archive",
+        },
       ],
       hideChart: this.PropStrategy.hidechart,
     };
@@ -269,6 +376,7 @@ export default {
     PropTrade: { type: Object },
     SelectedTraded: { type: Array },
   },
+
 };
 </script>
 

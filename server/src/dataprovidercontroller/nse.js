@@ -8,6 +8,19 @@ let equityFutList = null;
 let indicesFutList = null;
 let mktLotsList = null;
 let lastupdated = null;
+let nseCookies = null;
+let baseUrl = "https://www.nseindia.com/";
+let headers = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+  'accept-language': 'en,gu;q=0.9,hi;q=0.8', 'accept-encoding': 'gzip, deflate, br'
+};
+let Instance = axios.create({
+  baseURL: baseUrl,
+  headers: headers,
+  cookie: nseCookies ?? ""
+});
+
+
 
 module.exports = {
   Maps: {
@@ -52,7 +65,7 @@ module.exports = {
           logger.info(`Got Lot size `)
         }
         lastupdated = now;
-      } 
+      }
       let result = [];
       const indices = [
         { name: "NIFTY", lotsize: 50 },
@@ -86,11 +99,12 @@ module.exports = {
     } else {
       let symbol = startegy.symbol;
       let symboltype = startegy.symboltype?.toLowerCase();
+      logger.info("symboltype ::>>", symboltype);
       let allTradeType = this.getTradeTypes(startegy);
       logger.info("Action:>>", action);
-      if(allTradeType){
+      if (allTradeType) {
         logger.info("All Trade Type is Present")
-      }else{
+      } else {
         logger.error("All Trade Type is null")
       }
       let hasEquity = allTradeType.includes("Equity") || allTradeType.includes("Stock");
@@ -115,13 +129,17 @@ module.exports = {
         return startegy;
       }
 
+
       if (symboltype == "indices") {
+
         let nseData = null;
         if (hasFutures) {
           let futData = await this.GetIndicesFutures(symbol);
         }
         if (hasOptions) {
           nseData = await this.GetIndicesOptionChain(symbol);
+
+          // logger.info("Indices Option:>> ", nseData);
           startegy = this.bindOptionData(startegy, nseData, action);
           if (action == "getexpiries") {
             startegy = this.bindExpiriesData(startegy, nseData);
@@ -222,9 +240,13 @@ module.exports = {
   },
   bindOptionData(startegy, inputData, action) {
     startegy.trades.forEach((trade) => {
+
+
+      logger.info("startegy.expiry", this.formatDate(startegy.expiry));
+
       let selector =
         "records.data[? expiryDate==`" +
-        startegy.expiry +
+        this.formatDate(startegy.expiry) +
         "` && strikePrice == `" +
         trade.selectedstrike +
         "`]." +
@@ -252,32 +274,92 @@ module.exports = {
     startegy.expiries = nseDataSelected;
     return startegy;
   },
+
+
+  getCookies: async (instance, url_oc) => {
+    if (nseCookies) {
+      logger.info("Getting Cookie form cache");
+      return nseCookies;
+    }
+    try {
+      logger.info("Getting Cookies");
+      const response = await instance.get(url_oc);
+      nseCookies = response.headers['set-cookie'].join();
+      logger.info("Got Cookies");
+      return nseCookies;
+    } catch (error) {
+      if (error.response.status === 403) {
+        logger.error("getCookies =========> error.status === 403");
+        await getCookies()
+      } else {
+        logger.error("getCookies =========> error");
+      }
+    }
+  },
+
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
+    ///Ref: https://stackoverflow.com/questions/66905036/node-js-requests-get-returns-response-code-401-for-nse-india-website 
+
     logger.info("Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
         return;
       }
-      const responce = await axios
-        .get("https://www.nseindia.com/")
-        .then((res) => {
-          return axios.get(url, {
-            headers: {
-              cookie: res.headers["set-cookie"],
-            },
-          });
-        });
+      let headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'accept-language': 'en,gu;q=0.9,hi;q=0.8', 'accept-encoding': 'gzip, deflate, br'
+      }
+
+      const instance = axios.create({
+        baseURL: url,
+        headers: headers,
+        cookie: ""
+      });
+      var cookies = await this.getCookies(instance, "https://www.nseindia.com/");
+      
+      const instanceUrl = axios.create({
+        baseURL: "https://www.nseindia.com/",
+        headers: headers,
+        cookie: cookies
+        
+      });
+      
+      logger.info("instanceUrl:>>");
+      var responce = await instanceUrl.get(url);
+      // logger.info("responce.data:>>", JSON.stringify(responce.data));
       return responce.data;
+
+
+
+
+      // const responce = await axios
+      //   .get("https://www.nseindia.com/")
+      //   .then((res) => {
+      //     logger.info("res", res);
+      //     return axios.get(url, {
+      //       headers: {
+      //         cookie: res.headers["set-cookie"],
+      //       },
+      //     });
+      //   });
+      // logger.info("responce");
+      // logger.info(responce);
+      // logger.info(responce.data);
+      // return responce.data;
+
+
     } catch (e) {
       logger.error(e);
       return null;
       //return e.reponce.data
     }
-  },
+  }
+
+  ,
   getTradeTypes: function (startegy) {
-    var _result =  this.getObject(startegy, this.Maps.getAllTradeType);
+    var _result = this.getObject(startegy, this.Maps.getAllTradeType);
     logger.info("GetTradeTypes:>>", JSON.stringify(_result));
     return _result;
   },
@@ -307,7 +389,22 @@ module.exports = {
     return JSON.stringify(result); //JSON
   },
   setCacheObject: (key, value) => {
-   logger.info("Setting cache value for:", key, "and value is:", value);
+    logger.info("Setting cache value for:", key, "and value is:", value);
+  },
+  formatDate: (dateString) => {
+
+    var dateArray = dateString.split("-");
+    var year = dateArray[0];
+    var month = dateArray[1];
+    var day = dateArray[2];
+
+    var months = [
+      "Jan", "Feb", "Mar", "Apr",
+      "May", "Jun", "Jul", "Aug",
+      "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    return day + "-" + months[Number(month) - 1] + "-" + year;
   },
   getCacheObject: (key) => {
 

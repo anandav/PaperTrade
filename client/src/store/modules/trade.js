@@ -70,7 +70,7 @@ const tradeModule = {
                     buyorsell: "Sell", //Buy/Sell
                     tradetype: "Call", //Call/Put/Future
                     quantity: 1,
-                    selectedstrike: 17500,
+                    selectedstrike: 19500,
                     price: 30,
                     note: "",
                     order: _strategy.trades.length,

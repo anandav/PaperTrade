@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Do papertrade with out losing your capital. Inspired by Sensibull and Tradingview paper trades.",
   "main": "index.js",
-  "postinstall":"(cd server && npm install); (cd client && npm install)",
+  "postinstall": "(cd server && npm install); (cd client && npm install)",
   "scripts": {
     "dev": "npm run dev --prefix ./client & npm run dev --prefix ./server",
     "echo": "echo \"use `npm run dev` from both client and server folder \" && exit 1"
