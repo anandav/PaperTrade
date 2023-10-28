@@ -20,11 +20,9 @@
     "d3": "^7.6.1",
     "dayjs": "^1.10.7",
     "dotenv": "^8.2.0",
-    "js-datepicker": "^5.18.2",
     "node-static": "^0.7.11",
     "vue": "^2.6.12",
     "vue-router": "^3.4.5",
-    "vue2-daterange-picker": "^0.6.8",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
