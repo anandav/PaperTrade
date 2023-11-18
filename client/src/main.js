@@ -19,31 +19,30 @@ Vue.component("tooltip", tooltip);
 
 Vue.filter("formatDateTime", function (value) {
   if (value) {
-    return dayjs(value, ["YYYY", "YYYY-MM-DD"], "in", true).format(
-      "DD-MMM-YYYY HH:mm"
-      );
-    }
-  });
-  Vue.filter("formatDate", function (value) {
-    if (value) {
-      console.log('input value :>> ', value);
-      var result = dayjs(value, ["YYYY", "YYYY-MM-DD"], "in", true).format("DD-MMM-YYYY");
-      console.log('result value :>> ', result);
-      return result;
-    }
-  });
-  Vue.filter("decimal2", function (value) {
-    if (value) {
-      return parseFloat(value).toFixed(2);
-    }
-  });
-  
-  Vue.config.productionTip = false;
-  Vue.config.keyCodes = {
-    f2: 113,
-  };
-  
-  Vue.use(resource);
+    var _format = value.length <= 10 ? "DD-MMM-YYYY" : "DD-MMM-YYYY HH:mm";
+    return dayjs(value, ["YYYY", "YYYY-MM-DD"], "in", true).format(_format);
+  }
+});
+Vue.filter("formatDate", function (value) {
+  if (value) {
+    console.log('input value :>> ', value);
+    var result = dayjs(value, ["YYYY", "YYYY-MM-DD"], "in", true).format("DD-MMM-YYYY");
+    console.log('result value :>> ', result);
+    return result;
+  }
+});
+Vue.filter("decimal2", function (value) {
+  if (value) {
+    return parseFloat(value).toFixed(2);
+  }
+});
+
+Vue.config.productionTip = false;
+Vue.config.keyCodes = {
+  f2: 113,
+};
+
+Vue.use(resource);
 
 
 new Vue({

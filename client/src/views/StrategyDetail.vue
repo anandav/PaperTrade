@@ -60,7 +60,7 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Expiry </label>
           <span class="view">
-            {{ PropStrategy.expiry }}
+            {{ PropStrategy.expiry | formatDateTime }}
           </span>
 
           <input
@@ -254,7 +254,6 @@ export default {
     },
   },
   mounted: function () {
-    logger.info("Mounted Called", "...");
     if (!this.PropStrategy.isarchive) {
       this.PortfolioLoad({
         portfolio: this.Portfolio,

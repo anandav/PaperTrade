@@ -192,6 +192,7 @@ module.exports = {
       "PARAMETER",
       equity
     );
+
     return this.getData(url);
   },
   GetEquityOptionChain: async function (equity) {
@@ -301,7 +302,6 @@ module.exports = {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
     ///Ref: https://stackoverflow.com/questions/66905036/node-js-requests-get-returns-response-code-401-for-nse-india-website 
 
-    logger.info("Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
@@ -318,37 +318,16 @@ module.exports = {
         cookie: ""
       });
       var cookies = await this.getCookies(instance, "https://www.nseindia.com/");
-      
+
       const instanceUrl = axios.create({
         baseURL: "https://www.nseindia.com/",
         headers: headers,
         cookie: cookies
-        
+
       });
-      
-      logger.info("instanceUrl:>>");
+      logger.info("Calling URL:", url);
       var responce = await instanceUrl.get(url);
-      // logger.info("responce.data:>>", JSON.stringify(responce.data));
       return responce.data;
-
-
-
-
-      // const responce = await axios
-      //   .get("https://www.nseindia.com/")
-      //   .then((res) => {
-      //     logger.info("res", res);
-      //     return axios.get(url, {
-      //       headers: {
-      //         cookie: res.headers["set-cookie"],
-      //       },
-      //     });
-      //   });
-      // logger.info("responce");
-      // logger.info(responce);
-      // logger.info(responce.data);
-      // return responce.data;
-
 
     } catch (e) {
       logger.error(e);
@@ -392,6 +371,10 @@ module.exports = {
     logger.info("Setting cache value for:", key, "and value is:", value);
   },
   formatDate: (dateString) => {
+    logger.info("dateString:>>", dateString);
+    if (!dateString) {
+      dateString = getLastThursdayOfMonth();
+    }
 
     var dateArray = dateString.split("-");
     var year = dateArray[0];
@@ -409,4 +392,27 @@ module.exports = {
   getCacheObject: (key) => {
 
   },
+
+
+
+  getLastThursdayOfMonth: (year, month) => {
+    if(!year){
+      var _curretDate = new Date();
+      year = _curretDate.getFullYear();
+      month = _curretDate.getMonth()+1;
+    }
+    var lastDay = new Date(year, month, 0);
+    if (lastDay.getDay() < 4) {
+      lastDay.setDate(lastDay.getDate() - 6);
+    }
+    lastDay.setDate(lastDay.getDate() - (lastDay.getDay() - 4));
+    return lastDay;
+  }
+
+
+
+
+
+
+
 };

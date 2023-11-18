@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-
+import logs from "../../../common/logs";
 const utilitymixins = {
   data: function () {
     return {
@@ -53,13 +53,6 @@ const utilitymixins = {
         4: "Equity",
         // 5: "Crypto"
       },
-      EXCHANGE: {
-        1: "NSE",
-        2: "CDS",
-        3: "CBOE",
-        4: "BSE",
-        5: "MCX",
-      },
     };
   },
   methods: {
@@ -68,6 +61,9 @@ const utilitymixins = {
         "#strategy_" + strategy._id + " .chartplaceholder .chart";
       if (this.hasDerivative(strategy)) {
         let chartData = this.GenerateChartPoint(strategy);
+        let chartDatawithoutExit = this.GenerateChartPoint(strategy, true);
+        logs.warn(chartData);
+        logs.warn(chartDatawithoutExit);
         d3.selectAll(paretnId + " > *").remove();
         if (chartData?.length > 0) {
           //this._generateBarChart(chartData, paretnId);
@@ -238,7 +234,7 @@ const utilitymixins = {
       return { PnL, netPnL };
     },
 
-    GenerateChartPoint: function (strategy) {
+    GenerateChartPoint: function (strategy, skipExit ) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         let range = {
           x0: parseFloat(strategy.x0),
@@ -260,6 +256,11 @@ const utilitymixins = {
             continue;
           }
           let currentTrade = strategy.trades[i];
+          
+          if(currentTrade.isexit && skipExit){
+            continue;
+          }
+
           if (
             currentTrade.tradetype == "Call" ||
             currentTrade.tradetype == "Put" ||
