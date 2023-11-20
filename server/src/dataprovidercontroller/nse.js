@@ -244,7 +244,7 @@ module.exports = {
 
 
       logger.info("startegy.expiry", this.formatDate(startegy.expiry));
-
+      console.log("Foreach >>>>>>>>", this);
       let selector =
         "records.data[? expiryDate==`" +
         this.formatDate(startegy.expiry) +
@@ -317,6 +317,7 @@ module.exports = {
         headers: headers,
         cookie: ""
       });
+
       var cookies = await this.getCookies(instance, "https://www.nseindia.com/");
 
       const instanceUrl = axios.create({
@@ -325,6 +326,7 @@ module.exports = {
         cookie: cookies
 
       });
+
       logger.info("Calling URL:", url);
       var responce = await instanceUrl.get(url);
       return responce.data;
@@ -334,9 +336,7 @@ module.exports = {
       return null;
       //return e.reponce.data
     }
-  }
-
-  ,
+  },
   getTradeTypes: function (startegy) {
     var _result = this.getObject(startegy, this.Maps.getAllTradeType);
     logger.info("GetTradeTypes:>>", JSON.stringify(_result));
@@ -370,12 +370,24 @@ module.exports = {
   setCacheObject: (key, value) => {
     logger.info("Setting cache value for:", key, "and value is:", value);
   },
+  GetLastThursdayOfMonth: (year, month) => {
+    if (!year) {
+      var _curretDate = new Date();
+      year = _curretDate.getFullYear();
+      month = _curretDate.getMonth() + 1;
+    }
+    var lastDay = new Date(year, month, 0);
+    if (lastDay.getDay() < 4) {
+      lastDay.setDate(lastDay.getDate() - 6);
+    }
+    lastDay.setDate(lastDay.getDate() - (lastDay.getDay() - 4));
+    return lastDay;
+  },
   formatDate: (dateString) => {
     logger.info("dateString:>>", dateString);
     if (!dateString) {
-      dateString = getLastThursdayOfMonth();
+      dateString = this.GetLastThursdayOfMonth(null, null);
     }
-
     var dateArray = dateString.split("-");
     var year = dateArray[0];
     var month = dateArray[1];
@@ -392,22 +404,6 @@ module.exports = {
   getCacheObject: (key) => {
 
   },
-
-
-
-  getLastThursdayOfMonth: (year, month) => {
-    if(!year){
-      var _curretDate = new Date();
-      year = _curretDate.getFullYear();
-      month = _curretDate.getMonth()+1;
-    }
-    var lastDay = new Date(year, month, 0);
-    if (lastDay.getDay() < 4) {
-      lastDay.setDate(lastDay.getDate() - 6);
-    }
-    lastDay.setDate(lastDay.getDate() - (lastDay.getDay() - 4));
-    return lastDay;
-  }
 
 
 

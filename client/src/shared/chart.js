@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import logs from "../../../common/logs";
+import logs, { log } from "../../../common/logs";
 const utilitymixins = {
   data: function () {
     return {
@@ -62,14 +62,14 @@ const utilitymixins = {
       if (this.hasDerivative(strategy)) {
         let chartData = this.GenerateChartPoint(strategy);
         let chartDatawithoutExit = this.GenerateChartPoint(strategy, true);
-        logs.warn(chartData);
-        logs.warn(chartDatawithoutExit);
+        // logs.warn(chartData);
+        // logs.warn(chartDatawithoutExit);
         d3.selectAll(paretnId + " > *").remove();
         if (chartData?.length > 0) {
           //this._generateBarChart(chartData, paretnId);
           //this._generateLineChart(chartData, paretnId);
           // console.clear();
-          this.GenerateLineChart(chartData, paretnId, strategy);
+          this.GenerateLineChart(paretnId, strategy, chartData, chartDatawithoutExit);
         } else {
           let placeholder = [
             {
@@ -84,7 +84,7 @@ const utilitymixins = {
               price: 0,
             },
           ];
-          this.GenerateLineChart(placeholder, paretnId, strategy);
+          this.GenerateLineChart(paretnId, strategy, placeholder, null);
         }
       }
       else {
@@ -304,7 +304,7 @@ const utilitymixins = {
     /// Reg:  http://jsfiddle.net/samselikoff/Jqmzd/2/
     /// Ref:  https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
-    GenerateLineChart: function (chartData, paretnId, strategy) {
+    GenerateLineChart: function (paretnId, strategy, chartData, chartDatawithoutExit) {
       if (!chartData || !paretnId) return;
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
       //   const parentObj = document.querySelector(paretnId);
@@ -503,6 +503,7 @@ const utilitymixins = {
         .y((d) => yScale(d.netPnL));
 
       const lgdefID = `lg_${strategy._id}`;
+      const lgdefIDexit = `lgexit_${strategy._id}`;
       const lgurlid = `url(#${lgdefID})`;
 
       svg.attr("stroke-width", this.ChartSettings.DIMENSION.Line);
@@ -523,10 +524,35 @@ const utilitymixins = {
           );
         })
         .attr("stop-color", (d) => {
+          console.log("d.netPnL1");
+          console.log(d.netPnL);
           return d.netPnL >= 0
             ? this.ChartSettings.COLOURS.LGGREEN
             : this.ChartSettings.COLOURS.LGRED;
         });
+
+      // svg
+      //   .append("linearGradient")
+      //   .attr("id", lgdefIDexit)
+      //   .attr("gradientUnits", "userSpaceOnUse")
+      //   .attr("x1", 0)
+      //   .attr("x2", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+      //   .selectAll("stop")
+      //   .data(chartDatawithoutExit)
+      //   .join("stop")
+      //   .attr("offset", (d) => {
+      //     return (
+      //       xScale(d.strikePrice) /
+      //       (this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+      //     );
+      //   })
+      //   .attr("stop-color", (d) => {
+      //     console.log("d.netPnL2");
+      //     console.log(d.netPnL);
+      //     return d.netPnL >= 0
+      //       ? this.ChartSettings.COLOURS.LGGREEN
+      //       : this.ChartSettings.COLOURS.LGRED;
+      //   });
 
       svg
         .append("g")
@@ -580,6 +606,20 @@ const utilitymixins = {
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
+
+        // svg
+        // .append("path")
+        // .datum(chartDatawithoutExit)
+        // .attr("fill", "none")
+        // .attr("stroke", lgurlid)
+        // .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
+        // .attr("transform", "translate(0,0)")
+        // .attr("stroke-linejoin", "round")
+        // .attr("stroke-linecap", "round")
+        // .attr("d", line);
+  
+
+
 
       if (this.ChartSettings.PATTERN) {
         svg

@@ -4,6 +4,8 @@ dist
 launch.json
 DockerCommands.txt
 build.log
+node.core
+
 
 
 # local env files
