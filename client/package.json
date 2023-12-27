@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.4",
-    "axios": "^0.27.2",
+    "axios": "^1.6.3",
     "caniuse-lite": "^1.0.30001426",
     "core-js": "^3.6.4",
     "d3": "^7.6.1",
