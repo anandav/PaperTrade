@@ -1,8 +1,9 @@
 FROM node:lts-alpine
 WORKDIR /server
-COPY package*.json .
-RUN npm install
 COPY . .
-RUN npm run build
+RUN npm --prefix ./server install
+RUN npm --prefix ./server run build
+RUN cp -r ./server/dist/ /home/server
+RUN cp -r ./server/node_modules /home/server
 EXPOSE 9090
-CMD [ "node", "./dist/index.js" ]
+CMD [ "node", "/home/server/index.js" ]
