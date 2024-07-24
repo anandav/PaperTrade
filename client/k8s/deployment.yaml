@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ptclient
+spec:
+  selector:
+    matchLabels:
+      app: ptclient
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: ptclient
+    spec:
+      containers:
+      - name: ptclient
+        image: k8sclusterdevind01registry.azurecr.io/ptclient:002
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 8080

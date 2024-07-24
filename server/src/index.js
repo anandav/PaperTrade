@@ -7,10 +7,11 @@ const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
 const dataProvider = require("./dataprovidercontroller/index");
-const logger = require("../../common/logs");
+const logger = require("./common/logs");
 const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
+console.log("Connection string", conn_string);
 
 logger.info("port:", port);
 app.use(express.json());
@@ -19,7 +20,16 @@ app.use(helmet());
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
-app.use("/", express.static('public'));
+var options = {
+  index: "index.html"
+};
+
+//  app.use("/", options);
+app.get('/', function(req, res){
+  res.sendFile( __dirname + "/index.html"  );
+});
+// app.use("/", express.static('public'));
+
 //app.use(express.urlencoded({extended : true}));
 
 if (enable_dataapi == 'true') {

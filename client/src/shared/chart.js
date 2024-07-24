@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import logs, { log } from "../../../common/logs";
+import logs, { log } from "../common/logs";
 const utilitymixins = {
   data: function () {
     return {
