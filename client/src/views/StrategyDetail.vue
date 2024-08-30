@@ -232,7 +232,7 @@
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
-import logger from "../common/logs";
+//import logger from "../common/logs";
 
 export default {
   name: "StrategyDetail",

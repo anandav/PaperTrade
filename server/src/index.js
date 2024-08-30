@@ -44,8 +44,10 @@ if (conn_string) {
     conn_string,
     { useNewUrlParser: true, useUnifiedTopology: true },
     (x) => {
-      logger.info(x);
-      logger.info("DB connected...");
+	    if(!x){
+      		logger.info(x);
+		logger.info("DB connected...");
+	    }
     }
   );
 } else {

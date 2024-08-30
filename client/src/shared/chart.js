@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import logs, { log } from "../common/logs";
+//import logs, { log } from "../common/logs"
 const utilitymixins = {
   data: function () {
     return {
@@ -305,6 +305,7 @@ const utilitymixins = {
     /// Ref:  https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
     GenerateLineChart: function (paretnId, strategy, chartData, chartDatawithoutExit) {
+      console.log(chartDatawithoutExit);
       if (!chartData || !paretnId) return;
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
       //   const parentObj = document.querySelector(paretnId);
@@ -503,7 +504,7 @@ const utilitymixins = {
         .y((d) => yScale(d.netPnL));
 
       const lgdefID = `lg_${strategy._id}`;
-      const lgdefIDexit = `lgexit_${strategy._id}`;
+      //const lgdefIDexit = `lgexit_${strategy._id}`;
       const lgurlid = `url(#${lgdefID})`;
 
       svg.attr("stroke-width", this.ChartSettings.DIMENSION.Line);
