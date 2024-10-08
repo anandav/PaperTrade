@@ -92,11 +92,11 @@
         </div>
         <div class="flex-2">
           <div class="float-right space-x-2">
-            <!-- <button class="btn dark:text-orange-400 tooltip view" @click="onBindAddEditTrade()"
-              v-if="!this.PropStrategy.isarchive">
-              <i class="material-icons">playlist_add</i>
-              <tooltip :Value="txtAddTrade" />
-            </button> -->
+
+
+
+
+
 
             <button
               class="btn tooltip view"

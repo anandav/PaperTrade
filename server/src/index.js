@@ -13,7 +13,7 @@ const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
 console.log("Connection string", conn_string);
 
-logger.info("port:", port);
+// logger.info("port:", port);
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
@@ -25,8 +25,8 @@ var options = {
 };
 
 //  app.use("/", options);
-app.get('/', function(req, res){
-  res.sendFile( __dirname + "/index.html"  );
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + "/index.html");
 });
 // app.use("/", express.static('public'));
 
@@ -40,16 +40,24 @@ if (enable_dataapi == 'true') {
   });
 }
 if (conn_string) {
-  mongoose.connect(
-    conn_string,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    (x) => {
-	    if(!x){
-      		logger.info(x);
-		logger.info("DB connected...");
-	    }
-    }
-  );
+  mongoose
+  .connect(conn_string, { useNewUrlParser: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
+  // mongoose.connect(
+  //   conn_string,
+  //   { useNewUrlParser: true, useUnifiedTopology: true },
+  //   (x) => {
+  //     if (x) {
+  //       logger.error(x);
+  //     }
+  //     else {
+  //       logger.info("DB connected...");
+  //     }
+  //   }
+  // );
+  
+
 } else {
   logger.error("Empty connnection string!")
 }
