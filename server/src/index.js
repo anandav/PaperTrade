@@ -7,25 +7,30 @@ const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
 const dataProvider = require("./dataprovidercontroller/index");
+const logger = require("./common/logs");
 const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+
+console.log("Connection string", conn_string);
+// logger.info("port:", port);
 app.use(express.json());
-//app.use(express.urlencoded({extended : true}));
 app.use(cors());
-
-console.log("process.env.PORT:",process.env.PORT);
-console.log("port:",port);
-
 app.use(helmet());
-
-// app.use("/", (req, res, next) => {
-//   next();
-// });
 app.use("/strategy", strategyController);
 app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + "/index.html");
+});
+
 if (enable_dataapi == 'true') {
   app.use("/data", dataProvider);
 } else {
@@ -34,24 +39,17 @@ if (enable_dataapi == 'true') {
   });
 }
 
-app.use("/", express.static('public'));
-
 if (conn_string) {
-  mongoose.connect(
-    conn_string,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    (x) => {
-      console.log("Service Started...");
-    }
-  );
-}else { 
-  console.error("Empty connnection string!")
+  mongoose
+  .connect(conn_string, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => logger.info("MongoDB connected"))
+  .catch((err) => logger.error(err));
+} else {
+  logger.error("Empty connnection string!")
 }
 
-
-
-//app.use(require("./route"));
-app.listen(port, function () {
+app.listen(port, (x) => {
+  logger.info("Service Started");
 });
 
 

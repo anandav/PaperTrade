@@ -1,9 +1,11 @@
-FROM node:lts-alpine
+FROM node:lts-alpine AS build
 WORKDIR /client
-RUN npm install -g http-server
-COPY package*.json .
-RUN npm install
 COPY . .
-RUN npm run build
+RUN npm install
+RUN NODE_OPTIONS=--openssl-legacy-provider npm  run build
+
+FROM node:lts-alpine
+COPY --from=build /client/dist/ /home/client/
+RUN npm install -g http-server
 EXPOSE 8080
-CMD [ "http-server", "dist" ]
+CMD [ "http-server", "/home/client" ]

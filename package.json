@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Do papertrade with out losing your capital. Inspired by Sensibull and Tradingview paper trades.",
   "main": "index.js",
+  "postinstall": "(cd server && npm install); (cd client && npm install)",
   "scripts": {
+    "prebuild" : "ls .",
     "dev": "npm run dev --prefix ./client & npm run dev --prefix ./server",
     "echo": "echo \"use `npm run dev` from both client and server folder \" && exit 1"
   },
@@ -16,5 +18,26 @@
   "bugs": {
     "url": "https://github.com/anandav/NSE-PaperTrade/issues"
   },
-  "homepage": "https://github.com/anandav/NSE-PaperTrade#readme"
+  "homepage": "https://github.com/anandav/NSE-PaperTrade#readme",
+  "devDependencies": {
+    "eslint": "^8.30.0",
+    "eslint-plugin-vue": "^9.8.0"
+  },
+  "dependencies": {
+    "babel-eslint": "^10.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  }
 }

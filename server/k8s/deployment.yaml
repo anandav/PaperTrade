@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ptserver-api2
+  namespace: default
+  labels:
+    app:  ptserver-api2
+spec:
+  selector:
+    matchLabels:
+      app: ptserver-api2
+  replicas: 4
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  ptserver-api2
+    spec:
+      containers:
+      - name:  ptserver-api2
+        image:  k8sclusterdevind01registry.azurecr.io/ptserver:002
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort:  9090
+      restartPolicy: Always

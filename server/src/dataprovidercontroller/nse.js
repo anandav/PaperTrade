@@ -1,5 +1,6 @@
 const axios = require("axios").default;
 const jmespath = require("jmespath");
+const logger = require("../common/logs");
 
 require("dotenv/config");
 let currencyFutList = null;
@@ -7,15 +8,28 @@ let equityFutList = null;
 let indicesFutList = null;
 let mktLotsList = null;
 let lastupdated = null;
-const optionCEPath =
-  "records.data[?expiryDate==`{expiry}` && strikePrice == `{strikeprice}`]";
+let nseCookies = null;
+let baseUrl = "https://www.nseindia.com/";
+let headers = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+  'accept-language': 'en,gu;q=0.9,hi;q=0.8', 'accept-encoding': 'gzip, deflate, br'
+};
+let Instance = axios.create({
+  baseURL: baseUrl,
+  headers: headers,
+  cookie: nseCookies ?? ""
+});
+
+
 
 module.exports = {
   Maps: {
     getAllTradeType: "trades[?!isexit].tradetype",
   },
   Get: async function (portfolio, startegy, action) {
+    this.setCacheObject(`"action"`, action);
     if (action == "init") {
+      debugger;
       if (!lastupdated) {
         lastupdated = new Date();
       } else {
@@ -23,21 +37,34 @@ module.exports = {
       }
       let now = Date.now();
       let totalHourDiff = Math.abs(now - lastupdated) / 36e5;
+
+      //||      totalHourDiff > 24
       if (
         !equityFutList ||
         !indicesFutList ||
         !currencyFutList ||
-        !mktLotsList ||
-        totalHourDiff > 24
+        !mktLotsList
       ) {
-        indicesFutList = await this.GetIndicesList();
-        currencyFutList = await this.GetCurrencyFuture();
-        //equityFutList = await this.GetEquitiesFuturesList();
-        let csv = await this.GetMRKTLot();
-        mktLotsList = this.csvJSON(csv);
+        if (!indicesFutList) {
+          logger.info(`Getting Indices List`);
+          indicesFutList = await this.GetIndicesList();
+        }
+        if (!currencyFutList) {
+          logger.info(`Getting Currency Futures`);
+          currencyFutList = await this.GetCurrencyFuture();
+        }
+        if (!equityFutList) {
+          logger.info(`Getting Equity Futures`);
+          equityFutList = await this.GetEquitiesFuturesList();
+          logger.info(`Got Equity Futures`);
+        }
+        if (!mktLotsList) {
+          logger.info(`Getting Lot size`);
+          let csv = await this.GetMRKTLot();
+          mktLotsList = this.csvJSON(csv);
+          logger.info(`Got Lot size `)
+        }
         lastupdated = now;
-      } else {
-
       }
       let result = [];
       const indices = [
@@ -49,7 +76,6 @@ module.exports = {
         result.push({ ...item, symboltype: "Indices", istradeble: true });
       });
       if (equityFutList) {
-        console.log('equityFutList :>> ', equityFutList);
         equityFutList.forEach((item) => {
           result.push({
             name: item,
@@ -73,7 +99,14 @@ module.exports = {
     } else {
       let symbol = startegy.symbol;
       let symboltype = startegy.symboltype?.toLowerCase();
+      logger.info("symboltype ::>>", symboltype);
       let allTradeType = this.getTradeTypes(startegy);
+      logger.info("Action:>>", action);
+      if (allTradeType) {
+        logger.info("All Trade Type is Present")
+      } else {
+        logger.error("All Trade Type is null")
+      }
       let hasEquity = allTradeType.includes("Equity") || allTradeType.includes("Stock");
       let hasFutures = allTradeType.includes("Future");
       let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
@@ -82,28 +115,31 @@ module.exports = {
         let equityData = null;
         if (hasEquity) {
           equityData = await this.GetEquitiyDetail(symbol);
-          console.log("equityData :>> ", equityData);
-          startegy = this.bindEquityData(startegy, equityData);
+          startegy = this.bindEquityData(startegy, equityData, action);
         }
         if (hasFutures) {
           equityData = await this.GetEquityFuture(symbol);
-          console.log("equityData Futures:>> ", equityData);
+          logger.info("equityData Futures:>> ", equityData);
         }
         if (hasOptions) {
           equityData = await this.GetEquityOptionChain(symbol);
-          console.log("equityData Option:>> ", equityData);
+          logger.info("equityData Option:>> ", equityData);
           startegy = this.bindOptionData(startegy, equityData, action);
         }
         return startegy;
       }
 
+
       if (symboltype == "indices") {
+
         let nseData = null;
         if (hasFutures) {
           let futData = await this.GetIndicesFutures(symbol);
         }
         if (hasOptions) {
           nseData = await this.GetIndicesOptionChain(symbol);
+
+          // logger.info("Indices Option:>> ", nseData);
           startegy = this.bindOptionData(startegy, nseData, action);
           if (action == "getexpiries") {
             startegy = this.bindExpiriesData(startegy, nseData);
@@ -125,7 +161,6 @@ module.exports = {
       }
     }
   },
-
   GetEquitiyDetail: async function (equity) {
     const url = process.env.NSE_EQUITIES_API.replace("PARAMETER", equity);
     return this.getData(url);
@@ -150,13 +185,14 @@ module.exports = {
   },
   GetEquitiesFuturesList: async function () {
     var data = this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
-    console.log('data :>> ', data);
+    return data;
   },
   GetEquityFuture: async function (equity) {
     const url = process.env.NSE_EQUITIES_FUTURES_API.replace(
       "PARAMETER",
       equity
     );
+
     return this.getData(url);
   },
   GetEquityOptionChain: async function (equity) {
@@ -166,12 +202,10 @@ module.exports = {
     );
     return this.getData(url);
   },
-
   GetCurrencyFuture: async function () {
     const url = process.env.NSE_CURRENCY_FUTURES_LIST_API2;
     return this.getData(url);
   },
-
   GetMRKTLot: async function () {
     const url = process.env.NSE_MKT_LOTS;
     return this.getData(url);
@@ -183,21 +217,37 @@ module.exports = {
     );
     return this.getData(url);
   },
-  bindEquityData(startegy, inputData) {
+  bindEquityData(startegy, inputData, action) {
     startegy.trades.forEach((trade) => {
-      let selector = "priceInfo.lastPrice";
+      let selector = "priceInfo";
       let nseDataSelected = this.getObject(inputData, selector);
       if (nseDataSelected) {
-        trade.lasttradedprice = nseDataSelected;
+        //trade.lasttradedprice = nseDataSelected.lastPrice;
+
+        if (action == "updateltp") {
+          trade.lasttradedprice = nseDataSelected.lastPrice;
+        } else if (action == "updateexit") {
+
+          trade.lasttradedprice = nseDataSelected.lastPrice;
+          if (trade.isexit) {
+            trade.price = nseDataSelected.lastPrice;
+          }
+        } else if (action == "updateall") {
+          trade.price = trade.lasttradedprice = nseDataSelected.lastPrice;
+        }
       }
     });
     return startegy;
   },
   bindOptionData(startegy, inputData, action) {
     startegy.trades.forEach((trade) => {
+
+
+      logger.info("startegy.expiry", this.formatDate(startegy.expiry));
+      console.log("Foreach >>>>>>>>", this);
       let selector =
         "records.data[? expiryDate==`" +
-        startegy.expiry +
+        this.formatDate(startegy.expiry) +
         "` && strikePrice == `" +
         trade.selectedstrike +
         "`]." +
@@ -225,32 +275,72 @@ module.exports = {
     startegy.expiries = nseDataSelected;
     return startegy;
   },
+
+
+  getCookies: async (instance, url_oc) => {
+    if (nseCookies) {
+      logger.info("Getting Cookie form cache");
+      return nseCookies;
+    }
+    try {
+      logger.info("Getting Cookies");
+      const response = await instance.get(url_oc);
+      nseCookies = response.headers['set-cookie'].join();
+      logger.info("Got Cookies");
+      return nseCookies;
+    } catch (error) {
+      if (error.response.status === 403) {
+        logger.error("getCookies =========> error.status === 403");
+        await getCookies()
+      } else {
+        logger.error("getCookies =========> error");
+      }
+    }
+  },
+
   getData: async function (url) {
     ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
+    ///Ref: https://stackoverflow.com/questions/66905036/node-js-requests-get-returns-response-code-401-for-nse-india-website 
 
-    console.log(this.formatDate(), "Calling URL:", url);
     try {
       if (!url) {
         console.error("Url is empty or null.")
         return;
       }
-      const responce = await axios
-        .get("https://www.nseindia.com/")
-        .then((res) => {
-          return axios.get(url, {
-            headers: {
-              cookie: res.headers["set-cookie"],
-            },
-          });
-        });
+      let headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'accept-language': 'en,gu;q=0.9,hi;q=0.8', 'accept-encoding': 'gzip, deflate, br'
+      }
+
+      const instance = axios.create({
+        baseURL: url,
+        headers: headers,
+        cookie: ""
+      });
+
+      var cookies = await this.getCookies(instance, "https://www.nseindia.com/");
+
+      const instanceUrl = axios.create({
+        baseURL: "https://www.nseindia.com/",
+        headers: headers,
+        cookie: cookies
+
+      });
+
+      logger.info("Calling URL:", url);
+      var responce = await instanceUrl.get(url);
       return responce.data;
+
     } catch (e) {
+      logger.error(e);
       return null;
       //return e.reponce.data
     }
   },
   getTradeTypes: function (startegy) {
-    return this.getObject(startegy, this.Maps.getAllTradeType);
+    var _result = this.getObject(startegy, this.Maps.getAllTradeType);
+    logger.info("GetTradeTypes:>>", JSON.stringify(_result));
+    return _result;
   },
   getObject: function (inputData, selector) {
     return jmespath.search(inputData, selector);
@@ -277,30 +367,48 @@ module.exports = {
     }
     return JSON.stringify(result); //JSON
   },
-  formatDate: function () {
-    var d = new Date();
-    month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear(),
-      hour = d.getHours(),
-      min = d.getMinutes(),
-      sec = d.getSeconds(),
-      ms = d.getMilliseconds();
-
-
-    if (month.length < 2)
-      month = '0' + month;
-    if (day.length < 2)
-      day = '0' + day;
-    if (hour.length < 2)
-      hour = '0' + hour;
-    if (min.length < 2)
-      min = '0' + min;
-    if (sec.length < 2)
-      sec = '0' + sec;
-
-    var date = [day, month, year].join('-');
-    var time = [hour, min, sec].join(':');//+ "." + ms;
-    return date + " " + time;
+  setCacheObject: (key, value) => {
+    logger.info("Setting cache value for:", key, "and value is:", value);
   },
+  GetLastThursdayOfMonth: (year, month) => {
+    if (!year) {
+      var _curretDate = new Date();
+      year = _curretDate.getFullYear();
+      month = _curretDate.getMonth() + 1;
+    }
+    var lastDay = new Date(year, month, 0);
+    if (lastDay.getDay() < 4) {
+      lastDay.setDate(lastDay.getDate() - 6);
+    }
+    lastDay.setDate(lastDay.getDate() - (lastDay.getDay() - 4));
+    return lastDay;
+  },
+  formatDate: (dateString) => {
+    logger.info("dateString:>>", dateString);
+    if (!dateString) {
+      dateString = this.GetLastThursdayOfMonth(null, null);
+    }
+    var dateArray = dateString.split("-");
+    var year = dateArray[0];
+    var month = dateArray[1];
+    var day = dateArray[2];
+
+    var months = [
+      "Jan", "Feb", "Mar", "Apr",
+      "May", "Jun", "Jul", "Aug",
+      "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    return day + "-" + months[Number(month) - 1] + "-" + year;
+  },
+  getCacheObject: (key) => {
+
+  },
+
+
+
+
+
+
+
 };

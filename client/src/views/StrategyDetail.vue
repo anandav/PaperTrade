@@ -1,21 +1,10 @@
 <template>
   <div
-    class="
-      mx-3
-      my-3
-      rounded
-      border
-      drop-shadow-md
-      border-gray-300
-      dark:border-gray-700
-      bg-gray-200
-      dark:bg-gray-800
-    "
+    class="mx-3 my-3 rounded border drop-shadow-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
     :class="{ isStrategyEdit: editStrategy == PropStrategy._id }"
   >
     <div class="p-3 border-b border-gray-300 dark:border-gray-700">
       <div class="flex">
-
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Name </label>
           <span class="view">
@@ -42,7 +31,6 @@
             PlaceHolder="Symbol"
           />
         </div>
-
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Symbol Type </label>
           <span class="view">
@@ -69,14 +57,14 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Expiry </label>
           <span class="view">
-            {{ PropStrategy.expiry | formatDate }}
+            {{ PropStrategy.expiry | formatDateTime }}
           </span>
 
           <input
+            type="date"
             class="normal-edit edit"
             placeholder="Expiry"
             v-model="PropStrategy.expiry"
@@ -84,7 +72,9 @@
           />
         </div>
         <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Strike Price Step </label>
+          <label class="text-xxs block text-gray-500">
+            Strike Price Step
+          </label>
           <span class="view">
             {{ PropStrategy.strikepricestep }}
           </span>
@@ -100,17 +90,13 @@
           <label class="text-xxs block text-gray-500"> Created On </label>
           {{ PropStrategy.createdon | formatDateTime }}
         </div>
-
         <div class="flex-2">
           <div class="float-right space-x-2">
-            <button
-              class="btn dark:text-orange-400 tooltip view"
-              @click="onBindAddEditTrade()"
-              v-if="!this.PropStrategy.isarchive"
-            >
-              <i class="material-icons">playlist_add</i>
-              <tooltip :Value="txtAddTrade" />
-            </button>
+
+
+
+
+
 
             <button
               class="btn tooltip view"
@@ -145,11 +131,9 @@
               :Items="Portfolios"
               :Type="`Portfolios`"
               :Tooltip="txtMoveStrategy"
-              :MinItem="PropStrategy.isarchive? 0 : 3"
+              :MinItem="PropStrategy.isarchive ? 0 : 3"
               @itemclicked="onDropDownItemClicked"
-
             >
-         
             </dropdown>
 
             <dropdown
@@ -159,12 +143,14 @@
               :Type="`Menu`"
               @itemclicked="onActionDropDownItemClicked"
               :ExcludeItem="ExcluteStrategyAction"
-              Tooltip="Action">
+              Tooltip="Action"
+            >
             </dropdown>
 
             <button
               class="btn text-red-700 dark:text-red-700 tooltip view"
-              @dblclick="onDeleteStrategy()">
+              @dblclick="onDeleteStrategy()"
+            >
               <i class="material-icons">delete_forever</i>
               <tooltip :Value="txtDeleteStrategy" />
             </button>
@@ -172,18 +158,43 @@
         </div>
       </div>
     </div>
-    <div class="p-3" >
-      <div class="grid grid-cols-2" v-if="!this.PropStrategy.isarchive">
-        <div class="col-span-1 ">
+    <div class="p-3">
+      <!-- <div
+        class="w-1 cursor-pointer float-left"
+        v-if="!this.PropStrategy.isarchive"
+        @click="onHideChart()"
+      >
+        <i class="material-icons text-xxs" :class="hideChart ? 'hidden' : ''">
+          keyboard_double_arrow_left
+        </i>
+        <i class="material-icons text-xxs" :class="hideChart ? '' : 'hidden'">
+          keyboard_double_arrow_right
+        </i>
+      </div> -->
+
+      <div
+        class="w-1 cursor-pointer float-right"
+        v-if="!this.PropStrategy.isarchive"
+        @click="onHideChart()"
+      >
+        <i class="material-icons text-xxs" :class="hideChart ? 'hidden' : ''">
+          keyboard_double_arrow_right
+        </i>
+        <i class="material-icons text-xxs" :class="hideChart ? '' : 'hidden'">
+          keyboard_double_arrow_left
+        </i>
+      </div>
+      <div class="grid grid-cols-12" v-if="!this.PropStrategy.isarchive">
+        <div :class="{ 'col-span-12': hideChart, 'col-span-6': !hideChart }">
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
         </div>
-        <div class="col-span-1  " >
 
+        <div :class="{ hidden: hideChart, 'col-span-6': !hideChart }">
           <div class="chartplaceholder">
-            <div class="col-span-1">
+            <div class="">
               <input
                 type="number"
                 v-model="PropStrategy.x0"
@@ -201,8 +212,7 @@
                 @keydown.enter="onShowChart()"
               />
             </div>
-            <div class="chart">
-            </div>
+            <div class="chart"></div>
           </div>
         </div>
       </div>
@@ -215,15 +225,19 @@
       </div>
     </div>
   </div>
+
+
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
+//import logger from "../common/logs";
 
 export default {
   name: "StrategyDetail",
   components: { TradeList },
+
   computed: {
     ...mapGetters({
       TradeDetail: "tradeModule/TradeDetail",
@@ -252,6 +266,7 @@ export default {
   },
   data: function () {
     return {
+      
       txtEditStrategy: this.$getConst("editStrategy"),
       txtSaveStrategy: this.$getConst("saveStrategy"),
       txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
@@ -263,11 +278,21 @@ export default {
       txtMoveStrategy: this.$getConst("moveStrategy"),
       editStrategy: null,
       StrategyAction: [
-        { _id: "1", name: "Duplicate", displaytext: "Duplicate" , icon: "content_copy" },
+        {
+          _id: "1",
+          name: "Duplicate",
+          displaytext: "Duplicate",
+          icon: "content_copy",
+        },
         { _id: "2", name: "Archive", displaytext: "Archive", icon: "archive" },
-        { _id: "3", name: "Unarchive", displaytext: "Restore", icon: "archive" },
+        {
+          _id: "3",
+          name: "Unarchive",
+          displaytext: "Restore",
+          icon: "archive",
+        },
       ],
-      
+      hideChart: this.PropStrategy.hidechart,
     };
   },
   methods: {
@@ -284,24 +309,16 @@ export default {
 
     onEditStrategy: function (strategy) {
       this.editStrategy = strategy._id;
-      // this.StrategySymbolChange({
-      //   portfolio: this.Portfolio,
-      //   strategy,
-      //   action: "getexpiries",
-      // }).then((x) => {
-      //   this.editStrategy = strategy._id;
-      // });
     },
     onSaveStrategy: function () {
       this.editStrategy = null;
-
       this.Symbols.forEach((x) => {
         if (x.name == this.PropStrategy.symbol) {
           this.PropStrategy.symboltype = x.symboltype;
-          //this.PropStrategy.lotsize = x.lotsize;
         }
       });
       this.EditStrategy(this.PropStrategy);
+      this.GenerateChart(this.PropStrategy);
     },
     onDeleteStrategy: function () {
       this.DeleteStrategy({ _id: this.PropStrategy._id });
@@ -310,7 +327,7 @@ export default {
       this.BindAddEditTrade(this.PropStrategy);
     },
     onShowChart: function () {
-     this.GenerateChart(this.PropStrategy);
+      this.GenerateChart(this.PropStrategy);
     },
     onDropDownItemClicked: function (type, id) {
       if (type == "Portfolios") {
@@ -345,18 +362,10 @@ export default {
     onSymbolTypeKeyUp: function (Value) {
       this.PropStrategy.symboltype = Value;
     },
-    // onGetLiveData: function () {
-    //   this.GetLiveData({
-    //     portfolio: this.Portfolio,
-    //     strategy: this.PropStrategy,
-    //   }).then(() => {
-    //     //this.EditStrategy(this.PropStrategy);
-    //   });
-    // },
-    // onSymbolChange: function (Value) {
-    //   // this.PropStrategy.symbol = Value;
-    //   // this.GetLiveData({"portfolio": this.Portfolio,"strategy": this.PropStrategy,"action" : "detail"})
-    // },
+    onHideChart: function () {
+      this.PropStrategy.hidechart = this.hideChart = !this.hideChart;
+      this.onSaveStrategy();
+    },
   },
   mixins: [myMixins],
   props: {
@@ -364,6 +373,7 @@ export default {
     PropTrade: { type: Object },
     SelectedTraded: { type: Array },
   },
+
 };
 </script>
 
@@ -371,15 +381,15 @@ export default {
 [v-cloak] {
   display: none;
 }
-.form-control {
-  width: 200px;
-}
+
 .edit {
   display: none;
 }
+
 .isStrategyEdit .edit {
   display: inline-block;
 }
+
 .isStrategyEdit .view {
   display: none;
 }

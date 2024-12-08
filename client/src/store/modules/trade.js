@@ -23,9 +23,7 @@ const tradeModule = {
     },
     mutations: {
         [BINDADDEDITTRADE](state, { _strategy, _trade }) {
-            // state.TradeDetail = _tradeDetail;
             _strategy.trades.push(_trade);
-
         },
         [ADDEDITTRADE](state, { strategies, _strategy }) {
             var foundIndex = strategies.findIndex(x => x._id == _strategy._id);
@@ -49,7 +47,6 @@ const tradeModule = {
                 items.strategies[foundIndex] = items.strategy
             }
         }
-
     },
     actions: {
         SortTrades(context, strategy) {
@@ -73,7 +70,7 @@ const tradeModule = {
                     buyorsell: "Sell", //Buy/Sell
                     tradetype: "Call", //Call/Put/Future
                     quantity: 1,
-                    selectedstrike: 17500,
+                    selectedstrike: 19500,
                     price: 30,
                     note: "",
                     order: _strategy.trades.length,

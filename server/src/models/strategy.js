@@ -33,6 +33,10 @@ const strategySchema = schema({
     type: Boolean,
     default: false
   },
+  hidechart: {
+    type: Boolean,
+    default: false
+  },
   isarchive: {
     type: Boolean,
     default: false

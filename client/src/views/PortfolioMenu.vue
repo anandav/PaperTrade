@@ -13,7 +13,7 @@
             py-2
             ml-2
             w-48
-            bg-gray-200
+            bg-gray-100
             dark:bg-gray-600
             focus:outline-none
             rounded
@@ -24,12 +24,8 @@
         />
       </div>
     </div>
-    <div class="mt-5 " @drop="onDrop($event)">
-      <!-- <div class="">
-        <div v-show="isLoading" class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div> -->
+    <div class="mt-5 overflow-y-auto h-screen " @drop="onDrop($event)">
+    
       <div
         class="   border-b border-gray-200 dark:border-gray-800 "
         draggable="true"

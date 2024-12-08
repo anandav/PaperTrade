@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-
+//import logs, { log } from "../common/logs"
 const utilitymixins = {
   data: function () {
     return {
@@ -53,13 +53,6 @@ const utilitymixins = {
         4: "Equity",
         // 5: "Crypto"
       },
-      EXCHANGE: {
-        1: "NSE",
-        2: "CDS",
-        3: "CBOE",
-        4: "BSE",
-        5: "MCX",
-      },
     };
   },
   methods: {
@@ -68,12 +61,15 @@ const utilitymixins = {
         "#strategy_" + strategy._id + " .chartplaceholder .chart";
       if (this.hasDerivative(strategy)) {
         let chartData = this.GenerateChartPoint(strategy);
+        let chartDatawithoutExit = this.GenerateChartPoint(strategy, true);
+        // logs.warn(chartData);
+        // logs.warn(chartDatawithoutExit);
         d3.selectAll(paretnId + " > *").remove();
         if (chartData?.length > 0) {
           //this._generateBarChart(chartData, paretnId);
           //this._generateLineChart(chartData, paretnId);
           // console.clear();
-          this.GenerateLineChart(chartData, paretnId, strategy);
+          this.GenerateLineChart(paretnId, strategy, chartData, chartDatawithoutExit);
         } else {
           let placeholder = [
             {
@@ -88,7 +84,7 @@ const utilitymixins = {
               price: 0,
             },
           ];
-          this.GenerateLineChart(placeholder, paretnId, strategy);
+          this.GenerateLineChart(paretnId, strategy, placeholder, null);
         }
       }
       else {
@@ -238,7 +234,7 @@ const utilitymixins = {
       return { PnL, netPnL };
     },
 
-    GenerateChartPoint: function (strategy) {
+    GenerateChartPoint: function (strategy, skipExit ) {
       if (strategy && strategy.trades && strategy.trades.length > 0) {
         let range = {
           x0: parseFloat(strategy.x0),
@@ -260,13 +256,17 @@ const utilitymixins = {
             continue;
           }
           let currentTrade = strategy.trades[i];
+          
+          if(currentTrade.isexit && skipExit){
+            continue;
+          }
+
           if (
             currentTrade.tradetype == "Call" ||
             currentTrade.tradetype == "Put" ||
             currentTrade.tradetype == "Future"
           ) {
             let _strikePrice = range.x0;
-            console.log('_strikePrice :>> ', _strikePrice);
             let j = 0;
             do {
               let PnlObj = this.getNetPnL(_strikePrice, currentTrade, strategy);
@@ -286,7 +286,6 @@ const utilitymixins = {
             } while (range.x1 >= _strikePrice);
           }
         }
-        console.log('chartData :>> ', chartData);
         return chartData;
       }
     },
@@ -305,16 +304,14 @@ const utilitymixins = {
     /// Reg:  http://jsfiddle.net/samselikoff/Jqmzd/2/
     /// Ref:  https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
-    GenerateLineChart: function (chartData, paretnId, strategy) {
+    GenerateLineChart: function (paretnId, strategy, chartData, chartDatawithoutExit) {
+      console.log(chartDatawithoutExit);
       if (!chartData || !paretnId) return;
-
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
-
       //   const parentObj = document.querySelector(paretnId);
       //  const __node1 =  document.createElement("input")
       //  __node1.setAttribute("class","chart-mini-edit ml-12")
       //parentObj.append(__node1)
-
       this.WIDTH = _WIDTH > 0 ? _WIDTH : this.WIDTH;
       const minPnL = d3.min(chartData, (d) => d.netPnL);
       const maxPnL = d3.max(chartData, (d) => d.netPnL);
@@ -507,6 +504,7 @@ const utilitymixins = {
         .y((d) => yScale(d.netPnL));
 
       const lgdefID = `lg_${strategy._id}`;
+      //const lgdefIDexit = `lgexit_${strategy._id}`;
       const lgurlid = `url(#${lgdefID})`;
 
       svg.attr("stroke-width", this.ChartSettings.DIMENSION.Line);
@@ -527,10 +525,35 @@ const utilitymixins = {
           );
         })
         .attr("stop-color", (d) => {
+          console.log("d.netPnL1");
+          console.log(d.netPnL);
           return d.netPnL >= 0
             ? this.ChartSettings.COLOURS.LGGREEN
             : this.ChartSettings.COLOURS.LGRED;
         });
+
+      // svg
+      //   .append("linearGradient")
+      //   .attr("id", lgdefIDexit)
+      //   .attr("gradientUnits", "userSpaceOnUse")
+      //   .attr("x1", 0)
+      //   .attr("x2", this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+      //   .selectAll("stop")
+      //   .data(chartDatawithoutExit)
+      //   .join("stop")
+      //   .attr("offset", (d) => {
+      //     return (
+      //       xScale(d.strikePrice) /
+      //       (this.WIDTH + this.MARGIN.LEFT + this.MARGIN.RIGHT)
+      //     );
+      //   })
+      //   .attr("stop-color", (d) => {
+      //     console.log("d.netPnL2");
+      //     console.log(d.netPnL);
+      //     return d.netPnL >= 0
+      //       ? this.ChartSettings.COLOURS.LGGREEN
+      //       : this.ChartSettings.COLOURS.LGRED;
+      //   });
 
       svg
         .append("g")
@@ -584,6 +607,20 @@ const utilitymixins = {
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("d", line);
+
+        // svg
+        // .append("path")
+        // .datum(chartDatawithoutExit)
+        // .attr("fill", "none")
+        // .attr("stroke", lgurlid)
+        // .attr("stroke-width", this.ChartSettings.DIMENSION.Line)
+        // .attr("transform", "translate(0,0)")
+        // .attr("stroke-linejoin", "round")
+        // .attr("stroke-linecap", "round")
+        // .attr("d", line);
+  
+
+
 
       if (this.ChartSettings.PATTERN) {
         svg

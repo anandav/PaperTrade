@@ -7,7 +7,7 @@
         z-50
         drop-shadow-md
         py-5
-        bg-gray-200
+        bg-gray-100
         dark:bg-gray-900 
         dark:border-b 
         dark:border-gray-800
@@ -16,9 +16,9 @@
     >
       <div class="container mx-auto">
         <router-link to="/" class="pl-5">Paper Trade</router-link>
-        <!-- <router-link to="/builder" class="pl-5"
+        <router-link to="/builder" class="pl-5"
           > Place holder</router-link
-        > -->
+        >
         <!-- <router-link to="/about" class="pl-5">About</router-link> -->
         <div class="float-right">
           <label class="mr-3">
