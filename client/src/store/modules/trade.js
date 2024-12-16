@@ -9,7 +9,9 @@ import {
 
 
 const axios = require("axios");
-const apiUrl = process.env.VUE_APP_APIURL || "/";
+const apiUrl = process.env.APP_APIURL || "/";
+
+
 
 const tradeModule = {
     namespaced: true,
