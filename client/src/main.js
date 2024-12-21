@@ -2,7 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-
+// import dotenv from  'dotenv'
 import resource from "./shared/resource";
 import "./tailwind.css";
 import dayjs from "dayjs";
@@ -10,6 +10,17 @@ import dropdown from "./components/ui/DropDown";
 import autocomplete from "./components/ui/AutoComplete";
 import tooltip from "./components/ui/ToolTip";
 
+
+// dotenv.config({path : '/home/aditi/Projects/PaperTrade/client/.env'});
+
+const apiUrl = process.env;
+console.log('Main process.env:', apiUrl);
+
+
+// import envPaths from 'env-paths';
+// var paths = envPaths('MyApp');
+// console.log('paths.data:', paths.data);
+// console.log('paths.config:', paths.config);
 
 
 

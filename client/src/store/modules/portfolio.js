@@ -1,15 +1,15 @@
-import "dotenv/config";
 import {
   SETALLPORTFOLIOS,
   SETPORTFOLIO,
   SAVEALLPORTFOLIO,
   DELETEPORTFOLIE,
 } from "../mutationtype";
+import dotenv from  "dotenv";
+dotenv.config();
 
 const axios = require("axios");
 const apiUrl = process.env.APP_APIURL || "/";
-console.log("process.env.APP_APIURL :>>", process.env.APP_APIURL);
-console.log("apiUrl :>>", apiUrl);
+
 const portfolioModule = {
   namespaced: true,
   state: {
@@ -44,6 +44,7 @@ const portfolioModule = {
   },
   actions: {
     async GetAllPortfolios({ commit }) {
+      const apiUrl = process.env.APP_APIURL || "/";
       const response = await axios.get(apiUrl + "portfolio");
       commit(SETALLPORTFOLIOS, response.data);
     },
