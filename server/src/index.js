@@ -12,9 +12,9 @@ const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
 
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+//const swaggerUi = require('swagger-ui-express');
+//const swaggerDocument = require('./swagger.json');
+//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 
@@ -42,7 +42,7 @@ if (enable_dataapi == 'true') {
 
 if (conn_string) {
   mongoose
-  .connect(conn_string, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(conn_string)
   .then(() => logger.info("MongoDB connected"))
   .catch((err) => logger.error(err));
 } else {
