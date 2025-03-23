@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema,
   model = mongoose.model.bind(mongoose);
 const BUYORSELL = {
-  BUY: 0,
-  SELL: 1,
+//  'BUY': 0,
+//  'SELL': 1,
 };
 const CALLPUTFUT = {
-  CALL: 0,
-  PUT: 1,
-  FUT: 2,
+//  'CALL': 0,
+//  'PUT': 1,
+//  'FUT': 2,
 };
 
 const tradeSchema = schema({
