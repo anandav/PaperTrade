@@ -6,8 +6,9 @@ import {
     SETEXCHANGEDETAIL,
 } from "../mutationtype";
 
-const axios = require("axios");
-const apiUrl = process.env.APP_APIURL || "/";
+import axios from "axios";
+// const axios = require("axios");
+const apiUrl = process.env.VUE_APP_APIURL || "/";
 const strategyModule = {
     namespaced: true,
     state: {

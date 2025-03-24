@@ -5,10 +5,11 @@ import {
   DELETEPORTFOLIE,
 } from "../mutationtype";
 import dotenv from  "dotenv";
+import axios from "axios";
 dotenv.config();
 
-const axios = require("axios");
-const apiUrl = process.env.APP_APIURL || "/";
+// const axios = require("axios");
+const apiUrl = process.env.VUE_APP_APIURL || "/";
 
 const portfolioModule = {
   namespaced: true,
@@ -44,7 +45,8 @@ const portfolioModule = {
   },
   actions: {
     async GetAllPortfolios({ commit }) {
-      const apiUrl = process.env.APP_APIURL || "/";
+      const apiUrl = process.env.VUE_APP_APIURL || "/";
+      console.log(apiUrl);
       const response = await axios.get(apiUrl + "portfolio");
       commit(SETALLPORTFOLIOS, response.data);
     },

@@ -8,6 +8,7 @@ const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
 const dataProvider = require("./dataprovidercontroller/index");
 const logger = require("./common/logs");
+const myenv = process.env;
 const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
@@ -18,7 +19,7 @@ const conn_string = process.env.DBCONNECTIONSTRING;
 
 
 
-console.log("Connection string", conn_string);
+//console.log("Connection string", conn_string);
 // logger.info("port:", port);
 app.use(express.json());
 app.use(cors());

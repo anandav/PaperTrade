@@ -12,7 +12,7 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
   if (fieldName && fieldValue) {
     result = await Strategy.aggregate(
       [
-        { $match: { [fieldName]: mongoose.Types.ObjectId(fieldValue) } },
+        { $match: { [fieldName]: new mongoose.Types.ObjectId(`${fieldValue}`) } },
         { $sort: { "createdon": -1, 'trades.order': -1 } }
       ]
     );
