@@ -30,7 +30,4 @@ Web API uses MongoDB Atlas, change the connection string in the `.env` file to p
 > :warning: Change the endpoint in server's `.env` file to get live updates from NSE. (Unfortunately, I can't share those API URLs.)
 > :warning: Delete functionality won't ask for conformation, use 'double click' to delete.
 
- 
-
-
 
