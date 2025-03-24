@@ -7,7 +7,6 @@ const portfolio = require("../models/portfolio");
 require("dotenv/config");
 
 portfolicontroller.get("/", async (req, res) => {
-    console.log("portfolio root called.")
   const data = await Portfolio.find().sort({ modifiedon: -1 });
   res.json(data);
 });

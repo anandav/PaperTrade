@@ -10,7 +10,7 @@ import dropdown from "./components/ui/DropDown";
 import autocomplete from "./components/ui/AutoComplete";
 import tooltip from "./components/ui/ToolTip";
 
-
+console.log(process.env);
 // dotenv.config({path : '/home/aditi/Projects/PaperTrade/client/.env'});
 
 const apiUrl = process.env;
