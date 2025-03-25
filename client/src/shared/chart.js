@@ -61,15 +61,12 @@ const utilitymixins = {
         "#strategy_" + strategy._id + " .chartplaceholder .chart";
       if (this.hasDerivative(strategy)) {
         let chartData = this.GenerateChartPoint(strategy);
-        let chartDatawithoutExit = this.GenerateChartPoint(strategy, true);
+        //let chartDatawithoutExit = this.GenerateChartPoint(strategy, true);
         // logs.warn(chartData);
         // logs.warn(chartDatawithoutExit);
         d3.selectAll(paretnId + " > *").remove();
         if (chartData?.length > 0) {
-          //this._generateBarChart(chartData, paretnId);
-          //this._generateLineChart(chartData, paretnId);
-          // console.clear();
-          this.GenerateLineChart(paretnId, strategy, chartData, chartDatawithoutExit);
+          this.GenerateLineChart(paretnId, strategy, chartData);
         } else {
           let placeholder = [
             {
@@ -84,7 +81,7 @@ const utilitymixins = {
               price: 0,
             },
           ];
-          this.GenerateLineChart(paretnId, strategy, placeholder, null);
+          this.GenerateLineChart(paretnId, strategy, placeholder);
         }
       }
       else {
@@ -304,8 +301,7 @@ const utilitymixins = {
     /// Reg:  http://jsfiddle.net/samselikoff/Jqmzd/2/
     /// Ref:  https://observablehq.com/@elishaterada/simple-area-chart-with-tooltip
     /// Ref:  https://observablehq.com/@jlchmura/d3-change-line-chart-with-positive-negative-fill
-    GenerateLineChart: function (paretnId, strategy, chartData, chartDatawithoutExit) {
-      console.log(chartDatawithoutExit);
+    GenerateLineChart: function (paretnId, strategy, chartData) {
       if (!chartData || !paretnId) return;
       const _WIDTH = document.querySelectorAll(paretnId)[0].clientWidth;
       //   const parentObj = document.querySelector(paretnId);
@@ -525,8 +521,6 @@ const utilitymixins = {
           );
         })
         .attr("stop-color", (d) => {
-          console.log("d.netPnL1");
-          console.log(d.netPnL);
           return d.netPnL >= 0
             ? this.ChartSettings.COLOURS.LGGREEN
             : this.ChartSettings.COLOURS.LGRED;
