@@ -10,20 +10,6 @@ import dropdown from "./components/ui/DropDown";
 import autocomplete from "./components/ui/AutoComplete";
 import tooltip from "./components/ui/ToolTip";
 
-console.log(process.env);
-// dotenv.config({path : '/home/aditi/Projects/PaperTrade/client/.env'});
-
-const apiUrl = process.env;
-console.log('Main process.env:', apiUrl);
-
-
-// import envPaths from 'env-paths';
-// var paths = envPaths('MyApp');
-// console.log('paths.data:', paths.data);
-// console.log('paths.config:', paths.config);
-
-
-
 Vue.component("autocomplete", autocomplete);
 Vue.component("dropdown", dropdown);
 Vue.component("tooltip", tooltip);

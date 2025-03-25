@@ -46,7 +46,6 @@ const portfolioModule = {
   actions: {
     async GetAllPortfolios({ commit }) {
       const apiUrl = process.env.VUE_APP_APIURL || "/";
-      console.log(apiUrl);
       const response = await axios.get(apiUrl + "portfolio");
       commit(SETALLPORTFOLIOS, response.data);
     },
