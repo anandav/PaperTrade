@@ -29,7 +29,6 @@ app.use("/portfolio", portfolioCotroller);
 app.use("/trade", tradeController);
 
 app.get('/', function (req, res) {
-  // res.sendFile(__dirname + "/index.html");
   res.send("<h1>helloworld</h1>");
 });
 
