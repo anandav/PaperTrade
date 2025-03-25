@@ -1,2 +1,4 @@
-sudo docker stop $(sudo docker ps -a -q -f ancestor='ptclient')
+#!/bin/bash
+
+sudo docker stop $(sudo docker ps -a -q -f ancestor='ptserver')
 
