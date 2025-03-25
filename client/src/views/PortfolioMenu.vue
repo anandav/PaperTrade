@@ -51,7 +51,7 @@
               Portfolio && item._id == Portfolio._id,
           }"
         >
-          <div class="p-2" tabindex="0">
+          <div class="p-2">
             <div class="inline-block">
               <div
                 class="view"
