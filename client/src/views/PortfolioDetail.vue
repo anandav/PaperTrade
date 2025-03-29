@@ -82,7 +82,7 @@
             @click="onAddNewStrategy()"
           >
             <i class="material-icons">playlist_add</i>
-            <tooltip :Value="txtAddStrategy" />
+            <tooltip :Value="getLableConst.addNewStrategy" />
           </button>
           <button class="btn tooltip view" @click="onEditPortfolio(Portfolio)">
             <i class="material-icons">edit</i>
@@ -116,6 +116,7 @@
   </div>
 </template>
 <script>
+import { inject } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import StrategyDetail from "./StrategyDetail.vue";
 import myMixins from "../shared/chart";
@@ -187,9 +188,12 @@ export default {
   data: function () {
     return {
       isEdit: false,
-      txtAddStrategy: this.$getConst("addNewStrategy"),
       editPortfolio: null,
     };
+  },
+  setup() {
+    let getLableConst = inject('GETCONST');
+    return { getLableConst };
   },
 };
 </script>

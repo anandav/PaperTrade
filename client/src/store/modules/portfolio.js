@@ -4,13 +4,9 @@ import {
   SAVEALLPORTFOLIO,
   DELETEPORTFOLIE,
 } from "../mutationtype";
-import dotenv from  "dotenv";
 import axios from "axios";
-dotenv.config();
 
-// const axios = require("axios");
 const apiUrl = process.env.VUE_APP_APIURL || "/";
-
 const portfolioModule = {
   namespaced: true,
   state: {

@@ -21,11 +21,13 @@
           <div class="9 table-cell px-1 py-4">Total Price</div>
           <div class="10 table-cell px-1 w-28">
             <div class="space-x-1">
-              <button class="btn dark:text-orange-400 tooltip view" @click="onBindAddEditTrade()"
-              v-if="!this.PropStrategy.isarchive">
-              <i class="material-icons">playlist_add</i>
-              <tooltip :Value="txtAddTrade" />
-            </button>
+              <button class="btn dark:text-orange-400 tooltip 
+              view" @click="onBindAddEditTrade()" v-if="!this.PropStrategy.isarchive">
+                <i class="material-icons">playlist_add</i>
+                <tooltip :Value="getLableConst.addTrade" />
+
+
+              </button>
 
               <button class="btn tooltip" @click="onExitAllTrade();">
                 <i class="material-icons">exit_to_app</i>
@@ -75,17 +77,17 @@
                 @change="onCheckStateChanged(item)" />
             </label>
           </div>
-          <div class="3 table-cell px-1 py-3" v-if="PropStrategy.symboltype != 'Equity'"> 
+          <div class="3 table-cell px-1 py-3" v-if="PropStrategy.symboltype != 'Equity'">
 
             <div v-show="item.tradetype == 'Call' || item.tradetype == 'Put'" class="view">
-              <button class="tooltip " @click="onIncrementDecrement(-1,item)">
+              <button class="tooltip " @click="onIncrementDecrement(-1, item)">
                 <i class="font13px material-icons">arrow_downward</i>
                 <tooltip Value="Decrement" />
               </button>
               <span class="">
                 {{ item.selectedstrike }}
               </span>
-              <button class="tooltip  " @click="onIncrementDecrement(1,item)">
+              <button class="tooltip  " @click="onIncrementDecrement(1, item)">
                 <i class="font13px material-icons">arrow_upward</i>
                 <tooltip Value="Increment" />
               </button>
@@ -142,27 +144,27 @@
             </div>
           </div>
           <div class="9 table-cell px-1 py-3">
-            {{ item.buyorsell == "Buy" ? ( item.price * (PropStrategy.lotsize * item.quantity) * -1 ).toFixed(2) :
-            (item.price * (PropStrategy.lotsize * item.quantity)).toFixed( 2 ) }}
+            {{ item.buyorsell == "Buy" ? (item.price * (PropStrategy.lotsize * item.quantity) * -1).toFixed(2) :
+              (item.price * (PropStrategy.lotsize * item.quantity)).toFixed(2) }}
           </div>
           <div class="10 table-cell px-1">
             <div class="space-x-1">
               <button class="btn tooltip view" @click="onInlineEditTrade(item)">
                 <i class="material-icons">edit</i>
-                <tooltip :Value="txtEditTrade" />
+                <tooltip :Value="getLableConst.editTrade" />
               </button>
               <button class="btn tooltip edit" @click="onInlineSaveTrade(item)">
                 <i class="material-icons">save</i>
-                <tooltip :Value="txtSaveTrade" />
+                <tooltip :Value="getLableConst.saveTrade" />
               </button>
               <button class="btn tooltip view" v-show="!item.isexit" @click="onInlineExitTrade(item)">
                 <i class="material-icons">logout</i>
-                <tooltip :Value="txtExitTrade" />
+                <tooltip :Value="getLableConst.exitTrade" />
               </button>
               <button class="btn tooltip text-red-600 dark:text-red-700"
                 @dblclick="onDeleteTrade(PropStrategy._id, item._id)">
                 <i class="material-icons">delete_forever</i>
-                <tooltip :Value="txtDeleteTrade" />
+                <tooltip :Value="getLableConst.deleteTrade" />
               </button>
             </div>
           </div>
@@ -204,6 +206,7 @@
   </div>
 </template>
 <script>
+import { inject } from "vue";
 import { mapActions, mapState, mapGetters } from "vuex";
 import myMixins from "../shared/chart";
 import SwitchButton from "../components/ui/SwitchButton";
@@ -219,12 +222,13 @@ export default {
     return {
       selectedIDs: [],
       editTrade: null,
-      txtAddTrade: this.$getConst("addTrade"),
-      txtEditTrade: this.$getConst("editTrade"),
-      txtSaveTrade: this.$getConst("saveTrade"),
-      txtExitTrade: this.$getConst("exitTrade"),
-      txtDeleteTrade: this.$getConst("deleteTrade"),
-      txtGetLiveData: this.$getConst("getLiveData"),
+
+      // txtAddTrade: this.$getConst("addTrade"),
+      // txtEditTrade: this.$getConst("editTrade"),
+      // txtSaveTrade: this.$getConst("saveTrade"),
+      // txtExitTrade: this.$getConst("exitTrade"),
+      // txtDeleteTrade: this.$getConst("deleteTrade"),
+      // txtGetLiveData: this.$getConst("getLiveData"),
 
       bgColor: ["bg-red-100", "bg-green-100", "bg-orange-200"],
       TradeAction: [
@@ -338,7 +342,7 @@ export default {
     },
     onExitAllTrade: function () {
       var parMethod = this.AddEditTrade;
-      var trades  = this.PropStrategy.trades;
+      var trades = this.PropStrategy.trades;
       var oppositetrade = this.getOppositeTrade;
       for (let _i = 0, _len = trades.length; _i < _len; _i++) {
         setTimeout(function () {
@@ -530,7 +534,11 @@ export default {
     TTL(val) {
       this.pnlpercentage = val;
     }
-  }
+  },
+  setup() {
+    let getLableConst = inject('GETCONST');
+    return { getLableConst };
+  },
 };
 </script>
 <style scoped>

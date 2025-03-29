@@ -1,11 +1,9 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+//import * as Vue from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
 import PaperTrade from '../views/PaperTrade';
 import Builder from '../views/builder/Builder';
 
-Vue.use(VueRouter)
-
-const approutes = [
+const routes = [
   {
     path: '/',
     component: PaperTrade,
@@ -20,20 +18,18 @@ const approutes = [
     path: '/about',
     name: 'About',
   },{
-    path : '*',
+    path: '/:pathMatch(.*)*',
     redirect: '/'
-  }
-]
+  }]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes : approutes
-})
+const router = createRouter({
+    history : createWebHistory(),
+    routes
+});
+// const router = new VueRouter({
+//   mode: 'history',
+//   base: process.env.BASE_URL,
+//   routes : approutes
+// })
 
 export default router
-// {
-//   path: '/papertrade',
-//   name: 'PaperTrade',
-//   component: PaperTrade
-// },

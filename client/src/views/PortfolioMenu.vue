@@ -18,7 +18,7 @@
             focus:outline-none
             rounded
           "
-          :placeholder="txtAddNewPortfolio"
+          placeholder="{{ getLableConst.savePortfolio }}"
           v-model="portfolioName"
           @keyup.enter="onAddNewPortfolio()"
         />
@@ -126,6 +126,7 @@
   </div>
 </template>
 <script>
+import { inject } from "vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -183,7 +184,6 @@ export default {
       const tableRows = tableRowsGroup.querySelectorAll(".table-row");
       let i = 0;
       tableRows.forEach((row) => {
-       console.log("row :>> ", row);
         this.Portfolios.forEach((y) => {
           const x = row.getAttribute("data-id");
           if (x == y._id) {
@@ -213,11 +213,13 @@ export default {
       ).element;
     },
   },
+  setup() {
+    let getLableConst = inject('GETCONST');
+    return { getLableConst };
+  }, 
   data: function () {
     return {
       portfolioName: "",
-      txtAddEditPortfolio: this.$getConst("savePortfolio"),
-      txtAddNewPortfolio: this.$getConst("addNewPortfolio"),
       isLoading: true,
       editPortfolio: null,
     };
