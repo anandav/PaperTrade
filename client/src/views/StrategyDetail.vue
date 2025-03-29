@@ -104,12 +104,12 @@
               v-if="!this.PropStrategy.isarchive"
             >
               <i class="material-icons">edit</i>
-              <tooltip :Value="txtEditStrategy" />
+              <tooltip :Value="getLableConst.editStrategy" />
             </button>
 
             <button class="btn tooltip edit" @click="onSaveStrategy()">
               <i class="material-icons">save</i>
-              <tooltip :Value="txtSaveStrategy" />
+              <tooltip :Value="getLableConst.saveStrategy" />
             </button>
 
             <dropdown
@@ -118,7 +118,7 @@
               :Items="CurrentPortfoliosStrategies"
               :Type="`Strategy`"
               :ExcludeItem="PropStrategy._id"
-              :Tooltip="txtMergeStrategy"
+              :Tooltip="getLableConst.mergeStrategy"
               :MinItem="3"
               @itemclicked="onDropDownItemClicked"
               v-if="!this.PropStrategy.isarchive"
@@ -130,7 +130,7 @@
               :Icon="`trending_flat`"
               :Items="Portfolios"
               :Type="`Portfolios`"
-              :Tooltip="txtMoveStrategy"
+              :Tooltip="getLableConst.moveStrategy"
               :MinItem="PropStrategy.isarchive ? 0 : 3"
               @itemclicked="onDropDownItemClicked"
             >
@@ -152,7 +152,7 @@
               @dblclick="onDeleteStrategy()"
             >
               <i class="material-icons">delete_forever</i>
-              <tooltip :Value="txtDeleteStrategy" />
+              <tooltip :Value="getLableConst.deleteStrategy" />
             </button>
           </div>
         </div>
@@ -229,6 +229,7 @@
 
 </template>
 <script>
+import { inject } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
@@ -267,15 +268,16 @@ export default {
   data: function () {
     return {
       
-      txtEditStrategy: this.$getConst("editStrategy"),
-      txtSaveStrategy: this.$getConst("saveStrategy"),
-      txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
-      txtAddTrade: this.$getConst("addTrade"),
-      txtGetLiveData: this.$getConst("getLiveData"),
-      txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
-      txtDeleteStrategy: this.$getConst("deleteStrategy"),
-      txtMergeStrategy: this.$getConst("mergeStrategy"),
-      txtMoveStrategy: this.$getConst("moveStrategy"),
+      
+      // txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
+      // txtAddTrade: this.$getConst("addTrade"),
+
+      // txtGetLiveData: this.$getConst("getLiveData"),
+      // txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
+      // txtDeleteStrategy: this.$getConst("deleteStrategy"),
+      // txtMergeStrategy: this.$getConst("mergeStrategy"),
+      // txtMoveStrategy: this.$getConst("moveStrategy"),
+      
       editStrategy: null,
       StrategyAction: [
         {
@@ -373,7 +375,10 @@ export default {
     PropTrade: { type: Object },
     SelectedTraded: { type: Array },
   },
-
+  setup() {
+    let getLableConst = inject('GETCONST');
+    return { getLableConst };
+  },
 };
 </script>
 

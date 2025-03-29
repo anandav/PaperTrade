@@ -1,10 +1,9 @@
-import "dotenv/config";
+// import "dotenv/config";
 import {
 
     SETEXCHANGEDETAIL,
     SETCURRENTEXCHANGE,
 } from "../mutationtype";
-
 import axios from "axios";
 
 const apiUrl = process.env.VUE_APP_APIURL || "/";

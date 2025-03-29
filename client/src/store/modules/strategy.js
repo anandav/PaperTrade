@@ -1,4 +1,3 @@
-import "dotenv/config";
 import {
     GETALLSTRATEGIES,
     ADDEDITSTRATEGY,
@@ -7,7 +6,7 @@ import {
 } from "../mutationtype";
 
 import axios from "axios";
-// const axios = require("axios");
+
 const apiUrl = process.env.VUE_APP_APIURL || "/";
 const strategyModule = {
     namespaced: true,

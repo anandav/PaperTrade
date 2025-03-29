@@ -1,4 +1,4 @@
-const Resource = {
+export default {
 	addNewPortfolio: "New Portfolio",
 	savePortfolio: "Save Portfolio",
 	deletePortfolio: "Delete Portfolio",
@@ -17,10 +17,3 @@ const Resource = {
 	showStrategyDiagram: "Update Graph",
 	getLiveData : "Get Live Data",
 };
-
-Resource.install = function (Vue) {
-	Vue.prototype.$getConst = (key) => {
-		return Resource[key];
-	}
-};
-export default Resource;

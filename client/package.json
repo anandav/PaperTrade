@@ -21,9 +21,9 @@
     "dotenv": "^16.4.7",
     "env-paths": "^3.0.0",
     "node-static": "^0.7.11",
-    "vue": "^2.6.12",
-    "vue-router": "^3.4.5",
-    "vuex": "^3.5.1"
+    "vue": "^3.0.0",
+    "vue-router": "^4.5.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",
