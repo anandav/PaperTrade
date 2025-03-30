@@ -1,8 +1,8 @@
 # PaperTrade
 This is a simple trading simulator that allows you to test your trading strategies without putting any real money at risk. It is inspired by Sensibull papertrade, Tradingview papertrade, and tastyworks.
 
-![PaperTrade CI](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
 <!-- 
+![PaperTrade CI](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)
 [![Papertrade](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml/badge.svg)](https://github.com/anandav/PaperTrade/actions/workflows/master_nse-papertrade-app.yml) -->
 
 ## Server
