@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo docker build -t ptserver .
-sudo docker run -itd -p 9090:9090 ptserver
+docker build -t ptserver .
+docker run -d -p 9090:9090 ptserver
