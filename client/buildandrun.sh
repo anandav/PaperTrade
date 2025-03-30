@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo docker build -t ptclient .
-sudo docker run -itd -p 8080:8080 ptclient
+docker build -t ptclient .
+docker run -d -p 8080:8080 ptclient
