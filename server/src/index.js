@@ -19,9 +19,9 @@ const conn_string = process.env.DBCONNECTIONSTRING;
 
 
 
-//console.log("Connection string", conn_string);
-// logger.info("port:", port);
-app.use(express.json());
+  //console.log("Connection string", conn_string);
+  logger.info("port:", port);
+  app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use("/strategy", strategyController);
