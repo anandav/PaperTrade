@@ -1,1 +1,455 @@
-{}
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PaperTrade API",
+    "version": "1.0.0",
+    "description": "API for the PaperTrade application"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9090",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Username already exists"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Login failed"
+          }
+        }
+      }
+    },
+    "/portfolio": {
+      "get": {
+        "summary": "Get all portfolios",
+        "responses": {
+          "200": {
+            "description": "A list of portfolios"
+          }
+        }
+      }
+    },
+    "/portfolio/find": {
+      "post": {
+        "summary": "Find portfolios by a specific field",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fieldName": {
+                    "type": "string"
+                  },
+                  "fieldValue": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A list of matching portfolios"
+          }
+        }
+      }
+    },
+    "/portfolio/save": {
+      "post": {
+        "summary": "Save a portfolio",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Portfolio"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved portfolio"
+          }
+        }
+      }
+    },
+    "/portfolio/saveall": {
+      "post": {
+        "summary": "Save all portfolios",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Portfolio"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved portfolios"
+          }
+        }
+      }
+    },
+    "/portfolio/delete": {
+      "post": {
+        "summary": "Delete a portfolio",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The deletion status"
+          }
+        }
+      }
+    },
+    "/strategy/findusingportfolioid": {
+      "post": {
+        "summary": "Find strategies by portfolio ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fieldName": {
+                    "type": "string"
+                  },
+                  "fieldValue": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A list of matching strategies"
+          }
+        }
+      }
+    },
+    "/strategy/save": {
+      "post": {
+        "summary": "Save a strategy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Strategy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved strategy"
+          }
+        }
+      }
+    },
+    "/strategy/delete": {
+      "post": {
+        "summary": "Delete a strategy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The deletion status"
+          }
+        }
+      }
+    },
+    "/trade/save": {
+      "post": {
+        "summary": "Save a trade",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved trade"
+          }
+        }
+      }
+    },
+    "/trade/delete": {
+      "post": {
+        "summary": "Delete a trade",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tid": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The deletion status"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Portfolio": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "exchange": {
+            "type": "string"
+          },
+          "openingbalance": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdon": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateui": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Strategy": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "portfolio": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "symboltype": {
+            "type": "string"
+          },
+          "lotsize": {
+            "type": "number"
+          },
+          "expiry": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "strikepricestep": {
+            "type": "number"
+          },
+          "isarchive": {
+            "type": "boolean"
+          },
+          "hidechart": {
+            "type": "boolean"
+          },
+          "ismultiplesymbol": {
+            "type": "boolean"
+          },
+          "trades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trade"
+            }
+          },
+          "createdon": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Trade": {
+        "type": "object",
+        "properties": {
+          "sid": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "lotsize": {
+            "type": "number"
+          },
+          "buyorsell": {
+            "type": "string"
+          },
+          "tradetype": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "selectedstrike": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "lasttradedprice": {
+            "type": "number"
+          },
+          "isexit": {
+            "type": "boolean"
+          },
+          "partnerid": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "strikepricemin": {
+            "type": "number"
+          },
+          "strikepricemax": {
+            "type": "number"
+          },
+          "strikepricestep": {
+            "type": "number"
+          },
+          "order": {
+            "type": "number"
+          },
+          "color": {
+            "type": "string"
+          },
+          "createdon": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedon": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}
