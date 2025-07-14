@@ -7,50 +7,56 @@ const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
 const dataProvider = require("./dataprovidercontroller/index");
+const authController = require("./controller/authcontroller");
+const auth = require("./middleware/auth");
 const logger = require("./common/logs");
 const myenv = process.env;
 const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
+const jwt_secret = process.env.JWT_SECRET || "your_jwt_secret";
 
-//const swaggerUi = require('swagger-ui-express');
-//const swaggerDocument = require('./swagger.json');
-//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 
 
-  //console.log("Connection string", conn_string);
-  logger.info("port:", port);
-  app.use(express.json());
+//console.log("Connection string", conn_string);
+logger.info("port:", port);
+app.use(express.json());
 app.use(cors());
 app.use(helmet());
-app.use("/strategy", strategyController);
-app.use("/portfolio", portfolioCotroller);
-app.use("/trade", tradeController);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.post("/auth/register", authController.register);
+app.post("/auth/login", authController.login);
+
+app.use("/strategy", auth, strategyController);
+app.use("/portfolio", auth, portfolioCotroller);
+app.use("/trade", auth, tradeController);
 
 app.get('/', function (req, res) {
-  res.send("<h1>helloworld</h1>");
+    res.redirect("/api-docs");
 });
 
 if (enable_dataapi == 'true') {
-  app.use("/data", dataProvider);
+    app.use("/data", dataProvider);
 } else {
-  app.use("/data", (req, res) => {
-    res.status(404).json({ "error": "Data endpoint is disabled" })
-  });
+    app.use("/data", (req, res) => {
+        res.status(404).json({ "error": "Data endpoint is disabled" })
+    });
 }
 
 if (conn_string) {
-  mongoose
-  .connect(conn_string)
-  .then(() => logger.info("MongoDB connected"))
-  .catch((err) => logger.error(err));
+    mongoose
+        .connect(conn_string)
+        .then(() => logger.info("MongoDB connected"))
+        .catch((err) => logger.error(err));
 } else {
-  logger.error("Empty connnection string!")
+    logger.error("Empty connnection string!")
 }
 
 app.listen(port, (x) => {
-  logger.info("Service Started");
+    logger.info("Service Started");
 });
 
 
