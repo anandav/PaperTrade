@@ -24,6 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "mongoose": "^8.12.2",
+    "nodemon": "^3.1.10",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
