@@ -1,15 +1,13 @@
 import { createApp }from 'vue';
-// import { createApp } from 'vue'
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-// import dotenv from  'dotenv'
 import resource from "./shared/resource";
 import "./tailwind.css";
-//import dayjs from "dayjs";
 import dropdown from "./components/ui/DropDown";
 import autocomplete from "./components/ui/AutoComplete";
 import tooltip from "./components/ui/ToolTip";
+import axios from 'axios';
 
 
 // Vue.filter("formatDateTime", function (value) {
@@ -32,6 +30,11 @@ import tooltip from "./components/ui/ToolTip";
 //   }
 // });
 
+const token = localStorage.getItem('token');
+if (token) {
+  axios.defaults.headers.common['Authorization'] = token;
+}
+
 const app = createApp(App);
 app.config.productionTip = false;
 app.config.keyCodes = {
@@ -47,12 +50,3 @@ app.component("dropdown", dropdown);
 app.component("tooltip", tooltip);
 
 app.mount('#app');
-
-
-//
-//new Vue({
-  //  router,
-  //  store,
-  //
-  //  render: (h) => h(App),
-  //}).$mount("#app");

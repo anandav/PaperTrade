@@ -21,6 +21,7 @@
         >
         <!-- <router-link to="/about" class="pl-5">About</router-link> -->
         <div class="float-right">
+          <button v-if="isLoggedIn" @click="logout" class="mr-3">Logout</button>
           <label class="mr-3">
             <SwitchButton
               :IsDark="true"
@@ -46,6 +47,7 @@
 
 <script>
 import SwitchButton from "./components/ui/SwitchButton";
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   data: function () {
@@ -56,7 +58,25 @@ export default {
   components: {
     SwitchButton,
   },
+  computed: {
+    ...mapGetters('authModule', ['isLoggedIn']),
+      isdark: {
+  get: function () {
+    let _isdark = document.cookie["isdark"];
+    return _isdark;
+  },
+  set: function (value) {
+    let d = new Date();
+    d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = "isdark=" + value + ";" + expires + ";path=/";
+  }
+},
+
+
+  },
   methods: {
+    ...mapActions('authModule', ['logout']),
     swiththeme: function (value) {
       if (value) {
         document.documentElement.classList.remove("dark");
@@ -64,20 +84,12 @@ export default {
         document.documentElement.classList.add("dark");
       }
     },
-  },
-  computed: {
-    // isdark: {
-    //   get: function () {
-    //     let _isdark = document.cookie["isdark"];
-    //     return _isdark;
-    //   },
-    //   set: function (value) {
-    //     let d = new Date();
-    //     d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
-    //     let expires = "expires=" + d.toUTCString();
-    //     document.cookie = "isdark=" + value + ";" + expires + ";path=/";
-    //   },
-    // },
+    logout() {
+      this.$store.dispatch('authModule/logout')
+        .then(() => {
+          this.$router.push('/login');
+        });
+    }
   },
   mounted() {
     // if (localStorage != undefined && localStorage.isdark) {
