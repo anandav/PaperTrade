@@ -24,7 +24,7 @@ exports.login = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(401).send({ error: 'Login failed!' });
     }
-    const token = jwt.sign({ _id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.send({ user, token });
   } catch (error) {
     res.status(400).send({ error: 'Login failed!' });

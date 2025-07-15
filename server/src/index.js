@@ -14,7 +14,7 @@ const myenv = process.env;
 const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
-const jwt_secret = process.env.JWT_SECRET || "your_jwt_secret";
+const jwt_secret = process.env.JWT_SECRET;
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
