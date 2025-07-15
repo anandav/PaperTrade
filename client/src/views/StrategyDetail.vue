@@ -60,7 +60,7 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Expiry </label>
           <span class="view">
-            {{ PropStrategy.expiry | formatDateTime }}
+            {{ $filters.formatDateTime(PropStrategy.expiry) }}
           </span>
 
           <input
@@ -88,7 +88,7 @@
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Created On </label>
-          {{ PropStrategy.createdon | formatDateTime }}
+          {{ $filters.formatDateTime(PropStrategy.createdon) }}
         </div>
         <div class="flex-2">
           <div class="float-right space-x-2">

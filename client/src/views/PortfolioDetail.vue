@@ -47,7 +47,7 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Opening Balance </label>
           <span class="view">
-            {{ Portfolio.openingbalance | decimal2}}
+            {{ $filters.decimal2(Portfolio.openingbalance) }}
           </span>
 
           <input
@@ -62,18 +62,18 @@
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Current Balance </label>
           <span :class="FgColor">
-            {{ CurrentBalance | decimal2 }}
+            {{ $filters.decimal2(CurrentBalance) }}
           </span>
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Current P&L </label>
           <span :class="FgColor">
-            {{ TotalPortfolioAmount | decimal2}}
+            {{ $filters.decimal2(TotalPortfolioAmount) }}
           </span>
         </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> NAV </label>
-          <span :class="FgColor"> {{ NAV  | decimal2 }}% </span>
+          <span :class="FgColor"> {{ $filters.decimal2(NAV) }}% </span>
         </div>
 
         <div class="float-right pr-5 space-x-2">

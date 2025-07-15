@@ -126,7 +126,7 @@
           </div>
           <div class="7 table-cell px-1 py-3">
             <span class="view">
-              {{ item.price | decimal2 }}
+              {{ $filters.decimal2(item.price) }}
             </span>
             <input v-model="item.price" type="text" class="mini-edit edit text-right"
               @keydown.enter="onInlineSaveTrade(item)" />
@@ -139,7 +139,7 @@
               </button>
 
               <span class="">
-                {{ item.lasttradedprice | decimal2 }}
+                {{ $filters.decimal2(item.lasttradedprice) }}
               </span>
             </div>
           </div>
@@ -182,14 +182,14 @@
           </div>
           <div class="table-cell">
 
-            <!-- {{ PnLPercnet | decimal2 }} -->
+            <!-- {{ $filters.decimal2(PnLPercnet | decimal2) }} -->
           </div>
           <div class="table-cell" v-if="Portfolio.exchange"></div>
           <div class="table-cell">
             <span class="text-xs block text-gray-500">P&L</span>
           </div>
           <div class="table-cell px-1 py-2">
-            {{ TotalAmount | decimal2 }}
+            {{ $filters.decimal2(TotalAmount) }}
 
           </div>
           <div class="table-cell"></div>
@@ -200,7 +200,7 @@
     <div v-if="this.PropStrategy.isarchive" class="text-xs">
       This strategy is archived with P&L
       <span :class="FgColor">
-        {{ TotalAmount | decimal2 }}
+        {{ $filters.decimal2(TotalAmount) }}
       </span>
     </div>
   </div>

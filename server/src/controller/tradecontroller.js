@@ -71,15 +71,8 @@ tradeController.post("/save", async (req, res) => {
 
        var result = await _strategyObject.save();
        console.log("out:Trade saved successfully", result);
-
-       commonUtility.GetTradeById(_result.trades[_result.trades.length - 1]._id).then((__result) => {
-          console.log("inside:Trade saved successfully", __result);
-          res.json(__result);
-        });
-
-        // _strategyObject.save(function (_error, doc) {
-        //   res.json(doc);
-        // });
+       res.json(result);
+       
       } else {
         res.json({ "error_msg": "Strategy not found." });
       }
