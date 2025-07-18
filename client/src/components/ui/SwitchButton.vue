@@ -51,9 +51,6 @@ export default {
     if (this.PropTrade) {
       this.IsTrue = this.PropTrade.buyorsell == "Buy" ? true : false;
     } 
-    // else if (this.Value) {
-    //   this.IsTrue = this.Value;
-    // } 
     else {
       this.IsTrue = this.Value;
     }
@@ -62,21 +59,21 @@ export default {
     FgColor: function () {
       return {
         "translate-x-6 bg-green-300 dark:bg-green-300":
-          this.IsTrue && !this.IsDark,
+          this.IsTrue && !this.IsDarkTheme,
         "translate-x-0 bg-red-300 dark:bg-red-300":
-          !this.IsTrue && !this.IsDark,
+          !this.IsTrue && !this.IsDarkTheme,
         "translate-x-6 bg-gray-500 dark:bg-gray-500":
-          this.IsTrue && this.IsDark,
+          this.IsTrue && this.IsDarkTheme,
         "translate-x-0 bg-gray-500 dark:bg-gray-500":
-          !this.IsTrue && this.IsDark,
+          !this.IsTrue && this.IsDarkTheme,
       };
     },
     BgColor: function () {
       return {
-        "bg-green-600": this.IsTrue && !this.IsDark,
-        "bg-red-600": !this.IsTrue && !this.IsDark,
-        "bg-gray-600": this.IsTrue && this.IsDark,
-        "bg-gray-400": !this.IsTrue && this.IsDark,
+        "bg-green-600": this.IsTrue && !this.IsDarkTheme,
+        "bg-red-600": !this.IsTrue && !this.IsDarkTheme,
+        "bg-gray-600": this.IsTrue && this.IsDarkTheme,
+        "bg-gray-400": !this.IsTrue && this.IsDarkTheme,
       };
     },
   },
@@ -96,11 +93,9 @@ export default {
   },
   props: {
     PropTrade: { type: Object },
-    IsDark: { type: Boolean },
+    IsDarkTheme: { type: Boolean },
     Value: { type: Boolean },
   },
 };
 </script>
   
-  <style>
-</style>
