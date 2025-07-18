@@ -182,7 +182,7 @@
           </div>
           <div class="table-cell">
 
-            <!-- {{ $filters.decimal2(PnLPercnet | decimal2) }} -->
+            <!-- {{ $filters.decimal2(PnLPercnet) }} -->
           </div>
           <div class="table-cell" v-if="Portfolio.exchange"></div>
           <div class="table-cell">
