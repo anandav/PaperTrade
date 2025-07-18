@@ -1,7 +1,6 @@
 <template>
   <div id="app" class="text-sm font-medium text-gray-500 dark:text-gray-400">
-    <nav
-      class="
+    <nav class="
         fixed
         w-screen
         z-50
@@ -11,28 +10,15 @@
         dark:bg-gray-900 
         dark:border-b 
         dark:border-gray-800
-      "
-      role="navigation"
-    >
+      " role="navigation">
       <div class="container mx-auto">
         <router-link to="/" class="pl-5">Paper Trade</router-link>
-        <router-link to="/builder" class="pl-5"
-          > Place holder</router-link
-        >
+        <router-link to="/builder" class="pl-5"> Place holder</router-link>
         <!-- <router-link to="/about" class="pl-5">About</router-link> -->
         <div class="float-right">
+          <button v-if="isLoggedIn" @click="logout" class="mr-3">Logout</button>
           <label class="mr-3">
-            <SwitchButton
-              :IsDark="true"
-              :Value="false"
-              @itemclicked="swiththeme"
-            />
-            <!-- <input
-              type="checkbox"
-              class="mini-checkbox"
-              v-model="isdark"
-              @change="swiththeme()"
-            /> -->
+            <SwitchButton :IsDarkTheme="true" :Value="isdark" @itemclicked="swiththeme" />
             Dark Mode
           </label>
         </div>
@@ -46,51 +32,57 @@
 
 <script>
 import SwitchButton from "./components/ui/SwitchButton";
+import { mapGetters, mapActions } from 'vuex';
+
+// Helper to get cookie value
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
 
 export default {
-  data: function () {
+  data() {
+    // Read theme from cookie on initialization
+    const cookieValue = getCookie("isdark");
     return {
-      isdark: true,
+      isdark: cookieValue === "true",
     };
   },
   components: {
     SwitchButton,
   },
-  methods: {
-    swiththeme: function (value) {
-      if (value) {
-        document.documentElement.classList.remove("dark");
-      } else {
-        document.documentElement.classList.add("dark");
-      }
-    },
-  },
   computed: {
-    // isdark: {
-    //   get: function () {
-    //     let _isdark = document.cookie["isdark"];
-    //     return _isdark;
-    //   },
-    //   set: function (value) {
-    //     let d = new Date();
-    //     d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
-    //     let expires = "expires=" + d.toUTCString();
-    //     document.cookie = "isdark=" + value + ";" + expires + ";path=/";
-    //   },
-    // },
+    ...mapGetters('authModule', ['isLoggedIn']),
+  },
+  methods: {
+    ...mapActions('authModule', ['logout']),
+    swiththeme(value) {
+      this.isdark = value;
+      if (value) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      // Set cookie
+      let d = new Date();
+      d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+      let expires = "expires=" + d.toUTCString();
+      document.cookie = "isdark=" + value + ";" + expires + ";path=/";
+    },
+    logout() {
+      this.$store.dispatch('authModule/logout')
+        .then(() => {
+          this.$router.push('/login');
+        });
+    }
   },
   mounted() {
-    // if (localStorage != undefined && localStorage.isdark) {
-    //   this.isdark = localStorage.isdark;
-    // }
-  },
-  watch: {
-    // isdark(newisdark) {
-    //   localStorage.isdark = newisdark;
-    // },
+    // Apply theme on mount
+    this.swiththeme(this.isdark);
   },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

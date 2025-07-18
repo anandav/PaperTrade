@@ -67,9 +67,12 @@ tradeController.post("/save", async (req, res) => {
       let _strategyObject = await commonUtility.GetStrategyById(sid);
       if (_strategyObject) {
         _strategyObject.trades.push(_trade);
-        _strategyObject.save(function (_error, doc) {
-          res.json(doc);
-        });
+
+
+       var result = await _strategyObject.save();
+       console.log("out:Trade saved successfully", result);
+       res.json(result);
+       
       } else {
         res.json({ "error_msg": "Strategy not found." });
       }
