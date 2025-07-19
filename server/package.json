@@ -12,6 +12,7 @@
   "author": "Anand.AV",
   "license": "UNLICENSED",
   "dependencies": {
+    "@azure/msal-node": "^3.6.3",
     "axios": "^1.0.0",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.19.0",

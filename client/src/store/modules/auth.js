@@ -39,7 +39,7 @@ export default {
             const token = resp.data.token;
             const user = resp.data.user;
             localStorage.setItem('token', token);
-            axios.defaults.headers.common['Authorization'] = token;
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             commit('auth_success', token, user);
             resolve(resp);
           })
@@ -48,6 +48,15 @@ export default {
             localStorage.removeItem('token');
             reject(err);
           });
+      });
+    },
+    ssoLogin({ commit }, token) {
+      console.log('auth module ssoLogin action called with token:', token);
+      return new Promise((resolve) => {
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        commit('auth_success', token, {}); // We don't have user details here, but we could fetch them.
+        resolve();
       });
     },
     logout({ commit }) {

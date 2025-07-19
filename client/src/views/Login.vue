@@ -22,6 +22,11 @@
             Forgot Password?
           </a>
         </div>
+        <div class="flex items-center justify-between mt-4">
+          <button @click="ssoLogin" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+            Login with SSO
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -44,6 +49,10 @@ export default {
         .catch(err => {
           console.error(err);
         });
+    },
+    ssoLogin() {
+      // Redirect to the backend SSO endpoint
+      window.location.href = 'http://localhost:9090/api/auth/sso';
     }
   }
 };

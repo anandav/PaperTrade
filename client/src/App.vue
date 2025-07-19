@@ -53,6 +53,16 @@ export default {
   components: {
     SwitchButton,
   },
+  created() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      this.$store.dispatch('authModule/ssoLogin', token)
+        .then(() => {
+          this.$router.replace('/');
+        });
+    }
+  },
   computed: {
     ...mapGetters('authModule', ['isLoggedIn']),
   },
@@ -79,7 +89,6 @@ export default {
     }
   },
   mounted() {
-    // Apply theme on mount
     this.swiththeme(this.isdark);
   },
 };
