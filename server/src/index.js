@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
+const ssoAuthController = require("./controller/ssoauthcontroller");
 const dataProvider = require("./dataprovidercontroller/index");
 const authController = require("./controller/authcontroller");
 const auth = require("./middleware/auth");
@@ -19,16 +20,20 @@ const jwt_secret = process.env.JWT_SECRET;
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-
-
-//console.log("Connection string", conn_string);
 logger.info("port:", port);
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Auth routes
 app.post("/auth/register", authController.register);
 app.post("/auth/login", authController.login);
+
+// SSO Auth routes
+app.get("/api/auth/sso", ssoAuthController.login);
+app.get("/api/auth/sso/callback", ssoAuthController.callback);
 
 app.use("/strategy", auth, strategyController);
 app.use("/portfolio", auth, portfolioCotroller);
