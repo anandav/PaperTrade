@@ -27,6 +27,11 @@
             Login with SSO
           </button>
         </div>
+        <div class="flex items-center justify-between mt-4">
+          <button @click="ssoLogin('Google.com')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+            Login with Google
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -50,9 +55,12 @@ export default {
           console.error(err);
         });
     },
-    ssoLogin() {
-      // Redirect to the backend SSO endpoint
-      window.location.href = 'http://localhost:9090/api/auth/sso';
+    ssoLogin(idpHint = null) {
+      let redirectUrl = 'http://localhost:9090/api/auth/sso';
+      if (idpHint) {
+        redirectUrl += `?idp_hint=${idpHint}`;
+      }
+      window.location.href = redirectUrl;
     }
   }
 };

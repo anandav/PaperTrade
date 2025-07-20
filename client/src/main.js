@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import setupAxiosInterceptors from './shared/axios-interceptor';
 import resource from "./shared/resource";
 import "./tailwind.css";
 import dropdown from "./components/ui/DropDown";
@@ -12,7 +13,7 @@ import formatters from './common/formatters';
 
 const token = localStorage.getItem('token');
 if (token) {
-  axios.defaults.headers.common['Authorization'] = token;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
 const app = createApp(App);
@@ -25,6 +26,7 @@ app.config.globalProperties.$filters = formatters;
 
 app.use(router);
 app.use(store);
+setupAxiosInterceptors(store);
 app.provide('GETCONST',resource);
 app.component("autocomplete", autocomplete);
 app.component("dropdown", dropdown);

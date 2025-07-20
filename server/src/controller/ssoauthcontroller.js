@@ -9,6 +9,10 @@ exports.login = (req, res) => {
         redirectUri: "http://localhost:9090/api/auth/sso/callback",
     };
 
+    if (req.query.idp_hint) {
+        authCodeUrlParameters.extraQueryParameters = { idp_hint: req.query.idp_hint };
+    }
+
     pca.getAuthCodeUrl(authCodeUrlParameters).then((response) => {
         res.redirect(response);
     }).catch((error) => console.log(JSON.stringify(error)));
@@ -35,7 +39,7 @@ exports.callback = (req, res) => {
             user = newUser;
         }
 
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '2m' });
         res.redirect(`http://localhost:8080/?token=${token}`);
 
     }).catch((error) => {
