@@ -5,12 +5,12 @@ const jwt = require('jsonwebtoken');
 
 exports.login = (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ["user.read"],
-        redirectUri: "http://localhost:9090/api/auth/sso/callback",
+        scopes: [process.env.B2C_CLIENT_ID, "openid", "profile","email"],
+        redirectUri: "http://localhost:9090/auth/sso/callback",
     };
-
-    if (req.query.idp_hint) {
-        authCodeUrlParameters.extraQueryParameters = { idp_hint: req.query.idp_hint };
+    console.log("Domain hint:", req.query.domain_hint);
+    if (req.query.domain_hint) {
+        authCodeUrlParameters.extraQueryParameters = { domain_hint: req.query.domain_hint };
     }
 
     pca.getAuthCodeUrl(authCodeUrlParameters).then((response) => {
@@ -21,11 +21,12 @@ exports.login = (req, res) => {
 exports.callback = (req, res) => {
     const tokenRequest = {
         code: req.query.code,
-        scopes: ["user.read"],
-        redirectUri: "http://localhost:9090/api/auth/sso/callback",
+        scopes: [process.env.B2C_CLIENT_ID, "openid", "profile","email"],
+        redirectUri: "http://localhost:9090/auth/sso/callback",
     };
 
     pca.acquireTokenByCode(tokenRequest).then(async (response) => {
+        console.log("SSO Callback Response:", response);
         let user = await User.findOne({ ssoId: response.account.homeAccountId });
 
         if (!user) {

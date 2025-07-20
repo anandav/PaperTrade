@@ -32,8 +32,8 @@ app.post("/auth/register", authController.register);
 app.post("/auth/login", authController.login);
 
 // SSO Auth routes
-app.get("/api/auth/sso", ssoAuthController.login);
-app.get("/api/auth/sso/callback", ssoAuthController.callback);
+app.get("/auth/sso", ssoAuthController.login);
+app.get("/auth/sso/callback", ssoAuthController.callback);
 
 app.use("/strategy", auth, strategyController);
 app.use("/portfolio", auth, portfolioCotroller);
