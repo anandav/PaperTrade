@@ -6,8 +6,11 @@ const auth = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({ _id: decoded._id });
+    if (decoded.exp * 1000 < Date.now()) {
+      throw new Error('Token expired');
+    }
 
+    const user = await User.findOne({ _id: decoded._id });
     if (!user) {
       throw new Error();
     }
