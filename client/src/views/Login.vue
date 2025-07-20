@@ -28,7 +28,7 @@
           </button>
         </div>
         <div class="flex items-center justify-between mt-4">
-          <button @click="ssoLogin('Google.com')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+          <button @click="ssoLogin('google.com')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
             Login with Google
           </button>
         </div>
@@ -55,10 +55,10 @@ export default {
           console.error(err);
         });
     },
-    ssoLogin(idpHint = null) {
-      let redirectUrl = 'http://localhost:9090/api/auth/sso';
-      if (idpHint) {
-        redirectUrl += `?idp_hint=${idpHint}`;
+    ssoLogin(domainHint = null) {
+      let redirectUrl = 'http://localhost:9090/auth/sso';
+      if (domainHint) {
+        redirectUrl += `?domain_hint=${domainHint}`;
       }
       window.location.href = redirectUrl;
     }

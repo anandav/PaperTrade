@@ -74,6 +74,38 @@
         }
       }
     },
+    "/api/auth/sso": {
+      "get": {
+        "summary": "Initiate SSO login",
+        "tags": ["SSO"],
+        "parameters": [
+          {
+            "name": "domain_hint",
+            "in": "query",
+            "description": "Hint for the identity provider (e.g., 'Google.com')",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the identity provider"
+          }
+        }
+      }
+    },
+    "/api/auth/sso/callback": {
+      "get": {
+        "summary": "SSO callback",
+        "tags": ["SSO"],
+        "responses": {
+          "302": {
+            "description": "Redirect to the frontend with a token"
+          }
+        }
+      }
+    },
     "/portfolio": {
       "get": {
         "summary": "Get all portfolios",
