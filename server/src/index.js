@@ -1,3 +1,4 @@
+require('express-async-errors'); // Must be the first import
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -11,6 +12,8 @@ const dataProvider = require("./dataprovidercontroller/index");
 const authController = require("./controller/authcontroller");
 const auth = require("./middleware/auth");
 const logger = require("./common/logs");
+const ApiError = require('./common/ApiError');
+const errorHandler = require('./middleware/errorHandler');
 const myenv = process.env;
 const port = process.env.PORT || 9090;
 const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
@@ -51,11 +54,25 @@ if (enable_dataapi == 'true') {
     });
 }
 
+// Handle 404 errors - this should be after all routes
+app.use((req, res, next) => {
+    next(new ApiError(404, 'Not Found'));
+});
+
+// Global error handler - this must be the last middleware
+app.use(errorHandler);
+
 if (conn_string) {
     mongoose
         .connect(conn_string)
         .then(() => logger.info("MongoDB connected"))
-        .catch((err) => logger.error(err));
+        .catch((err) => {
+            // Instead of just logging, we can now throw an error that will be caught
+            // by our global handler, though the app will likely exit on DB connection failure.
+            // For now, we'll keep logging it, but this could be improved.
+            logger.error("MongoDB connection error:", err)
+            // We could throw here, but it would stop the app from starting.
+        });
 } else {
     logger.error("Empty connnection string!")
 }
@@ -63,6 +80,3 @@ if (conn_string) {
 app.listen(port, (x) => {
     logger.info("Service Started");
 });
-
-
-

@@ -3,6 +3,7 @@ const tradeController = express.Router();
 const Strategy = require("../models/strategy");
 const Trade = require("../models/trade");
 const commonUtility = require("../models/commonUtility");
+const ApiError = require("../common/ApiError");
 
 tradeController.post("/save", async (req, res) => {
   if (process.env.ENABLE_DEMO == 'false') {
@@ -60,9 +61,9 @@ tradeController.post("/save", async (req, res) => {
         { $set: { "trades.$": _trade } }
       );
 
-      commonUtility.GetTradeById(_id).then((_result) => {
-        res.json(_result);
-      });
+      const _result = await commonUtility.GetTradeById(_id);
+      res.json(_result);
+
     } else if (sid && !_id) {
       let _strategyObject = await commonUtility.GetStrategyById(sid);
       if (_strategyObject) {
@@ -74,30 +75,34 @@ tradeController.post("/save", async (req, res) => {
        res.json(result);
        
       } else {
-        res.json({ "error_msg": "Strategy not found." });
+        throw new ApiError(404, "Strategy not found.");
       }
     }
   } else {
-    res.status(401);
-    res.send({ "error": "Cant edit trade on demo mode." })
+    throw new ApiError(401, "Cant edit trade on demo mode.");
   }
 });
 
 tradeController.post("/delete", async (req, res) => {
-  let { tid } = req.body;
-  if (tid) {
-    if (process.env.ENABLE_DEMO == 'false') {
-      const result = await Strategy.updateOne({ "trades._id": tid },
-        { $pull: { "trades": { _id: tid } } },
-        { new: true }, function (err) {
-          if (err) { console.error(err); }
-        }
-      );
-      res.json(result);
-    } else {
-      res.status(401);
-      res.json({ "error": "Cant delete trade on demo mode." })
+  const { tid } = req.body;
+  if (!tid) {
+    throw new ApiError(400, 'Trade ID (tid) is required.');
+  }
+
+  if (process.env.ENABLE_DEMO == 'false') {
+    const result = await Strategy.updateOne(
+      { "trades._id": tid },
+      { $pull: { "trades": { _id: tid } } }
+    );
+    
+    if (result.nModified === 0) {
+        // This is optional, but good practice. It tells the client if the trade wasn't found.
+        throw new ApiError(404, 'Trade not found or already deleted.');
     }
+
+    res.json({ message: 'Trade deleted successfully.' });
+  } else {
+    throw new ApiError(401, "Cant delete trade on demo mode.");
   }
 });
 

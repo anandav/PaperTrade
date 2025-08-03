@@ -1,32 +1,41 @@
 
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const ApiError = require('../common/ApiError');
 
 exports.register = async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ApiError(400, 'Username and password are required.');
+  }
   try {
-    const { username, password } = req.body;
     const user = new User({ username, password });
     await user.save();
     res.status(201).send({ message: 'User registered successfully' });
   } catch (error) {
-    res.status(400).send({ error: 'Username already exists' });
+    if (error.code === 11000) {
+      throw new ApiError(400, 'Username already exists');
+    }
+    throw error; // Let the global handler deal with other errors
   }
 };
 
 exports.login = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(401).send({ error: 'Login failed!' });
-    }
-    const isPasswordMatch = await user.comparePassword(password);
-    if (!isPasswordMatch) {
-      return res.status(401).send({ error: 'Login failed!' });
-    }
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.send({ user, token });
-  } catch (error) {
-    res.status(400).send({ error: 'Login failed!' });
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ApiError(400, 'Username and password are required.');
   }
+
+  const user = await User.findOne({ username });
+  if (!user) {
+    throw new ApiError(401, 'Invalid username or password');
+  }
+
+  const isPasswordMatch = await user.comparePassword(password);
+  if (!isPasswordMatch) {
+    throw new ApiError(401, 'Invalid username or password');
+  }
+
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  res.send({ user, token });
 };
