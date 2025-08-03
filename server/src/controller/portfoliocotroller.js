@@ -2,7 +2,7 @@ const express = require("express");
 const portfolicontroller = express.Router();
 const Portfolio = require("../models/portfolio");
 const commonUtility = require("../models/commonUtility");
-const portfolio = require("../models/portfolio");
+const ApiError = require("../common/ApiError");
 
 require("dotenv/config");
 
@@ -28,9 +28,12 @@ portfolicontroller.post("/save", async (req, res) => {
   if (process.env.ENABLE_DEMO == "false") {
     const { _id, name, exchange, openingbalance, description, createdon, updateui } = req.body;
 
-    let _portfolioObject = {};
+    let _portfolioObject;
     if (_id) {
       _portfolioObject = await commonUtility.GetPortfolioById(_id);
+      if (!_portfolioObject) {
+        throw new ApiError(404, "Portfolio not found.");
+      }
       _portfolioObject.name = name;
       _portfolioObject.exchange = exchange;
       _portfolioObject.openingbalance = openingbalance;
@@ -42,54 +45,58 @@ portfolicontroller.post("/save", async (req, res) => {
         name,
         exchange,
         description,
-        createdon,
+        createdon: new Date(),
       });
     }
-    try {
-      const result = await _portfolioObject.save();
-      if (updateui) {
-        const _allportfolio = await Portfolio.find();
-        res.send(_allportfolio);
-      } else {
-        res.send(result);
-      }
-    } catch (err) {
-      console.error(err);
-      res.send(err);
+
+    const result = await _portfolioObject.save();
+    if (updateui) {
+      const _allportfolio = await Portfolio.find();
+      res.send(_allportfolio);
+    } else {
+      res.send(result);
     }
   } else {
-    res.status(401);
-    res.send({ error: "Cant edit portfolio on demo mode." });
+    throw new ApiError(401, "Cant edit portfolio on demo mode.");
   }
 });
+
 portfolicontroller.post("/saveall", async (req, res) => {
+  if (process.env.ENABLE_DEMO == "true") {
+    throw new ApiError(401, "Cant save all portfolios in demo mode.");
+  }
+
   let _portfolios = req.body;
-  let _portfolioObject = {};
-  _portfolios.forEach(async (item) => {
-    _portfolioObject = await commonUtility.GetPortfolioById(item._id);
-    _portfolioObject.name = item.name;
-    _portfolioObject.exchange = item.exchange;
-    _portfolioObject.openingbalance = item.openingbalance;
-    _portfolioObject.description = item.description;
-    _portfolioObject.order = item.order;
-    _portfolioObject.modifiedon = new Date();
-    const result = await _portfolioObject.save();
-  });
+  for (const item of _portfolios) {
+    let _portfolioObject = await commonUtility.GetPortfolioById(item._id);
+    if (_portfolioObject) {
+      _portfolioObject.name = item.name;
+      _portfolioObject.exchange = item.exchange;
+      _portfolioObject.openingbalance = item.openingbalance;
+      _portfolioObject.description = item.description;
+      _portfolioObject.order = item.order;
+      _portfolioObject.modifiedon = new Date();
+      await _portfolioObject.save();
+    }
+  }
   res.send(await findPortfolio());
 });
 
 portfolicontroller.post("/delete", async (req, res) => {
-  let pid = req.body._id;
-  if (pid) {
-    if (process.env.ENABLE_DEMO == "false") {
-      commonUtility.DeleteStrategyUsingPortfolioID(pid);
-      Portfolio.deleteOne({ _id: pid }, (err, doc) => {
-        res.send(doc);
-      });
-    } else {
-      res.status(401);
-      res.send({ error: "Cant delete portfolio on demo mode." });
+  const pid = req.body._id;
+  if (!pid) {
+    throw new ApiError(400, 'Portfolio ID (_id) is required.');
+  }
+
+  if (process.env.ENABLE_DEMO == "false") {
+    await commonUtility.DeleteStrategyUsingPortfolioID(pid);
+    const result = await Portfolio.deleteOne({ _id: pid });
+    if (result.deletedCount === 0) {
+      throw new ApiError(404, 'Portfolio not found.');
     }
+    res.json({ message: "Portfolio and related strategies deleted successfully." });
+  } else {
+    throw new ApiError(401, "Cant delete portfolio on demo mode.");
   }
 });
 

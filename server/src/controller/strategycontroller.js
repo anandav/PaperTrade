@@ -5,6 +5,7 @@ const commUtility = require("../models/commonUtility");
 const portfolio = require("../models/portfolio");
 const Strategy = require("../models/strategy");
 const trade = require("../models/trade");
+const ApiError = require("../common/ApiError");
 
 strategycontoller.post("/findusingportfolioid", async (req, res) => {
   let { fieldName, fieldValue } = req.body;
@@ -19,12 +20,13 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
     res.json(result);
   } else {
     result = await Strategy.find({});
+    res.json(result);
   }
 });
 
 strategycontoller.post("/save", async (req, res) => {
   if (process.env.ENABLE_DEMO == 'false') {
-    const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, hidechart,ismultiplesymbol, trades, createdon } = req.body;
+    const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, hidechart, ismultiplesymbol, trades, createdon } = req.body;
     let _data = {
       _id,
       name,
@@ -47,50 +49,42 @@ strategycontoller.post("/save", async (req, res) => {
     }
 
     if (_id) {
-      let _strategyObject = await Strategy.updateOne(
+      const result = await Strategy.updateOne(
         { _id: _id },
         {
           $set: _data,
         }
       );
+      if (result.nModified === 0) {
+        throw new ApiError(404, 'Strategy not found or data is unchanged.');
+      }
       res.send(_data);
     } else {
-   const strategy = new Strategy(_data);
-      try {
-        _data.createdon = new Date();
-        const result = await strategy.save();
-        res.send(result);
-      } catch (err) {
-        console.error(err);
-      }
+      _data.createdon = new Date();
+      const strategy = new Strategy(_data);
+      const result = await strategy.save();
+      res.status(201).send(result);
     }
   } else {
-    res.status(401);
-    res.send({ "error": "Cant edit strategy on demo mode." })
+    throw new ApiError(401, "Cant edit strategy on demo mode.");
   }
-
-
 });
 
 strategycontoller.post("/delete", async (req, res) => {
-  let { _id } = req.body;
-  DeleteStrategy(_id, res);
-});
-
-
-function DeleteStrategy(_id, res) {
-  if (_id) {
-    if (process.env.ENABLE_DEMO == 'false') {
-      Strategy.deleteOne({ _id: _id }, (err, doc) => {
-        res.json(doc);
-      });
-    } else {
-
-      res.status(401);
-      res.json({ "error": "Cant delete strategy on demo mode." });
-    }
+  const { _id } = req.body;
+  if (!_id) {
+    throw new ApiError(400, 'Strategy ID (_id) is required.');
   }
-};
 
+  if (process.env.ENABLE_DEMO == 'false') {
+    const result = await Strategy.deleteOne({ _id: _id });
+    if (result.deletedCount === 0) {
+      throw new ApiError(404, 'Strategy not found.');
+    }
+    res.json({ message: 'Strategy deleted successfully.' });
+  } else {
+    throw new ApiError(401, "Cant delete strategy on demo mode.");
+  }
+});
 
 module.exports = strategycontoller;
