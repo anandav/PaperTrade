@@ -16,7 +16,7 @@ const ApiError = require('./common/ApiError');
 const errorHandler = require('./middleware/errorHandler');
 const myenv = process.env;
 const port = process.env.PORT || 9090;
-const enable_dataapi = process.env.ENABLE_DATAAPI || "true";
+const enable_dataapi = String(process.env.ENABLE_DATAAPI).toLowerCase() === "true";
 const conn_string = process.env.DBCONNECTIONSTRING;
 const jwt_secret = process.env.JWT_SECRET;
 
@@ -46,7 +46,7 @@ app.get('/', function (req, res) {
     res.redirect("/api-docs");
 });
 
-if (enable_dataapi == 'true') {
+if (enable_dataapi) {
     app.use("/data", dataProvider);
 } else {
     app.use("/data", (req, res) => {
