@@ -34,7 +34,7 @@
 import SwitchButton from "./components/ui/SwitchButton";
 import { mapGetters, mapActions } from 'vuex';
 
-// Helper to get cookie value
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -56,8 +56,9 @@ export default {
   created() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+
     if (token) {
-      this.$store.dispatch('authModule/ssoLogin', token)
+      this.$store.dispatch('authModule/b2cLogin', token)
         .then(() => {
           this.$router.replace('/');
         });

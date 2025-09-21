@@ -5,7 +5,7 @@ launch.json
 DockerCommands.txt
 build.log
 node.core
-
+temp
 
 
 # local env files
@@ -28,3 +28,6 @@ yarn-error.log*
 *.sw?
 *.pem
 *.code-workspace
+
+# backup
+*.bkp

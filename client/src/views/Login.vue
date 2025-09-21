@@ -2,6 +2,9 @@
   <div class="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
     <div class="w-full max-w-md">
       <form class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4" @submit.prevent="login">
+        <div v-if="error" class="mb-4 text-red-500">
+          {{ error }}
+        </div>
         <div class="mb-4">
           <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="username">
             Username
@@ -18,18 +21,14 @@
           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
             Sign In
           </button>
-          <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
+          <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="http://localhost:9090/auth/b2c/resetpassword">
             Forgot Password?
           </a>
         </div>
+
         <div class="flex items-center justify-between mt-4">
-          <button @click="ssoLogin" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-            Login with SSO
-          </button>
-        </div>
-        <div class="flex items-center justify-between mt-4">
-          <button @click="ssoLogin('google.com')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-            Login with Google
+          <button @click="b2cLogin" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+            Login with B2C
           </button>
         </div>
       </form>
@@ -42,8 +41,16 @@ export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      error: null
     };
+  },
+  created() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error_description');
+    if (error) {
+      this.error = error;
+    }
   },
   methods: {
     login() {
@@ -55,12 +62,9 @@ export default {
           console.error(err);
         });
     },
-    ssoLogin(domainHint = null) {
-      let redirectUrl = 'http://localhost:9090/auth/sso';
-      if (domainHint) {
-        redirectUrl += `?domain_hint=${domainHint}`;
-      }
-      window.location.href = redirectUrl;
+
+    b2cLogin() {
+      window.location.href = 'http://localhost:9090/auth/b2c/login';
     }
   }
 };

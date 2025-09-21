@@ -50,8 +50,8 @@ export default {
           });
       });
     },
-    ssoLogin({ commit }, token) {
-      console.log('auth module ssoLogin action called with token:', token);
+
+    b2cLogin({ commit }, token) {
       return new Promise((resolve) => {
         localStorage.setItem('token', token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;

@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
-const ssoAuthController = require("./controller/ssoauthcontroller");
+
 const dataProvider = require("./dataprovidercontroller/index");
 const authController = require("./controller/authcontroller");
 const auth = require("./middleware/auth");
@@ -34,9 +34,12 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.post("/auth/register", authController.register);
 app.post("/auth/login", authController.login);
 
-// SSO Auth routes
-app.get("/auth/sso", ssoAuthController.login);
-app.get("/auth/sso/callback", ssoAuthController.callback);
+const b2cAuthRoutes = require("./routes/b2cauth.js");
+
+
+
+// B2C Auth routes
+app.use("/auth/b2c", b2cAuthRoutes);
 
 app.use("/strategy", auth, strategyController);
 app.use("/portfolio", auth, portfolioCotroller);
