@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
     if (error.code === 11000) {
       throw new ApiError(400, 'Username already exists');
     }
-    throw error; // Let the global handler deal with other errors
+    throw error;
   }
 };
 

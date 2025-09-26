@@ -8,7 +8,7 @@ exports.login = async (req, res, next) => {
     try {
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
-            redirectUri: "http://localhost:9090/auth/b2c/callback",
+            redirectUri: process.env.B2C_REDIRECT_URI,
             authority: pca.config.auth.authority,
         };
 
@@ -23,7 +23,7 @@ exports.resetPassword = async (req, res, next) => {
     try {
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
-            redirectUri: "http://localhost:9090/auth/b2c/callback",
+            redirectUri: process.env.B2C_REDIRECT_URI,
             authority: pca.config.auth.authorityPasswordReset,
         };
 
@@ -43,7 +43,7 @@ exports.callback = async (req, res, next) => {
         const tokenRequest = {
             code: req.query.code,
             scopes: ["openid", "profile", "email"],
-            redirectUri: "http://localhost:9090/auth/b2c/callback"
+            redirectUri: process.env.B2C_REDIRECT_URI
         };
 
         const response = await pca.acquireTokenByCode(tokenRequest);
@@ -52,18 +52,18 @@ exports.callback = async (req, res, next) => {
         }
 
         let user = await User.findOne({ ssoId: response.account.homeAccountId });
-
+         
         if (!user) {
             const newUser = new User({
                 ssoId: response.account.homeAccountId,
-                email: response.idTokenClaims.email,
-                username: response.idTokenClaims.name,
+                email: response.idTokenClaims.email || `${response.account.homeAccountId}@papertrade.com`,
+                username: response.idTokenClaims.name || `${response.account.homeAccountId}-user`,
             });
             await newUser.save();
             user = newUser;
         }
 
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '2h' });
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.redirect(`http://localhost:8080/?token=${token}`);
 
     } catch (error) {

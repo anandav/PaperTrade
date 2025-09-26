@@ -82,7 +82,6 @@ const portfolioModule = {
       axios
         .post(apiUrl + "portfolio/saveall", item)
         .then(function(res) {
-          console.log('res.data :>> ', res.data);
           commit(SAVEALLPORTFOLIO, res.data);
         })
         .catch((e) => {
