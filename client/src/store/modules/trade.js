@@ -10,7 +10,7 @@ import {
 
 import axios from "axios";
 // const axios = require("axios");
-const apiUrl = process.env.VUE_APP_APIURL || "/";
+const apiUrl = process.env.APIURL || "/";
 
 
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = process.env.VUE_APP_APIURL || '/';
+const apiUrl = process.env.APIURL || '/';
 
 export default {
   namespaced: true,
@@ -32,6 +32,7 @@ export default {
   },
   actions: {
     login({ commit }, user) {
+      debugger;
       return new Promise((resolve, reject) => {
         commit('auth_request');
         axios.post(`${apiUrl}auth/login`, { username: user.username, password: user.password })
@@ -50,7 +51,6 @@ export default {
           });
       });
     },
-
     b2cLogin({ commit }, token) {
       return new Promise((resolve) => {
         localStorage.setItem('token', token);

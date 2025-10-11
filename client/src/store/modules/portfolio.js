@@ -6,7 +6,7 @@ import {
 } from "../mutationtype";
 import axios from "axios";
 
-const apiUrl = process.env.VUE_APP_APIURL || "/";
+const apiUrl = process.env.APIURL || "/";
 const portfolioModule = {
   namespaced: true,
   state: {
@@ -41,7 +41,7 @@ const portfolioModule = {
   },
   actions: {
     async GetAllPortfolios({ commit }) {
-      const apiUrl = process.env.VUE_APP_APIURL || "/";
+      const apiUrl = process.env.APIURL || "/";
       const response = await axios.get(apiUrl + "portfolio");
       commit(SETALLPORTFOLIOS, response.data);
     },

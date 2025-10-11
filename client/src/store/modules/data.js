@@ -6,7 +6,7 @@ import {
 } from "../mutationtype";
 import axios from "axios";
 
-const apiUrl = process.env.VUE_APP_APIURL || "/";
+const apiUrl = process.env.APIURL || "/";
 
 export default {
     namespaced: true,
