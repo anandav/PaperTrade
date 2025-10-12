@@ -8,7 +8,7 @@
     "devcss": "postcss src/tailwind.css -o public/tailwind.css",
     "devcss2": "tailwindcss build -i src/tailwind.css -o myindex.css",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "node scripts/generate-config.js && vue-cli-service build",
     "build:css": "postcss src/tailwind.css -o public/tailwind.css",
     "lint": "vue-cli-service lint"
   },

@@ -32,7 +32,6 @@ export default {
   },
   actions: {
     login({ commit }, user) {
-      debugger;
       return new Promise((resolve, reject) => {
         commit('auth_request');
         axios.post(`${apiUrl}auth/login`, { username: user.username, password: user.password })

@@ -11,6 +11,9 @@ import tooltip from "./components/ui/ToolTip";
 import axios from 'axios';
 import formatters from './common/formatters';
 
+axios.defaults.baseURL = window.APP_CONFIG.API_URL;
+
+console.log("API URL:", window.APP_CONFIG.API_URL);
 const token = localStorage.getItem('token');
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
