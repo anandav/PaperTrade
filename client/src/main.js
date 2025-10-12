@@ -15,6 +15,8 @@ axios.defaults.baseURL = window.APP_CONFIG.API_URL;
 
 console.log("API URL:", window.APP_CONFIG.API_URL);
 console.log("az_api_url:", process.env.AZ_API_URL);
+console.log("az_api_url:", process.env.VUE_APP_az_api_url);
+console.log("Environment Variables:", process.env);
 const token = localStorage.getItem('token');
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
