@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = {
   outputDir: path.resolve(__dirname, "./dist"),
+  productionSourceMap: false,
   devServer: {
     https: false,
     useLocalIp: false,
