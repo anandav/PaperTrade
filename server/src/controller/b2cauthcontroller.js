@@ -1,5 +1,6 @@
 
 const { pca } = require('../authConfig');
+const config = require('../config');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const ApiError = require('../common/ApiError');
@@ -36,7 +37,7 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.callback = async (req, res, next) => {
     if (req.query.error_description) {
-        return res.redirect(`http://localhost:8080/login?error_description=${req.query.error_description}`);
+        return res.redirect(`${config.clientUrl}/login?error_description=${req.query.error_description}`);
     }
 
     try {
@@ -64,7 +65,7 @@ exports.callback = async (req, res, next) => {
         }
 
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.redirect(`http://localhost:8080/?token=${token}`);
+        res.redirect(`${config.clientUrl}/?token=${token}`);
 
     } catch (error) {
         next(new ApiError(500, `B2C Callback Error: ${error.message}`));

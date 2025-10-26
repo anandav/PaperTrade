@@ -14,16 +14,21 @@ const auth = require("./middleware/auth");
 const logger = require("./common/logs");
 const ApiError = require('./common/ApiError');
 const errorHandler = require('./middleware/errorHandler');
-const myenv = process.env;
-const port = process.env.PORT || 9090;
-const enable_dataapi = String(process.env.ENABLE_DATAAPI).toLowerCase() === "true";
-const conn_string = process.env.DBCONNECTIONSTRING;
-const jwt_secret = process.env.JWT_SECRET;
+const config = require('./config');
+
+const port = config.port;
+const enable_dataapi = config.enableDataApi;
+const conn_string = config.dbConnectionString;
+const jwt_secret = config.jwtSecret;
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 logger.info("port:", port);
+logger.info("enable_dataapi:", enable_dataapi);
+logger.info("conn_string:", conn_string ? "Provided" : "Not Provided");
+logger.info("jwt_secret:", jwt_secret ? "Provided" : "Not Provided");
+
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
