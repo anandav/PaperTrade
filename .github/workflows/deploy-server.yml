@@ -1,0 +1,55 @@
+name: Deploy Server to Azure Container Apps
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'server/**'
+      - '.github/workflows/deploy-server.yml'
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINER_REGISTRY: <your-registry-name>  # e.g., papertradeacr
+  IMAGE_NAME: papertrade-api
+  CONTAINER_APP_NAME: papertrade-api
+  RESOURCE_GROUP: <your-resource-group>  # e.g., papertrade-rg
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Log in to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and push Docker image
+      working-directory: ./server
+      run: |
+        docker build -f Dockerfile.production -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+        docker build -f Dockerfile.production -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:latest .
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+
+    - name: Deploy to Azure Container Apps
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }}
+        imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        environmentVariables: |
+          NODE_ENV=production
+          AZURE_KEY_VAULT_URL=https://<your-keyvault-name>.vault.azure.net/

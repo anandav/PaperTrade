@@ -37,7 +37,7 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.callback = async (req, res, next) => {
     if (req.query.error_description) {
-        return res.redirect(`${config.clientUrl}/login?error_description=${req.query.error_description}`);
+        return res.redirect(`${config.clientUri}/login?error_description=${req.query.error_description}`);
     }
 
     try {
@@ -65,7 +65,7 @@ exports.callback = async (req, res, next) => {
         }
 
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.redirect(`${config.clientUrl}/?token=${token}`);
+        res.redirect(`${config.clientUri}/?token=${token}`);
 
     } catch (error) {
         next(new ApiError(500, `B2C Callback Error: ${error.message}`));

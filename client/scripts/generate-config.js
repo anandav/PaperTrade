@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const configPath = path.resolve(__dirname, '../public/config.js');
-const apiUrl = process.env.API_URL || 'http://localhost:41234/'; 
+const apiUrl = process.env.API_URL || 'http://localhost:9090/'; 
 
 const configContent = `window.APP_CONFIG = { API_URL: '${apiUrl}' };`;
 
