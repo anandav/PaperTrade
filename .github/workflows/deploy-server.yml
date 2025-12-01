@@ -11,7 +11,7 @@ on:
 
 env:
   AZURE_CONTAINER_REGISTRY: adirevand
-  AZURE_WEBAPP_NAME: papertrade-api
+  AZURE_WEBAPP_NAME: apiadirevandcom
   IMAGE_NAME: papertrade-api
   RESOURCE_GROUP: adirevand.com-rg
 
