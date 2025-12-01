@@ -4,8 +4,6 @@ const Portfolio = require("../models/portfolio");
 const commonUtility = require("../models/commonUtility");
 const ApiError = require("../common/ApiError");
 
-require("dotenv/config");
-
 portfolicontroller.get("/", async (req, res) => {
   const data = await Portfolio.find().sort({ modifiedon: -1 });
   res.json(data);

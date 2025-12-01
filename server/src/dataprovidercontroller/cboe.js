@@ -1,7 +1,6 @@
 const axios = require("axios").default;
 const jmespath = require("jmespath");
 
-require("dotenv/config");
 let lastupdated = null;
 let symbolList = null;
 

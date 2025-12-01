@@ -1,4 +1,14 @@
 require('express-async-errors'); // Must be the first import
+
+// Load .env file only in non-production environments
+if (process.env.NODE_ENV !== 'production') {
+    try {
+        require('dotenv').config();
+    } catch (error) {
+        console.warn("dotenv not available, using existing environment variables");
+    }
+}
+
 const express = require("express");
 const cors = require("cors");
 const app = express();

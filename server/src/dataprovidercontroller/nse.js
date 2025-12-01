@@ -2,7 +2,6 @@ const axios = require("axios").default;
 const jmespath = require("jmespath");
 const logger = require("../common/logs");
 
-require("dotenv/config");
 let currencyFutList = null;
 let equityFutList = null;
 let indicesFutList = null;
