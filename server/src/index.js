@@ -46,7 +46,6 @@ async function startServer() {
         logger.info("conn_string:", conn_string ? "Provided" : "Not Provided");
         logger.info("jwt_secret:", jwt_secret ? "Provided" : "Not Provided");
 
-        // Make config globally available for other modules
         global.appConfig = config;
 
         app.use(express.json());
