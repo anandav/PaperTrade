@@ -1,15 +1,15 @@
 
 const { pca } = require('../authConfig');
-const config = require('../config');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const ApiError = require('../common/ApiError');
 
 exports.login = async (req, res, next) => {
     try {
+        const appConfig = global.appConfig;
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
-            redirectUri: process.env.B2C_REDIRECT_URI,
+            redirectUri: appConfig.b2cRedirectUri,
             authority: pca.config.auth.authority,
         };
 
@@ -22,9 +22,10 @@ exports.login = async (req, res, next) => {
 
 exports.resetPassword = async (req, res, next) => {
     try {
+        const appConfig = global.appConfig;
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
-            redirectUri: process.env.B2C_REDIRECT_URI,
+            redirectUri: appConfig.b2cRedirectUri,
             authority: pca.config.auth.authorityPasswordReset,
         };
 
@@ -36,15 +37,17 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.callback = async (req, res, next) => {
+    const appConfig = global.appConfig;
+
     if (req.query.error_description) {
-        return res.redirect(`${config.clientUri}/login?error_description=${req.query.error_description}`);
+        return res.redirect(`${appConfig.clientUri}/login?error_description=${req.query.error_description}`);
     }
 
     try {
         const tokenRequest = {
             code: req.query.code,
             scopes: ["openid", "profile", "email"],
-            redirectUri: process.env.B2C_REDIRECT_URI
+            redirectUri: appConfig.b2cRedirectUri
         };
 
         const response = await pca.acquireTokenByCode(tokenRequest);
@@ -53,7 +56,7 @@ exports.callback = async (req, res, next) => {
         }
 
         let user = await User.findOne({ ssoId: response.account.homeAccountId });
-         
+
         if (!user) {
             const newUser = new User({
                 ssoId: response.account.homeAccountId,
@@ -64,8 +67,8 @@ exports.callback = async (req, res, next) => {
             user = newUser;
         }
 
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.redirect(`${config.clientUri}/?token=${token}`);
+        const token = jwt.sign({ _id: user._id }, appConfig.jwtSecret, { expiresIn: '1h' });
+        res.redirect(`${appConfig.clientUri}/?token=${token}`);
 
     } catch (error) {
         next(new ApiError(500, `B2C Callback Error: ${error.message}`));
