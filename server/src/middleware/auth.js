@@ -5,7 +5,7 @@ const User = require('../models/user');
 const auth = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, global.appConfig?.jwtSecret || process.env.JWT_SECRET);
     if (decoded.exp * 1000 < Date.now()) {
       throw new Error('Token expired');
     }
