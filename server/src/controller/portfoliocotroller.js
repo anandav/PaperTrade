@@ -5,32 +5,29 @@ const commonUtility = require("../models/commonUtility");
 const ApiError = require("../common/ApiError");
 
 portfolicontroller.get("/", async (req, res) => {
-  const data = await Portfolio.find().sort({ modifiedon: -1 });
+  const data = await Portfolio.find({ userId: req.user._id }).sort({ modifiedon: -1 });
   res.json(data);
 });
 
 portfolicontroller.post("/find", async (req, res) => {
   let { fieldName, fieldValue } = req.body;
-  let result = {};
+  let query = { userId: req.user._id };
   if (fieldName && fieldValue) {
-    result = await Portfolio.find({ [fieldName]: fieldValue }).sort({
-      order: -1
-    });
-  } else {
-    result = await Portfolio.find().sort({ order: -1 });
+    query[fieldName] = fieldValue;
   }
+  const result = await Portfolio.find(query).sort({ order: -1 });
   res.send(result);
 });
 
 portfolicontroller.post("/save", async (req, res) => {
   if (process.env.ENABLE_DEMO == "false") {
-    const { _id, name, exchange, openingbalance, description, createdon, updateui } = req.body;
+    const { _id, name, exchange, openingbalance, description, updateui } = req.body;
 
     let _portfolioObject;
     if (_id) {
-      _portfolioObject = await commonUtility.GetPortfolioById(_id);
+      _portfolioObject = await Portfolio.findOne({ _id, userId: req.user._id });
       if (!_portfolioObject) {
-        throw new ApiError(404, "Portfolio not found.");
+        throw new ApiError(404, "Portfolio not found or unauthorized.");
       }
       _portfolioObject.name = name;
       _portfolioObject.exchange = exchange;
@@ -42,14 +39,16 @@ portfolicontroller.post("/save", async (req, res) => {
       _portfolioObject = new Portfolio({
         name,
         exchange,
+        openingbalance,
         description,
+        userId: req.user._id,
         createdon: new Date(),
       });
     }
 
     const result = await _portfolioObject.save();
     if (updateui) {
-      const _allportfolio = await Portfolio.find();
+      const _allportfolio = await Portfolio.find({ userId: req.user._id }).sort({ order: 1 });
       res.send(_allportfolio);
     } else {
       res.send(result);
@@ -66,7 +65,7 @@ portfolicontroller.post("/saveall", async (req, res) => {
 
   let _portfolios = req.body;
   for (const item of _portfolios) {
-    let _portfolioObject = await commonUtility.GetPortfolioById(item._id);
+    let _portfolioObject = await Portfolio.findOne({ _id: item._id, userId: req.user._id });
     if (_portfolioObject) {
       _portfolioObject.name = item.name;
       _portfolioObject.exchange = item.exchange;
@@ -77,7 +76,7 @@ portfolicontroller.post("/saveall", async (req, res) => {
       await _portfolioObject.save();
     }
   }
-  res.send(await findPortfolio());
+  res.send(await Portfolio.find({ userId: req.user._id }).sort({ order: 1 }));
 });
 
 portfolicontroller.post("/delete", async (req, res) => {
@@ -87,11 +86,12 @@ portfolicontroller.post("/delete", async (req, res) => {
   }
 
   if (process.env.ENABLE_DEMO == "false") {
-    await commonUtility.DeleteStrategyUsingPortfolioID(pid);
-    const result = await Portfolio.deleteOne({ _id: pid });
-    if (result.deletedCount === 0) {
-      throw new ApiError(404, 'Portfolio not found.');
+    const portfolioToDelete = await Portfolio.findOne({ _id: pid, userId: req.user._id });
+    if (!portfolioToDelete) {
+      throw new ApiError(404, 'Portfolio not found or unauthorized.');
     }
+    await commonUtility.DeleteStrategyUsingPortfolioID(pid);
+    await Portfolio.deleteOne({ _id: pid });
     res.json({ message: "Portfolio and related strategies deleted successfully." });
   } else {
     throw new ApiError(401, "Cant delete portfolio on demo mode.");

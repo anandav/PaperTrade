@@ -49,6 +49,11 @@ const strategySchema = schema({
     type: Date,
     default: Date.now(),
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
   trades: [tradeSchema],
   portfolio: {
     type: mongoose.Schema.Types.ObjectId,

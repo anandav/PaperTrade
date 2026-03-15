@@ -19,6 +19,11 @@ const portfolioSchema = schema({
   order:{
     type: Number
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   createdon : {
     type: Date,
     default : Date.now()

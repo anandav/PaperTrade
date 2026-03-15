@@ -56,16 +56,20 @@ tradeController.post("/save", async (req, res) => {
 
     if (_id) {
       _trade._id = _id;
-      await Strategy.updateOne(
-        { "trades._id": _id },
+      const strategyUpdateResult = await Strategy.updateOne(
+        { "trades._id": _id, userId: req.user._id },
         { $set: { "trades.$": _trade } }
       );
 
-      const _result = await commonUtility.GetTradeById(_id);
+      if (strategyUpdateResult.matchedCount === 0) {
+        throw new ApiError(404, "Trade not found or unauthorized.");
+      }
+
+      const _result = await commonUtility.GetTradeById(_id, req.user._id);
       res.json(_result);
 
     } else if (sid && !_id) {
-      let _strategyObject = await commonUtility.GetStrategyById(sid);
+      let _strategyObject = await commonUtility.GetStrategyById(sid, req.user._id);
       if (_strategyObject) {
         _strategyObject.trades.push(_trade);
 
@@ -75,7 +79,7 @@ tradeController.post("/save", async (req, res) => {
        res.json(result);
        
       } else {
-        throw new ApiError(404, "Strategy not found.");
+        throw new ApiError(404, "Strategy not found or unauthorized.");
       }
     }
   } else {
@@ -91,13 +95,13 @@ tradeController.post("/delete", async (req, res) => {
 
   if (process.env.ENABLE_DEMO == 'false') {
     const result = await Strategy.updateOne(
-      { "trades._id": tid },
+      { "trades._id": tid, userId: req.user._id },
       { $pull: { "trades": { _id: tid } } }
     );
     
-    if (result.nModified === 0) {
+    if (result.matchedCount === 0) {
         // This is optional, but good practice. It tells the client if the trade wasn't found.
-        throw new ApiError(404, 'Trade not found or already deleted.');
+        throw new ApiError(404, 'Trade not found or unauthorized.');
     }
 
     res.json({ message: 'Trade deleted successfully.' });

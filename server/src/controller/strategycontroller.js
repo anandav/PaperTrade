@@ -13,13 +13,18 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
   if (fieldName && fieldValue) {
     result = await Strategy.aggregate(
       [
-        { $match: { [fieldName]: new mongoose.Types.ObjectId(`${fieldValue}`) } },
+        { 
+          $match: { 
+            [fieldName]: new mongoose.Types.ObjectId(`${fieldValue}`),
+            userId: req.user._id 
+          } 
+        },
         { $sort: { "createdon": -1, 'trades.order': -1 } }
       ]
     );
     res.json(result);
   } else {
-    result = await Strategy.find({});
+    result = await Strategy.find({ userId: req.user._id });
     res.json(result);
   }
 });
@@ -28,7 +33,6 @@ strategycontoller.post("/save", async (req, res) => {
   if (process.env.ENABLE_DEMO == 'false') {
     const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, hidechart, ismultiplesymbol, trades, createdon } = req.body;
     let _data = {
-      _id,
       name,
       description,
       symbol,
@@ -40,7 +44,6 @@ strategycontoller.post("/save", async (req, res) => {
       hidechart,
       ismultiplesymbol,
       portfolio,
-      createdon,
       modifiedon: new Date(),
     };
 
@@ -50,17 +53,18 @@ strategycontoller.post("/save", async (req, res) => {
 
     if (_id) {
       const result = await Strategy.updateOne(
-        { _id: _id },
+        { _id: _id, userId: req.user._id },
         {
           $set: _data,
         }
       );
-      if (result.nModified === 0) {
-        throw new ApiError(404, 'Strategy not found or data is unchanged.');
+      if (result.matchedCount === 0) {
+        throw new ApiError(404, 'Strategy not found or unauthorized.');
       }
-      res.send(_data);
+      res.send({ ..._data, _id, userId: req.user._id });
     } else {
       _data.createdon = new Date();
+      _data.userId = req.user._id;
       const strategy = new Strategy(_data);
       const result = await strategy.save();
       res.status(201).send(result);
@@ -77,9 +81,9 @@ strategycontoller.post("/delete", async (req, res) => {
   }
 
   if (process.env.ENABLE_DEMO == 'false') {
-    const result = await Strategy.deleteOne({ _id: _id });
+    const result = await Strategy.deleteOne({ _id: _id, userId: req.user._id });
     if (result.deletedCount === 0) {
-      throw new ApiError(404, 'Strategy not found.');
+      throw new ApiError(404, 'Strategy not found or unauthorized.');
     }
     res.json({ message: 'Strategy deleted successfully.' });
   } else {
