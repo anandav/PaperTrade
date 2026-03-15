@@ -18,7 +18,7 @@
             focus:outline-none
             rounded
           "
-          placeholder="{{ getLableConst.savePortfolio }}"
+          :placeholder="getLableConst.savePortfolio"
           v-model="portfolioName"
           @keyup.enter="onAddNewPortfolio()"
         />
