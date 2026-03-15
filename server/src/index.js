@@ -49,7 +49,7 @@ async function startServer() {
         global.appConfig = config;
 
         app.use(express.json());
-        app.use(cors());
+        app.use(cors({ origin: config.clientUri, credentials: true }));
         app.use(helmet());
 
         app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

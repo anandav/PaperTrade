@@ -1,50 +1,53 @@
-name: Deploy Server to Azure App Service
+name: Deploy Server to Azure Container Apps
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
     paths:
       - 'server/**'
       - '.github/workflows/deploy-server.yml'
   workflow_dispatch:
 
 env:
-  AZURE_CONTAINER_REGISTRY: adirevand
-  AZURE_WEBAPP_NAME: apiadirevandcom
-  IMAGE_NAME: papertrade-api
-  RESOURCE_GROUP: adirevand.com-rg
+  DO_REGISTRY: registry.digitalocean.com/${{ secrets.DO_REGISTRY_NAME }}
+  IMAGE_NAME: registry.digitalocean.com/${{ secrets.DO_REGISTRY_NAME }}/papertrade-api
+  CONTAINER_APP_NAME: apiadirevandcom
+  RESOURCE_GROUP: api_adirevand.com-rg
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+
+    - name: Log in to DigitalOcean Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: registry.digitalocean.com
+        username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Build and push Docker image
+      working-directory: ./server
+      run: |
+        docker build -f Dockerfile.production \
+          -t ${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          -t ${{ env.IMAGE_NAME }}:latest .
+        docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.IMAGE_NAME }}:latest
 
     - name: Log in to Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS_SERVICE }}
 
-    - name: Log in to Azure Container Registry
-      uses: azure/docker-login@v1
+    - name: Deploy to Azure Container Apps
+      uses: azure/container-apps-deploy-action@v1
       with:
-        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
-
-    - name: Build and push Docker image
-      working-directory: ./server
-      run: |
-        docker build -f Dockerfile.production -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-        docker build -f Dockerfile.production -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:latest .
-        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
-
-    - name: Deploy to Azure App Service
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        images: '${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}'
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }}
+        imageToDeploy: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+        registryUrl: registry.digitalocean.com
+        registryUsername: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        registryPassword: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
