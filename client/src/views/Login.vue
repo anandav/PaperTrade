@@ -30,6 +30,12 @@
           </button>
         </div>
       </form>
+      <div class="text-center text-gray-500 text-xs mt-4">
+        &copy; {{ currentYear }} Anand.AV. All rights reserved. 
+        <div class="mt-2">
+          <a href="https://www.adirevand.com" class="hover:underline text-gray-400">www.adirevand.com</a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -40,7 +46,8 @@ export default {
     return {
       username: '',
       password: '',
-      error: null
+      error: null,
+      currentYear: new Date().getFullYear()
     };
   },
   created() {
