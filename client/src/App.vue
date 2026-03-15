@@ -24,7 +24,7 @@
         </div>
       </div>
     </nav>
-    <main role="main">
+    <main role="main" class="pb-10">
       <router-view />
     </main>
     <AppFooter />
