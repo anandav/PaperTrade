@@ -27,11 +27,13 @@
     <main role="main">
       <router-view />
     </main>
+    <AppFooter />
   </div>
 </template>
 
 <script>
 import SwitchButton from "./components/ui/SwitchButton";
+import AppFooter from "./components/ui/AppFooter";
 import { mapGetters, mapActions } from 'vuex';
 
 
@@ -52,6 +54,7 @@ export default {
   },
   components: {
     SwitchButton,
+    AppFooter,
   },
   created() {
     const urlParams = new URLSearchParams(window.location.search);

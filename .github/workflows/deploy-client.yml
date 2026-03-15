@@ -39,6 +39,7 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           API_URL: ${{ secrets.API_URL_SECRET }}
+          BUILD_SHA: ${{ github.sha }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
