@@ -11,13 +11,14 @@ function getPca() {
             throw new Error('Application config not initialized. Make sure ConfigLoader runs before accessing B2C auth.');
         }
 
+        const tenantName = appConfig.b2cTenantName;
         const config = {
             auth: {
                 clientId: appConfig.b2cClientId,
-                authority: `https://aditirevathianand.b2clogin.com/aditirevathianand.onmicrosoft.com/${appConfig.b2cSigninPolicyName}`,
-                authorityPasswordReset: `https://aditirevathianand.b2clogin.com/aditirevathianand.onmicrosoft.com/${appConfig.b2cPasswordResetPolicyName || appConfig.b2cSigninPolicyName}`,
+                authority: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${appConfig.b2cSigninPolicyName}`,
+                authorityPasswordReset: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${appConfig.b2cPasswordResetPolicyName || appConfig.b2cSigninPolicyName}`,
                 clientSecret: appConfig.b2cClientSecret,
-                knownAuthorities: ["aditirevathianand.b2clogin.com"],
+                knownAuthorities: [`${tenantName}.b2clogin.com`],
             },
             system: {
                 loggerOptions: {
