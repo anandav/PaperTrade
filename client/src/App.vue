@@ -16,6 +16,7 @@
         <router-link to="/builder" class="pl-5"> Place holder</router-link>
         <!-- <router-link to="/about" class="pl-5">About</router-link> -->
         <div class="float-right">
+          <span v-if="isLoggedIn && email" class="mr-4">{{ email }}</span>
           <button v-if="isLoggedIn" @click="logout" class="mr-3">Logout</button>
           <label class="mr-3">
             <SwitchButton :IsDarkTheme="true" :Value="isdark" @itemclicked="swiththeme" />
@@ -24,6 +25,10 @@
         </div>
       </div>
     </nav>
+    <div v-if="isLoggedIn && claims" class="fixed top-14 right-4 z-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-3 text-xs max-w-xs overflow-auto max-h-64 shadow">
+      <div class="font-bold mb-1">JWT Claims</div>
+      <pre>{{ JSON.stringify(claims, null, 2) }}</pre>
+    </div>
     <main role="main" class="pb-10">
       <router-view />
     </main>
@@ -68,7 +73,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('authModule', ['isLoggedIn']),
+    ...mapGetters('authModule', ['isLoggedIn', 'username', 'email', 'claims']),
   },
   methods: {
     ...mapActions('authModule', ['logout']),

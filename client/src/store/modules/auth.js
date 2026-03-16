@@ -2,25 +2,39 @@ import axios from 'axios';
 
 const apiUrl = process.env.APIURL || '/';
 
+function parseJwt(token) {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch {
+    return {};
+  }
+}
+
+const storedToken = localStorage.getItem('token') || '';
+
 export default {
   namespaced: true,
   state: {
-    token: localStorage.getItem('token') || '',
+    token: storedToken,
+    claims: parseJwt(storedToken),
     user: {},
     status: '',
   },
   getters: {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
+    username: state => state.claims.username || '',
+    email: state => state.claims.email || '',
+    claims: state => state.claims,
   },
   mutations: {
     auth_request(state) {
       state.status = 'loading';
     },
-    auth_success(state, token, user) {
+    auth_success(state, { token }) {
       state.status = 'success';
       state.token = token;
-      state.user = user;
+      state.claims = parseJwt(token);
     },
     auth_error(state) {
       state.status = 'error';
@@ -28,6 +42,7 @@ export default {
     logout(state) {
       state.status = '';
       state.token = '';
+      state.claims = {};
     },
   },
   actions: {
@@ -37,10 +52,9 @@ export default {
         axios.post(`${apiUrl}auth/login`, { username: user.username, password: user.password })
           .then(resp => {
             const token = resp.data.token;
-            const user = resp.data.user;
             localStorage.setItem('token', token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            commit('auth_success', token, user);
+            commit('auth_success', { token });
             resolve(resp);
           })
           .catch(err => {
@@ -54,7 +68,7 @@ export default {
       return new Promise((resolve) => {
         localStorage.setItem('token', token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        commit('auth_success', token, {}); // We don't have user details here, but we could fetch them.
+        commit('auth_success', { token });
         resolve();
       });
     },

@@ -57,17 +57,28 @@ exports.callback = async (req, res, next) => {
 
         let user = await User.findOne({ ssoId: response.account.homeAccountId });
 
+        console.log('idTokenClaims:', JSON.stringify(response.idTokenClaims, null, 2));
+        const firstName = response.idTokenClaims.given_name || response.idTokenClaims.name || '';
+        const lastName = response.idTokenClaims.family_name || '';
+
         if (!user) {
             const newUser = new User({
                 ssoId: response.account.homeAccountId,
-                email: response.idTokenClaims.email || `${response.account.homeAccountId}@papertrade.com`,
+                email: (response.idTokenClaims.emails && response.idTokenClaims.emails[0]) || response.idTokenClaims.email || `${response.account.homeAccountId}@papertrade.com`,
                 username: response.idTokenClaims.name || `${response.account.homeAccountId}-user`,
+                firstName,
+                lastName,
             });
             await newUser.save();
             user = newUser;
+        } else {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.email = (response.idTokenClaims.emails && response.idTokenClaims.emails[0]) || response.idTokenClaims.email || user.email;
+            await user.save();
         }
 
-        const token = jwt.sign({ _id: user._id }, appConfig.jwtSecret, { expiresIn: '1h' });
+        const token = jwt.sign({ _id: user._id, username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email }, appConfig.jwtSecret, { expiresIn: '1h' });
         res.redirect(`${appConfig.clientUri}/?token=${token}`);
 
     } catch (error) {

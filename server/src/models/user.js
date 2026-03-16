@@ -18,11 +18,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: function() { return !this.ssoId; } // Required only if not an SSO user
   },
-  ssoId: { 
+  ssoId: {
     type: String,
     unique: true,
     sparse: true
-  }
+  },
+  firstName: { type: String, trim: true },
+  lastName: { type: String, trim: true }
 });
 
 // Only hash password if it's provided and modified
