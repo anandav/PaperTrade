@@ -12,11 +12,14 @@ function getPca() {
         }
 
         const tenantName = appConfig.b2cTenantName;
+        const signInPolicy = appConfig.b2cSigninPolicyName;
+        const passwordResetPolicy = appConfig.b2cPasswordResetPolicyName || signInPolicy;
+
         const config = {
             auth: {
                 clientId: appConfig.b2cClientId,
-                authority: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${appConfig.b2cSigninPolicyName}`,
-                authorityPasswordReset: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${appConfig.b2cPasswordResetPolicyName || appConfig.b2cSigninPolicyName}`,
+                authority: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${signInPolicy}`,
+                authorityPasswordReset: `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${passwordResetPolicy}`,
                 clientSecret: appConfig.b2cClientSecret,
                 knownAuthorities: [`${tenantName}.b2clogin.com`],
             },

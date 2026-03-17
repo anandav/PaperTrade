@@ -21,7 +21,6 @@
           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
             Sign In
           </button>
-         
         </div>
 
         <div class="flex items-center justify-between mt-4">
@@ -30,12 +29,6 @@
           </button>
         </div>
       </form>
-      <div class="text-center text-gray-500 text-xs mt-4">
-        &copy; {{ currentYear }} Anand.AV. All rights reserved. 
-        <div class="mt-2">
-          <a href="https://www.adirevand.com" class="hover:underline text-gray-400">www.adirevand.com</a>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -46,8 +39,7 @@ export default {
     return {
       username: '',
       password: '',
-      error: null,
-      currentYear: new Date().getFullYear()
+      error: null
     };
   },
   created() {

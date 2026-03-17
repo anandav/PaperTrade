@@ -23,24 +23,43 @@ exports.login = async (req, res, next) => {
 exports.resetPassword = async (req, res, next) => {
     try {
         const appConfig = global.appConfig;
+        if (!appConfig.b2cPasswordResetPolicyName) {
+            console.warn('B2C_PASSWORD_RESET_POLICY_NAME is not configured. Falling back to default sign-in policy, which might fail for password resets.');
+        }
+
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
             redirectUri: appConfig.b2cRedirectUri,
             authority: pca.config.auth.authorityPasswordReset,
         };
 
+        console.log('Generating Auth Code URL for Password Reset with authority:', authCodeUrlParameters.authority);
         const response = await pca.getAuthCodeUrl(authCodeUrlParameters);
         res.redirect(response);
     } catch (error) {
+        console.error('B2C Reset Password Error:', error);
         next(new ApiError(500, `B2C Reset Password Error: ${error.message}`));
     }
 };
 
 exports.callback = async (req, res, next) => {
     const appConfig = global.appConfig;
+    const errorDescription = req.query.error_description || req.query.error;
 
-    if (req.query.error_description) {
-        return res.redirect(`${appConfig.clientUri}/login?error_description=${req.query.error_description}`);
+    if (errorDescription) {
+        console.log('B2C Callback Error:', errorDescription);
+        if (errorDescription.includes('AADB2C90118')) {
+            // Redirect to the reset password flow
+            const resetPasswordUrl = `/auth/b2c/resetpassword`;
+            console.log('Redirecting to Password Reset:', resetPasswordUrl);
+            return res.redirect(resetPasswordUrl);
+        }
+        if (errorDescription.includes('AADB2C90091')) {
+            // User cancelled the operation (e.g., during password reset)
+            console.log('User cancelled B2C operation');
+            return res.redirect(`${appConfig.clientUri}/login`);
+        }
+        return res.redirect(`${appConfig.clientUri}/login?error_description=${encodeURIComponent(errorDescription)}`);
     }
 
     try {
