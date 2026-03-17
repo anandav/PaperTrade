@@ -25,10 +25,6 @@
         </div>
       </div>
     </nav>
-    <div v-if="isLoggedIn && claims" class="fixed top-14 right-4 z-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-3 text-xs max-w-xs overflow-auto max-h-64 shadow">
-      <div class="font-bold mb-1">JWT Claims</div>
-      <pre>{{ JSON.stringify(claims, null, 2) }}</pre>
-    </div>
     <main role="main" class="pb-10">
       <router-view />
     </main>
@@ -73,7 +69,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('authModule', ['isLoggedIn', 'username', 'email', 'claims']),
+    ...mapGetters('authModule', ['isLoggedIn', 'username', 'email']),
   },
   methods: {
     ...mapActions('authModule', ['logout']),
