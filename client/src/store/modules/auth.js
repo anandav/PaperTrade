@@ -77,6 +77,11 @@ export default {
         commit('logout');
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
+        
+        // Redirect to B2C logout on the server
+        const apiUrl = window.APP_CONFIG?.API_URL || '/';
+        window.location.href = `${apiUrl}auth/b2c/logout`;
+        
         resolve();
       });
     },

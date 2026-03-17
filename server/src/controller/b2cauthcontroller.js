@@ -42,6 +42,22 @@ exports.resetPassword = async (req, res, next) => {
     }
 };
 
+exports.logout = async (req, res, next) => {
+    try {
+        const appConfig = global.appConfig;
+        const tenantName = appConfig.b2cTenantName;
+        const policyName = appConfig.b2cSigninPolicyName;
+        const logoutUri = encodeURIComponent(appConfig.clientUri + '/login');
+        
+        const logoutUrl = `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${policyName}/oauth2/v2.0/logout?post_logout_redirect_uri=${logoutUri}`;
+        
+        console.log('Redirecting to B2C Logout:', logoutUrl);
+        res.redirect(logoutUrl);
+    } catch (error) {
+        next(new ApiError(500, `B2C Logout Error: ${error.message}`));
+    }
+};
+
 exports.callback = async (req, res, next) => {
     const appConfig = global.appConfig;
     const errorDescription = req.query.error_description || req.query.error;
