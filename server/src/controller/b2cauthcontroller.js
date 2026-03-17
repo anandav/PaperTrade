@@ -1,5 +1,5 @@
 
-const { pca } = require('../authConfig');
+const { pca, getAuthority } = require('../authConfig');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const ApiError = require('../common/ApiError');
@@ -10,7 +10,7 @@ exports.login = async (req, res, next) => {
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
             redirectUri: appConfig.b2cRedirectUri,
-            authority: pca.config.auth.authority,
+            authority: getAuthority(appConfig.b2cSigninPolicyName),
         };
 
         const response = await pca.getAuthCodeUrl(authCodeUrlParameters);
@@ -30,7 +30,7 @@ exports.resetPassword = async (req, res, next) => {
         const authCodeUrlParameters = {
             scopes: ["openid", "profile", "email"],
             redirectUri: appConfig.b2cRedirectUri,
-            authority: pca.config.auth.authorityPasswordReset,
+            authority: getAuthority(appConfig.b2cPasswordResetPolicyName),
         };
 
         console.log('Generating Auth Code URL for Password Reset with authority:', authCodeUrlParameters.authority);
@@ -63,10 +63,18 @@ exports.callback = async (req, res, next) => {
     }
 
     try {
+        // After password reset, B2C returns 'tfp' or 'p' parameter in query for policy name
+        const policy = req.query.tfp || req.query.p || appConfig.b2cSigninPolicyName;
+        const authority = getAuthority(policy);
+
+        console.log('B2C Callback using Policy:', policy);
+        console.log('B2C Callback using Authority:', authority);
+
         const tokenRequest = {
             code: req.query.code,
             scopes: ["openid", "profile", "email"],
-            redirectUri: appConfig.b2cRedirectUri
+            redirectUri: appConfig.b2cRedirectUri,
+            authority: authority
         };
 
         const response = await pca.acquireTokenByCode(tokenRequest);
@@ -101,6 +109,7 @@ exports.callback = async (req, res, next) => {
         res.redirect(`${appConfig.clientUri}/?token=${token}`);
 
     } catch (error) {
+        console.error('B2C Final Callback Error:', error);
         next(new ApiError(500, `B2C Callback Error: ${error.message}`));
     }
 };

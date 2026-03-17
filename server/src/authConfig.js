@@ -44,5 +44,10 @@ function getPca() {
 module.exports = {
     get pca() {
         return getPca();
+    },
+    getAuthority(policyName) {
+        const appConfig = global.appConfig;
+        const tenantName = appConfig.b2cTenantName;
+        return `https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com/${policyName || appConfig.b2cSigninPolicyName}`;
     }
 };
