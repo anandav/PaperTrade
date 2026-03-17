@@ -24,7 +24,12 @@ const UserSchema = new mongoose.Schema({
     sparse: true
   },
   firstName: { type: String, trim: true },
-  lastName: { type: String, trim: true }
+  lastName: { type: String, trim: true },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    default: 'active'
+  }
 });
 
 // Only hash password if it's provided and modified

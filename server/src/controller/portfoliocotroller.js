@@ -20,7 +20,7 @@ portfolicontroller.post("/find", async (req, res) => {
 });
 
 portfolicontroller.post("/save", async (req, res) => {
-  if (process.env.ENABLE_DEMO == "false") {
+  if (!(global.appConfig && global.appConfig.enableDemo)) {
     const { _id, name, exchange, openingbalance, description, updateui } = req.body;
 
     let _portfolioObject;
@@ -59,7 +59,7 @@ portfolicontroller.post("/save", async (req, res) => {
 });
 
 portfolicontroller.post("/saveall", async (req, res) => {
-  if (process.env.ENABLE_DEMO == "true") {
+  if (global.appConfig && global.appConfig.enableDemo) {
     throw new ApiError(401, "Cant save all portfolios in demo mode.");
   }
 
@@ -85,7 +85,7 @@ portfolicontroller.post("/delete", async (req, res) => {
     throw new ApiError(400, 'Portfolio ID (_id) is required.');
   }
 
-  if (process.env.ENABLE_DEMO == "false") {
+  if (!(global.appConfig && global.appConfig.enableDemo)) {
     const portfolioToDelete = await Portfolio.findOne({ _id: pid, userId: req.user._id });
     if (!portfolioToDelete) {
       throw new ApiError(404, 'Portfolio not found or unauthorized.');

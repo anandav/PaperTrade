@@ -30,7 +30,7 @@ strategycontoller.post("/findusingportfolioid", async (req, res) => {
 });
 
 strategycontoller.post("/save", async (req, res) => {
-  if (process.env.ENABLE_DEMO == 'false') {
+  if (!(global.appConfig && global.appConfig.enableDemo)) {
     const { _id, portfolio, name, description, symbol, symboltype, lotsize, expiry, strikepricestep, isarchive, hidechart, ismultiplesymbol, trades, createdon } = req.body;
     let _data = {
       name,
@@ -80,7 +80,7 @@ strategycontoller.post("/delete", async (req, res) => {
     throw new ApiError(400, 'Strategy ID (_id) is required.');
   }
 
-  if (process.env.ENABLE_DEMO == 'false') {
+  if (!(global.appConfig && global.appConfig.enableDemo)) {
     const result = await Strategy.deleteOne({ _id: _id, userId: req.user._id });
     if (result.deletedCount === 0) {
       throw new ApiError(404, 'Strategy not found or unauthorized.');

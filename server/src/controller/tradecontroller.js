@@ -6,7 +6,7 @@ const commonUtility = require("../models/commonUtility");
 const ApiError = require("../common/ApiError");
 
 tradeController.post("/save", async (req, res) => {
-  if (process.env.ENABLE_DEMO == 'false') {
+  if (!(global.appConfig && global.appConfig.enableDemo)) {
     const {
       sid,
       _id,
@@ -93,7 +93,7 @@ tradeController.post("/delete", async (req, res) => {
     throw new ApiError(400, 'Trade ID (tid) is required.');
   }
 
-  if (process.env.ENABLE_DEMO == 'false') {
+  if (!(global.appConfig && global.appConfig.enableDemo)) {
     const result = await Strategy.updateOne(
       { "trades._id": tid, userId: req.user._id },
       { $pull: { "trades": { _id: tid } } }

@@ -25,7 +25,7 @@ module.exports = {
 
   DeleteStrategyUsingPortfolioID: function (pid, userId) {
     if (pid) {
-      if (process.env.ENABLE_DEMO == 'false') {
+      if (!(global.appConfig && global.appConfig.enableDemo)) {
         Strategy.deleteMany({ portfolio: pid, userId: userId }, (err, doc) => {
           return doc;
         });

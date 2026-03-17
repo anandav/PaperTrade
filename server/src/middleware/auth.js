@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
     }
 
     const user = await User.findOne({ _id: decoded._id });
-    if (!user) {
+    if (!user || user.status === 'inactive') {
       throw new Error();
     }
 
