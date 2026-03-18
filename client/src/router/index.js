@@ -3,10 +3,17 @@ import { createRouter, createWebHistory } from 'vue-router';
 import PaperTrade from '../views/PaperTrade';
 import Builder from '../views/builder/Builder';
 import Login from '../views/Login.vue';
+import Home from '../views/Home.vue';
 
 const routes = [
   {
     path: '/',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/papertrade',
+    name: 'PaperTrade',
     component: PaperTrade,
     meta: { requiresAuth: true }
   },
@@ -19,7 +26,7 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    meta: { requiresAuth: true }
+    component: () => import('../views/About.vue')
   },
   {
     path: '/login',

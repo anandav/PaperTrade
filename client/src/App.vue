@@ -12,9 +12,11 @@
         dark:border-gray-800
       " role="navigation">
       <div class="container mx-auto">
-        <router-link to="/" class="pl-5">Paper Trade</router-link>
-        <router-link to="/builder" class="pl-5"> Place holder</router-link>
-        <!-- <router-link to="/about" class="pl-5">About</router-link> -->
+        <router-link to="/" class="pl-5">Home</router-link>
+        <router-link v-if="isLoggedIn" to="/papertrade" class="pl-5">Paper Trade</router-link>
+        <router-link v-if="isLoggedIn" to="/builder" class="pl-5">Builder</router-link>
+        <router-link v-if="!isLoggedIn" to="/about" class="pl-5">About</router-link>
+        <router-link v-if="!isLoggedIn" to="/login" class="pl-5">Login</router-link>
         <div class="float-right">
           <span v-if="isLoggedIn && email" class="mr-4">{{ email }}</span>
           <button v-if="isLoggedIn" @click="logout" class="mr-3">Logout</button>
@@ -47,10 +49,9 @@ function getCookie(name) {
 
 export default {
   data() {
-    // Read theme from cookie on initialization
     const cookieValue = getCookie("isdark");
     return {
-      isdark: cookieValue === "true",
+      isdark: cookieValue === null ? true : cookieValue === "true",
     };
   },
   components: {
@@ -64,7 +65,7 @@ export default {
     if (token) {
       this.$store.dispatch('authModule/b2cLogin', token)
         .then(() => {
-          this.$router.replace('/');
+          this.$router.replace('/papertrade');
         });
     }
   },

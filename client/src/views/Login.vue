@@ -53,7 +53,7 @@ export default {
     login() {
       this.$store.dispatch('authModule/login', { username: this.username, password: this.password })
         .then(() => {
-          this.$router.push('/');
+          this.$router.push('/papertrade');
         })
         .catch(err => {
           console.error(err);
