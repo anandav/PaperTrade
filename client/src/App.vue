@@ -16,10 +16,10 @@
         <router-link v-if="isLoggedIn" to="/papertrade" class="pl-5">Paper Trade</router-link>
         <router-link v-if="isLoggedIn" to="/builder" class="pl-5">Builder</router-link>
         <router-link v-if="!isLoggedIn" to="/about" class="pl-5">About</router-link>
-        <router-link v-if="!isLoggedIn" to="/login" class="pl-5">Login</router-link>
         <div class="float-right">
           <span v-if="isLoggedIn && email" class="mr-4">{{ email }}</span>
           <button v-if="isLoggedIn" @click="logout" class="mr-3">Logout</button>
+          <a v-if="!isLoggedIn" @click.prevent="b2cLogin" href="#" class="mr-3 cursor-pointer text-orange-400">Login</a>
           <label class="mr-3">
             <SwitchButton :IsDarkTheme="true" :Value="isdark" @itemclicked="swiththeme" />
             Dark Mode
@@ -92,6 +92,9 @@ export default {
         .then(() => {
           this.$router.push('/login');
         });
+    },
+    b2cLogin() {
+      window.location.href = window.APP_CONFIG.API_URL + 'auth/b2c/login';
     }
   },
   mounted() {
