@@ -28,7 +28,6 @@ module.exports = {
   Get: async function (portfolio, startegy, action) {
     this.setCacheObject(`"action"`, action);
     if (action == "init") {
-      debugger;
       if (!lastupdated) {
         lastupdated = new Date();
       } else {
@@ -136,10 +135,10 @@ module.exports = {
           let futData = await this.GetIndicesFutures(symbol);
         }
         if (hasOptions) {
-          nseData = await this.GetIndicesOptionChain(symbol);
-
-          // logger.info("Indices Option:>> ", nseData);
+          logger.info("Strategy before GetIndicesOptionChain:", JSON.stringify(startegy));
+          nseData = await this.GetIndicesOptionChain(symbol, this.formatDate(startegy.expiry));
           startegy = this.bindOptionData(startegy, nseData, action);
+          logger.info("Strategy after bindOptionData:", JSON.stringify(startegy));
           if (action == "getexpiries") {
             startegy = this.bindExpiriesData(startegy, nseData);
           }
@@ -161,59 +160,44 @@ module.exports = {
     }
   },
   GetEquitiyDetail: async function (equity) {
-    const url = process.env.NSE_EQUITIES_API.replace("PARAMETER", equity);
+    const url = global.appConfig.nseEquitiesApi.replace("PARAMETER", equity);
     return this.getData(url);
   },
   GetIndicesList: async function () {
-    const url = process.env.NSE_INDICES_LIST_API;
+    const url = global.appConfig.nseIndicesListApi;
     return this.getData(url);
   },
   GetIndicesFutures: async function (indices) {
-    const url = process.env.NSE_INDICES_FUTURES_API.replace(
-      "PARAMETER",
-      indices
-    );
+    const url = global.appConfig.nseIndicesFuturesApi.replace("PARAMETER", indices);
     return this.getData(url);
   },
-  GetIndicesOptionChain: async function (indices) {
-    const url = process.env.NSE_INDICES_OPTIONS_API.replace(
-      "PARAMETER",
-      indices
-    );
+  GetIndicesOptionChain: async function (indices, date) {
+    const url = global.appConfig.nseIndicesOptionsApi
+      .replace("PARAMETER", indices)
+      .replace("DATE", date ?? "");
     return this.getData(url);
   },
   GetEquitiesFuturesList: async function () {
-    var data = this.getData(process.env.NSE_EQUITIES_FUTURES_LIST_API);
-    return data;
+    return this.getData(global.appConfig.nseEquitiesFuturesListApi);
   },
   GetEquityFuture: async function (equity) {
-    const url = process.env.NSE_EQUITIES_FUTURES_API.replace(
-      "PARAMETER",
-      equity
-    );
-
+    const url = global.appConfig.nseEquitiesFuturesApi.replace("PARAMETER", equity);
     return this.getData(url);
   },
   GetEquityOptionChain: async function (equity) {
-    const url = process.env.NSE_EQUITIES_OPTIONS_API.replace(
-      "PARAMETER",
-      equity
-    );
+    const url = global.appConfig.nseEquitiesOptionsApi.replace("PARAMETER", equity);
     return this.getData(url);
   },
   GetCurrencyFuture: async function () {
-    const url = process.env.NSE_CURRENCY_FUTURES_LIST_API2;
+    const url = global.appConfig.nseCurrencyFuturesListApi2;
     return this.getData(url);
   },
   GetMRKTLot: async function () {
-    const url = process.env.NSE_MKT_LOTS;
+    const url = global.appConfig.nseMktLots;
     return this.getData(url);
   },
   GetCurrencyOptionChain: async function (symbol) {
-    const url = process.env.NSE_CURRENCY_OPTIONS_API.replace(
-      "PARAMETER",
-      symbol
-    );
+    const url = global.appConfig.nseCurrencyOptionsApi.replace("PARAMETER", symbol);
     return this.getData(url);
   },
   bindEquityData(startegy, inputData, action) {
@@ -240,18 +224,19 @@ module.exports = {
   },
   bindOptionData(startegy, inputData, action) {
     startegy.trades.forEach((trade) => {
-
-
-      logger.info("startegy.expiry", this.formatDate(startegy.expiry));
-      console.log("Foreach >>>>>>>>", this);
+      logger.info("bindOptionData inputData is:", inputData ? "present" : "NULL");
+      logger.info("stratey.expiry raw:", startegy.expiry);
+      logger.info("stratey.expiry formatted:", this.formatDate(startegy.expiry));
       let selector =
-        "records.data[? expiryDate==`" +
+        "records.data[? expiryDates==`" +
         this.formatDate(startegy.expiry) +
         "` && strikePrice == `" +
         trade.selectedstrike +
         "`]." +
         (trade.tradetype == "Call" ? "CE" : "PE");
+      logger.info("JMESPath selector:", selector);
       let nseDataSelected = this.getObject(inputData, selector);
+      logger.info("nseDataSelected:", JSON.stringify(nseDataSelected));
       if (nseDataSelected && nseDataSelected[0]?.lastPrice) {
         if (action == "updateltp") {
           trade.lasttradedprice = nseDataSelected[0].lastPrice;
@@ -303,7 +288,7 @@ module.exports = {
 
     try {
       if (!url) {
-        console.error("Url is empty or null.")
+        logger.error("Url is empty or null.");
         return;
       }
       let headers = {
