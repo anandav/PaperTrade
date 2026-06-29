@@ -1,16 +1,9 @@
 <template>
-  <div>
-    <div class="w-full bg-gray-100 dark:bg-gray-900">
-      <PortfolioMenu class="fixed top-16 bottom-0 w-52 overscroll-auto" />
-      <div class="ml-52 w-[calc(100%-13rem)] min-h-screen pt-16 pb-10 bg-gray-100 dark:bg-gray-900">
-        <PortfolioDetail />
-      </div>
-      <!-- <div class="grid grid-cols-10">
-        <PortfolioMenu class="col-span-2" />
-        <PortfolioDetail class="col-span-8" />
-      </div> -->
+  <div class="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    <PortfolioMenu class="fixed top-16 bottom-0 w-52" />
+    <div class="ml-52 flex-1 pt-16 pb-10">
+      <PortfolioDetail />
     </div>
-    <!-- <TradeAddEdit /> -->
   </div>
 </template>
 <style scoped>
