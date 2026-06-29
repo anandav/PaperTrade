@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="container min-h-screen mx-auto bg-gray-100 dark:bg-gray-900">
-      <div class="flex">
-        <PortfolioMenu class="flex-none w-52 fixed overscroll-auto " />
-        <PortfolioDetail class="flex-auto w-full ml-52" />
+    <div class="w-full bg-gray-100 dark:bg-gray-900">
+      <PortfolioMenu class="fixed top-16 bottom-0 w-52 overscroll-auto" />
+      <div class="ml-52 w-[calc(100%-13rem)] min-h-screen pt-16 pb-10 bg-gray-100 dark:bg-gray-900">
+        <PortfolioDetail />
       </div>
       <!-- <div class="grid grid-cols-10">
         <PortfolioMenu class="col-span-2" />

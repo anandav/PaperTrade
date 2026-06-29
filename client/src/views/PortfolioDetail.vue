@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-20">
+  <div class="pt-2 pb-4 min-h-full">
     <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-900">
       <h3 class="pl-5 pb-5 text-xl">Please select a portfolio.</h3>
     </div>

@@ -11,7 +11,7 @@
         dark:border-b 
         dark:border-gray-800
       " role="navigation">
-      <div class="container mx-auto">
+      <div class="w-full px-5">
         <router-link to="/" class="pl-5">Home</router-link>
         <router-link v-if="isLoggedIn" to="/papertrade" class="pl-5">Paper Trade</router-link>
         <router-link v-if="isLoggedIn" to="/builder" class="pl-5">Builder</router-link>
@@ -27,7 +27,7 @@
         </div>
       </div>
     </nav>
-    <main role="main" class="pb-10">
+    <main role="main">
       <router-view />
     </main>
     <AppFooter />

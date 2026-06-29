@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen mt-16 border-r border-gray-300 dark:border-gray-800 "
+    class="border-r border-gray-300 dark:border-gray-800 flex flex-col bg-gray-100 dark:bg-gray-900"
     role="menu"
     @dragover.prevent
     @dragenter.prevent
@@ -24,7 +24,7 @@
         />
       </div>
     </div>
-    <div class="mt-5 overflow-y-auto h-screen " @drop="onDrop($event)">
+    <div class="flex-1 overflow-y-auto mt-5 pb-10" @drop="onDrop($event)">
     
       <div
         class="   border-b border-gray-200 dark:border-gray-800 "

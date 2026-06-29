@@ -1,6 +1,6 @@
 <template>
   <div class="home bg-white dark:bg-gray-900 min-h-screen">
-    <div class="container mx-auto pt-32 text-center">
+    <div class="w-full px-5 pt-32 text-center">
       <h1 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Welcome to Paper Trade</h1>
       <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">Start your paper trading journey today.</p>
       <div class="flex justify-center gap-4">

@@ -1,5 +1,5 @@
 <template>
-  <div class="container ">
+  <div class="w-full px-4">
 
 <div class="pt-52 p-4 space-y-4 bg-light-blue-300 bg-stripes bg-stripes-white rounded-md">
     <span class="block rounded-md text-white font-extrabold text-center p-6 bg-red-500   visible sm:invisible">1</span>
