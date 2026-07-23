@@ -5,11 +5,20 @@
       <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">Start your paper trading journey today.</p>
       <div class="flex justify-center gap-4">
         <router-link 
-          :to="isLoggedIn ? '/papertrade' : '/login'" 
+          v-if="isLoggedIn"
+          to="/papertrade" 
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          {{ isLoggedIn ? 'Go to App' : 'Get Started' }}
+          Go to App
         </router-link>
+        <a 
+          v-else
+          href="#"
+          @click.prevent="b2cLogin"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+        >
+          Get Started
+        </a>
         <router-link 
           to="/about" 
           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
@@ -28,6 +37,11 @@ export default {
   name: 'Home',
   computed: {
     ...mapGetters('authModule', ['isLoggedIn'])
+  },
+  methods: {
+    b2cLogin() {
+      window.location.href = window.APP_CONFIG.API_URL + 'auth/b2c/login';
+    }
   }
 }
 </script>

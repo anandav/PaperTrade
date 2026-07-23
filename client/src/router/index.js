@@ -1,8 +1,6 @@
-//import * as Vue from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import PaperTrade from '../views/PaperTrade';
 import Builder from '../views/builder/Builder';
-import Login from '../views/Login.vue';
 import Home from '../views/Home.vue';
 
 const routes = [
@@ -29,11 +27,6 @@ const routes = [
     component: () => import('../views/About.vue')
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login
-  },
-  {
     path: '/:pathMatch(.*)*',
     redirect: '/'
   }
@@ -48,16 +41,10 @@ router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('token');
 
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
-    next('/login');
+    next('/');
   } else {
     next();
   }
 });
-
-// const router = new VueRouter({
-//   mode: 'history',
-//   base: process.env.BASE_URL,
-//   routes : approutes
-// })
 
 export default router

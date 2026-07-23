@@ -71,11 +71,10 @@ exports.callback = async (req, res, next) => {
             return res.redirect(resetPasswordUrl);
         }
         if (errorDescription.includes('AADB2C90091')) {
-            // User cancelled the operation (e.g., during password reset)
             console.log('User cancelled B2C operation');
-            return res.redirect(`${appConfig.clientUri}/login`);
+            return res.redirect(`${appConfig.clientUri}`);
         }
-        return res.redirect(`${appConfig.clientUri}/login?error_description=${encodeURIComponent(errorDescription)}`);
+        return res.redirect(`${appConfig.clientUri}?error_description=${encodeURIComponent(errorDescription)}`);
     }
 
     try {
