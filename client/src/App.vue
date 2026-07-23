@@ -88,10 +88,7 @@ export default {
       document.cookie = "isdark=" + value + ";" + expires + ";path=/";
     },
     logout() {
-      this.$store.dispatch('authModule/logout')
-        .then(() => {
-          this.$router.push('/login');
-        });
+      this.$store.dispatch('authModule/logout');
     },
     b2cLogin() {
       window.location.href = window.APP_CONFIG.API_URL + 'auth/b2c/login';
