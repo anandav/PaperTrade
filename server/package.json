@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.2.5",
+  "version": "0.5.0",
   "description": "Papper Trade Service using Express.js.",
   "main": "index.js",
   "scripts": {
