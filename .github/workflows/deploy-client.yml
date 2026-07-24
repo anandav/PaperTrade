@@ -24,6 +24,27 @@ jobs:
           submodules: true
           lfs: false
           fetch-depth: 0
+
+      # Azure SWA builds under app_location without reliable git/tags access.
+      # Resolve Tag+SHA version here (where git works) and pass APP_VERSION into the build.
+      - name: Resolve app version
+        id: version
+        run: |
+          set -e
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          if [ -n "$TAG" ]; then
+            BASE="${TAG#v}"
+            COUNT=$(git rev-list "${TAG}"..HEAD --count)
+            MAJOR=$(echo "$BASE" | cut -d. -f1)
+            MINOR=$(echo "$BASE" | cut -d. -f2)
+            PATCH=$(echo "$BASE" | cut -d. -f3)
+            VERSION="${MAJOR}.${MINOR}.$((PATCH + COUNT))"
+          else
+            VERSION=$(node -p "require('./client/package.json').version")
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved APP_VERSION=v${VERSION} (tag=${TAG:-none}, sha=${GITHUB_SHA:0:7})"
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -41,6 +62,7 @@ jobs:
         env:
           API_URL: ${{ secrets.API_URL_SECRET }}
           BUILD_SHA: ${{ github.sha }}
+          APP_VERSION: ${{ steps.version.outputs.version }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

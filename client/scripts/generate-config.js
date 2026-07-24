@@ -7,15 +7,23 @@ const apiUrl = process.env.API_URL || 'http://localhost:9090/';
 const { version: packageVersion } = require('../package.json');
 
 function runGit(cmd) {
-  try {
-    return execSync(cmd, {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-      cwd: path.resolve(__dirname, '..'),
-    }).trim();
-  } catch {
-    return null;
+  const repoRoots = [
+    path.resolve(__dirname, '../..'),
+    path.resolve(__dirname, '..'),
+  ];
+
+  for (const cwd of repoRoots) {
+    try {
+      return execSync(cmd, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+        cwd,
+      }).trim();
+    } catch {
+      // try next root
+    }
   }
+  return null;
 }
 
 function parseSemver(value) {
@@ -42,6 +50,7 @@ function resolveVersion() {
     return String(process.env.APP_VERSION).replace(/^v/i, '');
   }
 
+  // Prefer git from repo root (client is a subfolder; SWA builds often lack .git)
   const latestTag = runGit('git describe --tags --abbrev=0');
   const base = parseSemver(latestTag) || parseSemver(packageVersion) || {
     major: 0,
@@ -53,6 +62,11 @@ function resolveVersion() {
   if (latestTag) {
     const count = runGit(`git rev-list ${latestTag}..HEAD --count`);
     commitsSince = Number(count || '0') || 0;
+  } else if (!latestTag && packageVersion) {
+    console.warn(
+      `No git tag found; falling back to package.json version ${packageVersion}. ` +
+        'Pass APP_VERSION in CI so Azure SWA builds do not stick on package.json.'
+    );
   }
 
   return `${base.major}.${base.minor}.${base.patch + commitsSince}`;
