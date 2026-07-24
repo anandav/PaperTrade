@@ -3,7 +3,6 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const configPath = path.resolve(__dirname, '../public/config.js');
-const apiUrl = process.env.API_URL || 'http://localhost:9090/';
 const { version: packageVersion } = require('../package.json');
 
 function runGit(cmd) {
@@ -50,7 +49,6 @@ function resolveVersion() {
     return String(process.env.APP_VERSION).replace(/^v/i, '');
   }
 
-  // Prefer git from repo root (client is a subfolder; SWA builds often lack .git)
   const latestTag = runGit('git describe --tags --abbrev=0');
   const base = parseSemver(latestTag) || parseSemver(packageVersion) || {
     major: 0,
@@ -62,7 +60,7 @@ function resolveVersion() {
   if (latestTag) {
     const count = runGit(`git rev-list ${latestTag}..HEAD --count`);
     commitsSince = Number(count || '0') || 0;
-  } else if (!latestTag && packageVersion) {
+  } else if (packageVersion) {
     console.warn(
       `No git tag found; falling back to package.json version ${packageVersion}. ` +
         'Pass APP_VERSION in CI so Azure SWA builds do not stick on package.json.'
@@ -75,8 +73,8 @@ function resolveVersion() {
 const version = resolveVersion();
 const buildSha = resolveBuildSha();
 
-const configContent = `window.APP_CONFIG = { API_URL: '${apiUrl}', APP_VERSION: 'v${version}', BUILD_SHA: '${buildSha}' };`;
+const configContent = `window.APP_CONFIG = { APP_VERSION: 'v${version}', BUILD_SHA: '${buildSha}' };`;
 
 fs.writeFileSync(configPath, configContent, 'utf8');
 
-console.log(`Generated ${configPath} with API_URL: ${apiUrl}, version: v${version}, sha: ${buildSha}`);
+console.log(`Generated ${configPath} with version: v${version}, sha: ${buildSha}`);

@@ -32,6 +32,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { apiUrl } from '../config';
 
 export default {
   name: 'Home',
@@ -40,7 +41,7 @@ export default {
   },
   methods: {
     b2cLogin() {
-      window.location.href = window.APP_CONFIG.API_URL + 'auth/b2c/login';
+      window.location.href = apiUrl + 'auth/b2c/login';
     }
   }
 }

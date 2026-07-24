@@ -10,8 +10,9 @@ import autocomplete from "./components/ui/AutoComplete";
 import tooltip from "./components/ui/ToolTip";
 import axios from 'axios';
 import formatters from './common/formatters';
+import { apiUrl } from './config';
 
-axios.defaults.baseURL = window.APP_CONFIG.API_URL;
+axios.defaults.baseURL = apiUrl;
 
 const token = localStorage.getItem('token');
 if (token) {

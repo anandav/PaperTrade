@@ -38,6 +38,7 @@
 import SwitchButton from "./components/ui/SwitchButton";
 import AppFooter from "./components/ui/AppFooter";
 import { mapGetters, mapActions } from 'vuex';
+import { apiUrl } from './config';
 
 
 function getCookie(name) {
@@ -91,7 +92,7 @@ export default {
       this.$store.dispatch('authModule/logout');
     },
     b2cLogin() {
-      window.location.href = window.APP_CONFIG.API_URL + 'auth/b2c/login';
+      window.location.href = apiUrl + 'auth/b2c/login';
     }
   },
   mounted() {

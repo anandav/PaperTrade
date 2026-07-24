@@ -61,6 +61,7 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           API_URL: ${{ secrets.API_URL_SECRET }}
+          VUE_APP_API_URL: ${{ secrets.API_URL_SECRET }}
           BUILD_SHA: ${{ github.sha }}
           APP_VERSION: ${{ steps.version.outputs.version }}
 

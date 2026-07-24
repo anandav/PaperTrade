@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from '../../config';
 
 function parseJwt(token) {
   try {
@@ -52,7 +53,6 @@ export default {
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
 
-        const apiUrl = window.APP_CONFIG?.API_URL || '/';
         window.location.href = `${apiUrl}auth/b2c/logout`;
 
         resolve();

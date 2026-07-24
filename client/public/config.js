@@ -1,1 +1,1 @@
-window.APP_CONFIG = { API_URL: 'http://localhost:9090/', APP_VERSION: 'v0.4.1', BUILD_SHA: '275dce6' };
+window.APP_CONFIG = { APP_VERSION: 'v0.4.2', BUILD_SHA: '10cc933' };
