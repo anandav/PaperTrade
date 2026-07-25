@@ -107,6 +107,15 @@
               <tooltip :Value="getLableConst.editStrategy" />
             </button>
 
+            <button
+              class="btn tooltip view"
+              @click="onHideChart()"
+              v-if="!this.PropStrategy.isarchive"
+            >
+              <i class="material-icons">{{ hideChart ? "show_chart" : "hide_source" }}</i>
+              <tooltip :Value="hideChart ? getLableConst.showGraph : getLableConst.hideGraph" />
+            </button>
+
             <button class="btn tooltip edit" @click="onSaveStrategy()">
               <i class="material-icons">save</i>
               <tooltip :Value="getLableConst.saveStrategy" />
@@ -159,31 +168,6 @@
       </div>
     </div>
     <div class="p-3">
-      <!-- <div
-        class="w-1 cursor-pointer float-left"
-        v-if="!this.PropStrategy.isarchive"
-        @click="onHideChart()"
-      >
-        <i class="material-icons text-xxs" :class="hideChart ? 'hidden' : ''">
-          keyboard_double_arrow_left
-        </i>
-        <i class="material-icons text-xxs" :class="hideChart ? '' : 'hidden'">
-          keyboard_double_arrow_right
-        </i>
-      </div> -->
-
-      <div
-        class="w-1 cursor-pointer float-right"
-        v-if="!this.PropStrategy.isarchive"
-        @click="onHideChart()"
-      >
-        <i class="material-icons text-xxs" :class="hideChart ? 'hidden' : ''">
-          keyboard_double_arrow_right
-        </i>
-        <i class="material-icons text-xxs" :class="hideChart ? '' : 'hidden'">
-          keyboard_double_arrow_left
-        </i>
-      </div>
       <div class="grid grid-cols-12" v-if="!this.PropStrategy.isarchive">
         <div :class="{ 'col-span-12': hideChart, 'col-span-6': !hideChart }">
           <TradeList
@@ -294,7 +278,7 @@ export default {
           icon: "archive",
         },
       ],
-      hideChart: this.PropStrategy.hidechart,
+      hideChart: true,
     };
   },
   methods: {
@@ -366,7 +350,12 @@ export default {
     },
     onHideChart: function () {
       this.PropStrategy.hidechart = this.hideChart = !this.hideChart;
-      this.onSaveStrategy();
+      this.EditStrategy(this.PropStrategy);
+      if (!this.hideChart) {
+        this.$nextTick(() => {
+          this.GenerateChart(this.PropStrategy);
+        });
+      }
     },
   },
   mixins: [myMixins],

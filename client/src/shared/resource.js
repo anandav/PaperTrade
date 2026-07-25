@@ -15,5 +15,7 @@ export default {
 	exitTrade : "Exit Trade",
 	deleteTrade : "Delete Trade",
 	showStrategyDiagram: "Update Graph",
+	showGraph: "Show Graph",
+	hideGraph: "Hide Graph",
 	getLiveData : "Get Live Data",
 };
