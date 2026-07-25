@@ -617,10 +617,13 @@ const utilitymixins = {
 
 
       if (this.ChartSettings.PATTERN) {
-        svg
-          .append("defs")
+        const greenPatternId = `green_${strategy._id}`;
+        const saffronPatternId = `saffron_${strategy._id}`;
+        const defs = svg.append("defs");
+
+        defs
           .append("pattern")
-          .attr("id", "green")
+          .attr("id", greenPatternId)
           .attr("patternUnits", "userSpaceOnUse")
           .attr("width", 4)
           .attr("height", 4)
@@ -629,10 +632,9 @@ const utilitymixins = {
           .attr("stroke", this.ChartSettings.COLOURS.Positive)
           .attr("stroke-width", 1);
 
-        svg
-          .append("defs")
+        defs
           .append("pattern")
-          .attr("id", "saffron")
+          .attr("id", saffronPatternId)
           .attr("patternUnits", "userSpaceOnUse")
           .attr("width", 4)
           .attr("height", 4)
@@ -644,14 +646,14 @@ const utilitymixins = {
         svg
           .append("path")
           .datum(chartData)
-          .attr("fill", "url(#green)")
+          .attr("fill", `url(#${greenPatternId})`)
           .attr("class", this.ChartSettings.COLOURS.PositiveRegionOnlyOpacity)
           .attr("d", areaPos);
 
         svg
           .append("path")
           .datum(chartData)
-          .attr("fill", "url(#saffron)")
+          .attr("fill", `url(#${saffronPatternId})`)
           .attr("class", this.ChartSettings.COLOURS.NegativeRegionOnlyOpacity)
           .attr("d", areaNeg);
       } else {
