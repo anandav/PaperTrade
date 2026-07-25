@@ -14,7 +14,6 @@
       <div class="w-full px-5">
         <router-link to="/" class="pl-5">Home</router-link>
         <router-link v-if="isLoggedIn" to="/papertrade" class="pl-5">Paper Trade</router-link>
-        <router-link v-if="isLoggedIn" to="/builder" class="pl-5">Builder</router-link>
         <router-link v-if="!isLoggedIn" to="/about" class="pl-5">About</router-link>
         <div class="float-right">
           <span v-if="isLoggedIn && email" class="mr-4">{{ email }}</span>

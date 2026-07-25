@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PaperTrade from '../views/PaperTrade';
-import Builder from '../views/builder/Builder';
 import Home from '../views/Home.vue';
 
 const routes = [
@@ -13,12 +12,6 @@ const routes = [
     path: '/papertrade',
     name: 'PaperTrade',
     component: PaperTrade,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/builder',
-    name: 'Builder',
-    component: Builder,
     meta: { requiresAuth: true }
   },
   {
