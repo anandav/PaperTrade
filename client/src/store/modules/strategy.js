@@ -65,6 +65,7 @@ const strategyModule = {
                 name: "Strategy",
                 description: "",
                 symbol: "NIFTY",
+                symboltype: "Indices",
                 portfolio: _pid,
                 lotsize: 50,
                 strikepricestep: 50,

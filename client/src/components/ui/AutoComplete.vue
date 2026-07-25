@@ -103,17 +103,21 @@ export default {
       componentid: "",
     };
   },
+  watch: {
+    Value: function (newVal) {
+      if (newVal !== this.autocompleteValue) {
+        this.autocompleteValue = newVal == null ? "" : newVal;
+      }
+    },
+  },
   methods: {
     onKeyUp: function () {
       this.$emit("keyup", this.autocompleteValue);
     },
-    
     onChange: function () {
-      console.log('on change :>> ');
       this.$emit("change", this.autocompleteValue);
     },
     onEnterKeyup: function () {
-      console.log('on enter press :>> ');
       this.$emit("save", this.autocompleteValue);
     },
   },

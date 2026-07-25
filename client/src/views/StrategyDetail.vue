@@ -17,20 +17,6 @@
             @keydown.enter="onSaveStrategy()"
           />
         </div>
-        <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
-          <label class="text-xxs block text-gray-500"> Symbol </label>
-          <span class="view">
-            {{ PropStrategy.symbol }}
-          </span>
-
-          <autocomplete
-            :Value="PropStrategy.symbol"
-            :Items="Symbols"
-            @keyup="onSymbolKeyUp"
-            @save="onSaveStrategy"
-            PlaceHolder="Symbol"
-          />
-        </div>
         <div class="flex-1">
           <label class="text-xxs block text-gray-500"> Symbol Type </label>
           <span class="view">
@@ -42,6 +28,20 @@
             @keyup="onSymbolTypeKeyUp"
             @save="onSaveStrategy"
             PlaceHolder="Symbol Types"
+          />
+        </div>
+        <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
+          <label class="text-xxs block text-gray-500"> Symbol </label>
+          <span class="view">
+            {{ PropStrategy.symbol }}
+          </span>
+
+          <autocomplete
+            :Value="PropStrategy.symbol"
+            :Items="SymbolsForType"
+            @keyup="onSymbolKeyUp"
+            @save="onSaveStrategy"
+            PlaceHolder="Symbol"
           />
         </div>
         <div class="flex-1">
@@ -237,6 +237,15 @@ export default {
         return this.PropStrategy.isarchive ? "2" : "3";
       },
     },
+    SymbolsForType: function () {
+      const type = (this.PropStrategy.symboltype || "").toLowerCase();
+      if (!type || !this.Symbols?.length) {
+        return this.Symbols || [];
+      }
+      return this.Symbols.filter(
+        (x) => (x.symboltype || "").toLowerCase() === type
+      );
+    },
   },
   mounted: function () {
     if (this.PropStrategy.isedit) {
@@ -245,17 +254,6 @@ export default {
   },
   data: function () {
     return {
-      
-      
-      // txtShowStratergyDiagram: this.$getConst("showStrategyDiagram"),
-      // txtAddTrade: this.$getConst("addTrade"),
-
-      // txtGetLiveData: this.$getConst("getLiveData"),
-      // txtDuplicateStrategy: this.$getConst("duplicateStrategy"),
-      // txtDeleteStrategy: this.$getConst("deleteStrategy"),
-      // txtMergeStrategy: this.$getConst("mergeStrategy"),
-      // txtMoveStrategy: this.$getConst("moveStrategy"),
-      
       editStrategy: null,
       StrategyAction: [
         {
@@ -291,11 +289,27 @@ export default {
     },
     onSaveStrategy: function () {
       this.editStrategy = null;
-      this.Symbols.forEach((x) => {
-        if (x.name == this.PropStrategy.symbol) {
-          this.PropStrategy.symboltype = x.symboltype;
+      const type = (this.PropStrategy.symboltype || "").toLowerCase();
+      const symbol = this.PropStrategy.symbol;
+      let match = null;
+      if (symbol && this.Symbols?.length) {
+        if (type) {
+          match = this.Symbols.find(
+            (x) =>
+              x.name == symbol &&
+              (x.symboltype || "").toLowerCase() === type
+          );
         }
-      });
+        if (!match && !type) {
+          match = this.Symbols.find((x) => x.name == symbol);
+          if (match) {
+            this.PropStrategy.symboltype = match.symboltype;
+          }
+        }
+      }
+      if (match?.lotsize) {
+        this.PropStrategy.lotsize = match.lotsize;
+      }
       this.EditStrategy(this.PropStrategy);
       this.GenerateChart(this.PropStrategy);
     },
@@ -337,9 +351,41 @@ export default {
     },
     onSymbolKeyUp: function (Value) {
       this.PropStrategy.symbol = Value;
+      if (!Value || !this.Symbols?.length) {
+        return;
+      }
+      const matches = this.Symbols.filter((x) => x.name == Value);
+      if (matches.length === 1) {
+        this.PropStrategy.symboltype = matches[0].symboltype;
+        if (matches[0].lotsize) {
+          this.PropStrategy.lotsize = matches[0].lotsize;
+        }
+        return;
+      }
+      const type = (this.PropStrategy.symboltype || "").toLowerCase();
+      if (type) {
+        const typed = matches.find(
+          (x) => (x.symboltype || "").toLowerCase() === type
+        );
+        if (typed?.lotsize) {
+          this.PropStrategy.lotsize = typed.lotsize;
+        }
+      }
     },
     onSymbolTypeKeyUp: function (Value) {
       this.PropStrategy.symboltype = Value;
+      const type = (Value || "").toLowerCase();
+      if (!type || !this.PropStrategy.symbol) {
+        return;
+      }
+      const ok = this.Symbols?.some(
+        (x) =>
+          x.name == this.PropStrategy.symbol &&
+          (x.symboltype || "").toLowerCase() === type
+      );
+      if (!ok) {
+        this.PropStrategy.symbol = "";
+      }
     },
     onHideChart: function () {
       this.PropStrategy.hidechart = this.hideChart = !this.hideChart;
