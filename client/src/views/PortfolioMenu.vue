@@ -5,49 +5,69 @@
     @dragover.prevent
     @dragenter.prevent
   >
-    <div class="flex items-center mt-5 invisible sm:visible">
-      <div>
-        <input
-          class="
-            px-1
-            py-2
-            ml-2
-            w-48
-            bg-gray-100
-            dark:bg-gray-600
-            focus:outline-none
-            rounded
-          "
-          :placeholder="getLableConst.savePortfolio"
-          v-model="portfolioName"
-          @keyup.enter="onAddNewPortfolio()"
-        />
-      </div>
+    <div class="flex items-center gap-1 mt-5 px-2 invisible sm:visible">
+      <input
+        class="
+          px-1
+          py-2
+          flex-1
+          min-w-0
+          bg-gray-100
+          dark:bg-gray-600
+          focus:outline-none
+          rounded
+        "
+        :placeholder="getLableConst.searchPortfolios"
+        v-model="portfolioSearch"
+      />
+      <button
+        class="btn tooltip shrink-0"
+        type="button"
+        @click="onToggleNewPortfolio()"
+      >
+        <i class="material-icons">{{ showNewPortfolio ? "close" : "add" }}</i>
+        <tooltip :Value="getLableConst.addNewPortfolio" />
+      </button>
+    </div>
+    <div class="px-2 mt-2 invisible sm:visible" v-if="showNewPortfolio">
+      <input
+        ref="newPortfolioInput"
+        class="
+          px-1
+          py-2
+          w-full
+          bg-gray-100
+          dark:bg-gray-600
+          focus:outline-none
+          rounded
+        "
+        :placeholder="getLableConst.addNewPortfolio"
+        v-model="portfolioName"
+        @keyup.enter="onAddNewPortfolio()"
+        @keyup.esc="onCancelNewPortfolio()"
+      />
     </div>
     <div class="flex-1 overflow-y-auto mt-5 pb-10" @drop="onDrop($event)">
-    
       <div
-        class="   border-b border-gray-200 dark:border-gray-800 "
+        class="border-b border-gray-200 dark:border-gray-800"
         draggable="true"
-        v-for="(item, index) in Portfolios"
+        v-for="(item, index) in FilteredPortfolios"
         :key="item._id"
         :data-order="item.order"
-       
         :data-id="item._id"
         :class="{ isPortfolioEdit: item == editPortfolio }"
         @dragover="onDragOver($event, index)"
         @dragstart="onDragStart($event, item, index)"
       >
         <div
-          class=" leading-10 rounded-sm cursor-pointer "
+          class="leading-10 rounded-sm cursor-pointer"
           role="menuitem"
           tabindex="0"
           @click="onMenuSelectedPortfolio(item)"
           @keydown.enter="onMenuSelectedPortfolio(item)"
           @keydown.f2="onInlineEditPortfolio(item)"
-         
           :class="{
-            'border-l-2  border-yellow-500':
+            'border-l-2 border-yellow-500':
               Portfolio && item._id == Portfolio._id,
           }"
         >
@@ -100,25 +120,6 @@
                 @keyup.enter="onInlineSavePortfolio(item)"
               />
             </div>
-            <!-- <div class="float-right ">
-            <div class="space-x-1">
-              <a class="btn tooltip view " @click="onInlineEditPortfolio(item)">
-                <i class="material-icons">edit</i>
-                <tooltip Value="Edit" />
-              </a>
-              <a class="btn edit tooltip " @click="onInlineSavePortfolio(item)">
-                <i class="material-icons">save</i>
-                <tooltip Value="Save Portfilio" />
-              </a>
-              <a
-                class="btn ml-2 tooltip text-red-700 dark:text-red-700 "
-                @dblclick="onDeletePortfolio(item)"
-              >
-                <i class="material-icons">delete</i>
-                <tooltip Value="Delete Portfilio" />
-              </a>
-            </div>
-          </div> -->
           </div>
         </div>
       </div>
@@ -149,6 +150,20 @@ export default {
         action: "init",
       });
     },
+    onToggleNewPortfolio: function () {
+      this.showNewPortfolio = !this.showNewPortfolio;
+      if (this.showNewPortfolio) {
+        this.$nextTick(() => {
+          this.$refs.newPortfolioInput?.focus();
+        });
+      } else {
+        this.portfolioName = "";
+      }
+    },
+    onCancelNewPortfolio: function () {
+      this.showNewPortfolio = false;
+      this.portfolioName = "";
+    },
     onAddNewPortfolio: function () {
       if (this.portfolioName) {
         this.SavePortfolio({
@@ -159,12 +174,18 @@ export default {
           updateui: true,
         });
         this.portfolioName = "";
+        this.showNewPortfolio = false;
       }
+    },
+    onInlineEditPortfolio: function (item) {
+      this.editPortfolio = item;
+    },
+    onInlineSavePortfolio: function (item) {
+      this.editPortfolio = null;
+      this.SavePortfolio(item);
     },
 
     onDragStart: function (e) {
-      console.clear();
-      ///Ref:// https://github.com/WebDevSimplified/Drag-And-Drop
       const row = e.target;
       row.classList.add("dragging");
     },
@@ -219,12 +240,14 @@ export default {
     },
   },
   setup() {
-    let getLableConst = inject('GETCONST');
+    let getLableConst = inject("GETCONST");
     return { getLableConst };
-  }, 
+  },
   data: function () {
     return {
+      portfolioSearch: "",
       portfolioName: "",
+      showNewPortfolio: false,
       isLoading: true,
       editPortfolio: null,
     };
@@ -240,6 +263,14 @@ export default {
       Portfolio: "portfolioModule/Portfolio",
       Portfolios: "portfolioModule/Portfolios",
     }),
+    FilteredPortfolios: function () {
+      const list = this.Portfolios || [];
+      const q = (this.portfolioSearch || "").trim().toLowerCase();
+      if (!q) {
+        return list;
+      }
+      return list.filter((p) => (p.name || "").toLowerCase().includes(q));
+    },
   },
 };
 </script>

@@ -1,5 +1,6 @@
 export default {
 	addNewPortfolio: "New Portfolio",
+	searchPortfolios: "Search portfolios",
 	savePortfolio: "Save Portfolio",
 	deletePortfolio: "Delete Portfolio",
 	addNewStrategy: "New Strategy",
