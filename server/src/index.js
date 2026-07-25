@@ -41,12 +41,13 @@ async function startServer() {
         const conn_string = config.dbConnectionString;
         const jwt_secret = config.jwtSecret;
 
+        global.appConfig = config;
+
         logger.info("port:", port);
         logger.info("enable_dataapi:", enable_dataapi);
         logger.info("conn_string:", conn_string ? "Provided" : "Not Provided");
         logger.info("jwt_secret:", jwt_secret ? "Provided" : "Not Provided");
-
-        global.appConfig = config;
+        logger.info("log_level:", logger.getLevel());
 
         app.use(express.json());
         const allowedOrigins = [config.clientUri, 'http://localhost:8080', 'http://127.0.0.1:8080'];
