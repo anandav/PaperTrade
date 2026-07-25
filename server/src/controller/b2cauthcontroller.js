@@ -120,11 +120,74 @@ exports.callback = async (req, res, next) => {
             await user.save();
         }
 
-        const token = jwt.sign({ _id: user._id, username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email }, appConfig.jwtSecret, { expiresIn: '1h' });
-        res.redirect(`${appConfig.clientUri}/?token=${token}`);
+        const claims = {
+            _id: user._id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+        };
+        const token = jwt.sign(claims, appConfig.jwtSecret, { expiresIn: '1h' });
+        const refreshToken = jwt.sign(
+            { _id: user._id, type: 'refresh' },
+            appConfig.jwtSecret,
+            { expiresIn: '7d' }
+        );
+        const q = new URLSearchParams({
+            token,
+            refreshToken,
+        });
+        res.redirect(`${appConfig.clientUri}/?${q.toString()}`);
 
     } catch (error) {
         console.error('B2C Final Callback Error:', error);
         next(new ApiError(500, `B2C Callback Error: ${error.message}`));
+    }
+};
+
+exports.refresh = async (req, res, next) => {
+    try {
+        const appConfig = global.appConfig;
+        const refreshToken = req.body?.refreshToken;
+        if (!refreshToken) {
+            throw new ApiError(400, 'Refresh token is required.');
+        }
+
+        let decoded;
+        try {
+            decoded = jwt.verify(refreshToken, appConfig.jwtSecret);
+        } catch (e) {
+            throw new ApiError(401, 'Invalid or expired refresh token.');
+        }
+
+        if (decoded.type !== 'refresh' || !decoded._id) {
+            throw new ApiError(401, 'Invalid refresh token.');
+        }
+
+        const user = await User.findOne({ _id: decoded._id });
+        if (!user || user.status === 'inactive') {
+            throw new ApiError(401, 'User not found or inactive.');
+        }
+
+        const claims = {
+            _id: user._id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+        };
+        const token = jwt.sign(claims, appConfig.jwtSecret, { expiresIn: '1h' });
+        const nextRefreshToken = jwt.sign(
+            { _id: user._id, type: 'refresh' },
+            appConfig.jwtSecret,
+            { expiresIn: '7d' }
+        );
+
+        res.json({ token, refreshToken: nextRefreshToken });
+    } catch (error) {
+        if (error instanceof ApiError) {
+            return next(error);
+        }
+        next(new ApiError(500, `Refresh token error: ${error.message}`));
     }
 };

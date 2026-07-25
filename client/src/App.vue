@@ -61,9 +61,10 @@ export default {
   created() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+    const refreshToken = urlParams.get('refreshToken');
 
     if (token) {
-      this.$store.dispatch('authModule/b2cLogin', token)
+      this.$store.dispatch('authModule/b2cLogin', { token, refreshToken })
         .then(() => {
           this.$router.replace('/papertrade');
         });
