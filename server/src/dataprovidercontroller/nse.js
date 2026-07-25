@@ -1,6 +1,7 @@
 const axios = require("axios").default;
 const jmespath = require("jmespath");
 const logger = require("../common/logs");
+const ttlCache = require("../common/ttlCache");
 
 let currencyFutList = null;
 let equityFutList = null;
@@ -135,10 +136,8 @@ module.exports = {
           let futData = await this.GetIndicesFutures(symbol);
         }
         if (hasOptions) {
-          logger.info("Strategy before GetIndicesOptionChain:", JSON.stringify(startegy));
           nseData = await this.GetIndicesOptionChain(symbol, this.formatDate(startegy.expiry));
           startegy = this.bindOptionData(startegy, nseData, action);
-          logger.info("Strategy after bindOptionData:", JSON.stringify(startegy));
           if (action == "getexpiries") {
             startegy = this.bindExpiriesData(startegy, nseData);
           }
@@ -236,7 +235,7 @@ module.exports = {
         (trade.tradetype == "Call" ? "CE" : "PE");
       logger.info("JMESPath selector:", selector);
       let nseDataSelected = this.getObject(inputData, selector);
-      logger.info("nseDataSelected:", JSON.stringify(nseDataSelected));
+      logger.debug("nseDataSelected:", JSON.stringify(nseDataSelected));
       if (nseDataSelected && nseDataSelected[0]?.lastPrice) {
         if (action == "updateltp") {
           trade.lasttradedprice = nseDataSelected[0].lastPrice;
@@ -283,42 +282,52 @@ module.exports = {
   },
 
   getData: async function (url) {
-    ///Ref: https://stackoverflow.com/questions/67864408/how-to-return-server-response-from-axios
-    ///Ref: https://stackoverflow.com/questions/66905036/node-js-requests-get-returns-response-code-401-for-nse-india-website 
+    if (!url) {
+      logger.error("Url is empty or null.");
+      return;
+    }
 
+    const self = this;
+    return ttlCache.getOrFetch(url, async () => {
+      logger.info("NSE fetch:", url);
+      return self.fetchFromNse(url);
+    });
+  },
+
+  fetchFromNse: async function (url, retried) {
     try {
-      if (!url) {
-        logger.error("Url is empty or null.");
-        return;
-      }
-      let headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'accept-language': 'en,gu;q=0.9,hi;q=0.8', 'accept-encoding': 'gzip, deflate, br'
-      }
+      const headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "accept-language": "en,gu;q=0.9,hi;q=0.8",
+        "accept-encoding": "gzip, deflate, br",
+      };
 
-      const instance = axios.create({
+      const cookieInstance = axios.create({
         baseURL: url,
-        headers: headers,
-        cookie: ""
+        headers,
+        cookie: "",
       });
-
-      var cookies = await this.getCookies(instance, "https://www.nseindia.com/");
+      const cookies = await this.getCookies(
+        cookieInstance,
+        "https://www.nseindia.com/"
+      );
 
       const instanceUrl = axios.create({
         baseURL: "https://www.nseindia.com/",
-        headers: headers,
-        cookie: cookies
-
+        headers,
+        cookie: cookies,
       });
 
-      logger.info("Calling URL:", url);
-      var responce = await instanceUrl.get(url);
+      const responce = await instanceUrl.get(url);
       return responce.data;
-
     } catch (e) {
+      if (e?.response?.status === 403 && !retried) {
+        logger.error("NSE 403, clearing cookies and retrying once");
+        nseCookies = null;
+        return this.fetchFromNse(url, true);
+      }
       logger.error(e);
       return null;
-      //return e.reponce.data
     }
   },
   getTradeTypes: function (startegy) {

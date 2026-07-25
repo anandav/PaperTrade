@@ -239,12 +239,6 @@ export default {
     },
   },
   mounted: function () {
-    if (!this.PropStrategy.isarchive) {
-      this.PortfolioLoad({
-        portfolio: this.Portfolio,
-        action: "init",
-      });
-    }
     if (this.PropStrategy.isedit) {
       this.editStrategy = this.PropStrategy._id;
     }
@@ -289,7 +283,6 @@ export default {
       MoveStrategy: "strategyModule/MoveStrategy",
       MergeStrategy: "strategyModule/MergeStrategy",
       GetLiveData: "dataModule/GetLiveData",
-      PortfolioLoad: "dataModule/PortfolioLoad",
       StrategySymbolChange: "dataModule/StrategySymbolChange",
     }),
 

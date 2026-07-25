@@ -19,4 +19,9 @@ module.exports = new function () {
     this.error = (...message) => {
         console.error(utility.formatDate(), 'ERROR:', message.join(' '));
     }
+    this.debug = (...message) => {
+        console.debug(utility.formatDate(), 'DEBUG:', message.join(' '));
+    }
+
+
 };

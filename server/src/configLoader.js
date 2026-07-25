@@ -89,7 +89,7 @@ class ConfigLoader {
     this.config.port = parseInt(this.config.port || '9090', 10);
     this.config.enableDataApi = String(this.config.enableDataApi || 'false').toLowerCase() === 'true';
     this.config.enableDemo = String(this.config.enableDemo || 'false').toLowerCase() === 'true';
-    this.config.cacheDuration = parseInt(this.config.cacheDuration || '10', 10);
+    this.config.cacheDuration = parseInt(this.config.cacheDuration || '60', 10);
     this.config.nodeEnv = 'production';
   }
 
@@ -102,7 +102,7 @@ class ConfigLoader {
       jwtSecret: process.env.JWT_SECRET,
       nodeEnv: process.env.NODE_ENV || 'development',
       clientUri: process.env.CLIENT_URI || 'http://localhost:8080',
-      cacheDuration: parseInt(process.env.CACHE_DURATION || '10', 10),
+      cacheDuration: parseInt(process.env.CACHE_DURATION || '60', 10),
 
       // NSE 
       nseIndicesListApi: process.env.NSE_INDICES_LIST_API,

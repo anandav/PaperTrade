@@ -139,10 +139,15 @@ export default {
       SaveAllPortfolio: "portfolioModule/SaveAllPortfolio",
       DeletePortfolio: "portfolioModule/DeletePortfolio",
       GetAllStrategies: "strategyModule/GetAllStrategies",
+      PortfolioLoad: "dataModule/PortfolioLoad",
     }),
     onMenuSelectedPortfolio: function (item) {
       this.GetPortfolioById(item);
       this.GetAllStrategies(item);
+      this.PortfolioLoad({
+        portfolio: item,
+        action: "init",
+      });
     },
     onAddNewPortfolio: function () {
       if (this.portfolioName) {
