@@ -3,6 +3,7 @@ import {
   SETPORTFOLIO,
   SAVEALLPORTFOLIO,
   DELETEPORTFOLIE,
+  GETALLSTRATEGIES,
 } from "../mutationtype";
 import axios from "axios";
 
@@ -59,24 +60,57 @@ const portfolioModule = {
         });
     },
     async SavePortfolio({ commit }, item) {
+      const isNew = !item._id || item._id === 0 || item._id === "0";
       item.updateui = true;
-      axios
+      return axios
         .post(apiUrl + "portfolio/save", item)
-        .then(function(res) {
+        .then(function (res) {
           if (item.updateui) {
-            commit(SETALLPORTFOLIOS, res.data);
+            const list = Array.isArray(res.data) ? res.data : [];
+            commit(SETALLPORTFOLIOS, list);
+            if (isNew && list.length) {
+              const matches = list.filter((p) => p.name === item.name);
+              const created =
+                matches.sort(
+                  (a, b) =>
+                    new Date(b.modifiedon || b.createdon || 0) -
+                    new Date(a.modifiedon || a.createdon || 0)
+                )[0] || list[list.length - 1];
+              if (created) {
+                commit(SETPORTFOLIO, created);
+                commit("strategyModule/" + GETALLSTRATEGIES, [], {
+                  root: true,
+                });
+              }
+            }
           } else {
-            commit(SETPORTFOLIO, res.data[0]);
+            commit(SETPORTFOLIO, res.data[0] || res.data);
           }
+          return res.data;
         })
         .catch((e) => {
           console.error(e);
         });
     },
     async DeletePortfolio({ commit }, item) {
-      axios.post(apiUrl + "portfolio/delete", item).then(function() {
-        commit(DELETEPORTFOLIE, item);
-      });
+      const id = item && (item._id || item.id);
+      if (!id) {
+        console.error("DeletePortfolio: missing portfolio id");
+        return Promise.reject(new Error("Missing portfolio id"));
+      }
+      return axios
+        .post(apiUrl + "portfolio/delete", { _id: id })
+        .then(function (res) {
+          if (res && res.status >= 200 && res.status < 300) {
+            commit(DELETEPORTFOLIE, { _id: id });
+            commit("strategyModule/" + GETALLSTRATEGIES, [], { root: true });
+          }
+          return res;
+        })
+        .catch((e) => {
+          console.error("DeletePortfolio failed", e);
+          throw e;
+        });
     },
     async SaveAllPortfolio({ commit }, item) {
       axios

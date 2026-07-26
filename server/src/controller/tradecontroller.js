@@ -57,7 +57,7 @@ tradeController.post("/save", async (req, res) => {
     if (_id) {
       _trade._id = _id;
       const strategyUpdateResult = await Strategy.updateOne(
-        { "trades._id": _id, userId: req.user._id },
+        { "trades._id": _id, userId: req.user._id, isactive: { $ne: false } },
         { $set: { "trades.$": _trade } }
       );
 
@@ -95,8 +95,8 @@ tradeController.post("/delete", async (req, res) => {
 
   if (!(global.appConfig && global.appConfig.enableDemo)) {
     const result = await Strategy.updateOne(
-      { "trades._id": tid, userId: req.user._id },
-      { $pull: { "trades": { _id: tid } } }
+      { "trades._id": tid, userId: req.user._id, isactive: { $ne: false } },
+      { $pull: { trades: { _id: tid } } }
     );
     
     if (result.matchedCount === 0) {

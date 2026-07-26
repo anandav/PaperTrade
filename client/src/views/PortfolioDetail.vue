@@ -1,9 +1,9 @@
 <template>
   <div class="pt-2 pb-4 min-h-full px-2 sm:px-0">
-    <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-900">
-      <h3 class="pl-3 sm:pl-5 pb-5 text-xl">
-        Select a portfolio to open its strategies, or create a new one.
-      </h3>
+    <div v-if="!Portfolio" class="portfolio-empty-state">
+      <p class="portfolio-empty-copy">
+        Select a portfolio from the left, or create a new one to get started.
+      </p>
     </div>
     <div v-if="Portfolio" class="">
       <div
@@ -127,16 +127,39 @@
           <button
             class="btn ml-1 tooltip text-red-700 dark:text-red-700 view"
             type="button"
-            aria-label="Delete portfolio"
-            @click="onDeletePortfolio(Portfolio)"
+            aria-label="Remove portfolio"
+            @click.stop="onDeletePortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">delete_forever</i>
-            <tooltip Value="Delete portfolio" />
+            <tooltip Value="Remove portfolio" />
           </button>
         </div>
       </div>
 
       <div class="mt-3">
+        <div
+          class="strategy-empty"
+          v-if="!hasStrategies"
+        >
+          <p class="strategy-empty-copy">
+            No strategies yet. Add a strategy to start paper trading.
+          </p>
+          <button
+            class="btn dark:text-orange-400 tooltip strategy-empty-btn"
+            type="button"
+            :aria-label="getLableConst.addNewStrategy"
+            @click="onAddNewStrategy()"
+          >
+            <i class="material-icons" aria-hidden="true">playlist_add</i>
+            <span class="strategy-empty-action">{{
+              getLableConst.addNewStrategy
+            }}</span>
+            <tooltip
+              :Value="getLableConst.addNewStrategy"
+              Location="bottom end"
+            />
+          </button>
+        </div>
         <div
           v-bind:id="'strategy_' + item._id"
           :key="item._id"
@@ -153,6 +176,7 @@ import { inject } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import StrategyDetail from "./StrategyDetail.vue";
 import myMixins from "../shared/chart";
+import { confirmDelete } from "../shared/confirmDialog";
 export default {
   name: "PortfolioDetail",
   components: {
@@ -194,6 +218,9 @@ export default {
         "text-red-700": this.TotalPortfolioAmount < 0,
       };
     },
+    hasStrategies: function () {
+      return Array.isArray(this.Strategies) && this.Strategies.length > 0;
+    },
   },
   methods: {
     ...mapActions({
@@ -202,6 +229,9 @@ export default {
       DeletePortfolio: "portfolioModule/DeletePortfolio",
     }),
     onAddNewStrategy: function () {
+      if (!this.Portfolio?._id) {
+        return;
+      }
       this.isEdit = !this.isEdit;
       this.AddStrategy(this.Portfolio._id);
     },
@@ -212,18 +242,26 @@ export default {
       this.editPortfolio = null;
       this.SavePortfolio(portfolio);
     },
-    onDeletePortfolio: function (portfolio) {
-      const name = portfolio?.name || "this portfolio";
-      if (
-        !window.confirm(
-          "Delete portfolio \"" +
-            name +
-            "\" and its strategies? You cannot undo this action."
-        )
-      ) {
+    onDeletePortfolio: async function (portfolio) {
+      const target = portfolio || this.Portfolio;
+      if (!target || !(target._id || target.id)) {
         return;
       }
-      this.DeletePortfolio(portfolio);
+      const name = target.name || "this portfolio";
+      const ok = await confirmDelete(
+        "Remove portfolio \"" +
+          name +
+          "\" and its strategies from your list? They will no longer appear in PaperTrade.",
+        "Remove portfolio"
+      );
+      if (!ok) {
+        return;
+      }
+      try {
+        await this.DeletePortfolio(target);
+      } catch (e) {
+        console.error(e);
+      }
     },
   },
   mixins: [myMixins],
@@ -255,6 +293,63 @@ export default {
 }
 .isPortfolioEdit .view {
   display: none;
+}
+.portfolio-empty-state {
+  padding: 1.25rem 1rem;
+}
+.portfolio-empty-copy {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #6b7280;
+}
+:global(.dark) .portfolio-empty-copy {
+  color: #9ca3af;
+}
+.strategy-empty {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.75rem;
+  margin: 0 0.5rem;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.375rem;
+  background: transparent;
+}
+:global(.dark) .strategy-empty {
+  border-color: #4b5563;
+}
+.strategy-empty-copy {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #6b7280;
+}
+:global(.dark) .strategy-empty-copy {
+  color: #9ca3af;
+}
+.strategy-empty-action {
+  margin-left: 0.35rem;
+  font-size: 0.8125rem;
+  line-height: 1;
+}
+.strategy-empty-btn {
+  flex-shrink: 0;
+  margin-left: auto;
+  width: auto;
+  min-width: auto;
+  padding: 0 0.65rem;
+  height: 2rem;
 }
 .portfolio-header {
   display: flex;

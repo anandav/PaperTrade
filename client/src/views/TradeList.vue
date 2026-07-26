@@ -9,7 +9,7 @@
         and payoff.
       </p>
       <button
-        class="btn dark:text-orange-400 tooltip"
+        class="btn dark:text-orange-400 tooltip trade-empty-btn"
         type="button"
         :aria-label="getLableConst.addTrade"
         @click="onBindAddEditTrade()"
@@ -388,6 +388,7 @@ import { inject } from "vue";
 import { mapActions, mapState, mapGetters } from "vuex";
 import myMixins from "../shared/chart";
 import SwitchButton from "../components/ui/SwitchButton";
+import { confirmDelete } from "../shared/confirmDialog";
 
 export default {
   name: "TradeList",
@@ -444,27 +445,30 @@ export default {
       CheckStateChanged: "tradeModule/CheckStateChanged",
       GetLiveData: "dataModule/GetLiveData",
     }),
-    onDeleteTrade: function (sid, tid) {
-      if (
-        !window.confirm(
-          "Delete this trade leg? You cannot undo this action."
-        )
-      ) {
-        return;
-      }
-      this.DeleteTrade({ sid, tid }).then(() => {
+    refreshPayoffChart: function () {
+      this.$nextTick(() => {
         this.GenerateChart(this.PropStrategy);
       });
     },
+    onDeleteTrade: async function (sid, tid) {
+      const ok = await confirmDelete(
+        "Delete this trade leg? You cannot undo this action.",
+        "Delete trade"
+      );
+      if (!ok) {
+        return;
+      }
+      this.DeleteTrade({ sid, tid }).then(() => {
+        this.refreshPayoffChart();
+      });
+    },
     onGetLiveData: function (action) {
-      console.log('action :>> ', action);
-
       this.GetLiveData({
         portfolio: this.Portfolio,
         strategy: this.PropStrategy,
-        action: action
+        action: action,
       }).then(() => {
-        //this.EditStrategy(this.PropStrategy);
+        this.refreshPayoffChart();
       });
     },
     onInlineEditTrade: function (trade) {
@@ -478,7 +482,7 @@ export default {
           : undefined;
       this.AddEditTrade(trade).then(() => {
         this.$emit("onItemEnterKeyPressed");
-        //this.GenerateChart(this.PropStrategy);
+        this.refreshPayoffChart();
       });
     },
     onDragStart: function (e) {
@@ -517,34 +521,42 @@ export default {
         });
         i += 1;
       });
-      this.EditStrategy(this.PropStrategy);
+      this.EditStrategy(this.PropStrategy).then(() => {
+        this.refreshPayoffChart();
+      });
     },
     onInlineExitTrade: function (trade) {
       var _exitTrade = this.getOppositeTrade(trade);
       this.AddEditTrade(_exitTrade).then(() => {
-        this.GenerateChart(this.PropStrategy);
+        this.refreshPayoffChart();
       });
     },
     onExitAllTrade: function () {
-      var parMethod = this.AddEditTrade;
-      var trades = this.PropStrategy.trades;
-      var oppositetrade = this.getOppositeTrade;
-      for (let _i = 0, _len = trades.length; _i < _len; _i++) {
-        setTimeout(function () {
-          var _trade = trades[_i];
-          var _exitTrade = oppositetrade(_trade);
-          parMethod(_exitTrade);
-        }, _i * 200);
-      }
+      var trades = this.PropStrategy.trades || [];
+      var chain = Promise.resolve();
+      trades.forEach((trade, index) => {
+        chain = chain.then(() => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              this.AddEditTrade(this.getOppositeTrade(trade)).then(resolve);
+            }, index * 200);
+          });
+        });
+      });
+      chain.then(() => {
+        this.refreshPayoffChart();
+      });
     },
     onCheckStateChanged: function (trade) {
       trade.checked = !trade.checked;
       this.CheckStateChanged(this.PropStrategy).then(() => {
-        this.GenerateChart(this.PropStrategy);
+        this.refreshPayoffChart();
       });
     },
     onBindAddEditTrade: function () {
-      this.BindAddEditTrade(this.PropStrategy);
+      this.BindAddEditTrade(this.PropStrategy).then(() => {
+        this.refreshPayoffChart();
+      });
     },
     onChangeColor: function (trade) {
       const findNextColor = (val) => {
@@ -566,7 +578,7 @@ export default {
     onLTPClick: function (trade) {
       trade.price = trade.lasttradedprice;
       this.AddEditTrade(trade).then(() => {
-        this.GenerateChart(this.PropStrategy);
+        this.refreshPayoffChart();
       });
     },
     onActionDropDownItemClicked: function (
@@ -575,22 +587,19 @@ export default {
       actionname,
       item
     ) {
-      // if (actionid == 1) {
-      // } else 
       if (actionid == 3) {
         this.onInlineExitTrade(item);
       }
     },
-    onLTPDropDownItemClicked: function (control,
-      action,
-    ) {
+    onLTPDropDownItemClicked: function (control, action) {
       this.onGetLiveData(action);
     },
     onIncrementDecrement(incdec, trade) {
-      trade.selectedstrike = (trade.selectedstrike + (incdec * this.PropStrategy.strikepricestep));
+      trade.selectedstrike =
+        trade.selectedstrike + incdec * this.PropStrategy.strikepricestep;
       this.AddEditTrade(trade).then(() => {
         this.$emit("onItemEnterKeyPressed");
-        this.GenerateChart(this.PropStrategy);
+        this.refreshPayoffChart();
       });
     },
     getDragAfterElement: function (container, y) {
@@ -662,8 +671,9 @@ export default {
         this.selectedIDs = selected;
 
         if (!this.PropStrategy.isarchive) {
-          this.CheckStateChanged(this.PropStrategy);
-          this.GenerateChart(this.PropStrategy);
+          this.CheckStateChanged(this.PropStrategy).then(() => {
+            this.refreshPayoffChart();
+          });
         }
       },
     },
@@ -751,17 +761,23 @@ export default {
 
 .trade-empty {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
-  padding: 1rem 0.5rem 0.75rem;
+  padding: 0.65rem 0.5rem;
+  width: 100%;
 }
 .trade-empty-copy {
   margin: 0;
-  max-width: 28rem;
+  flex: 1;
+  min-width: 0;
   font-size: 0.8125rem;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: #6b7280;
 }
 :global(.dark) .trade-empty-copy {
@@ -772,7 +788,9 @@ export default {
   font-size: 0.8125rem;
   line-height: 1;
 }
-.trade-empty .btn {
+.trade-empty-btn {
+  flex-shrink: 0;
+  margin-left: auto;
   width: auto;
   min-width: auto;
   padding: 0 0.65rem;

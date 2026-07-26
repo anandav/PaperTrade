@@ -236,14 +236,11 @@
           <button
             class="btn text-red-700 dark:text-red-700 tooltip view"
             type="button"
-            :aria-label="getLableConst.deleteStrategy"
+            aria-label="Remove strategy"
             @click="onDeleteStrategy()"
           >
             <i class="material-icons" aria-hidden="true">delete_forever</i>
-            <tooltip
-              :Value="getLableConst.deleteStrategy"
-              Location="above end"
-            />
+            <tooltip Value="Remove strategy" Location="above end" />
           </button>
         </div>
       </div>
@@ -254,6 +251,7 @@
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
+            @onItemEnterKeyPressed="onShowChart"
           />
         </div>
 
@@ -285,10 +283,6 @@
                 @keydown.enter="onShowChart()"
               />
             </div>
-            <p class="chart-help">
-              Payoff by strike. Hover the line for simulated P&amp;L at a strike.
-              Press Enter in min or max to redraw.
-            </p>
             <div
               class="chart"
               role="img"
@@ -319,6 +313,7 @@ import { inject } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
+import { confirmDelete } from "../shared/confirmDialog";
 
 export default {
   name: "StrategyDetail",
@@ -417,15 +412,15 @@ export default {
       this.EditStrategy(this.PropStrategy);
       this.GenerateChart(this.PropStrategy);
     },
-    onDeleteStrategy: function () {
+    onDeleteStrategy: async function () {
       const name = this.PropStrategy?.name || "this strategy";
-      if (
-        !window.confirm(
-          "Delete strategy \"" +
-            name +
-            "\" and its trade legs? You cannot undo this action."
-        )
-      ) {
+      const ok = await confirmDelete(
+        "Remove strategy \"" +
+          name +
+          "\" from this portfolio? It will no longer appear in PaperTrade.",
+        "Remove strategy"
+      );
+      if (!ok) {
         return;
       }
       this.DeleteStrategy({ _id: this.PropStrategy._id });
@@ -627,15 +622,6 @@ export default {
   overflow-x: auto;
 }
 
-.chart-help {
-  margin: 0 0 0.35rem;
-  padding: 0 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #6b7280;
-  line-height: 1.35;
-}
-
 .chart-empty {
   padding: 1rem 0.5rem;
   min-height: 8rem;
@@ -652,7 +638,6 @@ export default {
   color: #6b7280;
 }
 
-:global(.dark) .chart-help,
 :global(.dark) .chart-empty p {
   color: #9ca3af;
 }

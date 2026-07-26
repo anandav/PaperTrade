@@ -41,6 +41,10 @@ const strategySchema = schema({
     type: Boolean,
     default: false
   },
+  isactive: {
+    type: Boolean,
+    default: true,
+  },
   createdon: {
     type: Date,
     default: Date.now(),

@@ -35,17 +35,20 @@
       <router-view />
     </main>
     <AppFooter />
+    <ConfirmDialog />
   </div>
 </template>
 
 <script>
 import AppFooter from "./components/ui/AppFooter";
+import ConfirmDialog from "./components/ui/ConfirmDialog";
 import { mapGetters, mapActions } from "vuex";
 import { apiUrl } from "./config";
 
 export default {
   components: {
     AppFooter,
+    ConfirmDialog,
   },
   created() {
     const urlParams = new URLSearchParams(window.location.search);
