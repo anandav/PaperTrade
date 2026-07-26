@@ -52,7 +52,8 @@
               :inputId="'st-type-' + PropStrategy._id"
               AriaLabel="Symbol Type"
               @keyup="onSymbolTypeKeyUp"
-              @save="onSaveStrategy"
+              @change="onSymbolTypeKeyUp"
+              @save="onSymbolTypeSave"
               PlaceHolder="Symbol Types"
             />
           </div>
@@ -73,7 +74,8 @@
               :inputId="'st-symbol-' + PropStrategy._id"
               AriaLabel="Symbol"
               @keyup="onSymbolKeyUp"
-              @save="onSaveStrategy"
+              @change="onSymbolKeyUp"
+              @save="onSymbolSave"
               PlaceHolder="Symbol"
             />
           </div>
@@ -161,6 +163,7 @@
             :aria-label="
               hideChart ? getLableConst.showGraph : getLableConst.hideGraph
             "
+            :disabled="!canShowPayoffChart && hideChart"
             @click="onHideChart()"
             v-if="!this.PropStrategy.isarchive"
           >
@@ -169,7 +172,11 @@
             }}</i>
             <tooltip
               :Value="
-                hideChart ? getLableConst.showGraph : getLableConst.hideGraph
+                canShowPayoffChart || !hideChart
+                  ? hideChart
+                    ? getLableConst.showGraph
+                    : getLableConst.hideGraph
+                  : 'Add call, put, or future trades to show payoff'
               "
               Location="above end"
             />
@@ -251,28 +258,49 @@
         </div>
 
         <div class="strategy-chart" :class="{ hidden: hideChart }">
-          <div class="chartplaceholder">
+          <div v-if="!canShowPayoffChart" class="chart-empty">
+            <p>
+              No payoff to plot yet. Add at least one call, put, or future trade,
+              then open the graph again.
+            </p>
+          </div>
+          <div v-else class="chartplaceholder">
             <div class="chart-range">
               <input
                 type="number"
                 v-model="PropStrategy.x0"
-                placeholder="min"
+                placeholder="Min strike"
                 min="0"
                 class="chart-mini-edit"
-                aria-label="Chart min"
+                aria-label="Payoff chart minimum strike"
                 @keydown.enter="onShowChart()"
               />
               <input
                 type="number"
                 v-model="PropStrategy.x1"
-                placeholder="max"
+                placeholder="Max strike"
                 min="0"
                 class="chart-mini-edit"
-                aria-label="Chart max"
+                aria-label="Payoff chart maximum strike"
                 @keydown.enter="onShowChart()"
               />
             </div>
-            <div class="chart"></div>
+            <p class="chart-help">
+              Payoff by strike. Hover the line for simulated P&amp;L at a strike.
+              Press Enter in min or max to redraw.
+            </p>
+            <div
+              class="chart"
+              role="img"
+              :aria-label="
+                'Payoff chart for ' +
+                (PropStrategy.name || 'strategy') +
+                ', strike range ' +
+                (PropStrategy.x0 || 'auto') +
+                ' to ' +
+                (PropStrategy.x1 || 'auto')
+              "
+            ></div>
           </div>
         </div>
       </div>
@@ -318,6 +346,9 @@ export default {
       return this.Symbols.filter(
         (x) => (x.symboltype || "").toLowerCase() === type
       );
+    },
+    canShowPayoffChart: function () {
+      return this.hasDerivative(this.PropStrategy);
     },
   },
   mounted: function () {
@@ -390,7 +421,9 @@ export default {
       const name = this.PropStrategy?.name || "this strategy";
       if (
         !window.confirm(
-          "Delete strategy \"" + name + "\"? This cannot be undone."
+          "Delete strategy \"" +
+            name +
+            "\" and its trade legs? You cannot undo this action."
         )
       ) {
         return;
@@ -430,12 +463,25 @@ export default {
         this.EditStrategy(this.PropStrategy);
       }
     },
+    asTextValue: function (Value) {
+      if (Value == null) {
+        return "";
+      }
+      if (typeof Value === "string") {
+        return Value;
+      }
+      if (typeof Value === "number") {
+        return String(Value);
+      }
+      return "";
+    },
     onSymbolKeyUp: function (Value) {
-      this.PropStrategy.symbol = Value;
-      if (!Value || !this.Symbols?.length) {
+      const text = this.asTextValue(Value);
+      this.PropStrategy.symbol = text;
+      if (!text || !this.Symbols?.length) {
         return;
       }
-      const matches = this.Symbols.filter((x) => x.name == Value);
+      const matches = this.Symbols.filter((x) => x.name == text);
       if (matches.length === 1) {
         this.PropStrategy.symboltype = matches[0].symboltype;
         if (matches[0].lotsize) {
@@ -454,8 +500,9 @@ export default {
       }
     },
     onSymbolTypeKeyUp: function (Value) {
-      this.PropStrategy.symboltype = Value;
-      const type = (Value || "").toLowerCase();
+      const text = this.asTextValue(Value);
+      this.PropStrategy.symboltype = text;
+      const type = text.toLowerCase();
       if (!type || !this.PropStrategy.symbol) {
         return;
       }
@@ -468,7 +515,18 @@ export default {
         this.PropStrategy.symbol = "";
       }
     },
+    onSymbolSave: function (Value) {
+      this.onSymbolKeyUp(Value);
+      this.onSaveStrategy();
+    },
+    onSymbolTypeSave: function (Value) {
+      this.onSymbolTypeKeyUp(Value);
+      this.onSaveStrategy();
+    },
     onHideChart: function () {
+      if (this.hideChart && !this.canShowPayoffChart) {
+        return;
+      }
       this.PropStrategy.hidechart = this.hideChart = !this.hideChart;
       this.EditStrategy(this.PropStrategy);
       if (!this.hideChart) {
@@ -567,6 +625,41 @@ export default {
 .chart {
   max-width: 100%;
   overflow-x: auto;
+}
+
+.chart-help {
+  margin: 0 0 0.35rem;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+.chart-empty {
+  padding: 1rem 0.5rem;
+  min-height: 8rem;
+  display: flex;
+  align-items: center;
+}
+
+.chart-empty p {
+  margin: 0;
+  max-width: 22rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #6b7280;
+}
+
+:global(.dark) .chart-help,
+:global(.dark) .chart-empty p {
+  color: #9ca3af;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 @media (min-width: 768px) {

@@ -59,37 +59,20 @@ const utilitymixins = {
     GenerateChart: function (strategy) {
       let paretnId =
         "#strategy_" + strategy._id + " .chartplaceholder .chart";
-      if (this.hasDerivative(strategy)) {
-        let chartData = this.GenerateChartPoint(strategy);
-        //let chartDatawithoutExit = this.GenerateChartPoint(strategy, true);
-        // logs.warn(chartData);
-        // logs.warn(chartDatawithoutExit);
-        d3.selectAll(paretnId + " > *").remove();
-        if (chartData?.length > 0) {
-          this.GenerateLineChart(paretnId, strategy, chartData);
-        } else {
-          let placeholder = [
-            {
-              strikePrice: 1,
-              symbol: "Nifty",
-              name: "Strategy - 1",
-              //"intrinsicValue": 0,
-              PnL: 0,
-              netPnL: 0,
-              qty: 0,
-              lot: 0,
-              price: 0,
-            },
-          ];
-          this.GenerateLineChart(paretnId, strategy, placeholder);
-        }
-      }
-      else {
-        //console.clear();
-        //console.log('No Data :>> ');
-        strategy.HideChart = false;
+      const chartNode = document.querySelector(paretnId);
+      if (!chartNode) {
         return false;
       }
+      d3.selectAll(paretnId + " > *").remove();
+      if (!this.hasDerivative(strategy)) {
+        return false;
+      }
+      let chartData = this.GenerateChartPoint(strategy);
+      if (chartData?.length > 0) {
+        this.GenerateLineChart(paretnId, strategy, chartData);
+        return true;
+      }
+      return false;
     },
 
     GetBreakEven: function (strategy) {
@@ -288,11 +271,19 @@ const utilitymixins = {
     },
 
     hasDerivative: function (strategy) {
-      const s = (e) =>
-        e.tradetype == "Call" ||
-        e.tradetype == "Put" ||
-        e.tradetype == "Future";
-      return strategy.trades.some(s);
+      if (!strategy || !Array.isArray(strategy.trades) || !strategy.trades.length) {
+        return false;
+      }
+      return strategy.trades.some(
+        (e) =>
+          e.tradetype == "Call" ||
+          e.tradetype == "Put" ||
+          e.tradetype == "Future"
+      );
+    },
+
+    hasTrades: function (strategy) {
+      return !!(strategy && Array.isArray(strategy.trades) && strategy.trades.length);
     },
 
     /// Line Chart
@@ -364,7 +355,7 @@ const utilitymixins = {
             "transform",
             `translate(${xScale(xInv)},${this.HEIGHT - height})`
           );
-          tooltipText = `P&L:${pnlval}\nStrike:${xInv}`;
+          tooltipText = `P&L: ${pnlval}\nStrike: ${xInv}`;
         } else if (this.ChartSettings.TOOLTIPLOCATION == "FOLLOW") {
           transYScale = yScale(pnlval);
           let _transYScale = transYScale;
@@ -382,13 +373,13 @@ const utilitymixins = {
             "transform",
             `translate(${xScale(xInv)},${_transYScale})`
           );
-          tooltipText = `P&L:${pnlval}\nStrike:${xInv}`;
+          tooltipText = `P&L: ${pnlval}\nStrike: ${xInv}`;
         } else if (this.ChartSettings.TOOLTIPLOCATION == "TOP") {
           tooltip.attr(
             "transform",
             `translate(${xScale(xInv)},${-height + 35})`
           );
-          tooltipText = `P&L:${pnlval}\nStrike:${xInv}`;
+          tooltipText = `P&L: ${pnlval}\nStrike: ${xInv}`;
         }
 
         g.style("display", null)

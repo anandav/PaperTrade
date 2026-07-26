@@ -75,6 +75,14 @@ export default {
   visibility: visible;
 }
 
+.tooltip.is-open:hover .tooltiptext,
+.tooltip.is-open:focus-within .tooltiptext,
+.dropdown.is-open:hover .tooltiptext,
+.dropdown.is-open:focus-within .tooltiptext {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .tooltip .tooltiptext.tip-above {
   bottom: calc(100% + 6px);
   top: auto;

@@ -21,19 +21,27 @@ const strategyModule = {
     },
     mutations: {
         [GETALLSTRATEGIES](state, _strategies) {
-            state.Strategies = _strategies;
+            state.Strategies = Array.isArray(_strategies) ? _strategies : [];
             state.Strategies.forEach(s => {
                 s.x0 = s.x1 = undefined;
+                if (!Array.isArray(s.trades)) {
+                    s.trades = [];
+                }
                 s.trades.forEach(t => { t.checked = undefined; });
-
             });
         },
         [ADDEDITSTRATEGY](state, _strategy) {
+            if (!_strategy) {
+                return;
+            }
+            if (!Array.isArray(_strategy.trades)) {
+                _strategy.trades = [];
+            }
             var foundIndex = state.Strategies.findIndex(x => x._id == _strategy._id);
             if (foundIndex > -1) {
                 Object.assign(state.Strategies[foundIndex], _strategy);
             } else {
-                state.Strategies.unshift(_strategy);
+                state.Strategies = [_strategy, ...state.Strategies];
             }
         },
         [DELETESTRATEGY](state, _strategyId) {
@@ -69,33 +77,46 @@ const strategyModule = {
                 portfolio: _pid,
                 lotsize: 50,
                 strikepricestep: 50,
+                trades: [],
             };
-            axios.post(apiUrl + "strategy/save", item).then(function (res) {
-                if (res.status == 200) {
-                    res.data.isedit = true;
-                    commit(ADDEDITSTRATEGY, res.data);
+            return axios.post(apiUrl + "strategy/save", item).then(function (res) {
+                if (res && res.status >= 200 && res.status < 300 && res.data) {
+                    const strategy = {
+                        ...res.data,
+                        isedit: true,
+                        trades: Array.isArray(res.data.trades) ? res.data.trades : [],
+                    };
+                    commit(ADDEDITSTRATEGY, strategy);
+                    return strategy;
                 }
             });
         },
         EditStrategy({ commit }, item) {
-            axios.post(apiUrl + "strategy/save", item).then(function (res) {
-                if (res.status == 200) {
-                    commit(ADDEDITSTRATEGY, res.data);
+            return axios.post(apiUrl + "strategy/save", item).then(function (res) {
+                if (res && res.status >= 200 && res.status < 300 && res.data) {
+                    const strategy = {
+                        ...res.data,
+                        trades: Array.isArray(res.data.trades)
+                            ? res.data.trades
+                            : (item.trades || []),
+                    };
+                    commit(ADDEDITSTRATEGY, strategy);
+                    return strategy;
                 }
             });
         },
         DeleteStrategy({ commit }, item) {
-            axios.post(apiUrl + "strategy/delete", item).then(function (res) {
-                if (res.status == 200) {
+            return axios.post(apiUrl + "strategy/delete", item).then(function (res) {
+                if (res && res.status >= 200 && res.status < 300) {
                     commit(DELETESTRATEGY, item._id);
                 }
             })
         },
         MoveStrategy({ commit }, { Strategy, PortfolioID }) {
             Strategy.portfolio = PortfolioID;
-            axios.post(apiUrl + "strategy/save", Strategy).then(function (res) {
-                if (res.status == 200) {
-                    commit(DELETESTRATEGY, res.data._id);
+            return axios.post(apiUrl + "strategy/save", Strategy).then(function (res) {
+                if (res && res.status >= 200 && res.status < 300 && res.data) {
+                    commit(DELETESTRATEGY, res.data._id || Strategy._id);
                 }
             });
         },
@@ -116,9 +137,9 @@ const strategyModule = {
 
                 SourceStrategy.trades.forEach(x => { x._id = undefined; });
                 DestinationStrategy.trades = [...DestinationStrategy.trades, ...SourceStrategy.trades];
-                axios.post(apiUrl + "strategy/save", DestinationStrategy).then(function () {
-                    axios.post(apiUrl + "strategy/delete", SourceStrategy).then(function (res2) {
-                        if (res2.status == 200) {
+                return axios.post(apiUrl + "strategy/save", DestinationStrategy).then(function () {
+                    return axios.post(apiUrl + "strategy/delete", SourceStrategy).then(function (res2) {
+                        if (res2 && res2.status >= 200 && res2.status < 300) {
                             commit(DELETESTRATEGY, SourceStrategy._id);
                         }
                     });

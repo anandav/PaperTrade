@@ -32,12 +32,13 @@
         <button
           type="button"
           class="btn workspace-menu-btn"
-          aria-label="Open portfolios"
+          aria-label="Open portfolio list"
           :aria-expanded="menuOpen ? 'true' : 'false'"
           @click="toggleMenu"
         >
           <i class="material-icons">menu</i>
           <span class="workspace-menu-label">Portfolios</span>
+
         </button>
       </div>
       <PortfolioDetail />

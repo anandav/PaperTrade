@@ -1,8 +1,27 @@
 <template>
   <div class="trade-list">
     <div
+      class="trade-empty"
+      v-if="!PropStrategy.isarchive && !hasTradeLegs"
+    >
+      <p class="trade-empty-copy">
+        No trades yet. Add a call, put, future, or equity leg to track P&amp;L
+        and payoff.
+      </p>
+      <button
+        class="btn dark:text-orange-400 tooltip"
+        type="button"
+        :aria-label="getLableConst.addTrade"
+        @click="onBindAddEditTrade()"
+      >
+        <i class="material-icons" aria-hidden="true">playlist_add</i>
+        <span class="trade-empty-action">{{ getLableConst.addTrade }}</span>
+        <tooltip :Value="getLableConst.addTrade" Location="bottom end" />
+      </button>
+    </div>
+    <div
       class="trade-scroll"
-      v-if="!this.PropStrategy.isarchive"
+      v-if="!PropStrategy.isarchive && hasTradeLegs"
       @dragover.prevent
       @dragenter.prevent
     >
@@ -11,8 +30,8 @@
           <div
             class="table-row text-xs text-right text-gray-900 dark:text-white"
           >
-            <div class="1"></div>
-            <div class="2 table-cell px-1 py-3 w-12">
+            <div class="table-cell trade-col-drag"></div>
+            <div class="table-cell px-1 py-3 w-12">
               <label class="block ">
                 <input
                   type="checkbox"
@@ -23,20 +42,20 @@
               </label>
             </div>
             <div
-              class="3 table-cell px-1 py-4"
+              class="table-cell px-1 py-4"
               v-if="PropStrategy.symboltype != 'Equity'"
             >
-              Stike Price
+              Strike Price
             </div>
-            <div class="4 table-cell px-1 py-4">Trade Type</div>
-            <div class="5 table-cell px-1 py-4">B/S</div>
-            <div class="6 table-cell px-1 py-4">Qty</div>
-            <div class="7 table-cell px-1 py-4">Spot Price</div>
-            <div class="8 table-cell px-1 py-4" v-if="Portfolio.exchange">
+            <div class="table-cell px-1 py-4">Trade Type</div>
+            <div class="table-cell px-1 py-4">B/S</div>
+            <div class="table-cell px-1 py-4">Qty</div>
+            <div class="table-cell px-1 py-4">Spot Price</div>
+            <div class="table-cell px-1 py-4" v-if="showLtpColumn">
               LTP
             </div>
-            <div class="9 table-cell px-1 py-4">Total Price</div>
-            <div class="10 table-cell px-1 trade-actions-col">
+            <div class="table-cell px-1 py-4">Total Price</div>
+            <div class="table-cell px-1 trade-actions-col">
               <div class="trade-actions trade-actions-header">
                 <button
                   class="btn dark:text-orange-400 tooltip view"
@@ -55,15 +74,15 @@
                 <button
                   class="btn tooltip"
                   type="button"
-                  aria-label="Exit All Trades"
+                  aria-label="Exit all open trades"
                   @click="onExitAllTrade()"
                 >
                   <i class="material-icons" aria-hidden="true">exit_to_app</i>
-                  <tooltip Value="Exit All Trades" Location="bottom end" />
+                  <tooltip Value="Exit all open trades" Location="bottom end" />
                 </button>
                 <dropdown
                   class="text-red-600 inline-block view tooltip"
-                  Tooltip="Get LTP"
+                  Tooltip="Refresh prices (LTP)"
                   TooltipLocation="bottom end"
                   :Icon="`currency_rupee`"
                   :Items="LTPAction"
@@ -100,7 +119,7 @@
             ]"
             v-cloak
           >
-            <div class="1 table-cell" v-show="!item.ismove">
+            <div class="table-cell trade-col-drag" v-show="!item.ismove">
               <svg
                 class="
                   cursor-move
@@ -123,12 +142,12 @@
                 />
               </svg>
             </div>
-            <div class="2 table-cell px-1 py-2 trade-select-cell">
+            <div class="table-cell px-1 py-2 trade-select-cell">
               <div class="trade-select-row">
                 <button
                   class="btn-mini dark:text-yellow-500 tooltip view"
                   type="button"
-                  aria-label="Change row color"
+                  aria-label="Highlight row color"
                   @click="onChangeColor(item)"
                 >
                   <i class="material-icons" aria-hidden="true">category</i>
@@ -146,7 +165,7 @@
               </div>
             </div>
             <div
-              class="3 table-cell px-1 py-2"
+              class="table-cell px-1 py-2"
               v-if="PropStrategy.symboltype != 'Equity'"
             >
               <div
@@ -156,13 +175,13 @@
                 <button
                   class="tooltip"
                   type="button"
-                  aria-label="Decrement strike"
+                  aria-label="Lower strike by one step"
                   @click="onIncrementDecrement(-1, item)"
                 >
                   <i class="font13px material-icons" aria-hidden="true"
                     >arrow_downward</i
                   >
-                  <tooltip Value="Decrement" />
+                  <tooltip Value="Lower strike" />
                 </button>
                 <span>
                   {{ item.selectedstrike }}
@@ -170,41 +189,38 @@
                 <button
                   class="tooltip"
                   type="button"
-                  aria-label="Increment strike"
+                  aria-label="Raise strike by one step"
                   @click="onIncrementDecrement(1, item)"
                 >
                   <i class="font13px material-icons" aria-hidden="true"
                     >arrow_upward</i
                   >
-                  <tooltip Value="Increment" />
+                  <tooltip Value="Raise strike" />
                 </button>
               </div>
-              <div class="edit">
-                <div
-                  v-show="item.tradetype == 'Call' || item.tradetype == 'Put'"
-                  class="flex flex-col"
-                >
-                  <input
-                    v-model="item.selectedstrike"
-                    :step="PropStrategy.strikepricestep"
-                    @keydown.enter="onInlineSaveTrade(item)"
-                    type="number"
-                    class="text-right mini-edit"
-                  />
-                </div>
+              <div
+                v-show="item.tradetype == 'Call' || item.tradetype == 'Put'"
+                class="edit"
+              >
+                <input
+                  v-model="item.selectedstrike"
+                  :step="PropStrategy.strikepricestep"
+                  @keydown.enter="onInlineSaveTrade(item)"
+                  type="number"
+                  class="trade-edit-input text-right"
+                />
               </div>
             </div>
-            <div class="4 table-cell px-1 py-2">
+            <div class="table-cell px-1 py-2">
               <span class="view">
                 {{ item.tradetype }}
               </span>
-              <div class="">
-                <select
-                  class="btn edit"
-                  :id="'tt-' + item._id"
-                  v-model="item.tradetype"
-                  aria-label="Trade type"
-                >
+              <select
+                class="trade-edit-select edit"
+                :id="'tt-' + item._id"
+                v-model="item.tradetype"
+                aria-label="Trade type"
+              >
                   <option
                     :key="key"
                     v-for="(value, key) in TRADETYPE"
@@ -212,10 +228,9 @@
                   >
                     {{ value }}
                   </option>
-                </select>
-              </div>
+              </select>
             </div>
-            <div class="5 table-cell px-1 py-2">
+            <div class="table-cell px-1 py-2">
               <span class="view">
                 {{ item.buyorsell }}
               </span>
@@ -224,7 +239,7 @@
                 AriaLabel="Buy or Sell"
               />
             </div>
-            <div class="6 table-cell px-1 py-2">
+            <div class="table-cell px-1 py-2">
               <span class="view">
                 {{ item.quantity }}
               </span>
@@ -232,32 +247,32 @@
                 v-model="item.quantity"
                 min="1"
                 type="number"
-                class="mini-edit edit text-right"
+                class="trade-edit-input trade-edit-qty edit text-right"
                 @keydown.enter="onInlineSaveTrade(item)"
               />
             </div>
-            <div class="7 table-cell px-1 py-2">
+            <div class="table-cell px-1 py-2">
               <span class="view">
                 {{ $filters.decimal2(item.price) }}
               </span>
               <input
                 v-model="item.price"
                 type="text"
-                class="mini-edit edit text-right"
+                class="trade-edit-input trade-edit-price edit text-right"
                 @keydown.enter="onInlineSaveTrade(item)"
               />
             </div>
-            <div v-if="Portfolio.exchange" class="8 table-cell px-1 py-2">
+            <div v-if="showLtpColumn" class="table-cell px-1 py-2">
               <div v-if="item.lasttradedprice >= 0" class="ltp-cell">
                 <button
                   class="tooltip"
                   type="button"
-                  aria-label="Assign LTP to Spot Price"
+                  aria-label="Copy last price into spot price"
                   @click="onLTPClick(item)"
                 >
                   <i class="font13px material-icons" aria-hidden="true">west</i>
                   <tooltip
-                    Value="Assign LTP to Spot Price"
+                    Value="Use last price as spot"
                     Location="above end"
                   />
                 </button>
@@ -267,7 +282,7 @@
                 </span>
               </div>
             </div>
-            <div class="9 table-cell px-1 py-2">
+            <div class="table-cell px-1 py-2">
               {{
                 item.buyorsell == "Buy"
                   ? (
@@ -281,7 +296,7 @@
                     ).toFixed(2)
               }}
             </div>
-            <div class="10 table-cell px-1">
+            <div class="table-cell px-1">
               <div class="trade-actions">
                 <button
                   class="btn tooltip view"
@@ -340,27 +355,28 @@
         </div>
         <div class="table-row-group">
           <div class="table-row text-right border-t border-yellow-500">
+            <div class="table-cell trade-col-drag"></div>
+            <div class="table-cell"></div>
+            <div
+              class="table-cell"
+              v-if="PropStrategy.symboltype != 'Equity'"
+            ></div>
             <div class="table-cell"></div>
             <div class="table-cell"></div>
             <div class="table-cell"></div>
             <div class="table-cell"></div>
-            <div class="table-cell"></div>
-            <div class="table-cell"></div>
-            <div class="table-cell" v-if="Portfolio.exchange"></div>
-            <div class="table-cell">
-              <span class="text-xs block text-gray-500">P&L</span>
+            <div class="table-cell" v-if="showLtpColumn"></div>
+            <div class="table-cell px-1 py-2 trade-pnl-cell">
+              <span class="trade-pnl-label">P&L</span>
+              <span :class="FgColor">{{ $filters.decimal2(TotalAmount) }}</span>
             </div>
-            <div class="table-cell px-1 py-2">
-              {{ $filters.decimal2(TotalAmount) }}
-            </div>
-            <div class="table-cell"></div>
-            <div class="table-cell"></div>
+            <div class="table-cell trade-actions-col"></div>
           </div>
         </div>
       </div>
     </div>
     <div v-if="this.PropStrategy.isarchive" class="text-xs">
-      This strategy is archived with P&L
+      Archived strategy. Simulated P&amp;L:
       <span :class="FgColor">
         {{ $filters.decimal2(TotalAmount) }}
       </span>
@@ -405,9 +421,9 @@ export default {
         },
       ],
       LTPAction: [
-        { _id: "updateltp", name: "Update LTP", icon: "get_app", click: "" },
-        { _id: "updateexit", name: "Update Exit", icon: "vertical_align_bottom", click: "" },
-        { _id: "updateall", name: "Update All", icon: "save_alt", click: "" }
+        { _id: "updateltp", name: "Refresh last prices", icon: "get_app", click: "" },
+        { _id: "updateexit", name: "Refresh exit prices", icon: "vertical_align_bottom", click: "" },
+        { _id: "updateall", name: "Refresh all prices", icon: "save_alt", click: "" }
       ],
       pnlpercentage: 0,
     };
@@ -430,7 +446,9 @@ export default {
     }),
     onDeleteTrade: function (sid, tid) {
       if (
-        !window.confirm("Delete this trade? This cannot be undone.")
+        !window.confirm(
+          "Delete this trade leg? You cannot undo this action."
+        )
       ) {
         return;
       }
@@ -650,37 +668,33 @@ export default {
       },
     },
 
+    hasTradeLegs: function () {
+      return this.hasTrades(this.PropStrategy);
+    },
+    showLtpColumn: function () {
+      return !!(this.Portfolio && this.Portfolio.exchange);
+    },
     TotalAmount: function () {
-      if (this.selectedIDs) {
-        let price = 0;
-        // buyprice = 0,
-        // sellprice = 0;
-
-        this.PropStrategy?.trades?.forEach((_trade) => {
-          this.selectedIDs.forEach((_f) => {
-            if (_trade._id == _f) {
-              if (_trade.buyorsell == "Buy") {
-                price =
-                  price -
-                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
-
-                // buyprice +=
-                //   _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
-              } else {
-                price =
-                  price +
-                  _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
-
-                // sellprice +=
-                //   _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
-              }
-            }
-          });
-        });
-        //this.pnlpercentage = ((sellprice - buyprice) / buyprice) * 100;
-        return price;
+      if (!this.hasTradeLegs) {
+        return 0;
       }
-      return 0;
+      let price = 0;
+      const selected = this.selectedIDs || [];
+      this.PropStrategy?.trades?.forEach((_trade) => {
+        if (selected.length && !selected.includes(_trade._id)) {
+          return;
+        }
+        if (_trade.buyorsell == "Buy") {
+          price =
+            price -
+            _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+        } else {
+          price =
+            price +
+            _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+        }
+      });
+      return price;
     },
     PnLPercnet: {
       get: function () {
@@ -691,6 +705,9 @@ export default {
       },
     },
     FgColor: function () {
+      if (!this.hasTradeLegs) {
+        return { "text-gray-500": true };
+      }
       return {
         "text-green-700": this.TotalAmount >= 0,
         "text-red-700": this.TotalAmount < 0,
@@ -714,17 +731,53 @@ export default {
 }
 
 .edit {
-  display: none;
+  display: none !important;
 }
 
 .isTradeEdit .edit {
-  display: inline-flex;
+  display: inline-flex !important;
 }
 
 .isTradeEdit .view {
-  display: none;
+  display: none !important;
 }
 
+.isTradeEdit select.edit,
+.isTradeEdit input.edit,
+.isTradeEdit .trade-edit-select,
+.isTradeEdit .trade-edit-input {
+  display: inline-block !important;
+}
+
+.trade-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 0.5rem 0.75rem;
+}
+.trade-empty-copy {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #6b7280;
+}
+:global(.dark) .trade-empty-copy {
+  color: #9ca3af;
+}
+.trade-empty-action {
+  margin-left: 0.35rem;
+  font-size: 0.8125rem;
+  line-height: 1;
+}
+.trade-empty .btn {
+  width: auto;
+  min-width: auto;
+  padding: 0 0.65rem;
+  height: 2rem;
+}
 .trade-scroll {
   width: 100%;
   max-width: 100%;
@@ -755,6 +808,91 @@ export default {
 .trade-actions-col {
   min-width: 6.5rem;
   overflow: visible;
+}
+
+.trade-col-drag {
+  width: 1rem;
+  min-width: 1rem;
+}
+
+.trade-pnl-cell {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.trade-pnl-label {
+  display: inline;
+  margin-right: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+:global(.dark) .trade-pnl-label {
+  color: #9ca3af;
+}
+
+.trade-edit-select {
+  box-sizing: border-box;
+  width: 5.5rem;
+  min-width: 5.5rem;
+  height: 2rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  color: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+:global(.dark) .trade-edit-select {
+  border-color: #4b5563;
+  background-color: #1f2937;
+}
+
+.trade-edit-select:focus {
+  outline: 2px solid #9ca3af;
+  outline-offset: 1px;
+}
+
+.trade-edit-input {
+  box-sizing: border-box;
+  width: 4.5rem;
+  min-width: 4.5rem;
+  height: 2rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  color: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.trade-edit-qty {
+  width: 3.25rem;
+  min-width: 3.25rem;
+}
+
+.trade-edit-price {
+  width: 5rem;
+  min-width: 5rem;
+}
+
+:global(.dark) .trade-edit-input {
+  border-color: #4b5563;
+  background-color: #1f2937;
+}
+
+.trade-edit-input:focus {
+  outline: 2px solid #9ca3af;
+  outline-offset: 1px;
 }
 
 .trade-actions .tooltip,

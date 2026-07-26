@@ -15,9 +15,13 @@ export default {
     return '';
   },
   decimal2(value) {
-    if (value) {
-      return parseFloat(value).toFixed(2);
+    if (value === null || value === undefined || value === '') {
+      return '';
     }
-    return '';
+    const n = parseFloat(value);
+    if (Number.isNaN(n)) {
+      return '';
+    }
+    return n.toFixed(2);
   },
 };

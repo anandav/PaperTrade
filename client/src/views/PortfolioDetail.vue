@@ -1,7 +1,9 @@
 <template>
   <div class="pt-2 pb-4 min-h-full px-2 sm:px-0">
     <div v-if="!Portfolio" class="drop-shadow-md dark:bg-gray-900">
-      <h3 class="pl-3 sm:pl-5 pb-5 text-xl">Please select a portfolio.</h3>
+      <h3 class="pl-3 sm:pl-5 pb-5 text-xl">
+        Select a portfolio to open its strategies, or create a new one.
+      </h3>
     </div>
     <div v-if="Portfolio" class="">
       <div
@@ -107,29 +109,29 @@
           <button
             class="btn tooltip view"
             type="button"
-            aria-label="Edit Portfolio"
+            aria-label="Edit portfolio"
             @click="onEditPortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">edit</i>
-            <tooltip Value="Edit Portfolio" />
+            <tooltip Value="Edit portfolio" />
           </button>
           <button
             class="btn edit tooltip"
             type="button"
-            aria-label="Save Portfolio"
+            aria-label="Save portfolio"
             @click="onSavePortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">save</i>
-            <tooltip Value="Save Portfolio" />
+            <tooltip Value="Save portfolio" />
           </button>
           <button
             class="btn ml-1 tooltip text-red-700 dark:text-red-700 view"
             type="button"
-            aria-label="Delete Portfolio"
+            aria-label="Delete portfolio"
             @click="onDeletePortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">delete_forever</i>
-            <tooltip Value="Delete Portfolio" />
+            <tooltip Value="Delete portfolio" />
           </button>
         </div>
       </div>
@@ -214,7 +216,9 @@ export default {
       const name = portfolio?.name || "this portfolio";
       if (
         !window.confirm(
-          "Delete portfolio \"" + name + "\"? This cannot be undone."
+          "Delete portfolio \"" +
+            name +
+            "\" and its strategies? You cannot undo this action."
         )
       ) {
         return;

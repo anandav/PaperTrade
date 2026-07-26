@@ -27,7 +27,7 @@
         {{ LblText }}
       </span>
       <tooltip
-        v-if="Tooltip && Tooltip.length > 0"
+        v-if="Tooltip && Tooltip.length > 0 && !isOpen"
         :Value="Tooltip"
         :Location="TooltipLocation"
       />
@@ -44,8 +44,6 @@
         divide-gray-400
         dark:divide-gray-600
         rounded
-        w-32
-        -ml-10
         shadow-lg
         divide-y
         divide-solid
@@ -135,6 +133,15 @@
 
 <script>
 let dropdownSeq = 0;
+const openDropdowns = new Set();
+
+function closeOtherDropdowns(current) {
+  openDropdowns.forEach((instance) => {
+    if (instance !== current) {
+      instance.closeMenu();
+    }
+  });
+}
 
 export default {
   name: "DropDown",
@@ -193,22 +200,32 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener("click", this._onDocClick);
+    openDropdowns.delete(this);
   },
   methods: {
     toggleMenu: function () {
-      this.isOpen = !this.isOpen;
       if (this.isOpen) {
-        this.$nextTick(() => this.focusFirst());
+        this.closeMenu();
+        return;
       }
+      this.openMenu();
+    },
+    openMenu: function () {
+      closeOtherDropdowns(this);
+      this.isOpen = true;
+      openDropdowns.add(this);
+      this.$nextTick(() => this.focusFirst());
     },
     openAndFocusFirst: function () {
       if (!this.isOpen) {
-        this.isOpen = true;
+        this.openMenu();
+      } else {
+        this.$nextTick(() => this.focusFirst());
       }
-      this.$nextTick(() => this.focusFirst());
     },
     closeMenu: function () {
       this.isOpen = false;
+      openDropdowns.delete(this);
     },
     menuItems: function () {
       return Array.from(this.$el.querySelectorAll('[role="menuitem"]'));
@@ -246,12 +263,20 @@ export default {
 .dropdown {
   vertical-align: middle;
 }
+.dropdown.is-open .tooltiptext {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
 .dropdown-content {
   display: none;
   position: absolute;
   right: 0;
   left: auto;
   margin-left: 0;
+  min-width: 12rem;
+  width: max-content;
+  max-width: 18rem;
+  z-index: 50;
 }
 .dropdown-content.is-visible {
   display: block;
@@ -268,6 +293,7 @@ export default {
   border: 0;
   color: inherit;
   font: inherit;
+  white-space: nowrap;
 }
 @media (pointer: coarse) {
   .dropdown > .btn {
