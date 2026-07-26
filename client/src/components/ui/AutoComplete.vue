@@ -4,7 +4,9 @@
       <input
         data-dropdown-toggle="dropdown"
         class="normal-edit"
+        :id="inputId || componentid + '-input'"
         :list="componentid"
+        :aria-label="AriaLabel || PlaceHolder"
         @change="onChange"
         @keyup="onKeyUp"
         @keyup.enter="onEnterKeyup"
@@ -125,6 +127,8 @@ export default {
     Items: { type: Array },
     Value: { type: String },
     PlaceHolder: { type: String },
+    AriaLabel: { type: String },
+    inputId: { type: String },
   },
 };
 </script>

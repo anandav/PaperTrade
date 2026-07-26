@@ -19,12 +19,15 @@
       >
         <div class="portfolio-meta">
           <div class="portfolio-field">
-            <label class="text-xs block text-gray-500"> Portfolio </label>
+            <label class="text-xs block text-gray-500" :for="'pf-name-' + Portfolio._id">
+              Portfolio
+            </label>
             <span class="view">
               {{ Portfolio.name }}
             </span>
             <input
               class="normal-edit edit"
+              :id="'pf-name-' + Portfolio._id"
               placeholder="Edit Portfolio Name"
               type="text"
               v-model="Portfolio.name"
@@ -32,13 +35,16 @@
             />
           </div>
           <div class="portfolio-field">
-            <label class="text-xs block text-gray-500"> Exchange </label>
+            <label class="text-xs block text-gray-500" :for="'pf-ex-' + Portfolio._id">
+              Exchange
+            </label>
             <span class="view">
               {{ Portfolio.exchange }}
             </span>
 
             <input
               class="normal-edit edit"
+              :id="'pf-ex-' + Portfolio._id"
               placeholder="Exchange Name"
               type="text"
               v-model="Portfolio.exchange"
@@ -47,13 +53,16 @@
           </div>
 
           <div class="portfolio-field">
-            <label class="text-xs block text-gray-500"> Opening Balance </label>
+            <label class="text-xs block text-gray-500" :for="'pf-ob-' + Portfolio._id">
+              Opening Balance
+            </label>
             <span class="view">
               {{ $filters.decimal2(Portfolio.openingbalance) }}
             </span>
 
             <input
               class="normal-edit edit"
+              :id="'pf-ob-' + Portfolio._id"
               placeholder="Opening Balance"
               type="number"
               v-model="Portfolio.openingbalance"
@@ -62,20 +71,26 @@
           </div>
 
           <div class="portfolio-field">
-            <label class="text-xs block text-gray-500"> Current Balance </label>
-            <span :class="FgColor">
+            <span class="text-xs block text-gray-500" id="pf-cb-label">
+              Current Balance
+            </span>
+            <span :class="FgColor" aria-labelledby="pf-cb-label">
               {{ $filters.decimal2(CurrentBalance) }}
             </span>
           </div>
           <div class="portfolio-field">
-            <label class="text-xs block text-gray-500"> Current P&L </label>
-            <span :class="FgColor">
+            <span class="text-xs block text-gray-500" id="pf-pnl-label">
+              Current P&L
+            </span>
+            <span :class="FgColor" aria-labelledby="pf-pnl-label">
               {{ $filters.decimal2(TotalPortfolioAmount) }}
             </span>
           </div>
           <div class="portfolio-field">
-            <label class="text-xs block text-gray-500"> NAV </label>
-            <span :class="FgColor"> {{ $filters.decimal2(NAV) }}% </span>
+            <span class="text-xs block text-gray-500" id="pf-nav-label">NAV</span>
+            <span :class="FgColor" aria-labelledby="pf-nav-label">
+              {{ $filters.decimal2(NAV) }}%
+            </span>
           </div>
         </div>
 
@@ -96,7 +111,7 @@
             @click="onEditPortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">edit</i>
-            <tooltip Value="Edit Portfilio" />
+            <tooltip Value="Edit Portfolio" />
           </button>
           <button
             class="btn edit tooltip"
@@ -105,16 +120,16 @@
             @click="onSavePortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">save</i>
-            <tooltip Value="Save Portfilio" />
+            <tooltip Value="Save Portfolio" />
           </button>
           <button
             class="btn ml-1 tooltip text-red-700 dark:text-red-700 view"
             type="button"
             aria-label="Delete Portfolio"
-            @dblclick="onDeletePortfolio(Portfolio)"
+            @click="onDeletePortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">delete_forever</i>
-            <tooltip Value="Delete Portfilio" />
+            <tooltip Value="Delete Portfolio" />
           </button>
         </div>
       </div>
@@ -196,6 +211,14 @@ export default {
       this.SavePortfolio(portfolio);
     },
     onDeletePortfolio: function (portfolio) {
+      const name = portfolio?.name || "this portfolio";
+      if (
+        !window.confirm(
+          "Delete portfolio \"" + name + "\"? This cannot be undone."
+        )
+      ) {
+        return;
+      }
       this.DeletePortfolio(portfolio);
     },
   },

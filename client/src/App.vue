@@ -12,13 +12,22 @@
         </div>
         <div class="ml-auto flex items-center">
           <span v-if="isLoggedIn && email" class="mr-4">{{ email }}</span>
-          <button v-if="isLoggedIn" @click="logout" class="mr-3">Logout</button>
-          <a
+          <button
+            v-if="isLoggedIn"
+            type="button"
+            class="mr-3"
+            @click="logout"
+          >
+            Logout
+          </button>
+          <button
             v-if="!isLoggedIn"
-            @click.prevent="b2cLogin"
-            href="#"
+            type="button"
             class="login-link"
-          >Log in <span>→</span></a>
+            @click="b2cLogin"
+          >
+            Log in <span>→</span>
+          </button>
         </div>
       </div>
     </nav>
@@ -104,6 +113,10 @@ export default {
   font-size: 12px;
   margin-right: 0;
   text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
 }
 :global(.dark) .login-link {
   color: #e89b4d;

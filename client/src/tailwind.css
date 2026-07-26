@@ -95,6 +95,18 @@
   @apply rounded border-none focus:outline-none bg-gray-300 dark:bg-gray-600 checked:text-gray-400 dark:checked:text-gray-700;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 @media (pointer: coarse) {
   .btn,
   .btn-nonrounded,
@@ -127,12 +139,7 @@
   }
 }
 
-.tooltiptext{
-  @apply  hidden absolute text-xxs w-20 bg-gray-500 text-white text-center py-1 rounded-md z-10 left-2 -ml-10    
-  bottom-7 after:top-full 
-  after:absolute after:left-2/4 after:border-4 after:border-solid 
-  transition-opacity duration-300 ;
-}
+
 
 ::-webkit-scrollbar {
   width: 6px;

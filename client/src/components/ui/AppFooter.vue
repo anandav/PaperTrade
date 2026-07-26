@@ -19,14 +19,15 @@
     "
   >
     <div class="footer-bar">
-      <label class="theme-switch">
+      <div class="theme-switch">
         <SwitchButton
           :IsDarkTheme="true"
           :Value="isdark"
+          AriaLabel="Dark mode"
           @itemclicked="swiththeme"
         />
-        <span class="theme-label">Dark Mode</span>
-      </label>
+        <span class="theme-label" id="dark-mode-label">Dark Mode</span>
+      </div>
       <div class="footer-meta">
         <span>&copy; {{ currentYear }} Anand.AV</span>
         <span class="mx-2">&middot;</span>
@@ -98,7 +99,6 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
   color: #56677a;
   white-space: nowrap;
   font-size: 11px;

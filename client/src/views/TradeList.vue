@@ -37,7 +37,7 @@
             </div>
             <div class="9 table-cell px-1 py-4">Total Price</div>
             <div class="10 table-cell px-1 trade-actions-col">
-              <div class="trade-actions">
+              <div class="trade-actions trade-actions-header">
                 <button
                   class="btn dark:text-orange-400 tooltip view"
                   type="button"
@@ -46,7 +46,10 @@
                   v-if="!this.PropStrategy.isarchive"
                 >
                   <i class="material-icons" aria-hidden="true">playlist_add</i>
-                  <tooltip :Value="getLableConst.addTrade" />
+                  <tooltip
+                    :Value="getLableConst.addTrade"
+                    Location="bottom end"
+                  />
                 </button>
 
                 <button
@@ -56,11 +59,12 @@
                   @click="onExitAllTrade()"
                 >
                   <i class="material-icons" aria-hidden="true">exit_to_app</i>
-                  <tooltip Value="Exit All Trades" />
+                  <tooltip Value="Exit All Trades" Location="bottom end" />
                 </button>
                 <dropdown
                   class="text-red-600 inline-block view tooltip"
-                  :Tooltip="`LTP`"
+                  Tooltip="Get LTP"
+                  TooltipLocation="bottom end"
                   :Icon="`currency_rupee`"
                   :Items="LTPAction"
                   :Type="`Menu`"
@@ -195,7 +199,12 @@
                 {{ item.tradetype }}
               </span>
               <div class="">
-                <select class="btn edit" v-model="item.tradetype">
+                <select
+                  class="btn edit"
+                  :id="'tt-' + item._id"
+                  v-model="item.tradetype"
+                  aria-label="Trade type"
+                >
                   <option
                     :key="key"
                     v-for="(value, key) in TRADETYPE"
@@ -210,7 +219,10 @@
               <span class="view">
                 {{ item.buyorsell }}
               </span>
-              <SwitchButton :PropTrade="item" />
+              <SwitchButton
+                :PropTrade="item"
+                AriaLabel="Buy or Sell"
+              />
             </div>
             <div class="6 table-cell px-1 py-2">
               <span class="view">
@@ -244,7 +256,10 @@
                   @click="onLTPClick(item)"
                 >
                   <i class="font13px material-icons" aria-hidden="true">west</i>
-                  <tooltip Value="Assign LTP to Spot Price" />
+                  <tooltip
+                    Value="Assign LTP to Spot Price"
+                    Location="above end"
+                  />
                 </button>
 
                 <span>
@@ -275,7 +290,10 @@
                   @click="onInlineEditTrade(item)"
                 >
                   <i class="material-icons" aria-hidden="true">edit</i>
-                  <tooltip :Value="getLableConst.editTrade" />
+                  <tooltip
+                    :Value="getLableConst.editTrade"
+                    Location="above end"
+                  />
                 </button>
                 <button
                   class="btn tooltip edit"
@@ -284,7 +302,10 @@
                   @click="onInlineSaveTrade(item)"
                 >
                   <i class="material-icons" aria-hidden="true">save</i>
-                  <tooltip :Value="getLableConst.saveTrade" />
+                  <tooltip
+                    :Value="getLableConst.saveTrade"
+                    Location="above end"
+                  />
                 </button>
                 <button
                   class="btn tooltip view"
@@ -294,18 +315,24 @@
                   @click="onInlineExitTrade(item)"
                 >
                   <i class="material-icons" aria-hidden="true">logout</i>
-                  <tooltip :Value="getLableConst.exitTrade" />
+                  <tooltip
+                    :Value="getLableConst.exitTrade"
+                    Location="above end"
+                  />
                 </button>
                 <button
                   class="btn tooltip text-red-600 dark:text-red-700"
                   type="button"
                   :aria-label="getLableConst.deleteTrade"
-                  @dblclick="onDeleteTrade(PropStrategy._id, item._id)"
+                  @click="onDeleteTrade(PropStrategy._id, item._id)"
                 >
                   <i class="material-icons" aria-hidden="true"
                     >delete_forever</i
                   >
-                  <tooltip :Value="getLableConst.deleteTrade" />
+                  <tooltip
+                    :Value="getLableConst.deleteTrade"
+                    Location="above end"
+                  />
                 </button>
               </div>
             </div>
@@ -402,6 +429,11 @@ export default {
       GetLiveData: "dataModule/GetLiveData",
     }),
     onDeleteTrade: function (sid, tid) {
+      if (
+        !window.confirm("Delete this trade? This cannot be undone.")
+      ) {
+        return;
+      }
       this.DeleteTrade({ sid, tid }).then(() => {
         this.GenerateChart(this.PropStrategy);
       });
@@ -697,7 +729,9 @@ export default {
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.25rem;
 }
 
 .trade-table {
@@ -710,10 +744,22 @@ export default {
   align-items: center;
   justify-content: flex-end;
   gap: 0.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.trade-actions-header {
+  z-index: 2;
 }
 
 .trade-actions-col {
   min-width: 6.5rem;
+  overflow: visible;
+}
+
+.trade-actions .tooltip,
+.trade-actions .dropdown {
+  overflow: visible;
 }
 
 .trade-actions .btn,

@@ -19,32 +19,50 @@
       <div class="strategy-header">
         <div class="strategy-meta">
           <div class="strategy-field">
-            <label class="text-xs block text-gray-500"> Name </label>
+            <label
+              class="text-xs block text-gray-500"
+              :for="'st-name-' + PropStrategy._id"
+            >
+              Name
+            </label>
             <span class="view">
               {{ PropStrategy.name }}
             </span>
             <input
               class="normal-edit edit"
+              :id="'st-name-' + PropStrategy._id"
               placeholder="Strategy Name"
               v-model="PropStrategy.name"
               @keydown.enter="onSaveStrategy()"
             />
           </div>
           <div class="strategy-field">
-            <label class="text-xs block text-gray-500"> Symbol Type </label>
+            <label
+              class="text-xs block text-gray-500"
+              :for="'st-type-' + PropStrategy._id"
+            >
+              Symbol Type
+            </label>
             <span class="view">
               {{ PropStrategy.symboltype }}
             </span>
             <autocomplete
               :Value="PropStrategy.symboltype"
               :Items="SymbolTypes"
+              :inputId="'st-type-' + PropStrategy._id"
+              AriaLabel="Symbol Type"
               @keyup="onSymbolTypeKeyUp"
               @save="onSaveStrategy"
               PlaceHolder="Symbol Types"
             />
           </div>
           <div class="strategy-field" v-if="!PropStrategy.ismultiplesymbol">
-            <label class="text-xs block text-gray-500"> Symbol </label>
+            <label
+              class="text-xs block text-gray-500"
+              :for="'st-symbol-' + PropStrategy._id"
+            >
+              Symbol
+            </label>
             <span class="view">
               {{ PropStrategy.symbol }}
             </span>
@@ -52,26 +70,39 @@
             <autocomplete
               :Value="PropStrategy.symbol"
               :Items="SymbolsForType"
+              :inputId="'st-symbol-' + PropStrategy._id"
+              AriaLabel="Symbol"
               @keyup="onSymbolKeyUp"
               @save="onSaveStrategy"
               PlaceHolder="Symbol"
             />
           </div>
           <div class="strategy-field">
-            <label class="text-xs block text-gray-500"> Lot Size </label>
+            <label
+              class="text-xs block text-gray-500"
+              :for="'st-lot-' + PropStrategy._id"
+            >
+              Lot Size
+            </label>
             <span class="view">
               {{ PropStrategy.lotsize }}
             </span>
 
             <input
               class="normal-edit edit"
+              :id="'st-lot-' + PropStrategy._id"
               placeholder="Lot Size"
               v-model="PropStrategy.lotsize"
               @keydown.enter="onSaveStrategy()"
             />
           </div>
           <div class="strategy-field">
-            <label class="text-xs block text-gray-500"> Expiry </label>
+            <label
+              class="text-xs block text-gray-500"
+              :for="'st-exp-' + PropStrategy._id"
+            >
+              Expiry
+            </label>
             <span class="view">
               {{ $filters.formatDateTime(PropStrategy.expiry) }}
             </span>
@@ -79,13 +110,17 @@
             <input
               type="date"
               class="normal-edit edit"
+              :id="'st-exp-' + PropStrategy._id"
               placeholder="Expiry"
               v-model="PropStrategy.expiry"
               @keydown.enter="onSaveStrategy()"
             />
           </div>
           <div class="strategy-field">
-            <label class="text-xs block text-gray-500">
+            <label
+              class="text-xs block text-gray-500"
+              :for="'st-step-' + PropStrategy._id"
+            >
               Strike Price Step
             </label>
             <span class="view">
@@ -94,13 +129,14 @@
 
             <input
               class="normal-edit edit"
+              :id="'st-step-' + PropStrategy._id"
               placeholder="Strike Price Step"
               v-model="PropStrategy.strikepricestep"
               @keydown.enter="onSaveStrategy()"
             />
           </div>
           <div class="strategy-field">
-            <label class="text-xs block text-gray-500"> Created On </label>
+            <span class="text-xs block text-gray-500"> Created On </span>
             {{ $filters.formatDateTime(PropStrategy.createdon) }}
           </div>
         </div>
@@ -113,7 +149,10 @@
             v-if="!this.PropStrategy.isarchive"
           >
             <i class="material-icons" aria-hidden="true">edit</i>
-            <tooltip :Value="getLableConst.editStrategy" />
+            <tooltip
+              :Value="getLableConst.editStrategy"
+              Location="above end"
+            />
           </button>
 
           <button
@@ -132,6 +171,7 @@
               :Value="
                 hideChart ? getLableConst.showGraph : getLableConst.hideGraph
               "
+              Location="above end"
             />
           </button>
 
@@ -142,7 +182,10 @@
             @click="onSaveStrategy()"
           >
             <i class="material-icons" aria-hidden="true">save</i>
-            <tooltip :Value="getLableConst.saveStrategy" />
+            <tooltip
+              :Value="getLableConst.saveStrategy"
+              Location="above end"
+            />
           </button>
 
           <dropdown
@@ -152,6 +195,7 @@
             :Type="`Strategy`"
             :ExcludeItem="PropStrategy._id"
             :Tooltip="getLableConst.mergeStrategy"
+            TooltipLocation="above end"
             :MinItem="3"
             @itemclicked="onDropDownItemClicked"
             v-if="!this.PropStrategy.isarchive"
@@ -164,6 +208,7 @@
             :Items="Portfolios"
             :Type="`Portfolios`"
             :Tooltip="getLableConst.moveStrategy"
+            TooltipLocation="above end"
             :MinItem="PropStrategy.isarchive ? 0 : 3"
             @itemclicked="onDropDownItemClicked"
           >
@@ -177,6 +222,7 @@
             @itemclicked="onActionDropDownItemClicked"
             :ExcludeItem="ExcluteStrategyAction"
             Tooltip="Action"
+            TooltipLocation="above end"
           >
           </dropdown>
 
@@ -184,10 +230,13 @@
             class="btn text-red-700 dark:text-red-700 tooltip view"
             type="button"
             :aria-label="getLableConst.deleteStrategy"
-            @dblclick="onDeleteStrategy()"
+            @click="onDeleteStrategy()"
           >
             <i class="material-icons" aria-hidden="true">delete_forever</i>
-            <tooltip :Value="getLableConst.deleteStrategy" />
+            <tooltip
+              :Value="getLableConst.deleteStrategy"
+              Location="above end"
+            />
           </button>
         </div>
       </div>
@@ -338,6 +387,14 @@ export default {
       this.GenerateChart(this.PropStrategy);
     },
     onDeleteStrategy: function () {
+      const name = this.PropStrategy?.name || "this strategy";
+      if (
+        !window.confirm(
+          "Delete strategy \"" + name + "\"? This cannot be undone."
+        )
+      ) {
+        return;
+      }
       this.DeleteStrategy({ _id: this.PropStrategy._id });
     },
     onBindAddEditTrade: function () {
