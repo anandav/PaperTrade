@@ -9,16 +9,26 @@ let indicesFutList = null;
 let mktLotsList = null;
 let lastupdated = null;
 let nseCookies = null;
-let baseUrl = "https://www.nseindia.com/";
-let headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-  'accept-language': 'en,gu;q=0.9,hi;q=0.8', 'accept-encoding': 'gzip, deflate, br'
+let nseCookieFetchedAt = 0;
+const NSE_HOME = "https://www.nseindia.com/";
+const COOKIE_TTL_MS = 10 * 60 * 1000;
+
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Accept-Encoding": "gzip, deflate, br",
+  Connection: "keep-alive",
+  "Upgrade-Insecure-Requests": "1",
+  "Sec-Fetch-Dest": "document",
+  "Sec-Fetch-Mode": "navigate",
+  "Sec-Fetch-Site": "none",
+  "Sec-Fetch-User": "?1",
+  "sec-ch-ua":
+    '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": '"Windows"',
 };
-let Instance = axios.create({
-  baseURL: baseUrl,
-  headers: headers,
-  cookie: nseCookies ?? ""
-});
 
 
 
@@ -96,47 +106,73 @@ module.exports = {
       }
       return result;
     } else {
-      let symbol = startegy.symbol;
-      let symboltype = startegy.symboltype?.toLowerCase();
-      logger.info("symboltype ::>>", symboltype);
-      let allTradeType = this.getTradeTypes(startegy);
-      logger.info("Action:>>", action);
-      if (allTradeType) {
-        logger.info("All Trade Type is Present")
-      } else {
-        logger.error("All Trade Type is null")
-      }
-      let hasEquity = allTradeType.includes("Equity") || allTradeType.includes("Stock");
+      let symbol = this.resolveSymbol(startegy);
+      let symboltype = (startegy.symboltype || "").toLowerCase().trim();
+      let allTradeType = this.getTradeTypes(startegy) || [];
+      let hasEquity =
+        allTradeType.includes("Equity") || allTradeType.includes("Stock");
       let hasFutures = allTradeType.includes("Future");
-      let hasOptions = allTradeType.includes("Call") || allTradeType.includes("Put");
+      let hasOptions =
+        allTradeType.includes("Call") || allTradeType.includes("Put");
+
+      logger.info("NSE quote request", {
+        action,
+        symboltype,
+        symbol: symbol || "(empty)",
+        strategyId: startegy?._id,
+        strategyName: startegy?.name,
+        tradeCount: Array.isArray(startegy?.trades) ? startegy.trades.length : 0,
+        tradeTypes: allTradeType,
+        hasEquity,
+        hasFutures,
+        hasOptions,
+        expiry: startegy?.expiry || null,
+      });
+
+      if (!symbol) {
+        logger.warn(
+          "NSE skip: strategy has no symbol. Set Symbol Type and Symbol before refreshing LTP.",
+          {
+            action,
+            symboltype,
+            strategyId: startegy?._id,
+            strategyName: startegy?.name,
+          }
+        );
+        return startegy;
+      }
 
       if (symboltype == "equity") {
         let equityData = null;
         if (hasEquity) {
           equityData = await this.GetEquitiyDetail(symbol);
+          if (!equityData) {
+            logger.warn("NSE equity quote returned no data", { symbol, action });
+          }
           startegy = this.bindEquityData(startegy, equityData, action);
         }
         if (hasFutures) {
           equityData = await this.GetEquityFuture(symbol);
-          logger.info("equityData Futures:>> ", equityData);
+          logger.debug("equityData Futures:", equityData ? "present" : "null");
         }
         if (hasOptions) {
           equityData = await this.GetEquityOptionChain(symbol);
-          logger.info("equityData Option:>> ", equityData);
+          logger.debug("equityData Option:", equityData ? "present" : "null");
           startegy = this.bindOptionData(startegy, equityData, action);
         }
         return startegy;
       }
 
-
       if (symboltype == "indices") {
-
         let nseData = null;
         if (hasFutures) {
-          let futData = await this.GetIndicesFutures(symbol);
+          await this.GetIndicesFutures(symbol);
         }
         if (hasOptions) {
-          nseData = await this.GetIndicesOptionChain(symbol, this.formatDate(startegy.expiry));
+          nseData = await this.GetIndicesOptionChain(
+            symbol,
+            this.formatDate(startegy.expiry)
+          );
           startegy = this.bindOptionData(startegy, nseData, action);
           if (action == "getexpiries") {
             startegy = this.bindExpiriesData(startegy, nseData);
@@ -156,35 +192,148 @@ module.exports = {
         }
         return startegy;
       }
+
+      logger.warn("NSE skip: unsupported symboltype", {
+        symboltype,
+        symbol,
+        action,
+      });
+      return startegy;
     }
   },
+  resolveSymbol: function (startegy) {
+    const direct = (startegy?.symbol || "").toString().trim();
+    if (direct) {
+      return direct;
+    }
+    const trades = Array.isArray(startegy?.trades) ? startegy.trades : [];
+    for (const trade of trades) {
+      if (trade?.isexit) {
+        continue;
+      }
+      const fromTrade = (trade.symbol || "").toString().trim();
+      if (fromTrade) {
+        logger.info("NSE symbol resolved from trade", {
+          symbol: fromTrade,
+          tradetype: trade.tradetype,
+          tradeId: trade._id,
+        });
+        return fromTrade;
+      }
+    }
+    return "";
+  },
+  buildNseUrl: function (template, equity) {
+    if (!template) {
+      logger.error("NSE URL template missing from config");
+      return null;
+    }
+    if (!equity || !String(equity).trim()) {
+      logger.error("NSE URL build skipped: empty symbol parameter", {
+        template,
+      });
+      return null;
+    }
+    const encoded = encodeURIComponent(String(equity).trim().toUpperCase());
+    return template.replace("PARAMETER", encoded);
+  },
   GetEquitiyDetail: async function (equity) {
-    const url = global.appConfig.nseEquitiesApi.replace("PARAMETER", equity);
-    return this.getData(url);
+    const symbol = String(equity || "").trim().toUpperCase();
+    if (!symbol) {
+      logger.error("GetEquitiyDetail skipped: empty equity symbol");
+      return null;
+    }
+    const url = this.buildNseUrl(global.appConfig.nseEquitiesApi, symbol);
+    const raw = await this.getData(url, {
+      referer: `https://www.nseindia.com/get-quotes/equity?symbol=${encodeURIComponent(symbol)}`,
+      warmPath: `/get-quotes/equity?symbol=${encodeURIComponent(symbol)}`,
+    });
+    return this.normalizeEquityQuote(raw, symbol);
+  },
+  normalizeEquityQuote: function (data, symbol) {
+    if (!data) {
+      return null;
+    }
+    if (data.priceInfo && data.priceInfo.lastPrice != null) {
+      return data;
+    }
+    const row = Array.isArray(data.equityResponse)
+      ? data.equityResponse[0]
+      : null;
+    if (!row) {
+      logger.warn("NSE equity quote: unexpected payload shape", {
+        symbol,
+        keys: Object.keys(data),
+      });
+      return data;
+    }
+    const lastPrice =
+      row.orderBook?.lastPrice ??
+      row.tradeInfo?.lastPrice ??
+      row.metaData?.closePrice ??
+      row.metaData?.previousClose ??
+      row.priceInfo?.lastPrice;
+    if (lastPrice == null || Number.isNaN(Number(lastPrice))) {
+      logger.warn("NSE equity quote: lastPrice missing in NextApi payload", {
+        symbol,
+        hasOrderBook: !!row.orderBook,
+        hasTradeInfo: !!row.tradeInfo,
+      });
+    } else {
+      logger.info("NSE equity quote ok", {
+        symbol,
+        lastPrice: Number(lastPrice),
+        company: row.metaData?.companyName,
+      });
+    }
+    return {
+      ...data,
+      priceInfo: {
+        ...(row.priceInfo || {}),
+        lastPrice: lastPrice != null ? Number(lastPrice) : null,
+        open: row.metaData?.open,
+        previousClose: row.metaData?.previousClose,
+        close: row.metaData?.closePrice,
+        dayHigh: row.metaData?.dayHigh,
+        dayLow: row.metaData?.dayLow,
+      },
+      info: row.metaData || { symbol },
+    };
   },
   GetIndicesList: async function () {
     const url = global.appConfig.nseIndicesListApi;
     return this.getData(url);
   },
   GetIndicesFutures: async function (indices) {
-    const url = global.appConfig.nseIndicesFuturesApi.replace("PARAMETER", indices);
+    const url = this.buildNseUrl(global.appConfig.nseIndicesFuturesApi, indices);
     return this.getData(url);
   },
   GetIndicesOptionChain: async function (indices, date) {
-    const url = global.appConfig.nseIndicesOptionsApi
-      .replace("PARAMETER", indices)
-      .replace("DATE", date ?? "");
+    const base = this.buildNseUrl(
+      global.appConfig.nseIndicesOptionsApi,
+      indices
+    );
+    if (!base) {
+      return null;
+    }
+    const url = base.replace("DATE", date ?? "");
     return this.getData(url);
   },
   GetEquitiesFuturesList: async function () {
     return this.getData(global.appConfig.nseEquitiesFuturesListApi);
   },
   GetEquityFuture: async function (equity) {
-    const url = global.appConfig.nseEquitiesFuturesApi.replace("PARAMETER", equity);
+    const url = this.buildNseUrl(
+      global.appConfig.nseEquitiesFuturesApi,
+      equity
+    );
     return this.getData(url);
   },
   GetEquityOptionChain: async function (equity) {
-    const url = global.appConfig.nseEquitiesOptionsApi.replace("PARAMETER", equity);
+    const url = this.buildNseUrl(
+      global.appConfig.nseEquitiesOptionsApi,
+      equity
+    );
     return this.getData(url);
   },
   GetCurrencyFuture: async function () {
@@ -196,20 +345,24 @@ module.exports = {
     return this.getData(url);
   },
   GetCurrencyOptionChain: async function (symbol) {
-    const url = global.appConfig.nseCurrencyOptionsApi.replace("PARAMETER", symbol);
+    const url = this.buildNseUrl(
+      global.appConfig.nseCurrencyOptionsApi,
+      symbol
+    );
     return this.getData(url);
   },
   bindEquityData(startegy, inputData, action) {
+    if (!inputData) {
+      logger.warn("bindEquityData skipped: no NSE payload");
+      return startegy;
+    }
     startegy.trades.forEach((trade) => {
       let selector = "priceInfo";
       let nseDataSelected = this.getObject(inputData, selector);
       if (nseDataSelected) {
-        //trade.lasttradedprice = nseDataSelected.lastPrice;
-
         if (action == "updateltp") {
           trade.lasttradedprice = nseDataSelected.lastPrice;
         } else if (action == "updateexit") {
-
           trade.lasttradedprice = nseDataSelected.lastPrice;
           if (trade.isexit) {
             trade.price = nseDataSelected.lastPrice;
@@ -217,15 +370,30 @@ module.exports = {
         } else if (action == "updateall") {
           trade.price = trade.lasttradedprice = nseDataSelected.lastPrice;
         }
+      } else {
+        logger.debug("bindEquityData: priceInfo missing for trade", {
+          tradeId: trade._id,
+          tradetype: trade.tradetype,
+        });
       }
     });
     return startegy;
   },
   bindOptionData(startegy, inputData, action) {
+    if (!inputData) {
+      logger.warn("bindOptionData skipped: no NSE payload", {
+        strategyId: startegy?._id,
+        symbol: startegy?.symbol,
+      });
+      return startegy;
+    }
     startegy.trades.forEach((trade) => {
-      logger.info("bindOptionData inputData is:", inputData ? "present" : "NULL");
-      logger.info("stratey.expiry raw:", startegy.expiry);
-      logger.info("stratey.expiry formatted:", this.formatDate(startegy.expiry));
+      logger.debug("bindOptionData", {
+        expiryRaw: startegy.expiry,
+        expiryFormatted: this.formatDate(startegy.expiry),
+        strike: trade.selectedstrike,
+        tradetype: trade.tradetype,
+      });
       let selector =
         "records.data[? expiryDates==`" +
         this.formatDate(startegy.expiry) +
@@ -233,14 +401,12 @@ module.exports = {
         trade.selectedstrike +
         "`]." +
         (trade.tradetype == "Call" ? "CE" : "PE");
-      logger.info("JMESPath selector:", selector);
+      logger.debug("JMESPath selector:", selector);
       let nseDataSelected = this.getObject(inputData, selector);
-      logger.debug("nseDataSelected:", JSON.stringify(nseDataSelected));
       if (nseDataSelected && nseDataSelected[0]?.lastPrice) {
         if (action == "updateltp") {
           trade.lasttradedprice = nseDataSelected[0].lastPrice;
         } else if (action == "updateexit") {
-
           trade.lasttradedprice = nseDataSelected[0].lastPrice;
           if (trade.isexit) {
             trade.price = nseDataSelected[0].lastPrice;
@@ -260,80 +426,208 @@ module.exports = {
   },
 
 
-  getCookies: async (instance, url_oc) => {
-    if (nseCookies) {
-      logger.info("Getting Cookie form cache");
+  parseSetCookieHeader: function (setCookie) {
+    if (!setCookie || !setCookie.length) {
+      return "";
+    }
+    return setCookie
+      .map((c) => String(c).split(";")[0].trim())
+      .filter(Boolean)
+      .join("; ");
+  },
+
+  mergeCookies: function (existing, setCookie) {
+    const map = {};
+    String(existing || "")
+      .split(";")
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .forEach((pair) => {
+        const i = pair.indexOf("=");
+        if (i > 0) {
+          map[pair.slice(0, i)] = pair.slice(i + 1);
+        }
+      });
+    this.parseSetCookieHeader(setCookie)
+      .split(";")
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .forEach((pair) => {
+        const i = pair.indexOf("=");
+        if (i > 0) {
+          map[pair.slice(0, i)] = pair.slice(i + 1);
+        }
+      });
+    return Object.keys(map)
+      .map((k) => `${k}=${map[k]}`)
+      .join("; ");
+  },
+
+  ensureNseSession: async function (warmPath) {
+    const now = Date.now();
+    if (nseCookies && now - nseCookieFetchedAt < COOKIE_TTL_MS) {
+      logger.debug("NSE session: using cached cookies");
       return nseCookies;
     }
     try {
-      logger.info("Getting Cookies");
-      const response = await instance.get(url_oc);
-      nseCookies = response.headers['set-cookie'].join();
-      logger.info("Got Cookies");
+      logger.info("NSE session: warming home page");
+      const home = await axios.get(NSE_HOME, {
+        timeout: 20000,
+        headers: {
+          ...BROWSER_HEADERS,
+          Accept:
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        },
+        validateStatus: () => true,
+        maxRedirects: 5,
+      });
+      logger.info("NSE session home status", {
+        status: home.status,
+        cookieCount: (home.headers["set-cookie"] || []).length,
+      });
+      let cookie = this.parseSetCookieHeader(home.headers["set-cookie"]);
+
+      if (warmPath) {
+        const warmUrl = warmPath.startsWith("http")
+          ? warmPath
+          : `https://www.nseindia.com${warmPath}`;
+        logger.info("NSE session: warming quote page", { warmUrl });
+        const warm = await axios.get(warmUrl, {
+          timeout: 20000,
+          headers: {
+            ...BROWSER_HEADERS,
+            Accept:
+              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            Referer: NSE_HOME,
+            Cookie: cookie,
+            "Sec-Fetch-Site": "same-origin",
+          },
+          validateStatus: () => true,
+          maxRedirects: 5,
+        });
+        cookie = this.mergeCookies(cookie, warm.headers["set-cookie"]);
+        logger.info("NSE session warm status", {
+          status: warm.status,
+          cookieCount: cookie ? cookie.split(";").length : 0,
+        });
+      }
+
+      if (!cookie) {
+        logger.warn("NSE session: no usable cookies after warm-up");
+        return null;
+      }
+      nseCookies = cookie;
+      nseCookieFetchedAt = now;
+      logger.info("NSE session: cookies ready", {
+        names: cookie
+          .split(";")
+          .map((p) => p.split("=")[0].trim())
+          .filter(Boolean),
+      });
       return nseCookies;
     } catch (error) {
-      if (error.response.status === 403) {
-        logger.error("getCookies =========> error.status === 403");
-        await getCookies()
-      } else {
-        logger.error("getCookies =========> error");
-      }
+      logger.error("NSE session warm-up failed", {
+        status: error?.response?.status,
+        message: error?.message,
+      });
+      return null;
     }
   },
 
-  getData: async function (url) {
+  getData: async function (url, options) {
     if (!url) {
-      logger.error("Url is empty or null.");
-      return;
+      logger.error("NSE getData skipped: url is empty or null");
+      return null;
+    }
+    if (/symbol=$|symbol=&/.test(url) || url.includes("symbol=%20")) {
+      logger.error("NSE getData skipped: empty symbol in url", { url });
+      return null;
     }
 
     const self = this;
     return ttlCache.getOrFetch(url, async () => {
       logger.info("NSE fetch:", url);
-      return self.fetchFromNse(url);
+      return self.fetchFromNse(url, false, options || {});
     });
   },
 
-  fetchFromNse: async function (url, retried) {
+  fetchFromNse: async function (url, retried, options) {
+    options = options || {};
     try {
+      const cookies = await this.ensureNseSession(options.warmPath);
       const headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "accept-language": "en,gu;q=0.9,hi;q=0.8",
-        "accept-encoding": "gzip, deflate, br",
+        ...BROWSER_HEADERS,
+        Accept: "application/json, text/plain, */*",
+        Referer: options.referer || NSE_HOME,
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "X-Requested-With": "XMLHttpRequest",
       };
-
-      const cookieInstance = axios.create({
-        baseURL: url,
-        headers,
-        cookie: "",
-      });
-      const cookies = await this.getCookies(
-        cookieInstance,
-        "https://www.nseindia.com/"
-      );
-
-      const instanceUrl = axios.create({
-        baseURL: "https://www.nseindia.com/",
-        headers,
-        cookie: cookies,
-      });
-
-      const responce = await instanceUrl.get(url);
-      return responce.data;
-    } catch (e) {
-      if (e?.response?.status === 403 && !retried) {
-        logger.error("NSE 403, clearing cookies and retrying once");
-        nseCookies = null;
-        return this.fetchFromNse(url, true);
+      if (cookies) {
+        headers.Cookie = cookies;
       }
-      logger.error(e);
+
+      const response = await axios.get(url, {
+        timeout: 20000,
+        headers,
+        validateStatus: () => true,
+        maxRedirects: 5,
+      });
+
+      if (response.headers["set-cookie"]) {
+        nseCookies = this.mergeCookies(
+          nseCookies,
+          response.headers["set-cookie"]
+        );
+        nseCookieFetchedAt = Date.now();
+      }
+
+      if (response.status >= 200 && response.status < 300) {
+        logger.debug("NSE fetch ok", {
+          url,
+          status: response.status,
+          hasData: !!response.data,
+        });
+        return response.data;
+      }
+
+      logger.error("NSE fetch failed", {
+        url,
+        status: response.status,
+        retried: !!retried,
+        data:
+          typeof response.data === "string"
+            ? response.data.slice(0, 220)
+            : response.data,
+      });
+
+      if (response.status === 403 && !retried) {
+        logger.warn("NSE 403, clearing session and retrying once", { url });
+        nseCookies = null;
+        nseCookieFetchedAt = 0;
+        return this.fetchFromNse(url, true, options);
+      }
+      return null;
+    } catch (e) {
+      logger.error("NSE fetch exception", {
+        url,
+        status: e?.response?.status,
+        message: e?.message,
+        retried: !!retried,
+      });
+      if (e?.response?.status === 403 && !retried) {
+        nseCookies = null;
+        nseCookieFetchedAt = 0;
+        return this.fetchFromNse(url, true, options);
+      }
       return null;
     }
   },
   getTradeTypes: function (startegy) {
     var _result = this.getObject(startegy, this.Maps.getAllTradeType);
-    logger.info("GetTradeTypes:>>", JSON.stringify(_result));
-    return _result;
+    logger.debug("GetTradeTypes:", _result);
+    return Array.isArray(_result) ? _result : [];
   },
   getObject: function (inputData, selector) {
     return jmespath.search(inputData, selector);

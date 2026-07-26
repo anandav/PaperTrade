@@ -463,6 +463,13 @@ export default {
       });
     },
     onGetLiveData: function (action) {
+      const symbol = (this.PropStrategy?.symbol || "").toString().trim();
+      if (!symbol) {
+        window.alert(
+          "Set a Symbol on this strategy before refreshing prices."
+        );
+        return;
+      }
       this.GetLiveData({
         portfolio: this.Portfolio,
         strategy: this.PropStrategy,
