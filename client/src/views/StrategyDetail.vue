@@ -1,190 +1,216 @@
 <template>
   <div
-    class="mx-3 my-3 rounded border drop-shadow-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
+    class="
+      strategy-card
+      mx-2
+      sm:mx-3
+      my-3
+      rounded
+      border
+      drop-shadow-md
+      border-gray-300
+      dark:border-gray-700
+      bg-gray-100
+      dark:bg-gray-800
+    "
     :class="{ isStrategyEdit: editStrategy == PropStrategy._id }"
   >
     <div class="p-3 border-b border-gray-300 dark:border-gray-700">
-      <div class="flex">
-        <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Name </label>
-          <span class="view">
-            {{ PropStrategy.name }}
-          </span>
-          <input
-            class="normal-edit edit"
-            placeholder="Strategy Name"
-            v-model="PropStrategy.name"
-            @keydown.enter="onSaveStrategy()"
-          />
-        </div>
-        <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Symbol Type </label>
-          <span class="view">
-            {{ PropStrategy.symboltype }}
-          </span>
-          <autocomplete
-            :Value="PropStrategy.symboltype"
-            :Items="SymbolTypes"
-            @keyup="onSymbolTypeKeyUp"
-            @save="onSaveStrategy"
-            PlaceHolder="Symbol Types"
-          />
-        </div>
-        <div class="flex-1" v-if="!PropStrategy.ismultiplesymbol">
-          <label class="text-xxs block text-gray-500"> Symbol </label>
-          <span class="view">
-            {{ PropStrategy.symbol }}
-          </span>
-
-          <autocomplete
-            :Value="PropStrategy.symbol"
-            :Items="SymbolsForType"
-            @keyup="onSymbolKeyUp"
-            @save="onSaveStrategy"
-            PlaceHolder="Symbol"
-          />
-        </div>
-        <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Lot Size </label>
-          <span class="view">
-            {{ PropStrategy.lotsize }}
-          </span>
-
-          <input
-            class="normal-edit edit"
-            placeholder="Lot Size"
-            v-model="PropStrategy.lotsize"
-            @keydown.enter="onSaveStrategy()"
-          />
-        </div>
-        <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Expiry </label>
-          <span class="view">
-            {{ $filters.formatDateTime(PropStrategy.expiry) }}
-          </span>
-
-          <input
-            type="date"
-            class="normal-edit edit"
-            placeholder="Expiry"
-            v-model="PropStrategy.expiry"
-            @keydown.enter="onSaveStrategy()"
-          />
-        </div>
-        <div class="flex-1">
-          <label class="text-xxs block text-gray-500">
-            Strike Price Step
-          </label>
-          <span class="view">
-            {{ PropStrategy.strikepricestep }}
-          </span>
-
-          <input
-            class="normal-edit edit"
-            placeholder="Strike Price Step"
-            v-model="PropStrategy.strikepricestep"
-            @keydown.enter="onSaveStrategy()"
-          />
-        </div>
-        <div class="flex-1">
-          <label class="text-xxs block text-gray-500"> Created On </label>
-          {{ $filters.formatDateTime(PropStrategy.createdon) }}
-        </div>
-        <div class="flex-2">
-          <div class="float-right space-x-2">
-
-
-
-
-
-
-            <button
-              class="btn tooltip view"
-              @click="onEditStrategy(PropStrategy)"
-              v-if="!this.PropStrategy.isarchive"
-            >
-              <i class="material-icons">edit</i>
-              <tooltip :Value="getLableConst.editStrategy" />
-            </button>
-
-            <button
-              class="btn tooltip view"
-              @click="onHideChart()"
-              v-if="!this.PropStrategy.isarchive"
-            >
-              <i class="material-icons">{{ hideChart ? "show_chart" : "hide_source" }}</i>
-              <tooltip :Value="hideChart ? getLableConst.showGraph : getLableConst.hideGraph" />
-            </button>
-
-            <button class="btn tooltip edit" @click="onSaveStrategy()">
-              <i class="material-icons">save</i>
-              <tooltip :Value="getLableConst.saveStrategy" />
-            </button>
-
-            <dropdown
-              class="inline-block tooltip view"
-              :Icon="`join_full`"
-              :Items="CurrentPortfoliosStrategies"
-              :Type="`Strategy`"
-              :ExcludeItem="PropStrategy._id"
-              :Tooltip="getLableConst.mergeStrategy"
-              :MinItem="3"
-              @itemclicked="onDropDownItemClicked"
-              v-if="!this.PropStrategy.isarchive"
-            >
-            </dropdown>
-            <dropdown
-              class="inline-block tooltip view"
-              :ExcludeItem="PropStrategy.portfolio"
-              :Icon="`trending_flat`"
-              :Items="Portfolios"
-              :Type="`Portfolios`"
-              :Tooltip="getLableConst.moveStrategy"
-              :MinItem="PropStrategy.isarchive ? 0 : 3"
-              @itemclicked="onDropDownItemClicked"
-            >
-            </dropdown>
-
-            <dropdown
-              class="inline-block tooltip view"
-              :Icon="`menu`"
-              :Items="StrategyAction"
-              :Type="`Menu`"
-              @itemclicked="onActionDropDownItemClicked"
-              :ExcludeItem="ExcluteStrategyAction"
-              Tooltip="Action"
-            >
-            </dropdown>
-
-            <button
-              class="btn text-red-700 dark:text-red-700 tooltip view"
-              @dblclick="onDeleteStrategy()"
-            >
-              <i class="material-icons">delete_forever</i>
-              <tooltip :Value="getLableConst.deleteStrategy" />
-            </button>
+      <div class="strategy-header">
+        <div class="strategy-meta">
+          <div class="strategy-field">
+            <label class="text-xs block text-gray-500"> Name </label>
+            <span class="view">
+              {{ PropStrategy.name }}
+            </span>
+            <input
+              class="normal-edit edit"
+              placeholder="Strategy Name"
+              v-model="PropStrategy.name"
+              @keydown.enter="onSaveStrategy()"
+            />
           </div>
+          <div class="strategy-field">
+            <label class="text-xs block text-gray-500"> Symbol Type </label>
+            <span class="view">
+              {{ PropStrategy.symboltype }}
+            </span>
+            <autocomplete
+              :Value="PropStrategy.symboltype"
+              :Items="SymbolTypes"
+              @keyup="onSymbolTypeKeyUp"
+              @save="onSaveStrategy"
+              PlaceHolder="Symbol Types"
+            />
+          </div>
+          <div class="strategy-field" v-if="!PropStrategy.ismultiplesymbol">
+            <label class="text-xs block text-gray-500"> Symbol </label>
+            <span class="view">
+              {{ PropStrategy.symbol }}
+            </span>
+
+            <autocomplete
+              :Value="PropStrategy.symbol"
+              :Items="SymbolsForType"
+              @keyup="onSymbolKeyUp"
+              @save="onSaveStrategy"
+              PlaceHolder="Symbol"
+            />
+          </div>
+          <div class="strategy-field">
+            <label class="text-xs block text-gray-500"> Lot Size </label>
+            <span class="view">
+              {{ PropStrategy.lotsize }}
+            </span>
+
+            <input
+              class="normal-edit edit"
+              placeholder="Lot Size"
+              v-model="PropStrategy.lotsize"
+              @keydown.enter="onSaveStrategy()"
+            />
+          </div>
+          <div class="strategy-field">
+            <label class="text-xs block text-gray-500"> Expiry </label>
+            <span class="view">
+              {{ $filters.formatDateTime(PropStrategy.expiry) }}
+            </span>
+
+            <input
+              type="date"
+              class="normal-edit edit"
+              placeholder="Expiry"
+              v-model="PropStrategy.expiry"
+              @keydown.enter="onSaveStrategy()"
+            />
+          </div>
+          <div class="strategy-field">
+            <label class="text-xs block text-gray-500">
+              Strike Price Step
+            </label>
+            <span class="view">
+              {{ PropStrategy.strikepricestep }}
+            </span>
+
+            <input
+              class="normal-edit edit"
+              placeholder="Strike Price Step"
+              v-model="PropStrategy.strikepricestep"
+              @keydown.enter="onSaveStrategy()"
+            />
+          </div>
+          <div class="strategy-field">
+            <label class="text-xs block text-gray-500"> Created On </label>
+            {{ $filters.formatDateTime(PropStrategy.createdon) }}
+          </div>
+        </div>
+        <div class="strategy-actions">
+          <button
+            class="btn tooltip view"
+            type="button"
+            :aria-label="getLableConst.editStrategy"
+            @click="onEditStrategy(PropStrategy)"
+            v-if="!this.PropStrategy.isarchive"
+          >
+            <i class="material-icons" aria-hidden="true">edit</i>
+            <tooltip :Value="getLableConst.editStrategy" />
+          </button>
+
+          <button
+            class="btn tooltip view"
+            type="button"
+            :aria-label="
+              hideChart ? getLableConst.showGraph : getLableConst.hideGraph
+            "
+            @click="onHideChart()"
+            v-if="!this.PropStrategy.isarchive"
+          >
+            <i class="material-icons" aria-hidden="true">{{
+              hideChart ? "show_chart" : "hide_source"
+            }}</i>
+            <tooltip
+              :Value="
+                hideChart ? getLableConst.showGraph : getLableConst.hideGraph
+              "
+            />
+          </button>
+
+          <button
+            class="btn tooltip edit"
+            type="button"
+            :aria-label="getLableConst.saveStrategy"
+            @click="onSaveStrategy()"
+          >
+            <i class="material-icons" aria-hidden="true">save</i>
+            <tooltip :Value="getLableConst.saveStrategy" />
+          </button>
+
+          <dropdown
+            class="inline-block tooltip view"
+            :Icon="`join_full`"
+            :Items="CurrentPortfoliosStrategies"
+            :Type="`Strategy`"
+            :ExcludeItem="PropStrategy._id"
+            :Tooltip="getLableConst.mergeStrategy"
+            :MinItem="3"
+            @itemclicked="onDropDownItemClicked"
+            v-if="!this.PropStrategy.isarchive"
+          >
+          </dropdown>
+          <dropdown
+            class="inline-block tooltip view"
+            :ExcludeItem="PropStrategy.portfolio"
+            :Icon="`trending_flat`"
+            :Items="Portfolios"
+            :Type="`Portfolios`"
+            :Tooltip="getLableConst.moveStrategy"
+            :MinItem="PropStrategy.isarchive ? 0 : 3"
+            @itemclicked="onDropDownItemClicked"
+          >
+          </dropdown>
+
+          <dropdown
+            class="inline-block tooltip view"
+            :Icon="`menu`"
+            :Items="StrategyAction"
+            :Type="`Menu`"
+            @itemclicked="onActionDropDownItemClicked"
+            :ExcludeItem="ExcluteStrategyAction"
+            Tooltip="Action"
+          >
+          </dropdown>
+
+          <button
+            class="btn text-red-700 dark:text-red-700 tooltip view"
+            type="button"
+            :aria-label="getLableConst.deleteStrategy"
+            @dblclick="onDeleteStrategy()"
+          >
+            <i class="material-icons" aria-hidden="true">delete_forever</i>
+            <tooltip :Value="getLableConst.deleteStrategy" />
+          </button>
         </div>
       </div>
     </div>
-    <div class="p-3">
-      <div class="grid grid-cols-12" v-if="!this.PropStrategy.isarchive">
-        <div :class="{ 'col-span-12': hideChart, 'col-span-6': !hideChart }">
+    <div class="p-2 sm:p-3">
+      <div class="strategy-body" v-if="!this.PropStrategy.isarchive">
+        <div class="strategy-trades" :class="{ 'with-chart': !hideChart }">
           <TradeList
             :PropStrategy="PropStrategy"
             :PropSelectedTraded="SelectedTraded"
           />
         </div>
 
-        <div :class="{ hidden: hideChart, 'col-span-6': !hideChart }">
+        <div class="strategy-chart" :class="{ hidden: hideChart }">
           <div class="chartplaceholder">
-            <div class="">
+            <div class="chart-range">
               <input
                 type="number"
                 v-model="PropStrategy.x0"
                 placeholder="min"
                 min="0"
-                class="chart-mini-edit ml-12"
+                class="chart-mini-edit"
+                aria-label="Chart min"
                 @keydown.enter="onShowChart()"
               />
               <input
@@ -192,7 +218,8 @@
                 v-model="PropStrategy.x1"
                 placeholder="max"
                 min="0"
-                class="chart-mini-edit float-right"
+                class="chart-mini-edit"
+                aria-label="Chart max"
                 @keydown.enter="onShowChart()"
               />
             </div>
@@ -209,15 +236,12 @@
       </div>
     </div>
   </div>
-
-
 </template>
 <script>
 import { inject } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import TradeList from "./TradeList";
 import myMixins from "../shared/chart";
-//import logger from "../common/logs";
 
 export default {
   name: "StrategyDetail",
@@ -404,7 +428,7 @@ export default {
     SelectedTraded: { type: Array },
   },
   setup() {
-    let getLableConst = inject('GETCONST');
+    let getLableConst = inject("GETCONST");
     return { getLableConst };
   },
 };
@@ -420,11 +444,123 @@ export default {
 }
 
 .isStrategyEdit .edit {
-  display: inline-block;
+  display: inline-flex;
 }
 
 .isStrategyEdit .view {
   display: none;
 }
-</style>
 
+.isStrategyEdit .dropdown.view {
+  display: none;
+}
+
+.strategy-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.strategy-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.strategy-field {
+  min-width: 0;
+}
+
+.strategy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.strategy-actions .btn,
+.strategy-actions .dropdown {
+  vertical-align: middle;
+}
+
+.strategy-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.strategy-trades {
+  min-width: 0;
+  width: 100%;
+}
+
+.strategy-chart {
+  min-width: 0;
+  width: 100%;
+}
+
+.chart-range {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  padding-left: 0.5rem;
+}
+
+.chart {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (min-width: 768px) {
+  .strategy-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .strategy-header {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .strategy-meta {
+    flex: 1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem 0.75rem;
+  }
+
+  .strategy-actions {
+    flex-shrink: 0;
+    max-width: 14rem;
+    justify-content: flex-end;
+  }
+
+  .strategy-body {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .strategy-trades.with-chart {
+    width: 50%;
+  }
+
+  .strategy-trades:not(.with-chart) {
+    width: 100%;
+  }
+
+  .strategy-chart:not(.hidden) {
+    width: 50%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .strategy-meta {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .strategy-actions {
+    max-width: none;
+  }
+}
+</style>

@@ -1,53 +1,73 @@
 <template>
   <div
-    class="border-r border-gray-300 dark:border-gray-800 flex flex-col bg-gray-100 dark:bg-gray-900"
-    role="menu"
+    class="
+      portfolio-menu
+      border-r border-gray-300
+      dark:border-gray-800
+      flex flex-col
+      bg-gray-100
+      dark:bg-gray-900
+      h-full
+    "
+    role="navigation"
+    aria-label="Portfolios"
     @dragover.prevent
     @dragenter.prevent
   >
-    <div class="flex items-center gap-1 mt-5 px-2 invisible sm:visible">
+    <div class="flex items-center gap-2 mt-4 px-2">
       <input
         class="
-          px-1
+          px-2
           py-2
           flex-1
           min-w-0
+          
           bg-gray-100
           dark:bg-gray-600
           focus:outline-none
+          focus:ring-2 focus:ring-gray-400
           rounded
+          text-sm
         "
         :placeholder="getLableConst.searchPortfolios"
+        :aria-label="getLableConst.searchPortfolios"
         v-model="portfolioSearch"
       />
       <button
         class="btn tooltip shrink-0"
         type="button"
+        :aria-label="getLableConst.addNewPortfolio"
         @click="onToggleNewPortfolio()"
       >
-        <i class="material-icons">{{ showNewPortfolio ? "close" : "add" }}</i>
+        <i class="material-icons" aria-hidden="true">{{
+          showNewPortfolio ? "close" : "add"
+        }}</i>
         <tooltip :Value="getLableConst.addNewPortfolio" />
       </button>
     </div>
-    <div class="px-2 mt-2 invisible sm:visible" v-if="showNewPortfolio">
+    <div class="px-2 mt-2" v-if="showNewPortfolio">
       <input
         ref="newPortfolioInput"
         class="
-          px-1
+          px-2
           py-2
           w-full
+          
           bg-gray-100
           dark:bg-gray-600
           focus:outline-none
+          focus:ring-2 focus:ring-gray-400
           rounded
+          text-sm
         "
         :placeholder="getLableConst.addNewPortfolio"
+        :aria-label="getLableConst.addNewPortfolio"
         v-model="portfolioName"
         @keyup.enter="onAddNewPortfolio()"
         @keyup.esc="onCancelNewPortfolio()"
       />
     </div>
-    <div class="flex-1 overflow-y-auto mt-5 pb-10" @drop="onDrop($event)">
+    <div class="flex-1 overflow-y-auto mt-4 pb-10" @drop="onDrop($event)">
       <div
         class="border-b border-gray-200 dark:border-gray-800"
         draggable="true"
@@ -60,8 +80,8 @@
         @dragstart="onDragStart($event, item, index)"
       >
         <div
-          class="leading-10 rounded-sm cursor-pointer"
-          role="menuitem"
+          class="leading-10 rounded-sm cursor-pointer portfolio-item"
+          role="button"
           tabindex="0"
           @click="onMenuSelectedPortfolio(item)"
           @keydown.enter="onMenuSelectedPortfolio(item)"
@@ -72,9 +92,9 @@
           }"
         >
           <div class="p-2">
-            <div class="inline-block">
+            <div class="inline-block w-full">
               <div
-                class="view"
+                class="view flex items-center gap-1 "
                 :class="{
                   'font-black': Portfolio && item._id == Portfolio._id,
                 }"
@@ -88,11 +108,13 @@
                     fill-current
                     text-gray-400
                     dark:text-gray-500
+                    shrink-0
                   "
                   width="10"
                   height="15"
                   viewBox="0 0 2 5"
                   version="1.1"
+                  aria-hidden="true"
                 >
                   <path
                     id="rect2026"
@@ -101,14 +123,16 @@
                   />
                 </svg>
 
-                {{ item.name }}
+                <span class="truncate">{{ item.name }}</span>
               </div>
               <input
                 class="
                   edit
                   ml-2
                   pl-2
-                  py-1
+                  py-2
+                  
+                  w-full
                   bg-gray-200
                   dark:bg-gray-700
                   focus:outline-none
@@ -149,6 +173,7 @@ export default {
         portfolio: item,
         action: "init",
       });
+      this.$emit("portfolio-selected", item);
     },
     onToggleNewPortfolio: function () {
       this.showNewPortfolio = !this.showNewPortfolio;
@@ -286,6 +311,7 @@ export default {
 }
 .isPortfolioEdit .edit {
   display: inline-block;
+  width: 100%;
 }
 .isPortfolioEdit .view {
   display: none;

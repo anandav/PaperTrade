@@ -3,9 +3,16 @@
     <div v-if="Type == 'text'">
       <input type="text" class="normal-edit" data-dropdown-toggle="dropdown" />
     </div>
-    <button class="btn" v-if="Type != 'text'" data-dropdown-toggle="dropdown" tabindex="0">
-      <i class="material-icons">{{ Icon }}</i>
-      <span class="lbltext">
+    <button
+      class="btn"
+      v-if="Type != 'text'"
+      type="button"
+      data-dropdown-toggle="dropdown"
+      tabindex="0"
+      :aria-label="Tooltip || LblText || Icon"
+    >
+      <i class="material-icons" aria-hidden="true">{{ Icon }}</i>
+      <span class="lbltext" v-if="LblText">
         {{ LblText }}
       </span>
       <tooltip v-if="Tooltip && Tooltip.length > 0" :Value="Tooltip" />
@@ -117,7 +124,26 @@ export default {
 };
 </script>
 <style>
-.dropdown:hover .dropdown-content {
+.dropdown {
+  vertical-align: middle;
+}
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
   display: block;
+}
+.dropdown > .btn {
+  height: 1.75rem;
+  width: 1.75rem;
+  min-height: 1.75rem;
+  min-width: 1.75rem;
+  padding: 0;
+}
+@media (pointer: coarse) {
+  .dropdown > .btn {
+    height: 2.25rem;
+    width: 2.25rem;
+    min-height: 2.25rem;
+    min-width: 2.25rem;
+  }
 }
 </style>

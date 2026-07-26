@@ -3,26 +3,38 @@
 
 
 .btn {
-     @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
+     @apply cursor-pointer inline-flex items-center justify-center py-1 px-1 border border-transparent shadow  font-medium rounded 
     dark:text-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-500 
     dark:drop-shadow-md
     bg-gray-200 hover:bg-gray-400 hover:text-gray-200  
     focus:outline-none focus:ring-2 focus:ring-offset-2 ; 
+    box-sizing: border-box;
+    height: 1.75rem;
+    width: 1.75rem;
+    min-height: 1.75rem;
+    min-width: 1.75rem;
+    padding: 0;
 }
 
 .btn-nonrounded {
-    @apply cursor-pointer inline-flex justify-center py-1 px-1 border border-transparent shadow-sm  font-medium 
+    @apply cursor-pointer inline-flex items-center justify-center py-1 px-1 border border-transparent shadow-sm  font-medium 
     dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
     bg-gray-200 hover:bg-gray-400 hover:text-gray-200
     focus:outline-none focus:ring-2 focus:ring-offset-2 ;
+    box-sizing: border-box;
+    height: 1.75rem;
+    min-height: 1.75rem;
+    min-width: 1.75rem;
 }
 
 .btn i{
-    font-size: 12px;
+    font-size: 16px;
+    line-height: 1;
 }
 
 .btn .lbltext{
-    font-size: 8px;
+    font-size: 10px;
+    line-height: 1;
 }
 
 .font13px{
@@ -30,10 +42,16 @@
 }
 
 .btn-mini{
-  @apply  cursor-pointer text-xxs  justify-center rounded border-none border border-transparent shadow-sm 
+  @apply  cursor-pointer text-xxs inline-flex items-center justify-center rounded border-none border border-transparent shadow-sm 
   dark:text-white dark:bg-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-500
   bg-gray-300 hover:bg-gray-400 hover:text-gray-200
   focus:outline-none focus:ring-2 focus:ring-offset-2;
+  box-sizing: border-box;
+  height: 1.75rem;
+  width: 1.75rem;
+  min-height: 1.75rem;
+  min-width: 1.75rem;
+  padding: 0;
 }
 
 
@@ -53,7 +71,8 @@
 }
 
 .btn-mini i{
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .mini-edit{
@@ -74,6 +93,38 @@
 
 .mini-checkbox{
   @apply rounded border-none focus:outline-none bg-gray-300 dark:bg-gray-600 checked:text-gray-400 dark:checked:text-gray-700;
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .btn-nonrounded,
+  .btn-mini {
+    height: 2.25rem;
+    width: 2.25rem;
+    min-height: 2.25rem;
+    min-width: 2.25rem;
+  }
+  .btn i {
+    font-size: 18px;
+  }
+  .btn-mini i {
+    font-size: 16px;
+  }
+  .mini-edit,
+  .mini-edit-nonrounded {
+    min-height: 2.25rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+  }
+  .normal-edit {
+    min-height: 2.25rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+  }
+  .chart-mini-edit {
+    height: 2.25rem;
+    width: 3.5rem;
+  }
 }
 
 .tooltiptext{
