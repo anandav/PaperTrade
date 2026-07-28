@@ -50,7 +50,7 @@ export default {
 .tooltip .tooltiptext {
   position: absolute;
   z-index: 60;
-  display: block;
+  display: none;
   box-sizing: border-box;
   width: max-content;
   max-width: 11rem;
@@ -64,23 +64,19 @@ export default {
   text-align: center;
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.15s ease;
+  opacity: 0.95;
 }
 
 .tooltip:hover .tooltiptext,
 .tooltip:focus-within .tooltiptext {
-  opacity: 0.95;
-  visibility: visible;
+  display: block;
 }
 
 .tooltip.is-open:hover .tooltiptext,
 .tooltip.is-open:focus-within .tooltiptext,
 .dropdown.is-open:hover .tooltiptext,
 .dropdown.is-open:focus-within .tooltiptext {
-  opacity: 0;
-  visibility: hidden;
+  display: none;
 }
 
 .tooltip .tooltiptext.tip-above {
@@ -115,9 +111,4 @@ export default {
   content: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tooltip .tooltiptext {
-    transition: none;
-  }
-}
 </style>
