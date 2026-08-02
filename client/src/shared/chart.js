@@ -286,6 +286,13 @@ const utilitymixins = {
       return !!(strategy && Array.isArray(strategy.trades) && strategy.trades.length);
     },
 
+    effectiveLotSize: function (strategy) {
+      if (strategy && strategy.symboltype == "Equity") {
+        return 1;
+      }
+      return strategy ? strategy.lotsize : 1;
+    },
+
     /// Line Chart
     /// Ref:  https://observablehq.com/@simulmedia/line-chart
     /// Ref:  https://gist.github.com/llad/3766585

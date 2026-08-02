@@ -191,11 +191,12 @@ export default {
       get: function () {
         let price = 0;
         this.Strategies.forEach((_startegy) => {
+          const lotsize = this.effectiveLotSize(_startegy);
           _startegy?.trades?.forEach((_trade) => {
             price =
               _trade.buyorsell == "Buy"
-                ? price - _trade.price * (_startegy.lotsize * _trade.quantity)
-                : price + _trade.price * (_startegy.lotsize * _trade.quantity);
+                ? price - _trade.price * (lotsize * _trade.quantity)
+                : price + _trade.price * (lotsize * _trade.quantity);
           });
         });
 
@@ -209,7 +210,11 @@ export default {
     },
     NAV: {
       get: function () {
-        return (this.CurrentBalance / ~~this.Portfolio.openingbalance) * 100;
+        const openingbalance = ~~this.Portfolio.openingbalance;
+        if (!openingbalance) {
+          return 0;
+        }
+        return (this.CurrentBalance / openingbalance) * 100;
       },
     },
     FgColor: function () {

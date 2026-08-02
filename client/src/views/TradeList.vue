@@ -223,7 +223,7 @@
               >
                   <option
                     :key="key"
-                    v-for="(value, key) in TRADETYPE"
+                    v-for="(value, key) in AvailableTradeTypes"
                     v-bind:value="value"
                   >
                     {{ value }}
@@ -287,12 +287,12 @@
                 item.buyorsell == "Buy"
                   ? (
                       item.price *
-                      (PropStrategy.lotsize * item.quantity) *
+                      (effectiveLotSize(PropStrategy) * item.quantity) *
                       -1
                     ).toFixed(2)
                   : (
                       item.price *
-                      (PropStrategy.lotsize * item.quantity)
+                      (effectiveLotSize(PropStrategy) * item.quantity)
                     ).toFixed(2)
               }}
             </div>
@@ -688,6 +688,12 @@ export default {
     hasTradeLegs: function () {
       return this.hasTrades(this.PropStrategy);
     },
+    AvailableTradeTypes: function () {
+      if (this.PropStrategy.symboltype == "Equity") {
+        return { 4: "Equity" };
+      }
+      return this.TRADETYPE;
+    },
     showLtpColumn: function () {
       return !!(this.Portfolio && this.Portfolio.exchange);
     },
@@ -701,14 +707,11 @@ export default {
         if (selected.length && !selected.includes(_trade._id)) {
           return;
         }
+        const lotsize = this.effectiveLotSize(this.PropStrategy);
         if (_trade.buyorsell == "Buy") {
-          price =
-            price -
-            _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+          price = price - _trade.price * (lotsize * _trade.quantity);
         } else {
-          price =
-            price +
-            _trade.price * (this.PropStrategy.lotsize * _trade.quantity);
+          price = price + _trade.price * (lotsize * _trade.quantity);
         }
       });
       return price;

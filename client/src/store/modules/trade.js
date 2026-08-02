@@ -115,7 +115,7 @@ const tradeModule = {
         sid: _strategy._id,
         expiry: null,
         buyorsell: "Sell",
-        tradetype: "Call",
+        tradetype: _strategy.symboltype == "Equity" ? "Equity" : "Call",
         quantity: 1,
         selectedstrike: 19500,
         price: 30,

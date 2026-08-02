@@ -85,7 +85,10 @@
               PlaceHolder="Symbol"
             />
           </div>
-          <div class="strategy-field">
+          <div
+            class="strategy-field"
+            v-if="PropStrategy.symboltype != 'Equity'"
+          >
             <label
               class="text-xs block text-gray-500"
               :for="'st-lot-' + PropStrategy._id"
@@ -104,7 +107,10 @@
               @keydown.enter="onSaveStrategy()"
             />
           </div>
-          <div class="strategy-field">
+          <div
+            class="strategy-field"
+            v-if="PropStrategy.symboltype != 'Equity'"
+          >
             <label
               class="text-xs block text-gray-500"
               :for="'st-exp-' + PropStrategy._id"
@@ -124,7 +130,10 @@
               @keydown.enter="onSaveStrategy()"
             />
           </div>
-          <div class="strategy-field">
+          <div
+            class="strategy-field"
+            v-if="PropStrategy.symboltype != 'Equity'"
+          >
             <label
               class="text-xs block text-gray-500"
               :for="'st-step-' + PropStrategy._id"
