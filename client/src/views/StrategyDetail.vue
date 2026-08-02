@@ -46,16 +46,22 @@
             <span class="view">
               {{ PropStrategy.symboltype }}
             </span>
-            <autocomplete
-              :Value="PropStrategy.symboltype"
-              :Items="SymbolTypes"
-              :inputId="'st-type-' + PropStrategy._id"
-              AriaLabel="Symbol Type"
-              @keyup="onSymbolTypeKeyUp"
-              @change="onSymbolTypeKeyUp"
-              @save="onSymbolTypeSave"
-              PlaceHolder="Symbol Types"
-            />
+            <select
+              class="normal-edit edit"
+              :id="'st-type-' + PropStrategy._id"
+              aria-label="Symbol Type"
+              v-model="PropStrategy.symboltype"
+              @change="onSymbolTypeKeyUp(PropStrategy.symboltype)"
+            >
+              <option value="">Symbol Types</option>
+              <option
+                :key="item.name"
+                v-for="item in SymbolTypes"
+                :value="item.name"
+              >
+                {{ item.name }}
+              </option>
+            </select>
           </div>
           <div class="strategy-field" v-if="!PropStrategy.ismultiplesymbol">
             <label
