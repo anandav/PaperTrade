@@ -131,7 +131,7 @@
             @click.stop="onDeletePortfolio(Portfolio)"
           >
             <i class="material-icons" aria-hidden="true">delete_forever</i>
-            <tooltip Value="Remove portfolio" />
+            <tooltip Value="Remove portfolio" Location="above end" />
           </button>
         </div>
       </div>

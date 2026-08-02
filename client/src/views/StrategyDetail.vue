@@ -164,7 +164,7 @@
               hideChart ? getLableConst.showGraph : getLableConst.hideGraph
             "
             :disabled="!canShowPayoffChart && hideChart"
-            @click="onHideChart()"
+            @click="onHideChart($event)"
             v-if="!this.PropStrategy.isarchive"
           >
             <i class="material-icons" aria-hidden="true">{{
@@ -518,9 +518,12 @@ export default {
       this.onSymbolTypeKeyUp(Value);
       this.onSaveStrategy();
     },
-    onHideChart: function () {
+    onHideChart: function (event) {
       if (this.hideChart && !this.canShowPayoffChart) {
         return;
+      }
+      if (event && event.currentTarget) {
+        event.currentTarget.blur();
       }
       this.PropStrategy.hidechart = this.hideChart = !this.hideChart;
       this.EditStrategy(this.PropStrategy);
