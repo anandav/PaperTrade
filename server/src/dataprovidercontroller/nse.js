@@ -12,6 +12,43 @@ let nseCookies = null;
 let nseCookieFetchedAt = 0;
 const NSE_HOME = "https://www.nseindia.com/";
 const COOKIE_TTL_MS = 10 * 60 * 1000;
+const NSE_REQUEST_TIMEOUT_MS = 15000;
+const NSE_MAX_ATTEMPTS = 3;
+const NSE_RETRY_BASE_DELAY_MS = 750;
+const NSE_RETRIABLE_CODES = new Set([
+  "ECONNABORTED",
+  "ETIMEDOUT",
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "EPIPE",
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "EPROTO",
+  "ERR_NETWORK",
+]);
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function clearNseSession() {
+  nseCookies = null;
+  nseCookieFetchedAt = 0;
+}
+
+function isRetriableAxiosError(error) {
+  if (!error) {
+    return false;
+  }
+  if (NSE_RETRIABLE_CODES.has(error.code)) {
+    return true;
+  }
+  if (/timeout/i.test(error.message || "")) {
+    return true;
+  }
+  const status = error?.response?.status;
+  return status === 403 || status === 429 || (status >= 500 && status < 600);
+}
 
 const BROWSER_HEADERS = {
   "User-Agent":
@@ -472,7 +509,7 @@ module.exports = {
     try {
       logger.info("NSE session: warming home page");
       const home = await axios.get(NSE_HOME, {
-        timeout: 20000,
+        timeout: NSE_REQUEST_TIMEOUT_MS,
         headers: {
           ...BROWSER_HEADERS,
           Accept:
@@ -493,7 +530,7 @@ module.exports = {
           : `https://www.nseindia.com${warmPath}`;
         logger.info("NSE session: warming quote page", { warmUrl });
         const warm = await axios.get(warmUrl, {
-          timeout: 20000,
+          timeout: NSE_REQUEST_TIMEOUT_MS,
           headers: {
             ...BROWSER_HEADERS,
             Accept:
@@ -547,12 +584,13 @@ module.exports = {
     const self = this;
     return ttlCache.getOrFetch(url, async () => {
       logger.info("NSE fetch:", url);
-      return self.fetchFromNse(url, false, options || {});
+      return self.fetchFromNse(url, 0, options || {});
     });
   },
 
-  fetchFromNse: async function (url, retried, options) {
+  fetchFromNse: async function (url, attempt, options) {
     options = options || {};
+    const attemptNo = Number.isInteger(attempt) ? attempt : attempt ? 1 : 0;
     try {
       const cookies = await this.ensureNseSession(options.warmPath);
       const headers = {
@@ -569,7 +607,7 @@ module.exports = {
       }
 
       const response = await axios.get(url, {
-        timeout: 20000,
+        timeout: NSE_REQUEST_TIMEOUT_MS,
         headers,
         validateStatus: () => true,
         maxRedirects: 5,
@@ -584,42 +622,83 @@ module.exports = {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        logger.debug("NSE fetch ok", {
-          url,
-          status: response.status,
-          hasData: !!response.data,
-        });
+        if (attemptNo > 0) {
+          logger.info("NSE fetch ok after retry", {
+            url,
+            status: response.status,
+            attempt: attemptNo + 1,
+          });
+        } else {
+          logger.debug("NSE fetch ok", {
+            url,
+            status: response.status,
+            hasData: !!response.data,
+          });
+        }
         return response.data;
       }
+
+      const retriableStatus =
+        response.status === 403 ||
+        response.status === 429 ||
+        (response.status >= 500 && response.status < 600);
 
       logger.error("NSE fetch failed", {
         url,
         status: response.status,
-        retried: !!retried,
+        attempt: attemptNo + 1,
+        maxAttempts: NSE_MAX_ATTEMPTS,
+        retriable: retriableStatus,
         data:
           typeof response.data === "string"
             ? response.data.slice(0, 220)
             : response.data,
       });
 
-      if (response.status === 403 && !retried) {
-        logger.warn("NSE 403, clearing session and retrying once", { url });
-        nseCookies = null;
-        nseCookieFetchedAt = 0;
-        return this.fetchFromNse(url, true, options);
+      if (retriableStatus && attemptNo < NSE_MAX_ATTEMPTS - 1) {
+        if (response.status === 403 || response.status === 429) {
+          clearNseSession();
+        }
+        const delay = NSE_RETRY_BASE_DELAY_MS * (attemptNo + 1);
+        logger.warn("NSE retrying after HTTP error", {
+          url,
+          status: response.status,
+          nextAttempt: attemptNo + 2,
+          delayMs: delay,
+        });
+        await sleep(delay);
+        return this.fetchFromNse(url, attemptNo + 1, options);
       }
       return null;
     } catch (e) {
+      const retriable = isRetriableAxiosError(e);
       logger.error("NSE fetch exception", {
         url,
         status: e?.response?.status,
+        code: e?.code,
         message: e?.message,
-        retried: !!retried,
+        attempt: attemptNo + 1,
+        maxAttempts: NSE_MAX_ATTEMPTS,
+        retriable,
       });
-      if (e?.response?.status === 403 && !retried) {
-        nseCookies = null;
-        nseCookieFetchedAt = 0;
-        return this.fetchFromNse(url, true, options);
+      if (retriable && attemptNo < NSE_MAX_ATTEMPTS - 1) {
+        const isTimeout =
+          e?.code === "ECONNABORTED" ||
+          e?.code === "ETIMEDOUT" ||
+          /timeout/i.test(e?.message || "");
+        if (isTimeout || e?.response?.status === 403) {
+          clearNseSession();
+        }
+        const delay = NSE_RETRY_BASE_DELAY_MS * (attemptNo + 1);
+        logger.warn("NSE retrying after exception", {
+          url,
+          message: e?.message,
+          nextAttempt: attemptNo + 2,
+          delayMs: delay,
+          sessionCleared: isTimeout || e?.response?.status === 403,
+        });
+        await sleep(delay);
+        return this.fetchFromNse(url, attemptNo + 1, options);
       }
       return null;
     }
