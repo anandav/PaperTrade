@@ -89,9 +89,6 @@ export default {
 .nav-landing {
   background-color: #f7f1e8;
 }
-:global(.dark) .nav-landing {
-  background-color: #121f29;
-}
 .brand {
   color: #17263c;
   font-family: Georgia, "Times New Roman", serif;
@@ -103,9 +100,6 @@ export default {
 .brand span {
   color: #c2410c;
   font-style: italic;
-}
-:global(.dark) .brand {
-  color: #f3f7f5;
 }
 .nav-links {
   display: flex;
@@ -120,9 +114,6 @@ export default {
 .nav-links a.router-link-exact-active {
   color: #c2410c;
 }
-:global(.dark) .nav-links a.router-link-exact-active {
-  color: #e89b4d;
-}
 .login-link {
   color: #9a3412;
   cursor: pointer;
@@ -133,9 +124,6 @@ export default {
   border: 0;
   padding: 0;
   font: inherit;
-}
-:global(.dark) .login-link {
-  color: #e89b4d;
 }
 .login-link span {
   margin-left: 4px;
@@ -148,5 +136,8 @@ export default {
 </style>
 
 <style>
-.dark #app .brand { color: #f3f7f5; }.dark #app .login-link { color: #e89b4d; }
+.dark #app .nav-landing { background-color: #121f29; }
+.dark #app .brand { color: #f3f7f5; }
+.dark #app .login-link { color: #e89b4d; }
+.dark #app .nav-links a.router-link-exact-active { color: #e89b4d; }
 </style>
