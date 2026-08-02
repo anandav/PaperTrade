@@ -5,7 +5,7 @@
       mx-2
       sm:mx-3
       my-3
-      rounded
+      rounded-lg
       border
       drop-shadow-md
       border-gray-300

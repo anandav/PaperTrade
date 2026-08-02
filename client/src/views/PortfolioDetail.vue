@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-2 pb-4 min-h-full px-2 sm:px-0">
+  <div class="pt-4 sm:pt-5 pb-4 min-h-full px-2 sm:px-0">
     <div v-if="!Portfolio" class="portfolio-empty-state">
       <p class="portfolio-empty-copy">
         Select a portfolio from the left, or create a new one to get started.

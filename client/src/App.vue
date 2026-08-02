@@ -1,7 +1,8 @@
 <template>
   <div id="app" class="text-sm font-medium text-gray-500 dark:text-gray-400">
     <nav
-      class="fixed w-screen z-50 py-4 bg-gray-100 dark:bg-gray-900 dark:border-b dark:border-gray-800"
+      class="fixed w-screen z-50 py-4 shadow-md"
+      :class="navSurfaceClass"
       role="navigation"
     >
       <div class="w-full px-6 flex items-center flex-wrap gap-y-2">
@@ -65,6 +66,12 @@ export default {
   },
   computed: {
     ...mapGetters("authModule", ["isLoggedIn", "username", "email"]),
+    navSurfaceClass() {
+      if (this.$route.name === "Home" || this.$route.name === "About") {
+        return "nav-landing";
+      }
+      return "bg-gray-100 dark:bg-gray-900";
+    },
   },
   methods: {
     ...mapActions("authModule", ["logout"]),
@@ -79,6 +86,12 @@ export default {
 </script>
 
 <style scoped>
+.nav-landing {
+  background-color: #f7f1e8;
+}
+:global(.dark) .nav-landing {
+  background-color: #121f29;
+}
 .brand {
   color: #17263c;
   font-family: Georgia, "Times New Roman", serif;
