@@ -39,6 +39,7 @@ class ConfigLoader {
       'JWTSECRET': 'jwtSecret',
       'ENABLEDATAAPI': 'enableDataApi',
       'ENABLEDEMO': 'enableDemo',
+      'AUTHPROVIDER': 'authProvider',
       'CACHEDURATION': 'cacheDuration',
       'LOGLEVEL': 'logLevel',
       'PORT': 'port',
@@ -72,6 +73,13 @@ class ConfigLoader {
       'B2CTENANTNAME': 'b2cTenantName',
       'B2CCLIENTSECRET': 'b2cClientSecret',
       'B2CREDIRECTURI': 'b2cRedirectUri',
+
+      // CIAM
+      'CIAMTENANTID': 'ciamTenantId',
+      'CIAMTENANTNAME': 'ciamTenantName',
+      'CIAMCLIENTID': 'ciamClientId',
+      'CIAMCLIENTSECRET': 'ciamClientSecret',
+      'CIAMREDIRECTURI': 'ciamRedirectUri',
     };
 
     for (const [secretName, configKey] of Object.entries(secretMappings)) {
@@ -90,6 +98,7 @@ class ConfigLoader {
     this.config.port = parseInt(this.config.port || '9090', 10);
     this.config.enableDataApi = String(this.config.enableDataApi || 'false').toLowerCase() === 'true';
     this.config.enableDemo = String(this.config.enableDemo || 'false').toLowerCase() === 'true';
+    this.config.authProvider = String(this.config.authProvider || 'b2c').toLowerCase();
     this.config.cacheDuration = parseInt(this.config.cacheDuration || '60', 10);
     this.config.logLevel = String(this.config.logLevel || process.env.LOG_LEVEL || 'info').toLowerCase();
     this.config.nodeEnv = 'production';
@@ -100,6 +109,7 @@ class ConfigLoader {
       port: parseInt(process.env.PORT || '9090', 10),
       enableDataApi: String(process.env.ENABLE_DATAAPI || 'false').toLowerCase() === 'true',
       enableDemo: String(process.env.ENABLE_DEMO || 'false').toLowerCase() === 'true',
+      authProvider: String(process.env.AUTH_PROVIDER || 'b2c').toLowerCase(),
       dbConnectionString: process.env.DBCONNECTIONSTRING,
       jwtSecret: process.env.JWT_SECRET,
       nodeEnv: process.env.NODE_ENV || 'development',
@@ -135,6 +145,13 @@ class ConfigLoader {
       b2cTenantName: process.env.B2C_TENANT_NAME,
       b2cClientSecret: process.env.B2C_CLIENT_SECRET,
       b2cRedirectUri: process.env.B2C_REDIRECT_URI,
+
+      // CIAM
+      ciamTenantId: process.env.CIAM_TENANT_ID,
+      ciamTenantName: process.env.CIAM_TENANT_NAME,
+      ciamClientId: process.env.CIAM_CLIENT_ID,
+      ciamClientSecret: process.env.CIAM_CLIENT_SECRET,
+      ciamRedirectUri: process.env.CIAM_REDIRECT_URI,
     };
   }
 

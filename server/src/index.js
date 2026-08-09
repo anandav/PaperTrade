@@ -72,9 +72,12 @@ async function startServer() {
         // app.post("/auth/login", authController.login);
 
         const b2cAuthRoutes = require("./routes/b2cauth.js");
+        const ciamAuthRoutes = require("./routes/ciamauth.js");
 
-        // B2C Auth routes
+        // B2C Auth routes (login/logout branch to CIAM internally when AUTH_PROVIDER=ciam)
         app.use("/auth/b2c", b2cAuthRoutes);
+        // CIAM callback (redirect_uri registered on the CIAM app registration)
+        app.use("/auth/ciam", ciamAuthRoutes);
 
         app.use("/strategy", auth, strategyController);
         app.use("/portfolio", auth, portfolioCotroller);
