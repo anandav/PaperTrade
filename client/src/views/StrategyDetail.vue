@@ -575,6 +575,10 @@ export default {
   display: inline-flex;
 }
 
+.isStrategyEdit input[type="date"].edit {
+  display: inline-block;
+}
+
 .isStrategyEdit .view {
   display: none;
 }
