@@ -318,10 +318,9 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  width: 100%;
   padding: 0.75rem 0.75rem;
   margin: 0 0.5rem;
-  border: 1px dashed #d1d5db;
+  border: 1px dashed #9ca3af;
   border-radius: 0.375rem;
   background: transparent;
 }
