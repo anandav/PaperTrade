@@ -6,68 +6,6 @@
     "description": "API for the PaperTrade application"
   },
   "paths": {
-    "/auth/register": {
-      "post": {
-        "summary": "Register a new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User registered successfully"
-          },
-          "400": {
-            "description": "Username already exists"
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "summary": "Login a user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Login successful"
-          },
-          "401": {
-            "description": "Login failed"
-          }
-        }
-      }
-    },
     "/api/auth/sso": {
       "get": {
         "summary": "Initiate SSO login",
