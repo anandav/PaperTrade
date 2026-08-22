@@ -6,7 +6,6 @@ const ttlCache = require("../common/ttlCache");
 let currencyFutList = null;
 let equityFutList = null;
 let indicesFutList = null;
-let mktLotsList = null;
 let lastupdated = null;
 let nseCookies = null;
 let nseCookieFetchedAt = 0;
@@ -88,8 +87,7 @@ module.exports = {
       if (
         !equityFutList ||
         !indicesFutList ||
-        !currencyFutList ||
-        !mktLotsList
+        !currencyFutList
       ) {
         if (!indicesFutList) {
           logger.info(`Getting Indices List`);
@@ -103,12 +101,6 @@ module.exports = {
           logger.info(`Getting Equity Futures`);
           equityFutList = await this.GetEquitiesFuturesList();
           logger.info(`Got Equity Futures`);
-        }
-        if (!mktLotsList) {
-          logger.info(`Getting Lot size`);
-          let csv = await this.GetMRKTLot();
-          mktLotsList = this.csvJSON(csv);
-          logger.info(`Got Lot size `)
         }
         lastupdated = now;
       }
@@ -375,10 +367,6 @@ module.exports = {
   },
   GetCurrencyFuture: async function () {
     const url = global.appConfig.nseCurrencyFuturesListApi2;
-    return this.getData(url);
-  },
-  GetMRKTLot: async function () {
-    const url = global.appConfig.nseMktLots;
     return this.getData(url);
   },
   GetCurrencyOptionChain: async function (symbol) {
@@ -738,28 +726,6 @@ module.exports = {
   },
   getObject: function (inputData, selector) {
     return jmespath.search(inputData, selector);
-  },
-  csvJSON: function (csv) {
-    ///copied from: https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
-    if (!csv)
-      return;
-    let lines = csv.split("\n");
-    let result = [];
-    let headers = lines[0].split(",").map((x) => x.trim());
-    for (let i = 1; i < lines.length; i++) {
-      let obj = {};
-      let currentline = lines[i].split(",");
-
-      for (let j = 0; j < headers.length; j++) {
-        if (currentline[j]?.trim().length > 0) {
-          obj[headers[j]] = currentline[j].trim();
-        }
-      }
-      if (obj.SYMBOL && obj.SYMBOL != "Symbol") {
-        result.push(obj);
-      }
-    }
-    return JSON.stringify(result); //JSON
   },
   setCacheObject: (key, value) => {
     logger.info("Setting cache value for:", key, "and value is:", value);
