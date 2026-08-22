@@ -6,20 +6,11 @@
     "description": "API for the PaperTrade application"
   },
   "paths": {
-    "/api/auth/sso": {
+    "/auth/b2c/login": {
       "get": {
-        "summary": "Initiate SSO login",
-        "tags": ["SSO"],
-        "parameters": [
-          {
-            "name": "domain_hint",
-            "in": "query",
-            "description": "Hint for the identity provider (e.g., 'Google.com')",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "summary": "Start SSO login (B2C or CIAM, based on AUTH_PROVIDER)",
+        "tags": ["Auth"],
+        "security": [],
         "responses": {
           "302": {
             "description": "Redirect to the identity provider"
@@ -27,13 +18,94 @@
         }
       }
     },
-    "/api/auth/sso/callback": {
+    "/auth/b2c/logout": {
       "get": {
-        "summary": "SSO callback",
-        "tags": ["SSO"],
+        "summary": "Log out and redirect to the identity provider's logout endpoint",
+        "tags": ["Auth"],
+        "security": [],
         "responses": {
           "302": {
-            "description": "Redirect to the frontend with a token"
+            "description": "Redirect to the identity provider logout page"
+          }
+        }
+      }
+    },
+    "/auth/b2c/resetpassword": {
+      "get": {
+        "summary": "Start the B2C password reset policy flow",
+        "tags": ["Auth"],
+        "security": [],
+        "responses": {
+          "302": {
+            "description": "Redirect to the identity provider"
+          }
+        }
+      }
+    },
+    "/auth/b2c/callback": {
+      "get": {
+        "summary": "B2C OAuth callback, issues app JWT and redirects to the client",
+        "tags": ["Auth"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the client with token and refreshToken query params"
+          }
+        }
+      }
+    },
+    "/auth/b2c/refresh": {
+      "post": {
+        "summary": "Exchange a refresh token for a new access token",
+        "tags": ["Auth"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New token and refreshToken"
+          },
+          "401": {
+            "description": "Invalid or expired refresh token"
+          }
+        }
+      }
+    },
+    "/auth/ciam/callback": {
+      "get": {
+        "summary": "CIAM OAuth callback, issues app JWT and redirects to the client",
+        "tags": ["Auth"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the client with token and refreshToken query params"
           }
         }
       }
@@ -258,6 +330,42 @@
         "responses": {
           "200": {
             "description": "The deletion status"
+          }
+        }
+      }
+    },
+    "/data": {
+      "post": {
+        "summary": "Proxy quote/reference data from the configured exchange (NSE or CBOE)",
+        "description": "Disabled and returns 404 unless ENABLE_DATAAPI=true.",
+        "tags": ["Data"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "description": "e.g. init, updateltp, updateexit, updateall, getexpiries"
+                  },
+                  "portfolio": {
+                    "type": "object",
+                    "description": "Portfolio containing the exchange (nse or cboe)"
+                  },
+                  "strategy": {
+                    "$ref": "#/components/schemas/Strategy"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exchange metadata (action=init) or the strategy updated with live quote data"
           }
         }
       }
