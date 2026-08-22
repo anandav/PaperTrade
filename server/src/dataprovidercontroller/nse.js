@@ -219,9 +219,9 @@ module.exports = {
       }
 
       if (symboltype == "currency") {
-        let currencyData = null;
         if (hasFutures) {
-          currencyData = await this.GetCurrencyFuture(symbol);
+          let currencyData = await this.GetCurrencyFuture();
+          startegy = this.bindCurrencyData(startegy, currencyData, action, symbol);
         }
         if (hasOptions) {
           let nseData = await this.GetCurrencyOptionChain(symbol);
@@ -416,6 +416,34 @@ module.exports = {
     });
     return startegy;
   },
+  bindCurrencyData(startegy, inputData, action, symbol) {
+    if (!inputData?.data) {
+      logger.warn("bindCurrencyData skipped: no NSE payload", { symbol });
+      return startegy;
+    }
+    const unit = String(symbol || "").trim().toUpperCase().replace(/INR$/, "");
+    const row = inputData.data.find(
+      (item) => (item.unit || "").toUpperCase() === unit
+    );
+    if (!row || row.rate == null || Number.isNaN(Number(row.rate))) {
+      logger.warn("NSE currency quote: rate missing", { symbol, unit });
+      return startegy;
+    }
+    const lastPrice = Number(row.rate);
+    startegy.trades.forEach((trade) => {
+      if (action == "updateltp") {
+        trade.lasttradedprice = lastPrice;
+      } else if (action == "updateexit") {
+        trade.lasttradedprice = lastPrice;
+        if (trade.isexit) {
+          trade.price = lastPrice;
+        }
+      } else if (action == "updateall") {
+        trade.price = trade.lasttradedprice = lastPrice;
+      }
+    });
+    return startegy;
+  },
   bindOptionData(startegy, inputData, action) {
     if (!inputData) {
       logger.warn("bindOptionData skipped: no NSE payload", {
@@ -432,7 +460,7 @@ module.exports = {
         tradetype: trade.tradetype,
       });
       let selector =
-        "records.data[? expiryDates==`" +
+        "records.data[? expiryDate==`" +
         this.formatDate(startegy.expiry) +
         "` && strikePrice == `" +
         trade.selectedstrike +
