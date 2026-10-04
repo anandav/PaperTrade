@@ -334,6 +334,92 @@
         }
       }
     },
+    "/splitplan": {
+      "get": {
+        "summary": "Get all equity split plans for the user",
+        "responses": {
+          "200": {
+            "description": "A list of split plans"
+          }
+        }
+      }
+    },
+    "/splitplan/save": {
+      "post": {
+        "summary": "Create or update an equity split plan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitPlan"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved plan and the updated plan list"
+          }
+        }
+      }
+    },
+    "/splitplan/delete": {
+      "post": {
+        "summary": "Delete an equity split plan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated plan list"
+          }
+        }
+      }
+    },
+    "/splitplan/quotes": {
+      "post": {
+        "summary": "Get NSE last traded prices for equity symbols",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "symbols": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A quote per symbol with lastPrice or an error"
+          },
+          "503": {
+            "description": "Live data API is disabled"
+          }
+        }
+      }
+    },
     "/data": {
       "post": {
         "summary": "Proxy quote/reference data from the configured exchange (NSE or CBOE)",
@@ -449,6 +535,43 @@
           "createdon": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "SplitPlan": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "useleftover": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "lasttradedprice": {
+                  "type": "number"
+                },
+                "included": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       },
