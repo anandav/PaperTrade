@@ -292,17 +292,21 @@
                   </div>
                   <div class="strategy-field">
                     <span class="text-xs block text-gray-500" id="sp-leftover-label">
-                      Leftover Cash
+                      Rounding
                     </span>
-                    <label class="leftover-toggle">
+                    <label class="leftover-toggle tooltip">
                       <input
                         type="checkbox"
                         class="mini-checkbox"
-                        aria-labelledby="sp-leftover-label"
+                        aria-describedby="sp-leftover-label"
                         v-model="plan.useleftover"
                         @change="queueSave()"
                       />
-                      <span>Buy 1 extra share</span>
+                      <span>Use leftover cash</span>
+                      <tooltip
+                        Value="Buy 1 more share where leftover cash covers it"
+                        Location="bottom start"
+                      />
                     </label>
                   </div>
                   <div class="strategy-field">
@@ -400,7 +404,18 @@
                         </label>
                       </div>
                       <div class="table-cell px-1 py-2 text-left">
-                        {{ row.symbol }}
+                        <span class="view">{{ row.symbol }}</span>
+                        <input
+                          :ref="'sym-' + row.symbol"
+                          v-model="editName"
+                          type="text"
+                          maxlength="20"
+                          autocomplete="off"
+                          :aria-label="'Symbol for ' + row.symbol"
+                          class="trade-edit-input trade-edit-symbol edit"
+                          @keydown.enter="onSaveRow(row.symbol)"
+                          @keydown.esc="editSymbol = null"
+                        />
                         <span v-if="row.error" class="block text-xs text-red-700 dark:text-red-400">
                           {{ row.error }}
                         </span>
@@ -518,7 +533,12 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { computeSplit, parseSymbolList } from "../common/splitPlan";
+import {
+  SYMBOL_PATTERN,
+  computeSplit,
+  normalizeSymbol,
+  parseSymbolList,
+} from "../common/splitPlan";
 import { confirmDelete } from "../shared/confirmDialog";
 
 const QUOTE_CHUNK = 50;
@@ -553,6 +573,7 @@ export default {
       editHeader: false,
       editSymbol: null,
       editPrice: 0,
+      editName: "",
       symbolInput: "",
       message: "",
       messageIsError: false,
@@ -863,9 +884,10 @@ export default {
     },
     onEditRow(row) {
       this.editSymbol = row.symbol;
+      this.editName = row.symbol;
       this.editPrice = row.price || null;
       this.$nextTick(() => {
-        const el = this.$refs["price-" + row.symbol];
+        const el = this.$refs["sym-" + row.symbol];
         const input = Array.isArray(el) ? el[0] : el;
         if (input) {
           input.focus();
@@ -875,12 +897,31 @@ export default {
     },
     onSaveRow(symbol) {
       const item = this.findItem(symbol);
-      if (item) {
-        const n = Number(this.editPrice);
-        item.price = Number.isFinite(n) && n > 0 ? n : 0;
-        item.error = "";
-        this.queueSave();
+      if (!item) {
+        this.editSymbol = null;
+        return;
       }
+      const newSymbol = normalizeSymbol(this.editName);
+      if (!SYMBOL_PATTERN.test(newSymbol)) {
+        this.setMessage(`"${this.editName}" is not a valid NSE symbol.`, true);
+        return;
+      }
+      if (newSymbol !== symbol && this.findItem(newSymbol)) {
+        this.setMessage(`${newSymbol} is already in the plan.`, true);
+        return;
+      }
+      const n = Number(this.editPrice);
+      const newPrice = Number.isFinite(n) && n > 0 ? n : 0;
+      if (newSymbol !== symbol) {
+        item.symbol = newSymbol;
+        item.lasttradedprice = 0;
+        item.price = newPrice !== item.price ? newPrice : 0;
+      } else {
+        item.price = newPrice;
+      }
+      item.error = "";
+      this.setMessage("");
+      this.queueSave();
       this.editSymbol = null;
     },
     onToggleItem(symbol, checked) {
@@ -1116,6 +1157,11 @@ export default {
   font-size: 0.8125rem;
   font-weight: 500;
   line-height: 1.2;
+}
+.trade-edit-symbol {
+  width: 7.5rem;
+  min-width: 7.5rem;
+  text-transform: uppercase;
 }
 .trade-edit-price {
   width: 5.5rem;
