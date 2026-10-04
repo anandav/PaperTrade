@@ -99,7 +99,7 @@ export default {
   text-decoration: none;
 }
 .brand span {
-  color: #c2410c;
+  color: #e07a2f;
   font-style: italic;
 }
 .nav-links {
@@ -139,6 +139,7 @@ export default {
 <style>
 .dark #app .nav-landing { background-color: #121f29; }
 .dark #app .brand { color: #f3f7f5; }
+.dark #app .brand span { color: #e89b4d; }
 .dark #app .login-link { color: #e89b4d; }
 .dark #app .nav-links a.router-link-exact-active { color: #e89b4d; }
 </style>
