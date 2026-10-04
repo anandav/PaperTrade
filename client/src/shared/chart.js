@@ -6,12 +6,12 @@ const utilitymixins = {
       MARGIN: {
         LEFT: 50,
         RIGHT: 50,
-        TOP: 10,
-        BOTTOM: 30,
+        TOP: 30,
+        BOTTOM: 38,
       },
       ChartSettings: {
         TOOLTIP: true,
-        PATTERN: true,
+        PATTERN: false,
         OFFSET: true,
         TOOLTIPLOCATION: "FOLLOW", //"BOTTOM",//"FOLLOW",//"TOP"
         COLOURS: {
@@ -29,9 +29,9 @@ const utilitymixins = {
             "stroke-current text-gray-500 dark:text-gray-500 opacity-50",
           PositiveRegion: "fill-current text-green-700 opacity-20 ",
           NegativeRegion: "fill-current text-red-700 opacity-20",
-          Positive: "#3DB2FF",
+          Positive: "#39A388",
           PositiveRegionOnlyOpacity: "opacity-30",
-          Nevgative: "#FF2442",
+          Negative: "#E02401",
           NegativeRegionOnlyOpacity: "opacity-30",
           LGGREEN: "rgb(57, 163, 136)",
           LGRED: "rgb(224, 36, 1)",
@@ -75,47 +75,42 @@ const utilitymixins = {
       return false;
     },
 
-    GetBreakEven: function (strategy) {
-      //let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      let netPnlArr = [];
-      for (let i = 0, len = strategy.trades.length; i < len; i++) {
-        let currentTrade = strategy.trades[i];
-        //let netPnL = 0,          PnL = 0;
-        for (let j = 0, len2 = strategy.trades.length; j < len2; j++) {
-          let currentTrade2 = strategy.trades[j];
-          let obj = this.getNetPnL(currentTrade.selectedstrike, currentTrade2);
-          netPnlArr[i] += obj.netPnL;
-          //PnL += obj.PnL;
+    GetPayoffSummary: function (chartData) {
+      if (!chartData || !chartData.length) {
+        return null;
+      }
+      let maxPoint = chartData[0];
+      let minPoint = chartData[0];
+      for (const d of chartData) {
+        if (d.netPnL > maxPoint.netPnL) maxPoint = d;
+        if (d.netPnL < minPoint.netPnL) minPoint = d;
+      }
+      let breakevens = [];
+      for (let i = 1; i < chartData.length; i++) {
+        const prev = chartData[i - 1];
+        const curr = chartData[i];
+        if (prev.netPnL === 0) {
+          breakevens.push(prev.strikePrice);
+        } else if (
+          (prev.netPnL < 0 && curr.netPnL > 0) ||
+          (prev.netPnL > 0 && curr.netPnL < 0)
+        ) {
+          const ratio = -prev.netPnL / (curr.netPnL - prev.netPnL);
+          breakevens.push(
+            parseFloat(
+              (
+                prev.strikePrice +
+                ratio * (curr.strikePrice - prev.strikePrice)
+              ).toFixed(2)
+            )
+          );
         }
       }
-    },
-
-    GetMaxMinPnL: function (strategy) {
-      let tminSP = d3.min(strategy.trades, (d) => d.selectedstrike);
-      //let tmaxSP = d3.max(strategy.trades, d => d.selectedstrike);
-      let minPrice = [tminSP - 1, tminSP];
-      let minStriketrade; //strategy.trades.find(t => t.selectedstrike == tminSP);
-      //let maxStriketrade = strategy.trades.find(t => t.selectedstrike == tmaxSP);
-      let tradeCount = strategy.trades.length;
-
-      minPrice.forEach((j) => {
-        for (let i = 0; i < tradeCount; i++) {
-          let PnlObj = this.getNetPnL(j, strategy.trades[i]);
-
-          if (minStriketrade) {
-            minStriketrade.netPnL += PnlObj.netPnL;
-            minStriketrade.PnL = PnlObj.PnL;
-          } else {
-            minStriketrade = {
-              strikePrice: j,
-              qty: strategy.trades[i].quantity,
-              lot: strategy.trades[i].lotsize,
-              price: strategy.trades[i].price,
-              ...PnlObj,
-            };
-          }
-        }
-      });
+      const last = chartData[chartData.length - 1];
+      if (last.netPnL === 0) {
+        breakevens.push(last.strikePrice);
+      }
+      return { maxProfit: maxPoint, maxLoss: minPoint, breakevens };
     },
 
     getoffsetprices: function (leastPrice) {
@@ -321,7 +316,9 @@ const utilitymixins = {
         .domain([minPnL, maxPnL])
         .nice()
         .range([this.HEIGHT - this.MARGIN.BOTTOM, this.MARGIN.TOP]);
-      const xAxisCall = d3.axisBottom(xScale);
+      const xAxisCall = d3
+        .axisBottom(xScale)
+        .ticks(Math.max(4, Math.floor(this.WIDTH / 90)));
       const yAxisCall = d3
         .axisLeft(yScale)
         .ticks(10)
@@ -638,7 +635,7 @@ const utilitymixins = {
           .attr("height", 4)
           .append("path")
           .attr("d", "M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2")
-          .attr("stroke", this.ChartSettings.COLOURS.Nevgative)
+          .attr("stroke", this.ChartSettings.COLOURS.Negative)
           .attr("stroke-width", 1);
 
         svg
@@ -667,6 +664,9 @@ const utilitymixins = {
           .attr("class", this.ChartSettings.COLOURS.NegativeRegion)
           .attr("d", areaNeg);
       }
+
+      this.DrawPayoffAnnotations(svg, xScale, yScale, chartData);
+
       const tooltipline = svg.append("line").classed("hoverline", true);
       const tooltipdotinner = svg.append("circle").classed("hoverdot", true);
       const tooltipdot = svg.append("circle").classed("hoverdot", true);
@@ -676,6 +676,105 @@ const utilitymixins = {
         svg.on("mouseleave", onMouseLeave);
         svg.on("mouseenter", onMouseEnter);
       }
+    },
+
+    DrawPayoffAnnotations: function (svg, xScale, yScale, chartData) {
+      const summary = this.GetPayoffSummary(chartData);
+      if (!summary) return;
+
+      const tag = (parent, x, y, label, fill, anchor, baseline) => {
+        const group = parent
+          .append("g")
+          .attr("class", "payoff-tag")
+          .style("pointer-events", "none");
+        const text = group
+          .append("text")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("text-anchor", anchor)
+          .attr("dominant-baseline", baseline)
+          .style("font", "12px sans-serif")
+          .style("font-weight", "700")
+          .attr("fill", "white")
+          .text(label);
+        const { x: bx, y: by, width, height } = text.node().getBBox();
+        group
+          .insert("rect", "text")
+          .attr("x", bx - 5)
+          .attr("y", by - 3)
+          .attr("width", width + 10)
+          .attr("height", height + 6)
+          .attr("rx", 4)
+          .attr("fill", fill)
+          .attr("opacity", 0.95);
+        return group;
+      };
+
+      const annotations = svg.append("g").attr("class", "payoff-annotations");
+
+      const edgeAnchor = (x) => {
+        if (x < this.MARGIN.LEFT + 45) return "start";
+        if (x > this.WIDTH - 45) return "end";
+        return "middle";
+      };
+
+      summary.breakevens.forEach((be) => {
+        const x = xScale(be);
+        annotations
+          .append("line")
+          .attr("x1", x)
+          .attr("x2", x)
+          .attr("y1", this.MARGIN.TOP)
+          .attr("y2", this.HEIGHT - this.MARGIN.BOTTOM)
+          .attr("stroke", "currentColor")
+          .attr("class", "text-gray-400 dark:text-gray-500")
+          .attr("stroke-width", 1)
+          .attr("stroke-dasharray", "3,3")
+          .attr("opacity", 0.6);
+
+        tag(
+          annotations,
+          x,
+          this.MARGIN.TOP - 16,
+          `BE ${be}`,
+          "#4B5563",
+          edgeAnchor(x),
+          "hanging"
+        );
+      });
+
+      if (summary.maxProfit.netPnL === summary.maxLoss.netPnL) return;
+
+      [
+        { point: summary.maxProfit, label: "Max profit", fill: this.ChartSettings.COLOURS.Positive, above: true },
+        { point: summary.maxLoss, label: "Max loss", fill: this.ChartSettings.COLOURS.Negative, above: false },
+      ].forEach(({ point, label, fill, above }) => {
+        const x = xScale(point.strikePrice);
+        const y = yScale(point.netPnL);
+
+        annotations
+          .append("circle")
+          .attr("cx", x)
+          .attr("cy", y)
+          .attr("r", 3.5)
+          .attr("fill", fill)
+          .attr("stroke", "white")
+          .attr("stroke-width", 1);
+
+        const placeAbove = above
+          ? y > this.MARGIN.TOP + 22
+          : y > this.HEIGHT - this.MARGIN.BOTTOM - 22;
+
+        tag(
+          annotations,
+          x,
+          placeAbove ? y - 11 : y + 11,
+          `${label} ${point.netPnL.toFixed(0)}`,
+          fill,
+          edgeAnchor(x),
+          placeAbove ? "auto" : "hanging"
+        );
+      });
     },
   },
 };
