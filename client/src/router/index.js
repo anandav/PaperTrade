@@ -15,6 +15,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/split-planner',
+    name: 'SplitPlanner',
+    component: () => import('../views/SplitPlanner.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue')

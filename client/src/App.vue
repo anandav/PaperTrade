@@ -9,6 +9,7 @@
         <router-link to="/" class="brand">paper<span>trade</span></router-link>
         <div class="nav-links">
           <router-link v-if="isLoggedIn" to="/papertrade">Workspace</router-link>
+          <router-link v-if="isLoggedIn" to="/split-planner">Split Planner</router-link>
           <router-link v-if="!isLoggedIn" to="/about">About</router-link>
         </div>
         <div class="ml-auto flex items-center">

@@ -15,4 +15,6 @@ export const CHANGECHECKSTATE = 'ChangeCheckState';
 //data
 export const SETEXCHANGEDETAIL = 'SetExchangeDetail';
 export const SETCURRENTEXCHANGE = 'SetCurrentExchange';
+//splitplan
+export const SETSPLITPLANS = 'SetSplitPlans';
 

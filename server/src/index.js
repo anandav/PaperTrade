@@ -17,6 +17,7 @@ const helmet = require("helmet");
 const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
+const splitPlanController = require("./controller/splitplancontroller");
 
 const dataProvider = require("./dataprovidercontroller/index");
 // const authController = require("./controller/authcontroller");
@@ -82,6 +83,7 @@ async function startServer() {
         app.use("/strategy", auth, strategyController);
         app.use("/portfolio", auth, portfolioCotroller);
         app.use("/trade", auth, tradeController);
+        app.use("/splitplan", auth, splitPlanController);
 
         app.get('/', function (req, res) {
             res.redirect("/api-docs");
