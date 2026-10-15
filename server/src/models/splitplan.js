@@ -41,6 +41,11 @@ const splitPlanSchema = schema({
     type: Boolean,
     default: true
   },
+  allocationmode: {
+    type: String,
+    enum: ['equal', 'profit_desc', 'profit_asc'],
+    default: 'equal'
+  },
   items: [splitPlanItemSchema],
   isactive: {
     type: Boolean,

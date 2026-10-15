@@ -184,7 +184,14 @@
                 <span class="text-xs block text-gray-500" id="sp-target-label">
                   Target per Stock
                 </span>
-                <span aria-labelledby="sp-target-label">
+                <span v-if="result.targetVaries" aria-labelledby="sp-target-label">
+                  Varies
+                  <span class="block text-xs text-gray-500">
+                    {{ $filters.decimal2(result.targetMin) }} -
+                    {{ $filters.decimal2(result.targetMax) }}
+                  </span>
+                </span>
+                <span v-else aria-labelledby="sp-target-label">
                   {{ $filters.decimal2(result.target) }}
                 </span>
               </div>
@@ -310,6 +317,21 @@
                     </label>
                   </div>
                   <div class="strategy-field">
+                    <label class="text-xs block text-gray-500" for="sp-allocation">
+                      Allocation
+                    </label>
+                    <select
+                      class="normal-edit allocation-select"
+                      id="sp-allocation"
+                      v-model="plan.allocationmode"
+                      @change="queueSave()"
+                    >
+                      <option v-for="mode in AllocationModes" :key="mode.id" :value="mode.id">
+                        {{ mode.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="strategy-field">
                     <span class="text-xs block text-gray-500" id="sp-count-label">
                       Stocks
                     </span>
@@ -390,6 +412,7 @@
                       <div class="table-cell px-1 py-4">LTP</div>
                       <div class="table-cell px-1 py-4">Held</div>
                       <div class="table-cell px-1 py-4">Avg Price</div>
+                      <div class="table-cell px-1 py-4">P&amp;L %</div>
                       <div class="table-cell px-1 py-4">Shares</div>
                       <div class="table-cell px-1 py-4">Cost</div>
                       <div class="table-cell px-1 py-4">vs Target</div>
@@ -496,6 +519,23 @@
                         />
                       </div>
                       <div class="table-cell px-1 py-2">
+                        <span
+                          v-if="row.holdAvg && row.price > 0"
+                          class="tooltip"
+                          :class="{
+                            'text-green-700 dark:text-green-400': row.pnlPercent > 0,
+                            'text-red-700 dark:text-red-400': row.pnlPercent < 0,
+                          }"
+                        >
+                          {{ row.pnlPercent > 0 ? "+" : "" }}{{ $filters.decimal2(row.pnlPercent) }}%
+                          <tooltip
+                            :Value="'P&L ' + $filters.decimal2(row.pnl)"
+                            Location="above end"
+                          />
+                        </span>
+                        <span v-else>-</span>
+                      </div>
+                      <div class="table-cell px-1 py-2">
                         {{ row.counted ? row.qty : "-" }}
                       </div>
                       <div class="table-cell px-1 py-2">
@@ -564,6 +604,7 @@
                         <span class="trade-pnl-label">Invested</span>
                         <span>{{ $filters.decimal2(result.invested) }}</span>
                       </div>
+                      <div class="table-cell"></div>
                       <div class="table-cell px-1 py-2">{{ result.totalShares }}</div>
                       <div class="table-cell px-1 py-2 trade-pnl-cell">
                         <span class="trade-pnl-label">Total</span>
@@ -595,6 +636,7 @@ import {
   computeSplit,
   normalizeSymbol,
   parseSymbolList,
+  ALLOCATION_MODES,
 } from "../common/splitPlan";
 import { confirmDelete } from "../shared/confirmDialog";
 
@@ -607,6 +649,7 @@ function toEditable(saved) {
     name: saved.name,
     amount: saved.amount,
     useleftover: saved.useleftover !== false,
+    allocationmode: saved.allocationmode || "equal",
     items: (saved.items || []).map((item) => ({
       symbol: item.symbol,
       price: item.price || 0,
@@ -641,6 +684,7 @@ export default {
       saveTimer: null,
       saving: false,
       saveAgain: false,
+      AllocationModes: ALLOCATION_MODES,
       LTPAction: [
         { _id: "refresh", name: "Refresh last prices", icon: "get_app" },
         { _id: "copy", name: "Use last prices as price", icon: "west" },
@@ -659,7 +703,12 @@ export default {
       if (!this.plan) {
         return computeSplit(0, [], false);
       }
-      return computeSplit(this.plan.amount, this.plan.items, this.plan.useleftover);
+      return computeSplit(
+        this.plan.amount,
+        this.plan.items,
+        this.plan.useleftover,
+        this.plan.allocationmode
+      );
     },
     allIncluded() {
       return !!this.plan && this.plan.items.length > 0 && this.plan.items.every((i) => i.included);
@@ -702,6 +751,7 @@ export default {
         name: this.plan.name,
         amount: Number(this.plan.amount) || 0,
         useleftover: this.plan.useleftover,
+        allocationmode: this.plan.allocationmode,
         items: this.plan.items.map((i) => ({
           symbol: i.symbol,
           price: i.price,
@@ -772,6 +822,7 @@ export default {
           name,
           amount: 100000,
           useleftover: true,
+          allocationmode: "equal",
           items: [],
         });
         this.plan = toEditable(saved);
@@ -1134,6 +1185,10 @@ export default {
   width: 100%;
   max-width: 24rem;
 }
+.allocation-select {
+  width: 100%;
+  max-width: 12rem;
+}
 .leftover-toggle {
   display: inline-flex;
   align-items: center;
@@ -1197,7 +1252,7 @@ export default {
   padding-bottom: 0.25rem;
 }
 .trade-table {
-  min-width: 1040px;
+  min-width: 1120px;
 }
 .trade-actions {
   display: inline-flex;
@@ -1339,7 +1394,7 @@ export default {
   }
   .strategy-meta {
     flex: 1;
-    grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 2fr) repeat(5, minmax(0, 1fr));
     gap: 0.5rem 0.75rem;
   }
   .add-field {

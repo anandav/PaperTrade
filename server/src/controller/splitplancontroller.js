@@ -8,6 +8,7 @@ const logger = require("../common/logs");
 const activeFilter = commonUtility.activeFilter;
 const SYMBOL_PATTERN = /^[A-Z0-9&_.-]{1,20}$/;
 const DEFAULT_MAX_ITEMS = 32;
+const ALLOCATION_MODES = ["equal", "profit_desc", "profit_asc"];
 const MAX_QUOTES = 50;
 const QUOTE_BATCH = 4;
 
@@ -69,7 +70,7 @@ splitplancontroller.post("/save", async (req, res) => {
     throw new ApiError(401, "Cant save split plan on demo mode.");
   }
 
-  const { _id, name, amount, useleftover, items } = req.body || {};
+  const { _id, name, amount, useleftover, allocationmode, items } = req.body || {};
   const cleanName = String(name || "").trim().slice(0, 80) || "Untitled plan";
   const cleanAmount = Number(amount);
   if (!Number.isFinite(cleanAmount) || cleanAmount < 0) {
@@ -97,6 +98,7 @@ splitplancontroller.post("/save", async (req, res) => {
   plan.name = cleanName;
   plan.amount = cleanAmount;
   plan.useleftover = useleftover !== false;
+  plan.allocationmode = ALLOCATION_MODES.includes(allocationmode) ? allocationmode : "equal";
   plan.items = cleanItems;
   plan.modifiedon = new Date();
 
