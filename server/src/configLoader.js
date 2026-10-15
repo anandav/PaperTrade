@@ -41,6 +41,7 @@ class ConfigLoader {
       'ENABLEDEMO': 'enableDemo',
       'AUTHPROVIDER': 'authProvider',
       'CACHEDURATION': 'cacheDuration',
+      'SPLITPLANMAXITEMS': 'splitPlanMaxItems',
       'LOGLEVEL': 'logLevel',
       'PORT': 'port',
       'CLIENTURI': 'clientUri',
@@ -99,6 +100,7 @@ class ConfigLoader {
     this.config.enableDemo = String(this.config.enableDemo || 'false').toLowerCase() === 'true';
     this.config.authProvider = String(this.config.authProvider || 'b2c').toLowerCase();
     this.config.cacheDuration = parseInt(this.config.cacheDuration || '60', 10);
+    this.config.splitPlanMaxItems = parseInt(this.config.splitPlanMaxItems || '32', 10);
     this.config.logLevel = String(this.config.logLevel || process.env.LOG_LEVEL || 'info').toLowerCase();
     this.config.nodeEnv = 'production';
   }
@@ -114,6 +116,7 @@ class ConfigLoader {
       nodeEnv: process.env.NODE_ENV || 'development',
       clientUri: process.env.CLIENT_URI || 'http://localhost:8080',
       cacheDuration: parseInt(process.env.CACHE_DURATION || '60', 10),
+      splitPlanMaxItems: parseInt(process.env.SPLITPLAN_MAX_ITEMS || '32', 10),
       logLevel: String(process.env.LOG_LEVEL || 'info').toLowerCase(),
 
       // NSE 

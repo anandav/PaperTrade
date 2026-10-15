@@ -7,7 +7,7 @@ const logger = require("../common/logs");
 
 const activeFilter = commonUtility.activeFilter;
 const SYMBOL_PATTERN = /^[A-Z0-9&_.-]{1,20}$/;
-const MAX_ITEMS = 200;
+const DEFAULT_MAX_ITEMS = 32;
 const MAX_QUOTES = 50;
 const QUOTE_BATCH = 4;
 
@@ -21,6 +21,11 @@ function normalizeSymbol(value) {
 function positiveOrZero(value) {
   const n = Number(value);
   return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function maxItems() {
+  const n = Number(global.appConfig && global.appConfig.splitPlanMaxItems);
+  return Number.isInteger(n) && n > 0 ? n : DEFAULT_MAX_ITEMS;
 }
 
 function sanitizeItems(items) {
@@ -44,8 +49,9 @@ function sanitizeItems(items) {
       included: item.included !== false,
     });
   }
-  if (result.length > MAX_ITEMS) {
-    throw new ApiError(400, `A plan can have at most ${MAX_ITEMS} stocks.`);
+  const limit = maxItems();
+  if (result.length > limit) {
+    throw new ApiError(400, `A plan can have at most ${limit} stocks.`);
   }
   return result;
 }

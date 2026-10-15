@@ -591,7 +591,6 @@
 <script>
 import { mapGetters } from "vuex";
 import {
-  MAX_ITEMS,
   SYMBOL_PATTERN,
   computeSplit,
   normalizeSymbol,
@@ -727,17 +726,19 @@ export default {
     },
     async persist() {
       if (!this.plan || !this.plan._id) {
-        return;
+        return false;
       }
       if (this.saving) {
         this.saveAgain = true;
-        return;
+        return true;
       }
       this.saving = true;
       try {
         await this.$store.dispatch("splitPlanModule/SavePlan", this.payload());
+        return true;
       } catch (err) {
         this.showError(err, "Could not save the plan.");
+        return false;
       } finally {
         this.saving = false;
         if (this.saveAgain) {
@@ -844,7 +845,7 @@ export default {
       const current = this.symbolInput.trim();
       this.symbolInput = current ? `${current}, ${joined}` : joined;
     },
-    onAddSymbols() {
+    async onAddSymbols() {
       const { valid, invalid } = parseSymbolList(this.symbolInput);
       const fresh = valid.filter((s) => !this.findItem(s));
       if (!fresh.length) {
@@ -855,13 +856,6 @@ export default {
             ? "Those stocks are already in the plan."
             : "Type one or more NSE symbols first.",
           invalid.length > 0
-        );
-        return;
-      }
-      if (this.plan.items.length + fresh.length > MAX_ITEMS) {
-        this.setMessage(
-          `A plan can have at most ${MAX_ITEMS} stocks. This plan has ${this.plan.items.length}.`,
-          true
         );
         return;
       }
@@ -877,8 +871,18 @@ export default {
           loading: false,
         });
       });
+      if (this.saveTimer) {
+        clearTimeout(this.saveTimer);
+        this.saveTimer = null;
+      }
+      const plan = this.plan;
+      const input = this.symbolInput;
       this.symbolInput = "";
-      this.queueSave();
+      if (!(await this.persist())) {
+        plan.items = plan.items.filter((i) => !fresh.includes(i.symbol));
+        this.symbolInput = input;
+        return;
+      }
       const added = `Added ${fresh.length} ${fresh.length === 1 ? "stock" : "stocks"}. Refresh prices from the rupee menu, or edit a price by hand.`;
       this.setMessage(
         invalid.length ? `${added} Skipped: ${invalid.join(", ")}` : added,

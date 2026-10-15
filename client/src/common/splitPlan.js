@@ -1,5 +1,4 @@
 export const SYMBOL_PATTERN = /^[A-Z0-9&_.-]{1,20}$/;
-export const MAX_ITEMS = 200;
 
 export function normalizeSymbol(value) {
   return String(value || "")
