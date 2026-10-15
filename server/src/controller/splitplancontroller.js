@@ -7,7 +7,7 @@ const logger = require("../common/logs");
 
 const activeFilter = commonUtility.activeFilter;
 const SYMBOL_PATTERN = /^[A-Z0-9&_.-]{1,20}$/;
-const MAX_ITEMS = 100;
+const MAX_ITEMS = 200;
 const MAX_QUOTES = 50;
 const QUOTE_BATCH = 4;
 
@@ -39,6 +39,8 @@ function sanitizeItems(items) {
       symbol,
       price: positiveOrZero(item.price),
       lasttradedprice: positiveOrZero(item.lasttradedprice),
+      holdqty: Math.floor(positiveOrZero(item.holdqty)),
+      avgprice: positiveOrZero(item.avgprice),
       included: item.included !== false,
     });
   }

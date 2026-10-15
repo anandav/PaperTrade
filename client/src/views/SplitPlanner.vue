@@ -325,6 +325,18 @@
                       {{ result.totalShares }}
                     </span>
                   </div>
+                  <div class="strategy-field">
+                    <span class="text-xs block text-gray-500" id="sp-invested-label">
+                      Already Invested
+                    </span>
+                    <span aria-labelledby="sp-invested-label">
+                      {{ $filters.decimal2(result.invested) }}
+                      <span v-if="result.holdCount" class="text-xs text-gray-500">
+                        in {{ result.holdCount }}
+                        {{ result.holdCount === 1 ? "stock" : "stocks" }}
+                      </span>
+                    </span>
+                  </div>
                 </div>
                 <div class="strategy-actions">
                   <button
@@ -376,9 +388,13 @@
                       <div class="table-cell px-1 py-4 text-left">Symbol</div>
                       <div class="table-cell px-1 py-4">Price</div>
                       <div class="table-cell px-1 py-4">LTP</div>
+                      <div class="table-cell px-1 py-4">Held</div>
+                      <div class="table-cell px-1 py-4">Avg Price</div>
                       <div class="table-cell px-1 py-4">Shares</div>
                       <div class="table-cell px-1 py-4">Cost</div>
                       <div class="table-cell px-1 py-4">vs Target</div>
+                      <div class="table-cell px-1 py-4">Total Qty</div>
+                      <div class="table-cell px-1 py-4">New Avg</div>
                       <div class="table-cell px-1 trade-actions-col"></div>
                     </div>
                   </div>
@@ -452,6 +468,34 @@
                         </div>
                       </div>
                       <div class="table-cell px-1 py-2">
+                        <span class="view">{{ row.holdQty || "-" }}</span>
+                        <input
+                          v-model.number="editHold"
+                          type="number"
+                          min="0"
+                          step="1"
+                          :aria-label="'Shares held for ' + row.symbol"
+                          class="trade-edit-input edit text-right"
+                          @keydown.enter="onSaveRow(row.symbol)"
+                          @keydown.esc="editSymbol = null"
+                        />
+                      </div>
+                      <div class="table-cell px-1 py-2">
+                        <span class="view">
+                          {{ row.holdAvg ? $filters.decimal2(row.holdAvg) : "-" }}
+                        </span>
+                        <input
+                          v-model.number="editAvg"
+                          type="number"
+                          min="0"
+                          step="0.05"
+                          :aria-label="'Average price for ' + row.symbol"
+                          class="trade-edit-input trade-edit-price edit text-right"
+                          @keydown.enter="onSaveRow(row.symbol)"
+                          @keydown.esc="editSymbol = null"
+                        />
+                      </div>
+                      <div class="table-cell px-1 py-2">
                         {{ row.counted ? row.qty : "-" }}
                       </div>
                       <div class="table-cell px-1 py-2">
@@ -459,6 +503,12 @@
                       </div>
                       <div class="table-cell px-1 py-2">
                         {{ row.counted ? $filters.decimal2(row.diff) : "-" }}
+                      </div>
+                      <div class="table-cell px-1 py-2">
+                        {{ row.finalQty || "-" }}
+                      </div>
+                      <div class="table-cell px-1 py-2">
+                        {{ row.finalAvg ? $filters.decimal2(row.finalAvg) : "-" }}
                       </div>
                       <div class="table-cell px-1">
                         <div class="trade-actions">
@@ -469,7 +519,7 @@
                             @click="onEditRow(row)"
                           >
                             <i class="material-icons" aria-hidden="true">edit</i>
-                            <tooltip Value="Edit price" Location="above end" />
+                            <tooltip Value="Edit row" Location="above end" />
                           </button>
                           <button
                             class="btn tooltip edit"
@@ -478,7 +528,7 @@
                             @click="onSaveRow(row.symbol)"
                           >
                             <i class="material-icons" aria-hidden="true">save</i>
-                            <tooltip Value="Save price" Location="above end" />
+                            <tooltip Value="Save row" Location="above end" />
                           </button>
                           <button
                             class="btn tooltip view"
@@ -509,6 +559,11 @@
                       <div class="table-cell"></div>
                       <div class="table-cell"></div>
                       <div class="table-cell"></div>
+                      <div class="table-cell"></div>
+                      <div class="table-cell px-1 py-2 trade-pnl-cell">
+                        <span class="trade-pnl-label">Invested</span>
+                        <span>{{ $filters.decimal2(result.invested) }}</span>
+                      </div>
                       <div class="table-cell px-1 py-2">{{ result.totalShares }}</div>
                       <div class="table-cell px-1 py-2 trade-pnl-cell">
                         <span class="trade-pnl-label">Total</span>
@@ -518,6 +573,8 @@
                         <span class="trade-pnl-label">Left</span>
                         <span>{{ $filters.decimal2(result.leftover) }}</span>
                       </div>
+                      <div class="table-cell"></div>
+                      <div class="table-cell"></div>
                       <div class="table-cell trade-actions-col"></div>
                     </div>
                   </div>
@@ -534,6 +591,7 @@
 <script>
 import { mapGetters } from "vuex";
 import {
+  MAX_ITEMS,
   SYMBOL_PATTERN,
   computeSplit,
   normalizeSymbol,
@@ -554,6 +612,8 @@ function toEditable(saved) {
       symbol: item.symbol,
       price: item.price || 0,
       lasttradedprice: item.lasttradedprice || 0,
+      holdqty: item.holdqty || 0,
+      avgprice: item.avgprice || 0,
       included: item.included !== false,
       error: "",
       loading: false,
@@ -574,6 +634,8 @@ export default {
       editSymbol: null,
       editPrice: 0,
       editName: "",
+      editHold: null,
+      editAvg: null,
       symbolInput: "",
       message: "",
       messageIsError: false,
@@ -605,6 +667,7 @@ export default {
     },
   },
   async mounted() {
+    window.addEventListener("pagehide", this.flushSave);
     try {
       const plans = await this.$store.dispatch("splitPlanModule/GetPlans");
       if (plans && plans.length) {
@@ -615,6 +678,7 @@ export default {
     }
   },
   beforeUnmount() {
+    window.removeEventListener("pagehide", this.flushSave);
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
       this.saveTimer = null;
@@ -643,6 +707,8 @@ export default {
           symbol: i.symbol,
           price: i.price,
           lasttradedprice: i.lasttradedprice,
+          holdqty: i.holdqty,
+          avgprice: i.avgprice,
           included: i.included,
         })),
       };
@@ -792,11 +858,20 @@ export default {
         );
         return;
       }
+      if (this.plan.items.length + fresh.length > MAX_ITEMS) {
+        this.setMessage(
+          `A plan can have at most ${MAX_ITEMS} stocks. This plan has ${this.plan.items.length}.`,
+          true
+        );
+        return;
+      }
       fresh.forEach((symbol) => {
         this.plan.items.push({
           symbol,
           price: 0,
           lasttradedprice: 0,
+          holdqty: 0,
+          avgprice: 0,
           included: true,
           error: "",
           loading: false,
@@ -886,6 +961,8 @@ export default {
       this.editSymbol = row.symbol;
       this.editName = row.symbol;
       this.editPrice = row.price || null;
+      this.editHold = row.holdQty || null;
+      this.editAvg = row.holdAvg || null;
       this.$nextTick(() => {
         const el = this.$refs["sym-" + row.symbol];
         const input = Array.isArray(el) ? el[0] : el;
@@ -912,6 +989,14 @@ export default {
       }
       const n = Number(this.editPrice);
       const newPrice = Number.isFinite(n) && n > 0 ? n : 0;
+      const hold = Number(this.editHold);
+      const avg = Number(this.editAvg);
+      if ((Number.isFinite(hold) && hold > 0) !== (Number.isFinite(avg) && avg > 0)) {
+        this.setMessage("Enter both shares held and average price, or leave both empty.", true);
+        return;
+      }
+      item.holdqty = hold > 0 ? Math.floor(hold) : 0;
+      item.avgprice = item.holdqty ? avg : 0;
       if (newSymbol !== symbol) {
         item.symbol = newSymbol;
         item.lasttradedprice = 0;
@@ -1108,7 +1193,7 @@ export default {
   padding-bottom: 0.25rem;
 }
 .trade-table {
-  min-width: 720px;
+  min-width: 1040px;
 }
 .trade-actions {
   display: inline-flex;
@@ -1250,7 +1335,7 @@ export default {
   }
   .strategy-meta {
     flex: 1;
-    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
     gap: 0.5rem 0.75rem;
   }
   .add-field {

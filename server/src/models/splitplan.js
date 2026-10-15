@@ -15,6 +15,14 @@ const splitPlanItemSchema = schema({
     type: Number,
     default: 0
   },
+  holdqty: {
+    type: Number,
+    default: 0
+  },
+  avgprice: {
+    type: Number,
+    default: 0
+  },
   included: {
     type: Boolean,
     default: true

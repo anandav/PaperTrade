@@ -1,4 +1,5 @@
 export const SYMBOL_PATTERN = /^[A-Z0-9&_.-]{1,20}$/;
+export const MAX_ITEMS = 200;
 
 export function normalizeSymbol(value) {
   return String(value || "")
@@ -61,12 +62,21 @@ export function computeSplit(amount, items, useLeftover) {
     const counted = item.included && Number(item.price) > 0;
     const qty = counted ? shares[item.symbol] : 0;
     const cost = qty * (Number(item.price) || 0);
+    const holdQty = Number(item.holdqty) > 0 ? Math.floor(Number(item.holdqty)) : 0;
+    const holdAvg = holdQty && Number(item.avgprice) > 0 ? Number(item.avgprice) : 0;
+    const invested = holdQty * holdAvg;
+    const finalQty = holdQty + qty;
     return {
       ...item,
       counted,
       qty,
       cost,
       diff: counted ? cost - target : 0,
+      holdQty,
+      holdAvg,
+      invested,
+      finalQty,
+      finalAvg: finalQty ? (invested + cost) / finalQty : 0,
     };
   });
 
@@ -77,6 +87,8 @@ export function computeSplit(amount, items, useLeftover) {
     activeCount: active.length,
     zeroCount: rows.filter((row) => row.counted && row.qty === 0).length,
     totalShares: rows.reduce((sum, row) => sum + row.qty, 0),
+    invested: rows.reduce((sum, row) => sum + row.invested, 0),
+    holdCount: rows.filter((row) => row.holdQty > 0).length,
     rows,
   };
 }
