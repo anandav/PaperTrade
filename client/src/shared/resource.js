@@ -4,6 +4,7 @@ export default {
   savePortfolio: "Save portfolio",
   deletePortfolio: "Remove portfolio",
   addNewStrategy: "New strategy",
+  importTrades: "Import trades",
   editStrategy: "Edit strategy",
   deleteStrategy: "Remove strategy",
   saveStrategy: "Save strategy",

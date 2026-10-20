@@ -167,17 +167,20 @@
               </div>
               <div class="plan-field">
                 <label class="text-xs block text-gray-500" for="sp-amount">
-                  Amount
+                  Amount I'd like to invest
                 </label>
-                <span class="view">{{ $filters.decimal2(plan.amount) }}</span>
                 <input
-                  class="normal-edit edit"
+                  class="normal-edit amount-input"
                   id="sp-amount"
                   type="number"
                   min="0"
-                  placeholder="Amount"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="0"
                   v-model.number="plan.amount"
-                  @keyup.enter="onSaveHeader()"
+                  @input="onAmountInput()"
+                  @keyup.enter="flushSave()"
+                  @blur="flushSave()"
                 />
               </div>
               <div class="plan-field">
@@ -216,7 +219,7 @@
                   Too Expensive
                 </span>
                 <span
-                  :class="{ 'text-red-700 dark:text-red-400': result.zeroCount > 0 }"
+                  :class="{ 'text-red-700 dark:text-red-400': result.zeroCount > 0 && plan.amount > 0 }"
                   aria-labelledby="sp-zero-label"
                 >
                   {{ result.zeroCount }}
@@ -370,6 +373,16 @@
                     <i class="material-icons" aria-hidden="true">playlist_add</i>
                     <tooltip Value="Add stocks" Location="above end" />
                   </button>
+                  <button
+                    v-if="ImportCapabilities.enabled"
+                    class="btn dark:text-orange-400 tooltip"
+                    type="button"
+                    aria-label="Import holdings"
+                    @click="importOpen = true"
+                  >
+                    <i class="material-icons" aria-hidden="true">upload_file</i>
+                    <tooltip Value="Import holdings" Location="above end" />
+                  </button>
                   <dropdown
                     class="text-red-600 inline-block tooltip"
                     Tooltip="Refresh prices (LTP)"
@@ -408,16 +421,76 @@
                         </label>
                       </div>
                       <div class="table-cell px-1 py-4 text-left">Symbol</div>
-                      <div class="table-cell px-1 py-4">Price</div>
-                      <div class="table-cell px-1 py-4">LTP</div>
-                      <div class="table-cell px-1 py-4">Held</div>
-                      <div class="table-cell px-1 py-4">Avg Price</div>
-                      <div class="table-cell px-1 py-4">P&amp;L %</div>
-                      <div class="table-cell px-1 py-4">Shares</div>
-                      <div class="table-cell px-1 py-4">Cost</div>
-                      <div class="table-cell px-1 py-4">vs Target</div>
-                      <div class="table-cell px-1 py-4">Total Qty</div>
-                      <div class="table-cell px-1 py-4">New Avg</div>
+                      <div class="table-cell px-1 py-2 grp-now grp-start">
+                        <span class="grp-label">Now</span>
+                        <span class="tooltip">
+                          LTP
+                          <tooltip Value="Last traded price on NSE" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-now">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          Held
+                          <tooltip Value="Shares you already own" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-now">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          Avg Price
+                          <tooltip Value="Your average buy price so far" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-now">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          P&amp;L %
+                          <tooltip Value="Profit or loss on shares held, at Buy Price" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-buy grp-start">
+                        <span class="grp-label">This buy</span>
+                        <span class="tooltip">
+                          Buy Price
+                          <tooltip Value="Price you plan to buy at. Starts as LTP, edit it for a limit price" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-buy">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          Buy Qty
+                          <tooltip Value="New shares to buy with this plan" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-buy">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          Buy Amount
+                          <tooltip Value="Buy Qty x Buy Price" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-buy">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          vs Target
+                          <tooltip Value="Buy Amount minus this stock share of the plan amount. Negative means under target because only whole shares can be bought" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-after grp-start">
+                        <span class="grp-label">After</span>
+                        <span class="tooltip">
+                          Total Qty
+                          <tooltip Value="Held + Buy Qty" Location="above end" />
+                        </span>
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-after">
+                        <span class="grp-label" aria-hidden="true">&nbsp;</span>
+                        <span class="tooltip">
+                          New Avg
+                          <tooltip Value="Average price after this buy" Location="above end" />
+                        </span>
+                      </div>
                       <div class="table-cell px-1 trade-actions-col"></div>
                     </div>
                   </div>
@@ -459,38 +532,22 @@
                           {{ row.error }}
                         </span>
                       </div>
-                      <div class="table-cell px-1 py-2">
-                        <span class="view">
-                          {{ row.price ? $filters.decimal2(row.price) : "-" }}
-                        </span>
-                        <input
-                          :ref="'price-' + row.symbol"
-                          v-model.number="editPrice"
-                          type="number"
-                          min="0"
-                          step="0.05"
-                          :aria-label="'Price for ' + row.symbol"
-                          class="trade-edit-input trade-edit-price edit text-right"
-                          @keydown.enter="onSaveRow(row.symbol)"
-                          @keydown.esc="editSymbol = null"
-                        />
-                      </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-now grp-start">
                         <div v-if="row.loading" class="ltp-cell">...</div>
                         <div v-else-if="row.lasttradedprice > 0" class="ltp-cell">
+                          <span>{{ $filters.decimal2(row.lasttradedprice) }}</span>
                           <button
                             class="tooltip"
                             type="button"
-                            :aria-label="'Use last price as price for ' + row.symbol"
+                            :aria-label="'Use LTP as buy price for ' + row.symbol"
                             @click="onUseLtp(row.symbol)"
                           >
-                            <i class="font13px material-icons" aria-hidden="true">west</i>
-                            <tooltip Value="Use last price as price" Location="above end" />
+                            <i class="font13px material-icons" aria-hidden="true">east</i>
+                            <tooltip Value="Use LTP as buy price" Location="above end" />
                           </button>
-                          <span>{{ $filters.decimal2(row.lasttradedprice) }}</span>
                         </div>
                       </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-now">
                         <span class="view">{{ row.holdQty || "-" }}</span>
                         <input
                           v-model.number="editHold"
@@ -503,7 +560,7 @@
                           @keydown.esc="editSymbol = null"
                         />
                       </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-now">
                         <span class="view">
                           {{ row.holdAvg ? $filters.decimal2(row.holdAvg) : "-" }}
                         </span>
@@ -518,7 +575,7 @@
                           @keydown.esc="editSymbol = null"
                         />
                       </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-now">
                         <span
                           v-if="row.holdAvg && row.price > 0"
                           class="tooltip"
@@ -535,20 +592,40 @@
                         </span>
                         <span v-else>-</span>
                       </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-buy grp-start">
+                        <span class="view">
+                          {{ row.price ? $filters.decimal2(row.price) : "-" }}
+                        </span>
+                        <input
+                          :ref="'price-' + row.symbol"
+                          v-model.number="editPrice"
+                          type="number"
+                          min="0"
+                          step="0.05"
+                          :aria-label="'Price for ' + row.symbol"
+                          class="trade-edit-input trade-edit-price edit text-right"
+                          @keydown.enter="onSaveRow(row.symbol)"
+                          @keydown.esc="editSymbol = null"
+                        />
+                      </div>
+                      <div class="table-cell px-1 py-2 grp-buy">
                         {{ row.counted ? row.qty : "-" }}
                       </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-buy">
                         {{ row.counted ? $filters.decimal2(row.cost) : "-" }}
                       </div>
-                      <div class="table-cell px-1 py-2">
+                      <div class="table-cell px-1 py-2 grp-buy">
                         {{ row.counted ? $filters.decimal2(row.diff) : "-" }}
                       </div>
-                      <div class="table-cell px-1 py-2">
-                        {{ row.finalQty || "-" }}
+                      <div class="table-cell px-1 py-2 grp-after grp-start">
+                        <span :class="afterClass(row.symbol, 'qty')">
+                          {{ row.finalQty || "-" }}
+                        </span>
                       </div>
-                      <div class="table-cell px-1 py-2">
-                        {{ row.finalAvg ? $filters.decimal2(row.finalAvg) : "-" }}
+                      <div class="table-cell px-1 py-2 grp-after">
+                        <span :class="afterClass(row.symbol, 'avg')">
+                          {{ row.finalAvg ? $filters.decimal2(row.finalAvg) : "-" }}
+                        </span>
                       </div>
                       <div class="table-cell px-1">
                         <div class="trade-actions">
@@ -597,25 +674,25 @@
                     <div class="table-row text-right border-t border-yellow-500">
                       <div class="table-cell"></div>
                       <div class="table-cell"></div>
-                      <div class="table-cell"></div>
-                      <div class="table-cell"></div>
-                      <div class="table-cell"></div>
-                      <div class="table-cell px-1 py-2 trade-pnl-cell">
+                      <div class="table-cell grp-now grp-start"></div>
+                      <div class="table-cell grp-now"></div>
+                      <div class="table-cell px-1 py-2 trade-pnl-cell grp-now">
                         <span class="trade-pnl-label">Invested</span>
                         <span>{{ $filters.decimal2(result.invested) }}</span>
                       </div>
-                      <div class="table-cell"></div>
-                      <div class="table-cell px-1 py-2">{{ result.totalShares }}</div>
-                      <div class="table-cell px-1 py-2 trade-pnl-cell">
+                      <div class="table-cell grp-now"></div>
+                      <div class="table-cell grp-buy grp-start"></div>
+                      <div class="table-cell px-1 py-2 grp-buy">{{ result.totalShares }}</div>
+                      <div class="table-cell px-1 py-2 trade-pnl-cell grp-buy">
                         <span class="trade-pnl-label">Total</span>
                         <span>{{ $filters.decimal2(result.spent) }}</span>
                       </div>
-                      <div class="table-cell px-1 py-2 trade-pnl-cell">
+                      <div class="table-cell px-1 py-2 trade-pnl-cell grp-buy">
                         <span class="trade-pnl-label">Left</span>
                         <span>{{ $filters.decimal2(result.leftover) }}</span>
                       </div>
-                      <div class="table-cell"></div>
-                      <div class="table-cell"></div>
+                      <div class="table-cell grp-after grp-start"></div>
+                      <div class="table-cell grp-after"></div>
                       <div class="table-cell trade-actions-col"></div>
                     </div>
                   </div>
@@ -626,6 +703,72 @@
         </div>
       </div>
     </div>
+    <import-dialog
+      :open="importOpen"
+      title="Import holdings"
+      hint="Upload the holdings export from your broker. Nothing is saved until you review and import."
+      :confirm-label="importConfirmLabel"
+      :can-confirm="importSelectedCount > 0"
+      :extract="onImportExtract"
+      :confirm="onImportConfirm"
+      @close="onImportClose"
+    >
+      <template #preview="{ result }">
+        <p v-if="!result.items.length" class="import-empty">
+          No equity holdings were found in this document.
+        </p>
+        <div v-else class="trade-scroll">
+          <table class="import-table w-full text-xs">
+            <thead>
+              <tr class="text-right text-gray-500">
+                <th class="px-1 py-2 w-8">
+                  <input
+                    type="checkbox"
+                    class="mini-checkbox"
+                    aria-label="Include all imported stocks"
+                    :checked="result.items.every((i) => i.include)"
+                    @change="result.items.forEach((i) => (i.include = $event.target.checked))"
+                  />
+                </th>
+                <th class="px-1 py-2 text-left">Symbol</th>
+                <th class="px-1 py-2">Held</th>
+                <th class="px-1 py-2">Avg Price</th>
+                <th class="px-1 py-2">LTP</th>
+                <th class="px-1 py-2 text-left">In plan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in result.items"
+                :key="row.symbol"
+                class="text-right border-t border-gray-300 dark:border-gray-700"
+              >
+                <td class="px-1 py-2">
+                  <input
+                    type="checkbox"
+                    class="mini-checkbox"
+                    :aria-label="'Import ' + row.symbol"
+                    v-model="row.include"
+                  />
+                </td>
+                <td class="px-1 py-2 text-left font-semibold">{{ row.symbol }}</td>
+                <td class="px-1 py-2">{{ row.holdqty }}</td>
+                <td class="px-1 py-2">{{ $filters.decimal2(row.avgprice) }}</td>
+                <td class="px-1 py-2">{{ row.lasttradedprice ? $filters.decimal2(row.lasttradedprice) : "-" }}</td>
+                <td class="px-1 py-2 text-left">
+                  <span
+                    class="import-badge"
+                    :class="findItem(row.symbol) ? 'import-badge-update' : 'import-badge-new'"
+                  >
+                    {{ findItem(row.symbol) ? "Updates existing" : "New" }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </template>
+    </import-dialog>
   </div>
 </template>
 
@@ -639,9 +782,12 @@ import {
   ALLOCATION_MODES,
 } from "../common/splitPlan";
 import { confirmDelete } from "../shared/confirmDialog";
+import ImportDialog from "../components/ui/ImportDialog.vue";
 
 const QUOTE_CHUNK = 50;
 const SAVE_DELAY = 600;
+const AMOUNT_ERROR = "Enter an amount of zero or more.";
+const AFTER_HIGHLIGHT_MS = 2500;
 
 function toEditable(saved) {
   return {
@@ -665,6 +811,9 @@ function toEditable(saved) {
 
 export default {
   name: "SplitPlanner",
+  components: {
+    ImportDialog,
+  },
   data() {
     return {
       menuOpen: false,
@@ -684,15 +833,27 @@ export default {
       saveTimer: null,
       saving: false,
       saveAgain: false,
+      importOpen: false,
+      importResult: null,
+      afterChanges: {},
+      afterTimer: null,
       AllocationModes: ALLOCATION_MODES,
       LTPAction: [
         { _id: "refresh", name: "Refresh last prices", icon: "get_app" },
-        { _id: "copy", name: "Use last prices as price", icon: "west" },
+        { _id: "copy", name: "Use last prices as buy price", icon: "east" },
       ],
     };
   },
   computed: {
     ...mapGetters("splitPlanModule", ["Plans"]),
+    ...mapGetters("docImportModule", { ImportCapabilities: "Capabilities" }),
+    importSelectedCount() {
+      return this.importResult ? this.importResult.items.filter((i) => i.include).length : 0;
+    },
+    importConfirmLabel() {
+      const n = this.importSelectedCount;
+      return `Import ${n} ${n === 1 ? "stock" : "stocks"}`;
+    },
     FilteredPlans() {
       const q = this.planSearch.trim().toLowerCase();
       return q
@@ -714,8 +875,21 @@ export default {
       return !!this.plan && this.plan.items.length > 0 && this.plan.items.every((i) => i.included);
     },
   },
+  created() {
+    this.$watch(
+      () => [this.plan, this.plan ? this.plan.amount : 0],
+      ([plan], [oldPlan, oldAmount]) => {
+        if (!plan || plan !== oldPlan) {
+          this.clearAfterChanges();
+          return;
+        }
+        this.highlightAfterChanges(oldAmount);
+      }
+    );
+  },
   async mounted() {
     window.addEventListener("pagehide", this.flushSave);
+    this.$store.dispatch("docImportModule/GetImportCapabilities");
     try {
       const plans = await this.$store.dispatch("splitPlanModule/GetPlans");
       if (plans && plans.length) {
@@ -727,6 +901,7 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener("pagehide", this.flushSave);
+    this.clearAfterChanges();
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
       this.saveTimer = null;
@@ -820,7 +995,7 @@ export default {
       try {
         const saved = await this.$store.dispatch("splitPlanModule/SavePlan", {
           name,
-          amount: 100000,
+          amount: 0,
           useleftover: true,
           allocationmode: "equal",
           items: [],
@@ -850,10 +1025,71 @@ export default {
     onEditHeader() {
       this.editHeader = true;
     },
+    highlightAfterChanges(oldAmount) {
+      const before = computeSplit(
+        oldAmount,
+        this.plan.items,
+        this.plan.useleftover,
+        this.plan.allocationmode
+      );
+      const previous = {};
+      before.rows.forEach((row) => {
+        previous[row.symbol] = row;
+      });
+      const changes = {};
+      this.result.rows.forEach((row) => {
+        const old = previous[row.symbol];
+        if (!old) {
+          return;
+        }
+        const qty = row.finalQty - old.finalQty;
+        const avg = Math.round((row.finalAvg - old.finalAvg) * 100) / 100;
+        if (qty || avg) {
+          changes[row.symbol] = { qty, avg };
+        }
+      });
+      if (this.afterTimer) {
+        clearTimeout(this.afterTimer);
+      }
+      this.afterChanges = changes;
+      this.afterTimer = setTimeout(() => {
+        this.afterTimer = null;
+        this.afterChanges = {};
+      }, AFTER_HIGHLIGHT_MS);
+    },
+    clearAfterChanges() {
+      if (this.afterTimer) {
+        clearTimeout(this.afterTimer);
+        this.afterTimer = null;
+      }
+      this.afterChanges = {};
+    },
+    afterDelta(symbol, field) {
+      const change = this.afterChanges[symbol];
+      return change ? change[field] : 0;
+    },
+    afterClass(symbol, field) {
+      const delta = this.afterDelta(symbol, field);
+      if (!delta) {
+        return "";
+      }
+      return delta > 0 ? "after-up" : "after-down";
+    },
+    onAmountInput() {
+      const amount = Number(this.plan.amount);
+      if (!Number.isFinite(amount) || amount < 0) {
+        this.setMessage(AMOUNT_ERROR, true);
+        return;
+      }
+      if (this.message === AMOUNT_ERROR) {
+        this.setMessage("");
+      }
+      this.queueSave();
+    },
     async onSaveHeader() {
       const amount = Number(this.plan.amount);
       if (!Number.isFinite(amount) || amount < 0) {
-        this.setMessage("Enter an amount of zero or more.", true);
+        this.setMessage(AMOUNT_ERROR, true);
         return;
       }
       this.editHeader = false;
@@ -1077,6 +1313,58 @@ export default {
       });
       this.queueSave();
     },
+    async onImportExtract(file) {
+      const result = await this.$store.dispatch("splitPlanModule/ImportHoldings", file);
+      result.items = (result.items || []).map((i) => ({ ...i, include: true }));
+      this.importResult = result;
+      return result;
+    },
+    async onImportConfirm(result) {
+      const selected = result.items.filter((i) => i.include);
+      const fresh = selected.filter((i) => !this.findItem(i.symbol));
+      const plan = this.plan;
+      const before = plan.items.map((i) => ({ ...i }));
+      selected.forEach((row) => {
+        const item = this.findItem(row.symbol);
+        if (item) {
+          item.holdqty = row.holdqty;
+          item.avgprice = row.avgprice;
+          if (!item.price && row.price) {
+            item.price = row.price;
+          }
+          if (!item.lasttradedprice && row.lasttradedprice) {
+            item.lasttradedprice = row.lasttradedprice;
+          }
+          return;
+        }
+        plan.items.push({
+          symbol: row.symbol,
+          price: row.price || 0,
+          lasttradedprice: row.lasttradedprice || 0,
+          holdqty: row.holdqty,
+          avgprice: row.avgprice,
+          included: true,
+          error: "",
+          loading: false,
+        });
+      });
+      if (this.saveTimer) {
+        clearTimeout(this.saveTimer);
+        this.saveTimer = null;
+      }
+      if (!(await this.persist())) {
+        plan.items = before;
+        throw new Error(this.message || "Could not save the plan.");
+      }
+      const updated = selected.length - fresh.length;
+      this.setMessage(
+        `Imported ${selected.length} ${selected.length === 1 ? "stock" : "stocks"}: ${fresh.length} new, ${updated} updated.`
+      );
+    },
+    onImportClose() {
+      this.importOpen = false;
+      this.importResult = null;
+    },
     onRemoveItem(symbol) {
       this.plan.items = this.plan.items.filter((i) => i.symbol !== symbol);
       if (this.editSymbol === symbol) {
@@ -1089,6 +1377,37 @@ export default {
 </script>
 
 <style scoped>
+.import-empty {
+  margin: 0.5rem 0;
+  color: #6b7280;
+}
+.import-table th {
+  font-weight: 500;
+}
+.import-badge {
+  display: inline-block;
+  padding: 0.05rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.import-badge-new {
+  background: #dcfce7;
+  color: #166534;
+}
+.import-badge-update {
+  background: #e5e7eb;
+  color: #374151;
+}
+:global(.dark) .import-badge-new {
+  background: #14532d;
+  color: #bbf7d0;
+}
+:global(.dark) .import-badge-update {
+  background: #374151;
+  color: #e5e7eb;
+}
 .plan-drawer {
   position: fixed;
   top: 4rem;
@@ -1122,6 +1441,23 @@ export default {
 
 .edit {
   display: none;
+}
+.amount-input {
+  display: inline-flex;
+  width: 9rem;
+  text-align: right;
+}
+.after-up {
+  color: #15803d;
+}
+.after-down {
+  color: #b91c1c;
+}
+:global(.dark) .after-up {
+  color: #4ade80;
+}
+:global(.dark) .after-down {
+  color: #f87171;
 }
 .isPlanEdit .edit {
   display: inline-flex;
@@ -1250,6 +1586,54 @@ export default {
   overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 0.25rem;
+}
+.grp-label {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.grp-now .grp-label {
+  color: #2563eb;
+}
+.grp-buy .grp-label {
+  color: #c2410c;
+}
+.grp-after .grp-label {
+  color: #15803d;
+}
+.grp-now {
+  background: rgba(37, 99, 235, 0.05);
+}
+.grp-buy {
+  background: rgba(224, 122, 47, 0.08);
+}
+.grp-after {
+  background: rgba(21, 128, 61, 0.06);
+}
+.grp-start {
+  border-left: 2px solid rgba(107, 114, 128, 0.25);
+}
+:global(.dark) .grp-now .grp-label {
+  color: #93c5fd;
+}
+:global(.dark) .grp-buy .grp-label {
+  color: #fdba74;
+}
+:global(.dark) .grp-after .grp-label {
+  color: #86efac;
+}
+:global(.dark) .grp-now {
+  background: rgba(96, 165, 250, 0.07);
+}
+:global(.dark) .grp-buy {
+  background: rgba(251, 146, 60, 0.09);
+}
+:global(.dark) .grp-after {
+  background: rgba(74, 222, 128, 0.07);
 }
 .trade-table {
   min-width: 1120px;

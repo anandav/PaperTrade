@@ -420,6 +420,100 @@
         }
       }
     },
+    "/import/capabilities": {
+      "get": {
+        "summary": "Document import status and supported file formats",
+        "responses": {
+          "200": {
+            "description": "{ enabled, formats, maxMb, message }"
+          }
+        }
+      }
+    },
+    "/import/splitplan": {
+      "post": {
+        "summary": "Extract equity holdings from a broker export for the Split Planner (no data is saved)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "{ items, skipped, notes, warnings }"
+          },
+          "400": {
+            "description": "Unsupported, empty or password protected file"
+          },
+          "403": {
+            "description": "Demo mode"
+          },
+          "413": {
+            "description": "File is too large"
+          },
+          "502": {
+            "description": "Document could not be read or extracted"
+          },
+          "503": {
+            "description": "Document import is turned off"
+          }
+        }
+      }
+    },
+    "/import/papertrade": {
+      "post": {
+        "summary": "Extract positions from a broker export as PaperTrade strategies grouped by underlying (no data is saved)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "{ strategies, skipped, notes, warnings }"
+          },
+          "400": {
+            "description": "Unsupported, empty or password protected file"
+          },
+          "403": {
+            "description": "Demo mode"
+          },
+          "413": {
+            "description": "File is too large"
+          },
+          "502": {
+            "description": "Document could not be read or extracted"
+          },
+          "503": {
+            "description": "Document import is turned off"
+          }
+        }
+      }
+    },
     "/data": {
       "post": {
         "summary": "Proxy quote/reference data from the configured exchange (NSE or CBOE)",

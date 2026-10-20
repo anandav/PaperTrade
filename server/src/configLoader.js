@@ -42,6 +42,12 @@ class ConfigLoader {
       'AUTHPROVIDER': 'authProvider',
       'CACHEDURATION': 'cacheDuration',
       'SPLITPLANMAXITEMS': 'splitPlanMaxItems',
+      'ENABLEDOCIMPORT': 'enableDocImport',
+      'ENABLEDOCINTEL': 'enableDocIntel',
+      'AZUREOPENAIENDPOINT': 'azureOpenAIEndpoint',
+      'AZUREOPENAIDEPLOYMENT': 'azureOpenAIDeployment',
+      'AZUREDOCINTELENDPOINT': 'azureDocIntelEndpoint',
+      'DOCIMPORTMAXMB': 'docImportMaxMb',
       'LOGLEVEL': 'logLevel',
       'PORT': 'port',
       'CLIENTURI': 'clientUri',
@@ -101,6 +107,10 @@ class ConfigLoader {
     this.config.authProvider = String(this.config.authProvider || 'b2c').toLowerCase();
     this.config.cacheDuration = parseInt(this.config.cacheDuration || '60', 10);
     this.config.splitPlanMaxItems = parseInt(this.config.splitPlanMaxItems || '32', 10);
+    this.config.enableDocImport = String(this.config.enableDocImport || 'false').toLowerCase() === 'true';
+    this.config.enableDocIntel = String(this.config.enableDocIntel || 'false').toLowerCase() === 'true';
+    this.config.azureOpenAIDeployment = this.config.azureOpenAIDeployment || 'gpt-5.4-mini';
+    this.config.docImportMaxMb = parseInt(this.config.docImportMaxMb || '5', 10);
     this.config.logLevel = String(this.config.logLevel || process.env.LOG_LEVEL || 'info').toLowerCase();
     this.config.nodeEnv = 'production';
   }
@@ -117,6 +127,12 @@ class ConfigLoader {
       clientUri: process.env.CLIENT_URI || 'http://localhost:8080',
       cacheDuration: parseInt(process.env.CACHE_DURATION || '60', 10),
       splitPlanMaxItems: parseInt(process.env.SPLITPLAN_MAX_ITEMS || '32', 10),
+      enableDocImport: String(process.env.ENABLE_DOCIMPORT || 'false').toLowerCase() === 'true',
+      enableDocIntel: String(process.env.ENABLE_DOCINTEL || 'false').toLowerCase() === 'true',
+      azureOpenAIEndpoint: process.env.AZURE_OPENAI_ENDPOINT,
+      azureOpenAIDeployment: process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-5.4-mini',
+      azureDocIntelEndpoint: process.env.AZURE_DOCINTEL_ENDPOINT,
+      docImportMaxMb: parseInt(process.env.DOCIMPORT_MAX_MB || '5', 10),
       logLevel: String(process.env.LOG_LEVEL || 'info').toLowerCase(),
 
       // NSE 

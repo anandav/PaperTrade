@@ -148,6 +148,39 @@ const strategyModule = {
                 console.error("Source and destination strategy not matching (Symbol/Lot size/Strike Price Step).");
             }
         },
+        async ImportStrategies(context, file) {
+            const form = new FormData();
+            form.append("file", file);
+            const response = await axios.post(apiUrl + "import/papertrade", form);
+            return response.data;
+        },
+        async SaveImportedStrategies({ dispatch }, { portfolioId, strategies }) {
+            let saved = 0;
+            let trades = 0;
+            let error = null;
+            for (const strategy of strategies) {
+                try {
+                    await axios.post(apiUrl + "strategy/save", {
+                        ...strategy,
+                        portfolio: portfolioId,
+                        trades: strategy.trades.map((trade) => {
+                            const clean = { ...trade };
+                            delete clean.units;
+                            return clean;
+                        }),
+                    });
+                    saved += 1;
+                    trades += strategy.trades.length;
+                } catch (err) {
+                    error = err;
+                    break;
+                }
+            }
+            if (saved) {
+                await dispatch("GetAllStrategies", { _id: portfolioId });
+            }
+            return { saved, trades, error };
+        },
         AddStrategyFromDataModule({ dispatch }, Strategy) {
             dispatch("EditStrategy", Strategy);
         },

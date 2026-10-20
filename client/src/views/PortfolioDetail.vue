@@ -107,6 +107,16 @@
             <tooltip :Value="getLableConst.addNewStrategy" />
           </button>
           <button
+            v-if="ImportCapabilities.enabled"
+            class="btn dark:text-orange-400 tooltip view"
+            type="button"
+            :aria-label="getLableConst.importTrades"
+            @click="onOpenImport()"
+          >
+            <i class="material-icons" aria-hidden="true">upload_file</i>
+            <tooltip :Value="getLableConst.importTrades" />
+          </button>
+          <button
             class="btn tooltip view"
             type="button"
             aria-label="Edit portfolio"
@@ -136,6 +146,13 @@
         </div>
       </div>
 
+      <p
+        v-if="importMessage"
+        class="px-3 sm:pl-5 sm:pr-5 mt-2 text-xs text-gray-500"
+        role="status"
+      >
+        {{ importMessage }}
+      </p>
       <div class="mt-3">
         <div
           class="strategy-empty"
@@ -169,6 +186,106 @@
         </div>
       </div>
     </div>
+    <import-dialog
+      :open="importOpen"
+      :title="getLableConst.importTrades"
+      hint="Upload the positions or holdings export from your broker. Each underlying becomes one strategy in this portfolio. Nothing is saved until you review and import."
+      :confirm-label="importConfirmLabel"
+      :can-confirm="importSelected.length > 0"
+      :extract="onImportExtract"
+      :confirm="onImportConfirm"
+      @close="onImportClose"
+    >
+      <template #preview="{ result }">
+        <p v-if="!result.strategies.length" class="import-empty">
+          No positions were found in this document.
+        </p>
+        <div
+          v-for="(strategy, sIndex) in result.strategies"
+          :key="strategy.symbol + strategy.symboltype"
+          class="import-strategy"
+          :class="{ 'import-strategy-off': !strategy.include }"
+        >
+          <div class="import-strategy-head">
+            <label class="import-strategy-name">
+              <input
+                type="checkbox"
+                class="mini-checkbox"
+                :aria-label="'Import ' + strategy.symbol"
+                v-model="strategy.include"
+              />
+              <span class="font-semibold">{{ strategy.symbol }}</span>
+              <span class="text-gray-500">{{ strategy.symboltype }}</span>
+            </label>
+            <label
+              v-if="strategy.symboltype != 'Equity'"
+              class="import-lot"
+              :for="'imp-lot-' + sIndex"
+            >
+              <span class="text-gray-500">Lot size</span>
+              <input
+                :id="'imp-lot-' + sIndex"
+                class="import-num"
+                type="number"
+                min="1"
+                step="1"
+                :value="strategy.lotsize"
+                @change="onImportLotSize(strategy, $event.target.value)"
+              />
+            </label>
+            <span v-if="strategy.expiry" class="text-gray-500">
+              Expiry {{ strategy.expiry }}
+            </span>
+          </div>
+          <div class="import-scroll">
+            <table class="import-table w-full text-xs">
+              <thead>
+                <tr class="text-right text-gray-500">
+                  <th class="px-1 py-1 text-left">Side</th>
+                  <th class="px-1 py-1 text-left">Type</th>
+                  <th class="px-1 py-1">Strike</th>
+                  <th class="px-1 py-1">{{ strategy.symboltype == "Equity" ? "Qty" : "Lots" }}</th>
+                  <th class="px-1 py-1">Price</th>
+                  <th class="px-1 py-1">LTP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(trade, tIndex) in strategy.trades"
+                  :key="tIndex"
+                  class="text-right border-t border-gray-300 dark:border-gray-700"
+                >
+                  <td
+                    class="px-1 py-1 text-left"
+                    :class="trade.buyorsell == 'Buy' ? 'text-green-700' : 'text-red-700'"
+                  >
+                    {{ trade.buyorsell }}
+                  </td>
+                  <td class="px-1 py-1 text-left">{{ trade.tradetype }}</td>
+                  <td class="px-1 py-1">
+                    {{ trade.tradetype == "Call" || trade.tradetype == "Put" ? trade.selectedstrike : "-" }}
+                  </td>
+                  <td class="px-1 py-1">
+                    <input
+                      class="import-num"
+                      type="number"
+                      min="0"
+                      step="any"
+                      :aria-label="'Quantity for ' + strategy.symbol + ' ' + trade.tradetype"
+                      v-model.number="trade.quantity"
+                    />
+                  </td>
+                  <td class="px-1 py-1">{{ $filters.decimal2(trade.price) }}</td>
+                  <td class="px-1 py-1">
+                    {{ trade.lasttradedprice ? $filters.decimal2(trade.lasttradedprice) : "-" }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+    </import-dialog>
   </div>
 </template>
 <script>
@@ -177,16 +294,28 @@ import { mapActions, mapGetters } from "vuex";
 import StrategyDetail from "./StrategyDetail.vue";
 import myMixins from "../shared/chart";
 import { confirmDelete } from "../shared/confirmDialog";
+import ImportDialog from "../components/ui/ImportDialog.vue";
 export default {
   name: "PortfolioDetail",
   components: {
     StrategyDetail,
+    ImportDialog,
   },
   computed: {
     ...mapGetters({
       Portfolio: "portfolioModule/Portfolio",
       Strategies: "strategyModule/Strategies",
+      ImportCapabilities: "docImportModule/Capabilities",
     }),
+    importSelected: function () {
+      return this.importResult
+        ? this.importResult.strategies.filter((s) => s.include)
+        : [];
+    },
+    importConfirmLabel: function () {
+      const n = this.importSelected.length;
+      return `Import ${n} ${n === 1 ? "strategy" : "strategies"}`;
+    },
     TotalPortfolioAmount: {
       get: function () {
         let price = 0;
@@ -232,7 +361,54 @@ export default {
       AddStrategy: "strategyModule/AddStrategy",
       SavePortfolio: "portfolioModule/SavePortfolio",
       DeletePortfolio: "portfolioModule/DeletePortfolio",
+      ImportStrategies: "strategyModule/ImportStrategies",
+      SaveImportedStrategies: "strategyModule/SaveImportedStrategies",
     }),
+    onImportExtract: async function (file) {
+      const result = await this.ImportStrategies(file);
+      result.strategies = (result.strategies || []).map((s) => ({ ...s, include: true }));
+      this.importResult = result;
+      return result;
+    },
+    onImportLotSize: function (strategy, value) {
+      const lotsize = Math.floor(Number(value));
+      if (!(lotsize > 0)) {
+        return;
+      }
+      strategy.lotsize = lotsize;
+      strategy.trades.forEach((trade) => {
+        if (trade.units && trade.units % lotsize === 0) {
+          trade.quantity = trade.units / lotsize;
+        }
+      });
+    },
+    onImportConfirm: async function () {
+      const strategies = this.importSelected.map((strategy) => {
+        const clean = { ...strategy };
+        delete clean.include;
+        return clean;
+      });
+      const total = strategies.length;
+      const { saved, trades, error } = await this.SaveImportedStrategies({
+        portfolioId: this.Portfolio._id,
+        strategies,
+      });
+      if (error) {
+        const reason = error.response && error.response.data && error.response.data.message;
+        throw new Error(
+          `Imported ${saved} of ${total} strategies. ${reason || "Could not save the rest."}`
+        );
+      }
+      this.importMessage = `Imported ${saved} ${saved === 1 ? "strategy" : "strategies"} with ${trades} ${trades === 1 ? "trade" : "trades"}.`;
+    },
+    onOpenImport: function () {
+      this.importMessage = "";
+      this.importOpen = true;
+    },
+    onImportClose: function () {
+      this.importOpen = false;
+      this.importResult = null;
+    },
     onAddNewStrategy: function () {
       if (!this.Portfolio?._id) {
         return;
@@ -269,11 +445,22 @@ export default {
       }
     },
   },
+  mounted: function () {
+    this.$store.dispatch("docImportModule/GetImportCapabilities");
+  },
+  watch: {
+    "Portfolio._id": function () {
+      this.importMessage = "";
+    },
+  },
   mixins: [myMixins],
   data: function () {
     return {
       isEdit: false,
       editPortfolio: null,
+      importOpen: false,
+      importResult: null,
+      importMessage: "",
     };
   },
   setup() {
@@ -284,6 +471,55 @@ export default {
 </script>
 
 <style scoped>
+.import-empty {
+  margin: 0.5rem 0;
+  color: #6b7280;
+}
+.import-strategy {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+}
+:global(.dark) .import-strategy {
+  border-color: #374151;
+}
+.import-strategy-off {
+  opacity: 0.5;
+}
+.import-strategy-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.8125rem;
+}
+.import-strategy-name,
+.import-lot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.import-scroll {
+  overflow-x: auto;
+}
+.import-table th {
+  font-weight: 500;
+}
+.import-num {
+  width: 5rem;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+  font-size: 0.75rem;
+  text-align: right;
+}
+:global(.dark) .import-num {
+  border-color: #4b5563;
+}
 [v-cloak] {
   display: none;
 }

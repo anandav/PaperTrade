@@ -18,6 +18,7 @@ const strategyController = require("./controller/strategycontroller");
 const portfolioCotroller = require("./controller/portfoliocotroller");
 const tradeController = require("./controller/tradecontroller");
 const splitPlanController = require("./controller/splitplancontroller");
+const importController = require("./controller/importcontroller");
 
 const dataProvider = require("./dataprovidercontroller/index");
 // const authController = require("./controller/authcontroller");
@@ -84,6 +85,7 @@ async function startServer() {
         app.use("/portfolio", auth, portfolioCotroller);
         app.use("/trade", auth, tradeController);
         app.use("/splitplan", auth, splitPlanController);
+        app.use("/import", auth, importController);
 
         app.get('/', function (req, res) {
             res.redirect("/api-docs");

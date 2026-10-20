@@ -41,5 +41,11 @@ export default {
       });
       return response.data.quotes || [];
     },
+    async ImportHoldings(context, file) {
+      const form = new FormData();
+      form.append("file", file);
+      const response = await axios.post(apiUrl + "import/splitplan", form);
+      return response.data;
+    },
   },
 };

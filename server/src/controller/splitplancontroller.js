@@ -4,30 +4,12 @@ const SplitPlan = require("../models/splitplan");
 const commonUtility = require("../models/commonUtility");
 const ApiError = require("../common/ApiError");
 const logger = require("../common/logs");
+const { SYMBOL_PATTERN, normalizeSymbol, positiveOrZero, splitPlanMaxItems } = require("../common/symbols");
 
 const activeFilter = commonUtility.activeFilter;
-const SYMBOL_PATTERN = /^[A-Z0-9&_.-]{1,20}$/;
-const DEFAULT_MAX_ITEMS = 32;
 const ALLOCATION_MODES = ["equal", "profit_desc", "profit_asc"];
 const MAX_QUOTES = 50;
 const QUOTE_BATCH = 4;
-
-function normalizeSymbol(value) {
-  return String(value || "")
-    .trim()
-    .toUpperCase()
-    .replace(/^NSE:/, "");
-}
-
-function positiveOrZero(value) {
-  const n = Number(value);
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
-
-function maxItems() {
-  const n = Number(global.appConfig && global.appConfig.splitPlanMaxItems);
-  return Number.isInteger(n) && n > 0 ? n : DEFAULT_MAX_ITEMS;
-}
 
 function sanitizeItems(items) {
   if (!Array.isArray(items)) {
@@ -50,7 +32,7 @@ function sanitizeItems(items) {
       included: item.included !== false,
     });
   }
-  const limit = maxItems();
+  const limit = splitPlanMaxItems();
   if (result.length > limit) {
     throw new ApiError(400, `A plan can have at most ${limit} stocks.`);
   }

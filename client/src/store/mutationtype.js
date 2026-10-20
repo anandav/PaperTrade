@@ -18,3 +18,5 @@ export const SETCURRENTEXCHANGE = 'SetCurrentExchange';
 //splitplan
 export const SETSPLITPLANS = 'SetSplitPlans';
 
+//docimport
+export const SETIMPORTCAPABILITIES = 'SetImportCapabilities';
