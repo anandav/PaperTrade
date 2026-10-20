@@ -17,7 +17,7 @@ const routes = [
   {
     path: '/split-planner',
     name: 'SplitPlanner',
-    component: () => import('../views/SplitPlanner.vue'),
+    component: () => import('../views/splitplanner/SplitPlanner.vue'),
     meta: { requiresAuth: true }
   },
   {

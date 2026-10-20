@@ -29,6 +29,40 @@ export function parseSymbolList(text) {
   return { valid, invalid };
 }
 
+export function newPlanItem(fields) {
+  return {
+    symbol: "",
+    price: 0,
+    lasttradedprice: 0,
+    holdqty: 0,
+    avgprice: 0,
+    included: true,
+    error: "",
+    loading: false,
+    ...fields,
+  };
+}
+
+export function toEditable(saved) {
+  return {
+    _id: saved._id,
+    name: saved.name,
+    amount: saved.amount,
+    useleftover: saved.useleftover !== false,
+    allocationmode: saved.allocationmode || "equal",
+    items: (saved.items || []).map((item) =>
+      newPlanItem({
+        symbol: item.symbol,
+        price: item.price || 0,
+        lasttradedprice: item.lasttradedprice || 0,
+        holdqty: item.holdqty || 0,
+        avgprice: item.avgprice || 0,
+        included: item.included !== false,
+      })
+    ),
+  };
+}
+
 export const ALLOCATION_MODES = [
   { id: "equal", name: "Equal split" },
   { id: "profit_desc", name: "Profit: high to low" },
