@@ -21,76 +21,45 @@
                 />
               </label>
             </div>
-            <div class="table-cell px-1 py-4 text-left">Symbol</div>
-            <div class="table-cell px-1 py-2 grp-now grp-start">
-              <span class="grp-label">Now</span>
-              <span class="tooltip">
-                LTP
-                <tooltip Value="Last traded price on NSE" Location="above end" />
-              </span>
+            <div class="table-cell px-1 py-4 text-left">
+              <button
+                type="button"
+                class="sort-btn"
+                :class="{ 'sort-active': sortKey === 'symbol' }"
+                :aria-label="sortLabel(symbolColumn)"
+                @click="onSort('symbol')"
+              >
+                Symbol
+                <i
+                  v-if="sortKey === 'symbol'"
+                  class="material-icons sort-icon"
+                  aria-hidden="true"
+                >{{ sortDir === "asc" ? "arrow_upward" : "arrow_downward" }}</i>
+              </button>
             </div>
-            <div class="table-cell px-1 py-2 grp-now">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                Held
-                <tooltip Value="Shares you already own" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-now">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                Avg Price
-                <tooltip Value="Your average buy price so far" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-now">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                P&amp;L %
-                <tooltip Value="Profit or loss on shares held, at Buy Price" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-buy grp-start">
-              <span class="grp-label">This buy</span>
-              <span class="tooltip">
-                Buy Price
-                <tooltip Value="Price you plan to buy at. Starts as LTP, edit it for a limit price" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-buy">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                Buy Qty
-                <tooltip Value="New shares to buy with this plan" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-buy">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                Buy Amount
-                <tooltip Value="Buy Qty x Buy Price" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-buy">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                vs Target
-                <tooltip Value="Buy Amount minus this stock share of the plan amount. Negative means under target because only whole shares can be bought" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-after grp-start">
-              <span class="grp-label">After</span>
-              <span class="tooltip">
-                Total Qty
-                <tooltip Value="Held + Buy Qty" Location="above end" />
-              </span>
-            </div>
-            <div class="table-cell px-1 py-2 grp-after">
-              <span class="grp-label" aria-hidden="true">&nbsp;</span>
-              <span class="tooltip">
-                New Avg
-                <tooltip Value="Average price after this buy" Location="above end" />
-              </span>
+            <div
+              v-for="col in valueColumns"
+              :key="col.key"
+              class="table-cell px-1 py-2"
+              :class="['grp-' + col.group, { 'grp-start': col.groupLabel }]"
+            >
+              <span v-if="col.groupLabel" class="grp-label">{{ col.groupLabel }}</span>
+              <span v-else class="grp-label" aria-hidden="true">&nbsp;</span>
+              <button
+                type="button"
+                class="sort-btn tooltip"
+                :class="{ 'sort-active': sortKey === col.key }"
+                :aria-label="sortLabel(col)"
+                @click="onSort(col.key)"
+              >
+                <i
+                  v-if="sortKey === col.key"
+                  class="material-icons sort-icon"
+                  aria-hidden="true"
+                >{{ sortDir === "asc" ? "arrow_upward" : "arrow_downward" }}</i>
+                {{ col.label }}
+                <tooltip :Value="col.tip" Location="above end" />
+              </button>
             </div>
             <div class="table-cell px-1 trade-actions-col"></div>
           </div>
@@ -98,7 +67,7 @@
         <div class="table-row-group">
           <div
             class="table-row text-right border-t border-gray-300 dark:border-gray-600"
-            v-for="row in result.rows"
+            v-for="row in sortedRows"
             :key="row.symbol"
             :class="{
               isTradeEdit: editSymbol === row.symbol,
@@ -305,6 +274,48 @@
 <script>
 import { SYMBOL_PATTERN, normalizeSymbol } from "../../common/splitPlan";
 
+const SORT_STORAGE_KEY = "splitPlanSort";
+
+const COLUMNS = [
+  { key: "ltp", label: "LTP", group: "now", groupLabel: "Now", tip: "Last traded price on NSE", value: (r) => r.lasttradedprice || null },
+  { key: "held", label: "Held", group: "now", tip: "Shares you already own", value: (r) => r.holdQty || null },
+  { key: "avg", label: "Avg Price", group: "now", tip: "Your average buy price so far", value: (r) => r.holdAvg || null },
+  { key: "pnl", label: "P&L %", group: "now", tip: "Profit or loss on shares held, at Buy Price", value: (r) => (r.holdAvg && r.price > 0 ? r.pnlPercent : null) },
+  { key: "price", label: "Buy Price", group: "buy", groupLabel: "This buy", tip: "Price you plan to buy at. Starts as LTP, edit it for a limit price", value: (r) => r.price || null },
+  { key: "qty", label: "Buy Qty", group: "buy", tip: "New shares to buy with this plan", value: (r) => (r.counted ? r.qty : null) },
+  { key: "cost", label: "Buy Amount", group: "buy", tip: "Buy Qty x Buy Price", value: (r) => (r.counted ? r.cost : null) },
+  { key: "diff", label: "vs Target", group: "buy", tip: "Buy Amount minus this stock share of the plan amount. Negative means under target because only whole shares can be bought", value: (r) => (r.counted ? r.diff : null) },
+  { key: "finalQty", label: "Total Qty", group: "after", groupLabel: "After", tip: "Held + Buy Qty", value: (r) => r.finalQty || null },
+  { key: "finalAvg", label: "New Avg", group: "after", tip: "Average price after this buy", value: (r) => r.finalAvg || null },
+];
+
+const SYMBOL_COLUMN = { key: "symbol", label: "Symbol", value: (r) => r.symbol };
+
+function readSort() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(SORT_STORAGE_KEY) || "null");
+    const known = saved && (saved.key === "symbol" || COLUMNS.some((c) => c.key === saved.key));
+    if (known && (saved.dir === "asc" || saved.dir === "desc")) {
+      return saved;
+    }
+  } catch (err) {
+    return { key: null, dir: null };
+  }
+  return { key: null, dir: null };
+}
+
+function writeSort(key, dir) {
+  try {
+    if (key) {
+      window.localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ key, dir }));
+    } else {
+      window.localStorage.removeItem(SORT_STORAGE_KEY);
+    }
+  } catch (err) {
+    return;
+  }
+}
+
 export default {
   name: "PlanTable",
   props: {
@@ -314,7 +325,12 @@ export default {
   },
   emits: ["change", "message", "refresh", "remove"],
   data() {
+    const sort = readSort();
     return {
+      valueColumns: COLUMNS,
+      symbolColumn: SYMBOL_COLUMN,
+      sortKey: sort.key,
+      sortDir: sort.dir,
       editSymbol: null,
       editName: "",
       editPrice: 0,
@@ -323,6 +339,28 @@ export default {
     };
   },
   computed: {
+    sortedRows() {
+      const rows = this.result.rows;
+      const column =
+        this.sortKey === "symbol"
+          ? SYMBOL_COLUMN
+          : COLUMNS.find((c) => c.key === this.sortKey);
+      if (!column) {
+        return rows;
+      }
+      const sign = this.sortDir === "desc" ? -1 : 1;
+      return [...rows].sort((a, b) => {
+        const va = column.value(a);
+        const vb = column.value(b);
+        if (va === null || vb === null) {
+          return va === vb ? 0 : va === null ? 1 : -1;
+        }
+        if (typeof va === "string") {
+          return sign * va.localeCompare(vb);
+        }
+        return sign * (va - vb);
+      });
+    },
     allIncluded() {
       return this.plan.items.length > 0 && this.plan.items.every((i) => i.included);
     },
@@ -333,6 +371,26 @@ export default {
     },
   },
   methods: {
+    onSort(key) {
+      if (this.sortKey !== key) {
+        this.sortKey = key;
+        this.sortDir = "asc";
+      } else if (this.sortDir === "asc") {
+        this.sortDir = "desc";
+      } else {
+        this.sortKey = null;
+        this.sortDir = null;
+      }
+      writeSort(this.sortKey, this.sortDir);
+    },
+    sortLabel(col) {
+      if (this.sortKey !== col.key) {
+        return `Sort by ${col.label}`;
+      }
+      return this.sortDir === "asc"
+        ? `Sorted by ${col.label} ascending. Sort descending`
+        : `Sorted by ${col.label} descending. Clear sort`;
+    },
     findItem(symbol) {
       return this.plan.items.find((i) => i.symbol === symbol);
     },
@@ -484,6 +542,38 @@ export default {
   overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 0.25rem;
+}
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sort-btn:hover,
+.sort-active,
+.sort-icon {
+  color: #ca8a04;
+}
+:global(.dark) .sort-btn:hover,
+:global(.dark) .sort-active,
+:global(.dark) .sort-icon {
+  color: #eab308;
+}
+.sort-btn:focus-visible {
+  outline: 2px solid #9ca3af;
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+.sort-icon {
+  font-size: 12px;
+  line-height: 1;
 }
 .grp-label {
   display: block;
