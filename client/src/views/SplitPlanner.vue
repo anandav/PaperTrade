@@ -102,6 +102,7 @@
 
     <div class="workspace-main flex-1 pt-16 pb-16 min-w-0">
       <div
+        ref="toolbar"
         class="
           workspace-toolbar
           sticky
@@ -283,7 +284,10 @@
               dark:bg-gray-800
             "
           >
-            <div class="p-3 border-b border-gray-300 dark:border-gray-700">
+            <div
+              class="plan-tools p-3 border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
+              :style="{ top: stickyTop + 'px' }"
+            >
               <div class="strategy-header">
                 <div class="strategy-meta">
                   <div class="strategy-field add-field">
@@ -788,6 +792,8 @@ const QUOTE_CHUNK = 50;
 const SAVE_DELAY = 600;
 const AMOUNT_ERROR = "Enter an amount of zero or more.";
 const AFTER_HIGHLIGHT_MS = 2500;
+const APP_HEADER_PX = 64;
+const STICKY_OVERLAP_PX = 1;
 
 function toEditable(saved) {
   return {
@@ -837,6 +843,8 @@ export default {
       importResult: null,
       afterChanges: {},
       afterTimer: null,
+      stickyTop: APP_HEADER_PX,
+      toolbarObserver: null,
       AllocationModes: ALLOCATION_MODES,
       LTPAction: [
         { _id: "refresh", name: "Refresh last prices", icon: "get_app" },
@@ -889,6 +897,18 @@ export default {
   },
   async mounted() {
     window.addEventListener("pagehide", this.flushSave);
+    window.addEventListener("resize", this.updateStickyTop);
+    if (window.ResizeObserver) {
+      this.toolbarObserver = new ResizeObserver(this.updateStickyTop);
+      const nav = document.querySelector("#app > nav");
+      if (nav) {
+        this.toolbarObserver.observe(nav);
+      }
+      if (this.$refs.toolbar) {
+        this.toolbarObserver.observe(this.$refs.toolbar);
+      }
+    }
+    this.updateStickyTop();
     this.$store.dispatch("docImportModule/GetImportCapabilities");
     try {
       const plans = await this.$store.dispatch("splitPlanModule/GetPlans");
@@ -901,6 +921,11 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener("pagehide", this.flushSave);
+    window.removeEventListener("resize", this.updateStickyTop);
+    if (this.toolbarObserver) {
+      this.toolbarObserver.disconnect();
+      this.toolbarObserver = null;
+    }
     this.clearAfterChanges();
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
@@ -1024,6 +1049,16 @@ export default {
     },
     onEditHeader() {
       this.editHeader = true;
+    },
+    updateStickyTop() {
+      const nav = document.querySelector("#app > nav");
+      const navBottom = nav ? nav.getBoundingClientRect().bottom : APP_HEADER_PX;
+      const toolbar = this.$refs.toolbar;
+      const toolbarBottom =
+        toolbar && toolbar.offsetParent !== null
+          ? APP_HEADER_PX + toolbar.getBoundingClientRect().height
+          : 0;
+      this.stickyTop = Math.max(navBottom, toolbarBottom) - STICKY_OVERLAP_PX;
     },
     highlightAfterChanges(oldAmount) {
       const before = computeSplit(
@@ -1578,6 +1613,13 @@ export default {
 }
 :global(.dark) .trade-empty-copy {
   color: #9ca3af;
+}
+.plan-tools {
+  position: sticky;
+  z-index: 10;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  box-shadow: 0 6px 8px -6px rgba(0, 0, 0, 0.18);
 }
 .trade-scroll {
   width: 100%;
