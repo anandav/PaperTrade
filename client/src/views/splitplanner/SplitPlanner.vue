@@ -120,6 +120,9 @@
       :confirm="onImportConfirm"
       @close="onImportClose"
     >
+      <template #summary="{ result: preview }">
+        <import-holdings-summary :items="preview.items" :existing-symbols="planSymbols" />
+      </template>
       <template #preview="{ result: preview }">
         <import-holdings-preview :items="preview.items" :existing-symbols="planSymbols" />
       </template>
@@ -141,6 +144,7 @@ import PlanDrawer from "./PlanDrawer.vue";
 import PlanHeader from "./PlanHeader.vue";
 import PlanTools from "./PlanTools.vue";
 import PlanTable from "./PlanTable.vue";
+import ImportHoldingsSummary from "./ImportHoldingsSummary.vue";
 import ImportHoldingsPreview from "./ImportHoldingsPreview.vue";
 
 const QUOTE_CHUNK = 50;
@@ -158,6 +162,7 @@ export default {
     PlanHeader,
     PlanTools,
     PlanTable,
+    ImportHoldingsSummary,
     ImportHoldingsPreview,
   },
   data() {

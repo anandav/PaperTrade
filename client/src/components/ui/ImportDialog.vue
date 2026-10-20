@@ -9,65 +9,123 @@
       <div class="import-backdrop" @click="onCancel"></div>
       <div
         ref="panel"
-        class="import-panel"
+        class="
+          import-panel
+          rounded-lg
+          border
+          border-gray-300
+          dark:border-gray-700
+          bg-gray-100
+          dark:bg-gray-800
+        "
         role="dialog"
         aria-modal="true"
         :aria-labelledby="titleId"
         tabindex="-1"
         @click.stop
       >
-        <h2 :id="titleId" class="import-title">{{ title }}</h2>
+        <div class="import-head border-b-2 border-gray-300 dark:border-gray-700">
+          <div class="min-w-0">
+            <h2 :id="titleId" class="import-title text-gray-900 dark:text-white">{{ title }}</h2>
+            <span class="text-xs text-gray-500">{{ stepLabel }}</span>
+          </div>
+          <button
+            class="btn tooltip shrink-0"
+            type="button"
+            aria-label="Close"
+            :disabled="busy"
+            @click.stop="onCancel"
+          >
+            <i class="material-icons" aria-hidden="true">close</i>
+            <tooltip Value="Close" Location="bottom end" />
+          </button>
+        </div>
 
         <div class="import-body">
-          <p v-if="step === 'loading'" class="import-status">Checking import settings...</p>
+          <p v-if="step === 'loading'" class="import-status text-xs text-gray-500">
+            Checking import settings...
+          </p>
 
-          <p v-else-if="!capabilities.enabled" class="import-status">
+          <p v-else-if="!capabilities.enabled" class="import-status text-xs text-gray-500">
             Document import is turned off.
           </p>
 
           <template v-else-if="step === 'pick'">
-            <label class="import-file" :for="inputId">
-              <i class="material-icons" aria-hidden="true">upload_file</i>
-              <span>{{ fileName || "Choose a file" }}</span>
-              <input
-                :id="inputId"
-                class="import-file-input"
-                type="file"
-                :accept="accept"
-                @change="onPick"
-              />
-            </label>
-            <p class="import-hint">
-              {{ capabilities.message }}. Max {{ capabilities.maxMb }} MB.
-            </p>
-            <p class="import-hint">{{ hint }}</p>
+            <div class="import-fields">
+              <div class="import-field import-field-file">
+                <span class="text-xs block text-gray-500" :id="inputId + '-label'">File</span>
+                <label
+                  class="normal-edit import-file"
+                  :class="{ 'import-file-empty': !file }"
+                  :for="inputId"
+                >
+                  <i class="material-icons" aria-hidden="true">upload_file</i>
+                  <span class="truncate">{{ fileName || "Choose a file" }}</span>
+                  <input
+                    :id="inputId"
+                    class="import-file-input"
+                    type="file"
+                    :accept="accept"
+                    :aria-labelledby="inputId + '-label'"
+                    @change="onPick"
+                  />
+                </label>
+              </div>
+              <div class="import-field">
+                <span class="text-xs block text-gray-500">Formats</span>
+                <span>{{ formatsLabel }}</span>
+              </div>
+              <div class="import-field">
+                <span class="text-xs block text-gray-500">Max size</span>
+                <span>{{ capabilities.maxMb }} MB</span>
+              </div>
+            </div>
+            <p v-if="hint" class="import-hint text-xs text-gray-500">{{ hint }}</p>
           </template>
 
-          <p v-else-if="step === 'reading'" class="import-status" aria-live="polite">
-            <span class="import-spinner" aria-hidden="true"></span>
-            Reading document...
+          <p
+            v-else-if="step === 'reading'"
+            class="import-status text-xs text-gray-500"
+            aria-live="polite"
+          >
+            <i class="material-icons import-spin" aria-hidden="true">autorenew</i>
+            Reading {{ fileName }}...
           </p>
 
           <template v-else-if="step === 'preview'">
+            <slot name="summary" :result="result"></slot>
             <ul v-if="messages.length" class="import-notes">
               <li
                 v-for="(m, index) in messages"
                 :key="index"
-                :class="{ 'import-note-warn': m.warn }"
+                class="text-xs"
+                :class="m.warn ? 'text-yellow-700 dark:text-yellow-500' : 'text-gray-500'"
               >
-                {{ m.text }}
+                <i class="material-icons" aria-hidden="true">{{ m.warn ? "warning_amber" : "info" }}</i>
+                <span>{{ m.text }}</span>
               </li>
             </ul>
             <slot name="preview" :result="result"></slot>
           </template>
 
-          <p v-if="error" class="import-error" role="alert">{{ error }}</p>
+          <p v-if="error" class="import-error text-xs text-red-700 dark:text-red-400" role="alert">
+            {{ error }}
+          </p>
         </div>
 
-        <div class="import-actions">
+        <div class="import-actions border-t border-gray-300 dark:border-gray-700">
+          <button
+            v-if="step === 'preview' && !saving"
+            type="button"
+            class="import-btn import-btn-cancel import-btn-left"
+            @click.stop="onBack"
+          >
+            Choose another file
+          </button>
           <button
             type="button"
             class="import-btn import-btn-cancel"
+            :disabled="busy"
             @click.stop="onCancel"
           >
             Cancel
@@ -133,8 +191,23 @@ export default {
     accept() {
       return this.capabilities.formats.map((f) => "." + f).join(",");
     },
+    formatsLabel() {
+      return this.capabilities.formats.map((f) => f.toUpperCase()).join(", ");
+    },
     fileName() {
       return this.file ? this.file.name : "";
+    },
+    busy() {
+      return this.saving || this.step === "reading";
+    },
+    stepLabel() {
+      if (this.step === "preview") {
+        return "Step 2 of 2: review and import";
+      }
+      if (this.step === "reading") {
+        return "Step 1 of 2: reading the document";
+      }
+      return "Step 1 of 2: choose a file";
     },
     messages() {
       if (!this.result) {
@@ -205,6 +278,12 @@ export default {
         this.file = null;
       }
     },
+    onBack() {
+      this.result = null;
+      this.file = null;
+      this.error = "";
+      this.step = "pick";
+    },
     async onConfirm() {
       this.error = "";
       this.saving = true;
@@ -218,7 +297,7 @@ export default {
       }
     },
     onCancel() {
-      if (this.saving || this.step === "reading") {
+      if (this.busy) {
         return;
       }
       this.$emit("close");
@@ -250,26 +329,23 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 46rem;
+  max-width: 48rem;
   max-height: calc(100vh - 2rem);
-  padding: 1.15rem 1.25rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  background: #f3f4f6;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
-  color: #17263c;
   outline: none;
 }
 
-:global(.dark) .import-panel {
-  background: #1f2937;
-  border-color: #374151;
-  color: #e5e7eb;
+.import-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem 0.75rem;
 }
 
 .import-title {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
+  margin: 0;
+  font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1.3;
 }
@@ -278,97 +354,19 @@ export default {
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
+  padding: 0.85rem 1rem;
 }
 
 .import-status {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 0.5rem 0;
-  color: #4b5563;
-}
-
-:global(.dark) .import-status {
-  color: #9ca3af;
-}
-
-.import-file {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
   gap: 0.4rem;
-  max-width: 100%;
-  padding: 0.5rem 0.85rem;
-  border: 1px dashed #9ca3af;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  overflow-wrap: anywhere;
+  margin: 0.25rem 0;
 }
 
-.import-file:hover {
-  border-color: #e07a2f;
-}
-
-.import-file-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-
-.import-file:focus-within {
-  outline: 2px solid #9ca3af;
-}
-
-.import-hint {
-  margin: 0.5rem 0 0;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-:global(.dark) .import-hint {
-  color: #9ca3af;
-}
-
-.import-notes {
-  margin: 0 0 0.75rem;
-  padding-left: 1.1rem;
-  list-style: disc;
-  font-size: 0.75rem;
-  color: #4b5563;
-}
-
-:global(.dark) .import-notes {
-  color: #9ca3af;
-}
-
-.import-note-warn {
-  color: #b45309;
-}
-
-:global(.dark) .import-note-warn {
-  color: #fbbf24;
-}
-
-.import-error {
-  margin: 0.75rem 0 0;
-  font-size: 0.8125rem;
-  color: #b91c1c;
-}
-
-:global(.dark) .import-error {
-  color: #f87171;
-}
-
-.import-spinner {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid #9ca3af;
-  border-top-color: #e07a2f;
-  border-radius: 50%;
-  animation: import-spin 0.8s linear infinite;
+.import-spin {
+  font-size: 16px;
+  animation: import-spin 1.2s linear infinite;
 }
 
 @keyframes import-spin {
@@ -378,15 +376,92 @@ export default {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .import-spinner {
-    animation-duration: 2.4s;
+  .import-spin {
+    animation: none;
   }
+}
+
+.import-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.import-field {
+  min-width: 0;
+}
+
+.import-field-file {
+  grid-column: 1 / -1;
+}
+
+.import-file {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 24rem;
+  cursor: pointer;
+}
+
+.import-file i {
+  font-size: 16px;
+}
+
+.import-file-empty {
+  color: #9ca3af;
+}
+
+.import-file:hover,
+.import-file:focus-within {
+  border-color: #eab308;
+}
+
+.import-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.import-hint {
+  margin: 0.75rem 0 0;
+}
+
+.import-notes {
+  margin: 0.75rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.import-notes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+  line-height: 1.35;
+}
+
+.import-notes i {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.import-error {
+  margin: 0.75rem 0 0;
 }
 
 .import-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.import-btn-left {
+  margin-right: auto;
 }
 
 .import-btn {
@@ -417,7 +492,7 @@ export default {
   color: #374151;
 }
 
-.import-btn-cancel:hover {
+.import-btn-cancel:hover:not(:disabled) {
   background: #d1d5db;
 }
 
@@ -426,7 +501,7 @@ export default {
   color: #e5e7eb;
 }
 
-:global(.dark) .import-btn-cancel:hover {
+:global(.dark) .import-btn-cancel:hover:not(:disabled) {
   background: #4b5563;
 }
 
@@ -437,5 +512,19 @@ export default {
 
 .import-btn-primary:hover:not(:disabled) {
   background: #e89b4d;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (min-width: 640px) {
+  .import-fields {
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  }
+  .import-field-file {
+    grid-column: auto;
+  }
 }
 </style>

@@ -63,6 +63,18 @@ export function toEditable(saved) {
   };
 }
 
+export function summarizeImport(items, existingSymbols) {
+  const existing = new Set(existingSymbols);
+  const selected = items.filter((i) => i.include);
+  return {
+    found: items.length,
+    selected: selected.length,
+    newCount: selected.filter((i) => !existing.has(i.symbol)).length,
+    shares: selected.reduce((sum, i) => sum + i.holdqty, 0),
+    invested: selected.reduce((sum, i) => sum + i.holdqty * i.avgprice, 0),
+  };
+}
+
 export const ALLOCATION_MODES = [
   { id: "equal", name: "Equal split" },
   { id: "profit_desc", name: "Profit: high to low" },
