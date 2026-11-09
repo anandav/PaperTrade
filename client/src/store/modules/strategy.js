@@ -75,7 +75,7 @@ const strategyModule = {
                 symbol: "NIFTY",
                 symboltype: "Indices",
                 portfolio: _pid,
-                lotsize: 50,
+                lotsize: 65,
                 strikepricestep: 50,
                 trades: [],
             };

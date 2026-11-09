@@ -6,6 +6,9 @@ const ttlCache = require("../common/ttlCache");
 let currencyFutList = null;
 let equityFutList = null;
 let indicesFutList = null;
+let mktLots = null;
+let mktLotsFetchedAt = 0;
+const MKT_LOTS_TTL_MS = 24 * 60 * 60 * 1000;
 let lastupdated = null;
 let nseCookies = null;
 let nseCookieFetchedAt = 0;
@@ -104,20 +107,26 @@ module.exports = {
         }
         lastupdated = now;
       }
+      await this.ensureMktLots();
       let result = [];
       const indices = [
-        { name: "NIFTY", lotsize: 50 },
-        { name: "BANKNIFTY", lotsize: 25 },
-        { name: "FINNIFTY", lotsize: 40 },
+        { name: "NIFTY", lotsize: 65 },
+        { name: "BANKNIFTY", lotsize: 30 },
+        { name: "FINNIFTY", lotsize: 60 },
       ];
       indices.forEach((item) => {
-        result.push({ ...item, symboltype: "Indices", istradeble: true });
+        result.push({
+          ...item,
+          lotsize: this.getLotSize(item.name) || item.lotsize,
+          symboltype: "Indices",
+          istradeble: true,
+        });
       });
       if (equityFutList) {
         equityFutList.forEach((item) => {
           result.push({
             name: item,
-            lotsize: 0,
+            lotsize: this.getLotSize(item) || 0,
             symboltype: "Equity",
             istradeble: true,
           });
@@ -329,6 +338,79 @@ module.exports = {
       info: row.metaData || { symbol },
     };
   },
+  GetMRKTLot: async function () {
+    return this.getData(global.appConfig.nseMktLots);
+  },
+  parseMktLots: function (csv) {
+    if (typeof csv !== "string" || !csv.trim()) {
+      return null;
+    }
+    const lines = csv.split(/\r?\n/).map((l) => l.split(",").map((c) => c.trim()));
+    const headerIndex = lines.findIndex((c) => (c[1] || "").toUpperCase() === "SYMBOL");
+    if (headerIndex < 0) {
+      return null;
+    }
+    const months = lines[headerIndex].slice(2);
+    const result = {};
+    lines.slice(headerIndex + 1).forEach((cells) => {
+      const symbol = (cells[1] || "").toUpperCase();
+      if (!symbol || symbol === "SYMBOL") {
+        return;
+      }
+      const byMonth = {};
+      let lotsize = 0;
+      months.forEach((month, i) => {
+        const value = Number(cells[i + 2]);
+        if (month && value > 0) {
+          byMonth[month.toUpperCase()] = value;
+          if (!lotsize) {
+            lotsize = value;
+          }
+        }
+      });
+      if (lotsize) {
+        result[symbol] = { lotsize, byMonth };
+      }
+    });
+    return Object.keys(result).length ? result : null;
+  },
+  ensureMktLots: async function () {
+    if (mktLots && Date.now() - mktLotsFetchedAt < MKT_LOTS_TTL_MS) {
+      return mktLots;
+    }
+    if (!global.appConfig?.nseMktLots) {
+      return mktLots;
+    }
+    try {
+      logger.info("Getting Lot size");
+      const parsed = this.parseMktLots(await this.GetMRKTLot());
+      if (parsed) {
+        mktLots = parsed;
+        mktLotsFetchedAt = Date.now();
+        logger.info("Got Lot size", { symbols: Object.keys(parsed).length });
+      } else {
+        logger.warn("Lot size file returned no usable rows");
+      }
+    } catch (error) {
+      logger.warn("Lot size fetch failed", { message: error.message });
+    }
+    return mktLots;
+  },
+  getLotSize: function (symbol, expiry) {
+    const entry = mktLots?.[(symbol || "").toUpperCase().trim()];
+    if (!entry) {
+      return 0;
+    }
+    const match = /^(\d{4})-(\d{2})/.exec(expiry || "");
+    if (match) {
+      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const key = `${months[Number(match[2]) - 1]}-${match[1].slice(2)}`;
+      if (entry.byMonth[key]) {
+        return entry.byMonth[key];
+      }
+    }
+    return entry.lotsize;
+  },
   GetIndicesList: async function () {
     const url = global.appConfig.nseIndicesListApi;
     return this.getData(url);
@@ -447,10 +529,13 @@ module.exports = {
         strike: trade.selectedstrike,
         tradetype: trade.tradetype,
       });
+      const expiry = this.formatDate(startegy.expiry);
       let selector =
-        "records.data[? expiryDate==`" +
-        this.formatDate(startegy.expiry) +
-        "` && strikePrice == `" +
+        "records.data[? (expiryDate==`" +
+        expiry +
+        "` || expiryDates==`" +
+        expiry +
+        "`) && strikePrice == `" +
         trade.selectedstrike +
         "`]." +
         (trade.tradetype == "Call" ? "CE" : "PE");
