@@ -197,6 +197,23 @@
                 {{ row.finalAvg ? $filters.decimal2(row.finalAvg) : "-" }}
               </span>
             </div>
+            <div class="table-cell px-1 py-2 grp-after">
+              <span
+                v-if="row.holdQty && row.finalAvg && row.price > 0"
+                class="tooltip"
+                :class="{
+                  'text-green-700 dark:text-green-400': row.finalPnlPercent > 0,
+                  'text-red-700 dark:text-red-400': row.finalPnlPercent < 0,
+                }"
+              >
+                {{ row.finalPnlPercent > 0 ? "+" : "" }}{{ $filters.decimal2(row.finalPnlPercent) }}%
+                <tooltip
+                  :Value="'P&L ' + $filters.decimal2(row.finalPnl)"
+                  Location="above end"
+                />
+              </span>
+              <span v-else>-</span>
+            </div>
             <div class="table-cell px-1">
               <div class="trade-actions">
                 <button
@@ -263,6 +280,7 @@
             </div>
             <div class="table-cell grp-after grp-start"></div>
             <div class="table-cell grp-after"></div>
+            <div class="table-cell grp-after"></div>
             <div class="table-cell trade-actions-col"></div>
           </div>
         </div>
@@ -287,6 +305,7 @@ const COLUMNS = [
   { key: "diff", label: "vs Target", group: "buy", tip: "Buy Amount minus this stock share of the plan amount. Negative means under target because only whole shares can be bought", value: (r) => (r.counted ? r.diff : null) },
   { key: "finalQty", label: "Total Qty", group: "after", groupLabel: "After", tip: "Held + Buy Qty", value: (r) => r.finalQty || null },
   { key: "finalAvg", label: "New Avg", group: "after", tip: "Average price after this buy", value: (r) => r.finalAvg || null },
+  { key: "finalPnl", label: "P&L %", group: "after", tip: "Profit or loss on Total Qty at New Avg, at Buy Price. Compare with P&L % under Now to see how much this buy averages", value: (r) => (r.holdQty && r.finalAvg && r.price > 0 ? r.finalPnlPercent : null) },
 ];
 
 const SYMBOL_COLUMN = { key: "symbol", label: "Symbol", value: (r) => r.symbol };

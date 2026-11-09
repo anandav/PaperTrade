@@ -168,6 +168,9 @@ export function computeSplit(amount, items, useLeftover, mode = "equal") {
     const { holdQty, holdAvg, pnl, pnlPercent } = holding(item);
     const invested = holdQty * holdAvg;
     const finalQty = holdQty + qty;
+    const finalAvg = finalQty ? (invested + cost) / finalQty : 0;
+    const price = Number(item.price) || 0;
+    const afterHeld = holdQty > 0 && finalAvg > 0 && price > 0;
     return {
       ...item,
       counted,
@@ -181,7 +184,9 @@ export function computeSplit(amount, items, useLeftover, mode = "equal") {
       pnlPercent,
       invested,
       finalQty,
-      finalAvg: finalQty ? (invested + cost) / finalQty : 0,
+      finalAvg,
+      finalPnl: afterHeld ? (price - finalAvg) * finalQty : 0,
+      finalPnlPercent: afterHeld ? ((price - finalAvg) / finalAvg) * 100 : 0,
     };
   });
 
